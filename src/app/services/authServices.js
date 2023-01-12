@@ -22,7 +22,7 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
   }
   else {
     const ActionCodeSettings = {
-      url: `https://deskable.pro?userID=${user.uid}&firstName=${userName.firstName}&lastName=${userName.lastName}`,
+      url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${userName.firstName}&lastName=${userName.lastName}`,
     }
     user.sendEmailVerification(ActionCodeSettings)
       .then(() => {

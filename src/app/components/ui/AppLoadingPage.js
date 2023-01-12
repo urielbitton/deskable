@@ -14,8 +14,8 @@ export default function AppLoadingPage() {
         <DotsLoader loading />
       </div>
       <div className="bottom">
-        <h5>Invoice Me</h5>
-        <small>Send & receive invoices quickly, get paid faster</small>
+        <h5>Deskable</h5>
+        <small>Boost your team's efficiency</small>
       </div>
     </div>
   )

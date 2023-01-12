@@ -41,7 +41,7 @@ export default function ForgotPassword() {
         <h3>Forgot Password</h3>
         <small className="description">Enter your email and we'll send you a link to reset your password.</small>
         <AppInput
-          placeholder="jane@invoiceme.pro"
+          placeholder="jane@workable.pro"
           onChange={(e) => setEmail(e.target.value)}
         />
         <AppButton

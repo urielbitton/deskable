@@ -172,8 +172,8 @@ export default function Register() {
       </div>
       <div className="login-cover register-cover">
         <img src={registerCover} alt="register-cover" />
-        <h5>Boost your business' invoicing efficiency.</h5>
-        <p>Try Invoice Me now and take advantage of exclusive features like scheduled invoices, one-click sending and in-app payouts.</p>
+        <h5>Boost your team's efficiency.</h5>
+        <p>Try Workable now and take advantage of an all-in-one-place taskforce platform.</p>
       </div>
     </div>
   )

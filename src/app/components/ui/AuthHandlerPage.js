@@ -18,7 +18,7 @@ export default function AuthHandlerPage(props) {
       <div className="header">
         <h5 onClick={() => navigate('/')}>
           <img src={logo} alt="logo" />
-          <span>Invoice Me</span>
+          <span>Deskable</span>
         </h5>
         <small onClick={() => signOut(setPageLoading)}>Log out</small>
       </div>

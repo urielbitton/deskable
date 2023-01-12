@@ -68,21 +68,9 @@ export const createUserDocService = (user, res, authMode, setLoading) => {
     regionCode: '',
     country: '',
     countryCode: '',
-    invoicesNum: 0,
-    estimatesNum: 0,
-    contactsNum: 0,
-    paymentsNum: 0,
     userID: user.uid,
     dateJoined: new Date(),
-    memberType: 'basic',
-    myBusiness: null,
-    taxNumbers: [],
-    totalRevenue: 0,
-    currency: {
-      name: 'Canadian Dollar',
-      symbol: '$',
-      value: 'CAD'
-    }
+    memberType: 'classb',
   })
     .then(() => {
       return createNotification(

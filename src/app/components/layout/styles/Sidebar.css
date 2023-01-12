@@ -18,8 +18,8 @@
 }
 .sidebar .logo {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 .sidebar .logo img {
   width: 35px;
@@ -37,21 +37,22 @@
 }
 .sidebar .menu a {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 7px;
+  font-size: 13px;
   padding: 10px;
   border-radius: 10px;
   transition: all 0.2s;
   color: var(--grayText);
 }
+.sidebar .menu a i {
+  font-size: 18px;
+}
 .sidebar .menu a:hover,
 .sidebar .menu a.active {
   background: var(--primary);
   color: #fff;
-}
-.sidebar .menu a i {
-  width: 20px
 }
 
 .sidebar .top .appInput {

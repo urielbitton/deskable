@@ -37,21 +37,13 @@ export default function Sidebar() {
               src={logo}
               alt="logo"
             />
-            <h4>Invoice Me</h4>
           </div>
           <div className="menu">
             {navLinksList}
           </div>
         </div>
         <div className="bottom">
-          {
-            myMemberType !== 'business' &&
-            <AppButton
-              label="Upgrade to Business"
-              leftIcon="far fa-rocket-launch"
-              url="/upgrade"
-            />
-          }
+          
         </div>
         <i
           className="fal fa-times close-sidebar"

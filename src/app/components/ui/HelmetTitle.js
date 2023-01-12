@@ -11,8 +11,8 @@ export default function HelmetTitle(props) {
       <title>
         {
           title ?
-          `${title} | Invoice Me` :
-          'Invoice Me - Send invoices, track payments, and get paid faster'
+          `${title} | Deskable` :
+          'Deskable - All your team tasks in one place'
         }
       </title>
       {link}

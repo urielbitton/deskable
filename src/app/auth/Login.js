@@ -160,14 +160,14 @@ export default function Login() {
           </form>
           <h6 className="no-account-text">
             Don't have an account yet?&nbsp;
-            <Link to="/register">Join Invoice Me</Link>
+            <Link to="/register">Join Workable</Link>
           </h6>
         </div>
       </div>
       <div className="login-cover">
         <img src={loginCover} alt="login-cover" />
-        <h5>Boost your business' invoicing efficiency.</h5>
-        <p>Try Invoice Me now and take advantage of exclusive features like scheduled invoices, one-click sending and in-app payouts.</p>
+        <h5>Boost your team's efficiency.</h5>
+        <p>Try Workable now and take advantage of an all-in-one-place taskforce platform.</p>
       </div>
     </div>
   )

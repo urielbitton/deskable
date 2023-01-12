@@ -1,0 +1,72 @@
+.payments-page {
+  display: flex;
+  flex-direction: column;
+}
+.payments-page .app-tabs-bar {
+  margin-top: 10px;
+}
+
+.payments-page .payments-content {
+  margin-top: 20px;
+}
+.payments-page .payments-content .appButton {
+  margin-top: 20px;
+}
+
+.payments-page .payments-content .app-table .headers {
+  padding: 0 10px;
+}
+.payments-page .payments-content .app-table .rows h6 {
+  text-transform: capitalize;
+}
+.payments-page .payments-content .app-table .rows .status {
+  color: var(--primary);
+}
+
+.subscription-modal .subscription-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.subscription-modal .subscription-modal-content .section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.subscription-modal .subscription-modal-content .section h5 {
+  font-size: 15px;
+  color: var(--darkGrayText);
+  margin-bottom: 10px;
+}
+.subscription-modal .subscription-modal-content .section h6 {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--darkGrayText);
+}
+.subscription-modal .subscription-modal-content .section h6 span {
+  color: var(--grayText);
+}
+
+.payments-page .payments-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+  min-height: 500px;
+}
+.payments-page .payments-loading h6 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+  margin-top: 20px;
+}
+.payments-page .payments-loading i {
+  font-size: 25px;
+  color: var(--darkGrayText);
+}

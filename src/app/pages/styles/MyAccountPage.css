@@ -1,0 +1,92 @@
+.account-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-page .app-tabs-bar {
+  margin-top: 20px;
+  background: var(--bg);
+  top: -20px
+}
+
+.account-page .account-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 20px;
+  width: 1000px;
+  max-width: 100%;
+}
+.account-page .account-content .account-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px 20px;
+  width: 100%;
+}
+.account-page .account-content .account-section > h4 {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+  margin-bottom: 10px;
+}
+.account-page .account-content .account-section .avatar-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 20px;
+}
+.account-page .account-content .account-section .commonInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.account-page .account-content .account-section .commonInput h6 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.account-page .account-content .account-section .btn-group {
+  grid-column: 1/-1;
+}
+
+.account-page .account-content .account-section .app-badge {
+  margin-top: -20px;
+}
+.account-page .account-section .app-badge h6 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.account-page .account-content .appInput .fa-info-circle {
+  margin-left: 8px;
+  top: 2px;
+  color: var(--grayText);
+}
+
+.account-page .account-content .account-section.delete-account {
+  border: 1px solid var(--red);
+  border-radius: 5px;
+  padding: 15px;
+}
+.account-page .account-content .account-section.delete-account h4 {
+  color: var(--red);
+}
+.account-page .account-content .account-section.delete-account .form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+.delete-account-modal .appInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.delete-account-modal .appInput h6 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}

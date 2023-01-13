@@ -25,8 +25,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--primary);
-  box-shadow: 0 8px 10px 5px rgba(23, 143, 255, 0.4);
+  background: #fff;
+  box-shadow: var(--morphShadow);
   overflow: hidden;
 }
 .app-loading-page .logo-container img {

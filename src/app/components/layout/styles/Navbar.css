@@ -11,13 +11,6 @@
   justify-content: space-between;
   transition: all 0.2s;
 }
-.navbar.compact-nav {
-  height: var(--navbarHeightCompact)
-}
-.navbar.compact-nav .bottombar {
-  visibility: hidden;
-  opacity: 0;
-}
 
 .navbar .topbar {
   display: flex;
@@ -80,180 +73,7 @@
 .navbar .topbar .right .icon-container:hover {
   background: rgba(255,255,255,0.1);
 }
-.navbar .profile-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  padding: 2px 5px;
-  border-radius: 40px;
-  user-select: none;
-}
-.navbar .profile-container:hover {
-  background: rgba(255,255,255,0.15);
-}
-.navbar .profile-container .clickable-profile {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.navbar .profile-container .clickable-profile > i {
-  color: #fff
-}
-.navbar .profile-dropdown {
-  min-width: 220px;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: var(--shadow);
-  z-index: 100;
-  position: absolute;
-  top: 50px;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  visibility: hidden;
-  opacity: 0;
-  padding: 5px;
-  transition: all 0.2s;
-}
-.navbar .profile-dropdown.show {
-  visibility: visible;
-  opacity: 1;
-  top: 40px;
-}
-.navbar .profile-dropdown a,
-.navbar .profile-dropdown h6 {
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--grayText);
-  font-weight: 600;
-  transition: all 0.2s;
-}
-.navbar .profile-dropdown a i,
-.navbar .profile-dropdown h6 i {
-  color: var(--grayText);
-}
-.navbar .profile-dropdown a:hover,
-.navbar .profile-dropdown h6:hover {
-  background: var(--primary);
-  color: #fff;
-}
-.navbar .profile-dropdown a:hover i,
-.navbar .profile-dropdown h6:hover i {
-  color: #fff;
-}
-.navbar .profile-dropdown hr {
-  width: 90%;
-  height: 1px;
-  align-self: center;
-  margin: 3px 0;
-  background: #eee;
-}
-.navbar .profile-dropdown .info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 10px;
-  cursor: default;
-}
-.navbar .profile-dropdown .info span.value {
-  font-size: 12px;
-  font-weight: 700;
-}
-.navbar .profile-dropdown .info span {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--grayText);
-}
 
-.navbar .bottombar {
-  display: flex;
-  align-items: flex-start;
-  width: 100%;
-  gap: 20px;
-  transition: all 0.2s;
-}
-.navbar .bottombar .go-back {
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.2s;
-  padding: 4px 10px;
-  border-radius: 40px;
-}
-.navbar .bottombar .go-back:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-.navbar .bottombar .nav-items {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.navbar .bottombar .nav-item {
-  border-radius: 5px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.07);
-  width: 200px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  transition: all 0.2s;
-}
-.navbar .bottombar .nav-item:hover {
-  background: rgba(255,255,255,0.1);
-}
-.navbar .bottombar .nav-item .texts {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-.navbar .bottombar .nav-item h4 {
-  font-size: 17px;
-  font-weight: 600;
-  color: #fff;
-}
-.navbar .bottombar .nav-item h6 {
-  font-size: 12px;
-  font-weight: 500;
-  color: #fff;
-}
-.navbar .bottombar .nav-item-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.navbar .bottombar .nav-item-info .meta-data {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.navbar .bottombar .nav-item-info .meta-data h6 {
-  font-size: 13px;
-  font-weight: 500;
-  color: #fff;
-}
-.navbar .bottombar .nav-item-info .meta-data h6 span {
-  text-transform: capitalize;
-  font-weight: 700;
-}
-.navbar .bottombar .nav-item-info .meta-data.column h6 {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
 
 .navbar .shapes-container {
   position: absolute;
@@ -424,6 +244,31 @@
   font-size: 13px;
 }
 
+.navbar .rightbar-btn {
+  display: none;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.navbar .rightbar-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+.navbar .rightbar-btn i {
+  font-size: 18px;
+  color: #fff;
+}
+
+
+
+@media (max-width: 1080px) {
+  .navbar .rightbar-btn {
+    display: flex;
+  }
+}
 
 @media (max-width: 700px) {
   .navbar {
@@ -441,15 +286,5 @@
   }
   .nav-search-dropdown {
     width: 100%;
-  }
-}
-
-
-@media (max-width: 400px) {
-  .navbar .profile-dropdown {
-    width: 100%;
-    min-width: 90vw;
-    right: 0;
-    left: auto;
   }
 }

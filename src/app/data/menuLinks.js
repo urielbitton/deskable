@@ -3,35 +3,54 @@ export const menuLinks = [
     name: 'Home',
     url: '/',
     icon: 'fas fa-th-large',
+    require: 'any'
   },
   {
-    name: 'Invoices',
-    url: '/invoices',
-    icon: 'fas fa-file-invoice-dollar',
+    name: 'Employees',
+    url: '/employees',
+    icon: 'fas fa-users', 
+    require: 'classa'
   },
   {
-    name: 'Estimates',
-    url: '/estimates',
-    icon: 'fas fa-file-invoice',
+    name: 'Posts',
+    url: '/posts',
+    icon: 'fas fa-newspaper',
+    require: 'any'
   },
   {
-    name: 'Contacts',
-    url: '/contacts',
-    icon: 'fas fa-address-book',
+    name: 'Projects',
+    url: '/projects',
+    icon: 'fas fa-project-diagram',
+    require: 'any'
   },
   {
-    name: 'Payments',
-    url: '/payments',
-    icon: 'fas fa-credit-card',
+    name: 'Messages',
+    url: '/messages',
+    icon: 'fas fa-comments',
+    require: 'any'
   },
   {
-    name: 'Emails',
-    url: '/emails',
-    icon: 'fas fa-envelope',
+    name: 'Meetings',
+    url: '/meetings',
+    icon: 'fas fa-video',
+    require: 'any'
+  },
+  {
+    name: 'Events',
+    url: '/events',
+    icon: 'fas fa-calendar-check',
+    require: 'any'
+  },
+  {
+    name: 'Resources',
+    url: '/resources',
+    icon: 'fas fa-book',
+    require: 'any'
   },
   {
     name: 'Settings',
     url: '/settings',
     icon: 'fas fa-cog',
+    require: 'any'
   }
 ]

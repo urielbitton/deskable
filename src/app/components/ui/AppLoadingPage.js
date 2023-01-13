@@ -1,6 +1,6 @@
 import React from 'react'
 import './styles/AppLoadingPage.css'
-import logo from 'app/assets/images/white-logo.png'
+import logo from 'app/assets/images/logo2.png'
 import DotsLoader from "./DotsLoader"
 
 export default function AppLoadingPage() {

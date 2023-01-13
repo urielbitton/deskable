@@ -70,7 +70,10 @@ export const createUserDocService = (user, res, authMode, setLoading) => {
     countryCode: '',
     userID: user.uid,
     dateJoined: new Date(),
-    memberType: 'classb',
+    memberType: 'classc',
+    title: 'Employee',
+    teams: [],
+    activeTeam: null
   })
     .then(() => {
       return createNotification(

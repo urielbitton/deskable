@@ -8,7 +8,9 @@ export default function DropdownButton(props) {
   const { items, leftIcon, rightIcon, buttonType, label,
     showMenu, setShowMenu, className='', dropdownPosition="place-right-bottom" } = props
 
-  const itemsList = items.map((item, index) => {
+  const itemsList = items
+  ?.filter(item => item)
+  .map((item, index) => {
     return (
       !item.url ?
       <div 

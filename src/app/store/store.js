@@ -10,7 +10,6 @@ const StoreContextProvider = ({children}) => {
   const user = auth.currentUser
   const [myUser, setMyUser] = useState(null) 
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === "true" ? true : false)
-  const [themeColor, setThemeColor] = useState(localStorage.getItem('themeColor') || "#178fff")
   const [contentScrollBottom, setContentScrollBottom] = useState(false)
   const [windowIsFocused, setWindowIsFocused] = useState(false)
   const [pageLoading, setPageLoading] = useState(false) 
@@ -33,10 +32,6 @@ const StoreContextProvider = ({children}) => {
       }
     })
   },[user])
-  
-  useEffect(() => {
-    document.documentElement.style.setProperty('--primary', themeColor)
-  },[])
 
   useEffect(() => {
     localStorage.setItem('darkmode', !darkMode ? "false" : "true")  
@@ -61,7 +56,6 @@ const StoreContextProvider = ({children}) => {
     contentScrollBottom, setContentScrollBottom, 
     photoURLPlaceholder,
     windowIsFocused,
-    themeColor, setThemeColor,
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts
   }}>

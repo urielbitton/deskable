@@ -9,6 +9,7 @@ import Navbar from "app/components/layout/Navbar"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import HelmetTitle from "app/components/ui/HelmetTitle"
 import PreventTabClose from "app/components/ui/PreventTabClose"
+import RightBar from "app/components/layout/RightBar"
 
 export default function AppContainer() {
 
@@ -34,6 +35,7 @@ export default function AppContainer() {
         <Navbar />
         <RoutesContainer />
       </div>
+      <RightBar />
       <PageLoader loading={pageLoading} />
       <PreventTabClose preventClose={pageLoading} />
     </div>

@@ -12,7 +12,9 @@ export default function Sidebar() {
   const { myMemberType, showMobileSidebar, setShowMobileSidebar } = useContext(StoreContext)
   const location = useLocation()
 
-  const navLinksList = menuLinks.map((link, index) => {
+  const navLinksList = menuLinks
+  ?.filter(link => link.require === 'any' || link.require === myMemberType)
+  .map((link, index) => {
     return <NavLink
       key={index}
       to={link.url}

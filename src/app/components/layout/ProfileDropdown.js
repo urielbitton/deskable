@@ -6,8 +6,8 @@ import Avatar from "../ui/Avatar"
 
 export default function ProfileDropdown(props) {
 
-  const { setPageLoading, myUserImg, myMemberType, myUserName } = useContext(StoreContext)
-  const { showMenu, setShowMenu } = props
+  const { setPageLoading, myUserImg, myMemberType } = useContext(StoreContext)
+  const { showMenu, setShowMenu, avatarDimensions } = props
 
   return (
     <div className="profile-container">
@@ -20,24 +20,16 @@ export default function ProfileDropdown(props) {
       >
         <Avatar
           src={myUserImg}
-          dimensions="30px"
+          dimensions={avatarDimensions}
+          border="2px solid var(--primary)"
           alt="profile"
-          border="1.5px solid #fff"
         />
-        <i className="fal fa-angle-down" />
       </div>
       <div className={`profile-dropdown ${showMenu === 'profile' ? 'show' : ''}`}>
         <Link to="/my-account">
           <i className="fas fa-user-circle" />
           <span>My Account</span>
         </Link>
-        {
-          myMemberType !== 'business' &&
-          <Link to="/upgrade">
-            <i className="fas fa-rocket-launch" />
-            <span>Upgrade</span>
-          </Link>
-        }
         <Link to="help-and-support">
           <i className="fas fa-question-circle" />
           <span>Help & Support</span>
@@ -51,10 +43,6 @@ export default function ProfileDropdown(props) {
           <span>Sign Out</span>
         </h6>
         <hr />
-        <div className="info">
-          <span>Profile Name:</span>
-          <span className="capitalize value">{myUserName}</span>
-        </div>
         <div className="info">
           <span>Account Type:</span>
           <span className="capitalize value">{myMemberType}</span>

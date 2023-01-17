@@ -1,8 +1,10 @@
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
+import AppTabsBar from "../ui/AppTabsBar"
 import IconContainer from "../ui/IconContainer"
 import NavDropdown from "./NavDropdown"
+import NewEventModal from "./NewEventModal"
 import NotificationElement from "./NotificationElement"
 import ProfileDropdown from "./ProfileDropdown"
 import './styles/RightBar.css'
@@ -11,6 +13,7 @@ export default function RightBar() {
 
   const { myUser, myUserID, myUserName } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
+  const [tabsBarIndex, setTabsBarIndex] = useState(0)
   const unreadNotifications = useUnreadNotifications(myUserID)
   const notifications = useAllNotifications(myUserID, 5)
 
@@ -61,7 +64,7 @@ export default function RightBar() {
             tooltip="Messages"
             onClick={(e) => {
               e.stopPropagation()
-              setShowMenu(showMenu === 'notifications' ? null : 'notifications')
+              setShowMenu(showMenu === 'messages' ? null : 'messages')
             }}
             badgeBgColor="var(--lightGrayText)"
             badgeTextColor="var(--darkGrayText)"
@@ -69,7 +72,7 @@ export default function RightBar() {
           <NavDropdown
             label="Notifications"
             viewAllURL="/notifications"
-            type="notifications"
+            menuName="notifications"
             showDropdown={showMenu}
             setShowDropdown={setShowMenu}
             itemsRender={notificationsList}
@@ -79,8 +82,30 @@ export default function RightBar() {
         <h6>{myUser?.title}</h6>
       </div>
       <div className="content">
-
+        <AppTabsBar>
+          <h6 
+            className={`tab-item ${tabsBarIndex === 0 ? 'active' : ''}`}
+            onClick={() => setTabsBarIndex(0)}
+          >
+            <i className="fas fa-calendar-alt" />
+            Calendar
+          </h6>
+          <h6 
+            className={`tab-item ${tabsBarIndex === 1 ? 'active' : ''}`}
+            onClick={() => setTabsBarIndex(1)}
+          >
+            <i className="fas fa-tasks" />
+            Tasks
+          </h6>
+        </AppTabsBar>
+        <div className={`tab-content ${tabsBarIndex === 0 ? 'show' : ''}`}>
+          {/* <AppCalendar /> */}
+        </div>
+        <div className={`tab-content ${tabsBarIndex === 1 ? 'show' : ''}`}>
+          
+        </div>
       </div>
+      <NewEventModal />
     </div>
   )
 }

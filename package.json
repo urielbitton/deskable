@@ -7,14 +7,18 @@
     "@types/react": "^18.0.9",
     "algoliasearch": "^4.11.0",
     "country-state-city": "^3.1.2",
+    "date-fns": "^2.29.3",
     "firebase": "^8.9.1",
     "react": "^17.0.2",
-    "react-calendar": "^4.0.0",
     "react-dom": "^17.0.2",
     "react-helmet-async": "^1.3.0",
     "react-instantsearch-dom": "^6.18.0",
     "react-router-dom": "6.3.0",
-    "react-scripts": "5.0.0"
+    "react-scripts": "5.0.0",
+    "@fullcalendar/daygrid": "^5.9.0",
+    "@fullcalendar/interaction": "^5.9.0",
+    "@fullcalendar/react": "^5.9.0",
+    "@fullcalendar/timegrid": "^5.9.0"
   },
   "scripts": {
     "start": "react-scripts start",

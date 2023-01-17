@@ -4,14 +4,14 @@ import './styles/NavDropdown.css'
 
 export default function NavDropdown(props) {
 
-  const { label, viewAllURL, type, showDropdown, 
+  const { label, viewAllURL, menuName, showDropdown, 
     setShowDropdown, itemsRender } = props
 
   return (
     <div 
-      className={`nav-dropdown ${showDropdown == type ? 'show' : ''}`}
+      className={`nav-dropdown ${showDropdown == menuName ? 'show' : ''}`}
       onClick={(e) => e.stopPropagation()}
-      key={type}
+      key={menuName}
     >
       <header>
         <h5>{label}</h5>

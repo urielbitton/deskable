@@ -12,6 +12,7 @@ import MeetingsPage from "app/pages/MeetingsPage"
 import EventsPage from "app/pages/EventsPage"
 import ResourcesPage from "app/pages/ResourcesPage"
 import SettingsPage from "app/pages/SettingsPage"
+import CalendarPage from "app/pages/CalendarPage"
 
 export default function RoutesContainer() {
 
@@ -30,6 +31,7 @@ export default function RoutesContainer() {
         <Route path="events" element={<EventsPage />} />
         <Route path="resources" element={<ResourcesPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         <Route path="*" element={<ErrorPage />} />

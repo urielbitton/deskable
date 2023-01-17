@@ -32,6 +32,10 @@ export const reformatDateToMonthDayYear = (date) => {
   return new Date(`${date?.toISOString().split('T')[0].split('-')[1]}-${date?.toISOString().split('T')[0].split('-')[2]}-${date?.toISOString().split('T')[0].split('-')[0]}`)
 }
 
+export const reformatDateToMonthDayYearWithTime = (date) => {
+  return new Date(`${date?.toISOString().split('T')[0].split('-')[1]}-${date?.toISOString().split('T')[0].split('-')[2]}-${date?.toISOString().split('T')[0].split('-')[0]} ${date?.toTimeString().split(' ')[0]}`)
+}
+
 export const convertDateToInputFormat = (date) => {
   const year = date?.getFullYear()
   const month = date?.getMonth() + 1
@@ -48,7 +52,15 @@ export const convertInputDateToDateAndTimeFormat = (string) => {
 }
 
 export const convertDateToTimeInputFormat = (date) => {
-  return reformatDateToMonthDayYear(date)?.toISOString().split('T')[1].split('.')[0]
+  return `${date?.toTimeString().split(' ')[0]}`
+}
+
+export const convertDateToInputDateAndTimeFormat = (date) => {
+  return `${convertDateToInputFormat(reformatDateToMonthDayYearWithTime(date))} ${convertDateToTimeInputFormat(reformatDateToMonthDayYearWithTime(date))}`
+}
+
+export const convertDateObjectToString = (date) => {
+  return `${date?.getMonth() + 1}-${date?.getDate()}-${date?.getFullYear()}`
 }
 
 export const convertDateToTimeString = (date) => {

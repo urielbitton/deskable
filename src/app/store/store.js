@@ -21,6 +21,7 @@ const StoreContextProvider = ({children}) => {
   const percentFormat = new Intl.NumberFormat('en-CA', {style: 'percent'})
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [toasts, setToasts] = useState([])
+  const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -57,7 +58,8 @@ const StoreContextProvider = ({children}) => {
     photoURLPlaceholder,
     windowIsFocused,
     showMobileSidebar, setShowMobileSidebar,
-    toasts, setToasts
+    toasts, setToasts,
+    newEventModal, setNewEventModal
   }}>
     {children}
   </StoreContext.Provider>

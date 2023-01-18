@@ -180,9 +180,8 @@ hr {
   color: #444;
   font-weight: 600;
 }
-.fc-day-today,
-.fc-day-today .fc-daygrid-day-frame {
-  background: #f7f7f7 !important;
+.fc .fc-day-today .fc-daygrid-day-frame {
+  background: #f7f7f7;
 }
 .fc-day-today {
   background: #f7f7f7 !important;

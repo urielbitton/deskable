@@ -1,5 +1,4 @@
-import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
-import { deleteDB } from "app/services/CrudDB"
+import { infoToast } from "app/data/toastsTemplates"
 import { createEventService, deleteEventService } from "app/services/eventsServices"
 import { StoreContext } from "app/store/store"
 import { convertDateToInputDateAndTimeFormat, convertDateToInputFormat } from "app/utils/dateUtils"
@@ -14,8 +13,8 @@ export default function NewEventModal() {
     setToasts, setPageLoading } = useContext(StoreContext)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [startingDate, setStartingDate] = useState(null)
-  const [endingDate, setEndingDate] = useState(null)
+  const [startingDate, setStartingDate] = useState('')
+  const [endingDate, setEndingDate] = useState('null')
   const [allDay, setAllDay] = useState(false)
 
   const allowSave = title && description && startingDate && endingDate

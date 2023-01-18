@@ -70,3 +70,75 @@
 .app-calendar .fc .fc-daygrid-day-frame:hover {
   background: var(--extraLightPrimary);
 }
+
+/* RIghtbar calendar CSS */
+.rightbar .app-calendar .fc-day-today .fc-timegrid-slot:hover ,
+.rightbar .app-calendar .fc-day-today .fc-daygrid-day-frame:hover {
+  background: var(--primary);
+}
+.rightbar .app-calendar .headerToolbar {
+  padding: 20px 0;
+}
+.rightbar .app-calendar .headerToolbar .centerBar {
+  width: 100%;
+  gap: 10px;
+}
+.rightbar .app-calendar .headerToolbar .centerBar .iconContainer {
+  height: 30px;
+  width: 30px;
+}
+.rightbar .app-calendar .headerToolbar .centerBar .iconContainer i {
+  font-size: 25px;
+}
+.rightbar .app-calendar .headerToolbar h4 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+}
+.rightbar .content .calendar-content .appButton {
+  margin-top: 10px;
+}
+.rightbar .fc-theme-standard td, 
+.rightbar .fc-theme-standard th,
+.rightbar .fc-theme-standard .fc-scrollgrid {
+  border: none;
+}
+.rightbar .fc-day-today .fc-daygrid-day-frame {
+  border-radius: 5px;
+  background:var(--primary);
+  box-shadow: var(--primaryShadow);
+}
+.rightbar .fc-day:hover .fc-day-today {
+  background:var(--primary);
+}
+.rightbar .fc-day-today .fc-daygrid-day-frame a {
+  color: #fff;
+}
+.rightbar .fc-daygrid-day-number {
+  font-size: 11px;
+  pointer-events: none;
+  margin: auto;
+}
+.rightbar .fc-col-header-cell-cushion {
+  font-size: 13px;
+}
+.rightbar .app-calendar .event-dots-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  text-align: center;
+  top: -5px;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.rightbar .app-calendar .event-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 10px;
+  background: var(--primary);
+}
+.rightbar .fc-day-today .fc-daygrid-day-frame .event-dot {
+  background: #fff;
+}

@@ -31,7 +31,7 @@ export default function Navbar() {
             showMenu={showMenu === 'show'}
             setShowMenu={setShowMenu}
             className="create-new-btn"
-            buttonType="outlineBtn"
+            buttonType="outlineWhiteBtn"
             rightIcon="fal fa-chevron-down"
             items={[
               { label: "New Post", icon: "fas fa-newspaper", url: "/posts/new" },

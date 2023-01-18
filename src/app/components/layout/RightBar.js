@@ -1,6 +1,10 @@
+import { useMonthEvents } from "app/hooks/eventHooks"
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
+import { dateChangeService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import AppButton from "../ui/AppButton"
+import AppCalendar from "../ui/AppCalendar"
 import AppTabsBar from "../ui/AppTabsBar"
 import IconContainer from "../ui/IconContainer"
 import NavDropdown from "./NavDropdown"
@@ -14,8 +18,14 @@ export default function RightBar() {
   const { myUser, myUserID, myUserName } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const [tabsBarIndex, setTabsBarIndex] = useState(0)
+  const [calendarRangeStartDate, setCalendarRangeStartDate] = useState(new Date())
+  const [calendarRangeEndDate, setCalendarRangeEndDate] = useState(new Date())
+  const [customCalendarViewTitle, setCustomCalendarViewTitle] = useState('')
+  const calendarRef = useRef(null)
+  const monthEvents = useMonthEvents(calendarRangeStartDate)
   const unreadNotifications = useUnreadNotifications(myUserID)
   const notifications = useAllNotifications(myUserID, 5)
+  const calendarAPI = calendarRef?.current?.getApi()
 
   const notificationsList = notifications?.map((notif, index) => {
     return <NotificationElement
@@ -23,6 +33,16 @@ export default function RightBar() {
       notif={notif}
     />
   })
+
+  const goToToday = () => {
+    dateChangeService(
+      'today', 
+      calendarAPI, 
+      setCustomCalendarViewTitle, 
+      setCalendarRangeStartDate, 
+      setCalendarRangeEndDate
+    )
+  }
 
   useEffect(() => {
     if (showMenu !== null) {
@@ -83,14 +103,14 @@ export default function RightBar() {
       </div>
       <div className="content">
         <AppTabsBar>
-          <h6 
+          <h6
             className={`tab-item ${tabsBarIndex === 0 ? 'active' : ''}`}
             onClick={() => setTabsBarIndex(0)}
           >
             <i className="fas fa-calendar-alt" />
             Calendar
           </h6>
-          <h6 
+          <h6
             className={`tab-item ${tabsBarIndex === 1 ? 'active' : ''}`}
             onClick={() => setTabsBarIndex(1)}
           >
@@ -98,11 +118,26 @@ export default function RightBar() {
             Tasks
           </h6>
         </AppTabsBar>
-        <div className={`tab-content ${tabsBarIndex === 0 ? 'show' : ''}`}>
-          {/* <AppCalendar /> */}
+        <div className={`tab-content calendar-content ${tabsBarIndex === 0 ? 'show' : ''}`}>
+          <AppCalendar 
+            events={monthEvents}
+            viewMode="dayGridMonth"
+            setViewMode={() => { }}
+            calendarRef={calendarRef}
+            initialView="dayGridMonth"
+            setCalendarRangeStartDate={setCalendarRangeStartDate}
+            setCalendarRangeEndDate={setCalendarRangeEndDate}
+            customCalendarViewTitle={customCalendarViewTitle}
+            setCustomCalendarViewTitle={setCustomCalendarViewTitle}
+          />
+          <AppButton
+            label="Today"
+            buttonType="tabBlueBtn"
+            onClick={() => goToToday()}
+          />
         </div>
         <div className={`tab-content ${tabsBarIndex === 1 ? 'show' : ''}`}>
-          
+
         </div>
       </div>
       <NewEventModal />

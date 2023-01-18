@@ -77,6 +77,16 @@
   color: #fff;
 }
 
+.appButton.outlineWhiteBtn {
+  border: 1px solid #fff;
+  color: #fff;
+  background: transparent;
+}
+.appButton.outlineWhiteBtn:hover {
+  background: #fff;
+  color: var(--primary);
+}
+
 .appButton.redBtn {
   background: var(--red);
   color: #fff;

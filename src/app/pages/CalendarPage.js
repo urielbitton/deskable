@@ -1,5 +1,5 @@
 import AppCalendar from "app/components/ui/AppCalendar"
-import { useMonthEvents, useWeekEvents } from "app/hooks/eventHooks"
+import { useCalendarMonthEvents, useCalendarWeekEvents } from "app/hooks/eventHooks"
 import React, { useRef, useState } from 'react'
 import './styles/CalendarPage.css'
 
@@ -10,8 +10,8 @@ export default function CalendarPage() {
   const [calendarRangeEndDate, setCalendarRangeEndDate] = useState(new Date())
   const [customCalendarViewTitle, setCustomCalendarViewTitle] = useState('')
   const calendarRef = useRef(null)
-  const weekEvents = useWeekEvents(calendarRangeStartDate)
-  const monthEvents = useMonthEvents(calendarRangeStartDate)
+  const weekEvents = useCalendarWeekEvents(calendarRangeStartDate)
+  const monthEvents = useCalendarMonthEvents(calendarRangeStartDate)
   const monthView = viewMode === 'dayGridMonth'
 
   return (

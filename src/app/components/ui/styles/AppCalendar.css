@@ -70,8 +70,21 @@
 .app-calendar .fc .fc-daygrid-day-frame:hover {
   background: var(--extraLightPrimary);
 }
+.app-calendar .fc-daygrid-dot-event {
+  color: #fff;
+}
+.app-calendar .fc-daygrid-dot-event .fc-daygrid-event-dot {
+  border-color: #fff;
+}
+.app-calendar .fc-daygrid-block-event {
+  background: var(--primary);
+  border-color: var(--primary);
+}
 
 /* RIghtbar calendar CSS */
+.rightbar .app-calendar .fc .fc-scroller-liquid-absolute {
+  overflow-y: hidden !important;
+}
 .rightbar .app-calendar .fc-day-today .fc-timegrid-slot:hover ,
 .rightbar .app-calendar .fc-day-today .fc-daygrid-day-frame:hover {
   background: var(--primary);
@@ -93,9 +106,6 @@
 .rightbar .app-calendar .headerToolbar h4 {
   font-size: 14px;
   color: var(--darkGrayText);
-}
-.rightbar .content .calendar-content .appButton {
-  margin-top: 10px;
 }
 .rightbar .fc-theme-standard td, 
 .rightbar .fc-theme-standard th,

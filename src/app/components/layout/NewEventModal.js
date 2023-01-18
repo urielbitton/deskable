@@ -1,5 +1,5 @@
 import { infoToast } from "app/data/toastsTemplates"
-import { createEventService, deleteEventService } from "app/services/eventsServices"
+import { createCalendarEventService, deleteCalendarEventService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
 import { convertDateToInputDateAndTimeFormat, convertDateToInputFormat } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ export default function NewEventModal() {
 
   const createEvent = () => {
     if(!!!allowSave) return setToasts(infoToast('Please fill all the fields.'))
-    createEventService(
+    createCalendarEventService(
       myUserID, 
       {
         title,
@@ -39,7 +39,7 @@ export default function NewEventModal() {
   const deleteEvent = () => {
     const confirm = window.confirm('Are you sure you want to delete this event?')
     if (!confirm) return setToasts(infoToast('Event not deleted.'))
-    deleteEventService(
+    deleteCalendarEventService(
       myUserID, 
       newEventModal.eventObject.eventID, 
       setToasts, 

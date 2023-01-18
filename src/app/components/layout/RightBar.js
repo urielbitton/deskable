@@ -1,8 +1,9 @@
-import { useMonthEvents } from "app/hooks/eventHooks"
+import { useCalendarMonthEvents } from "app/hooks/eventHooks"
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { dateChangeService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import EventItem from "../events/EventItem"
 import AppButton from "../ui/AppButton"
 import AppCalendar from "../ui/AppCalendar"
 import AppTabsBar from "../ui/AppTabsBar"
@@ -22,7 +23,7 @@ export default function RightBar() {
   const [calendarRangeEndDate, setCalendarRangeEndDate] = useState(new Date())
   const [customCalendarViewTitle, setCustomCalendarViewTitle] = useState('')
   const calendarRef = useRef(null)
-  const monthEvents = useMonthEvents(calendarRangeStartDate)
+  const monthEvents = useCalendarMonthEvents(calendarRangeStartDate)
   const unreadNotifications = useUnreadNotifications(myUserID)
   const notifications = useAllNotifications(myUserID, 5)
   const calendarAPI = calendarRef?.current?.getApi()
@@ -31,6 +32,13 @@ export default function RightBar() {
     return <NotificationElement
       key={index}
       notif={notif}
+    />
+  })
+
+  const eventsList = monthEvents?.map((event, index) => {
+    return <EventItem 
+      key={index}
+      event={event}
     />
   })
 
@@ -135,6 +143,9 @@ export default function RightBar() {
             buttonType="tabBlueBtn"
             onClick={() => goToToday()}
           />
+          <div className="events-list">
+            {eventsList}
+          </div>
         </div>
         <div className={`tab-content ${tabsBarIndex === 1 ? 'show' : ''}`}>
 

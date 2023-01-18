@@ -1,0 +1,37 @@
+.event-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--inputBorderColor);
+}
+.event-item:hover {
+  background: var(--extraLightPrimary);
+}
+.event-item .icon-container i {
+  font-size: 25px;
+  color: var(--darkGrayText);
+}
+.event-item .icon-container small {
+  position: absolute;
+  top: 9px;
+  color: var(--darkGrayText);
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.event-item h5 {
+  color: var(--darkGrayText);
+  font-weight: 700;
+  font-size: 13px;
+}
+.event-item h6 {
+  color: var(--grayText);
+  font-weight: 600;
+  font-size: 11px;
+}

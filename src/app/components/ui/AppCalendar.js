@@ -77,15 +77,15 @@ export default function AppCalendar(props) {
 
   useEffect(() => {
     setCustomCalendarViewTitle(calendarAPI?.currentDataManager?.data?.viewTitle)
-    setCalendarRangeStartDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.activeRange?.start))
-    setCalendarRangeEndDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.activeRange?.end))
+    setCalendarRangeStartDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.currentRange?.start))
+    setCalendarRangeEndDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.currentRange?.end))
   }, [calendarAPI])
 
   useEffect(() => {
     calendarAPI?.changeView(viewMode)
     setCustomCalendarViewTitle(calendarAPI?.currentDataManager?.data?.viewTitle)
-    setCalendarRangeStartDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.activeRange?.start))
-    setCalendarRangeEndDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.activeRange?.end))
+    setCalendarRangeStartDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.currentRange?.start))
+    setCalendarRangeEndDate(reformatDateToMonthDayYear(calendarAPI?.currentDataManager?.data?.dateProfile?.currentRange?.end))
   }, [viewMode])
 
   return (

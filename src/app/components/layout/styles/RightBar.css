@@ -133,6 +133,15 @@
   top: 0;
 }
 
+.rightbar .events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 10px;
+  height: 265px;
+  overflow-y: auto;
+}
+
 
 
 @media (max-width: 400px) {

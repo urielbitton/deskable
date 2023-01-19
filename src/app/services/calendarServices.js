@@ -1,7 +1,7 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { reformatDateToMonthDayYear } from "app/utils/dateUtils"
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns"
+import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 
 export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle, setCalendarRangeStartDate, setCalendarRangeEndDate) => {
@@ -129,6 +129,70 @@ export const deleteCalendarEventService = (userID, eventID, setToasts, setLoadin
     })
     .catch((err) => {
       setToasts(errorToast('Error deleting event. Please try again.'))
+      console.log(err)
+    })
+}
+
+export const getTodayTasksService = (userID, setTasks) => {
+  return db.collection('users')
+    .doc(userID)
+    .collection('tasks')
+    .where('dateCreated', '>=', startOfDay(new Date()))
+    .where('dateCreated', '<=', endOfDay(new Date()))
+    .orderBy('dateCreated', 'asc')
+    .onSnapshot(snapshot => {
+      setTasks(snapshot.docs.map(doc => doc.data()))
+    })
+}
+
+export const createTaskService = (userID, title, setToasts, setLoading) => {
+  setLoading(true)
+  const taskPath = `users/${userID}/tasks`
+  const docID = getRandomDocID(taskPath)
+  return setDB(taskPath, docID, {
+    taskID: docID,
+    dateCreated: new Date(),
+    ownerID: userID,
+    title,
+    isDone: false
+  })
+    .then(() => {
+      setToasts(successToast('Task saved successfully'))
+      setLoading(false)
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('Error saving task. Please try again.'))
+    })
+}
+
+export const updateTaskService = (userID, task, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(`users/${userID}/tasks`, task.taskID, {
+    title: task.title,
+    isDone: task.isDone
+  })
+    .then(() => {
+      setToasts(successToast('Task updated successfully'))
+      setLoading(false)
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('Error updating task. Please try again.'))
+    })
+}
+
+export const deleteTaskService = (userID, taskID, setToasts, setLoading) => {
+  setLoading(true)
+  return deleteDB(`users/${userID}/tasks`, taskID)
+    .then(() => {
+      setToasts(successToast('Task deleted successfully.'))
+      setLoading(false)
+    })
+    .catch((err) => {
+      setToasts(errorToast('Error deleting task. Please try again.'))
       console.log(err)
     })
 }

@@ -1,0 +1,50 @@
+.task-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--inputBorderColor);
+}
+.task-item:hover {
+  background: var(--bg);
+}
+.task-item.is-done {
+  border-color: #f5f5f5;
+}
+.task-item.is-done .task-info {
+  opacity: 0.4;
+}
+.task-item .task-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.task-item .task-info i {
+  color: var(--darkGrayText);
+}
+.task-item .task-info-text {
+  display: flex;
+  flex-direction: column;
+}
+.task-item h5 {
+  color: var(--darkGrayText);
+  font-weight: 700;
+  font-size: 13px;
+}
+.task-item h6 {
+  color: var(--grayText);
+  font-weight: 600;
+  font-size: 11px;
+}
+.task-item h6 span {
+  color: var(--primary);
+}
+.task-item .icon-container:hover {
+  background: #fff;
+}

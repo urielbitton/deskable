@@ -11,7 +11,7 @@
   border: 1px solid var(--inputBorderColor);
 }
 .event-item:hover {
-  background: var(--extraLightPrimary);
+  background: var(--bg);
 }
 .event-item .icon-container i {
   font-size: 25px;

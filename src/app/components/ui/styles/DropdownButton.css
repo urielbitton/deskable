@@ -68,6 +68,9 @@
   font-size: 14px;
   border-radius: 5px;
 }
+.dropdown-icon .dropdown-item {
+  font-size: 12px;
+}
 .dropdown-button .dropdown-item:hover {
   background: var(--primary);
 }

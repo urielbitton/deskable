@@ -1,5 +1,5 @@
 import AppCalendar from "app/components/ui/AppCalendar"
-import { useCalendarMonthEvents, useCalendarWeekEvents } from "app/hooks/eventHooks"
+import { useCalendarMonthEvents, useCalendarWeekEvents } from "app/hooks/calendarHooks"
 import React, { useRef, useState } from 'react'
 import './styles/CalendarPage.css'
 

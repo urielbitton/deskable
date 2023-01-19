@@ -66,10 +66,10 @@ export function AppTextarea(props) {
  
 export function AppSwitch(props) { 
 
-  const { iconclass, label, onChange, checked, className } = props
+  const { iconclass, label, onChange, checked, className, size='' } = props
 
   return (   
-    <div className={`appSwitch commonInput ${className ?? ""}`}>  
+    <div className={`appSwitch commonInput ${className ?? ""} ${size}`}>  
     <h6>
       <i className={iconclass}></i>
       {label}

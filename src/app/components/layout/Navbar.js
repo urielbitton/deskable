@@ -1,5 +1,3 @@
-import { functions } from "app/firebase/fire"
-import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import DropdownButton from "../ui/DropdownButton"

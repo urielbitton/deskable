@@ -3,10 +3,10 @@ import './styles/AppItemRow.css'
 
 export default function AppItemRow(props) {
 
-  const { item1, item2, item3, item4, item5, item6, item7, actions,
+  const { item1, item2, item3, item4, item5, item6, item7, item8, actions,
     onDoubleClick, handleCheckChange, className } = props
 
-  const itemsArray = [item1, item2, item3, item4, item5, item6, item7]
+  const itemsArray = [item1, item2, item3, item4, item5, item6, item7, item8]
 
   const itemsRender = itemsArray
   ?.filter(item => item !== undefined && item !== null)

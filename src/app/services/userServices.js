@@ -73,7 +73,7 @@ export const createUserDocService = (user, res, authMode, setLoading) => {
     memberType: 'classc',
     title: 'Employee',
     teams: [],
-    activeTeam: null
+    activeOrgID: null
   })
     .then(() => {
       return createNotification(
@@ -94,3 +94,14 @@ export const createUserDocService = (user, res, authMode, setLoading) => {
     })
 }
 
+export const pastUserYearsOptions = (dateJoined) => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  for (let i = currentYear; i <= dateJoined; i++) {
+    years.push({
+      label: i,
+      value: i
+    })
+  }
+  return years
+}

@@ -13,6 +13,7 @@ import EventsPage from "app/pages/EventsPage"
 import ResourcesPage from "app/pages/ResourcesPage"
 import SettingsPage from "app/pages/SettingsPage"
 import CalendarPage from "app/pages/CalendarPage"
+import EmployeePage from "app/pages/EmployeePage"
 
 export default function RoutesContainer() {
 
@@ -24,6 +25,7 @@ export default function RoutesContainer() {
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="employees" element={<EmployeesPage />} />
+        <Route path="employee/:employeeID" element={<EmployeePage />} />
         <Route path="posts" element={<PostsPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="messages" element={<MessagesPage />} />

@@ -1,6 +1,6 @@
 import React from 'react'
 import './styles/EmptyPage.css'
-import emptyPage from 'app/assets/images/empty-page-img.png'
+import emptyPage from 'app/assets/images/no-results.png'
 import AppButton from "./AppButton"
 import PageLoader from "./PageLoader"
 

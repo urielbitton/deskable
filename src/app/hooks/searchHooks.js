@@ -1,4 +1,4 @@
-import { algoliaSearchClient, contactsIndex } from "app/algolia"
+import { algoliaSearchClient } from "app/algolia"
 import React, { useEffect, useState } from 'react'
 
 export function useInstantSearch(query, searchResults, setSearchResults, indexName, filters,
@@ -53,26 +53,3 @@ export const useMultipleQueries = (query, setTotalResults, queries, limit, setLo
   return searchResults
 }
 
-export function useContactsSearch(query, setLoading, filters) {
-
-  const [results, setResults] = useState([])
-
-  useEffect(() => {
-    if (query?.length) {
-      setLoading(true)
-      contactsIndex.search(query, {
-        filters,
-      })
-        .then((result) => {
-          setLoading(false)
-          setResults(result.hits)
-        })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-        })
-    }
-  }, [query, filters])
-
-  return results
-}

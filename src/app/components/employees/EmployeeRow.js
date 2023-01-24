@@ -1,17 +1,31 @@
+import { infoToast } from "app/data/toastsTemplates"
+import { deleteEmployeeService } from "app/services/employeeServices"
+import { StoreContext } from "app/store/store"
 import { truncateText } from "app/utils/generalUtils"
-import React from 'react'
+import React, { useContext } from 'react'
 import { useNavigate } from "react-router-dom"
 import AppItemRow from "../ui/AppItemRow"
 import IconContainer from "../ui/IconContainer"
 
 export default function EmployeeRow(props) {
 
+  const { setToasts, myActiveOrgID, setPageLoading } = useContext(StoreContext)
   const { employeeID, firstName, lastName, email, phone,
     address, city, region, country, position } = props.employee
   const navigate = useNavigate()
 
   const deleteEmployee = () => {
-
+    const confirm = window.confirm(`Are you sure you want to delete ${firstName} ${lastName} from your employees?`)
+    if (!confirm) return setToasts(infoToast("Employee not deleted."))
+    deleteEmployeeService(
+      myActiveOrgID,
+      employeeID,
+      setPageLoading,
+      setToasts
+    )
+    .then(() => {
+      navigate(`/employees`)
+    })
   }
 
   return (

@@ -115,10 +115,6 @@ export const isDateGreaterThanXTimeAgo = (date, time) => {
   return diff > time
 }
 
-export const convertDateObjectToInputFormat = (date) => {
-  return date?.toISOString().split('T')[0]
-}
-
 export const extractYear = (date) => {
   return date.getFullYear()
 }

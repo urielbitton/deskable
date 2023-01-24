@@ -1,4 +1,5 @@
 import AppCalendar from "app/components/ui/AppCalendar"
+import HelmetTitle from "app/components/ui/HelmetTitle"
 import { useCalendarMonthEvents, useCalendarWeekEvents } from "app/hooks/calendarHooks"
 import React, { useRef, useState } from 'react'
 import './styles/CalendarPage.css'
@@ -16,6 +17,7 @@ export default function CalendarPage() {
 
   return (
     <div className="calendar-page">
+      <HelmetTitle title="Calendar" />
       <AppCalendar
         events={monthView ? monthEvents : weekEvents}
         viewMode={viewMode}

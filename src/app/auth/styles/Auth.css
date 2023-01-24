@@ -134,7 +134,7 @@
 }
 .login-page .login-info input {
   height: 40px;
-  border: 1px solid var(--inputBorderColor);
+  border: 1px solid var(--inputBorder);
   border-radius: 5px;
 }
 .login-page .login-info input:focus {

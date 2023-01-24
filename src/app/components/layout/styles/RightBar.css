@@ -17,8 +17,7 @@
 }
 .rightbar .header .row {
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   width: 100%;
 }
 .rightbar .header h4 {
@@ -167,7 +166,7 @@
 }
 .rightbar .add-task-input input {
   border: none;
-  border-bottom: 1px solid var(--inputBorderColor);
+  border-bottom: 1px solid var(--inputBorder);
   border-radius: 0;
   padding-left: 35px;
   caret-color: var(--grayText);

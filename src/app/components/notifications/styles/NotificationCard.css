@@ -46,7 +46,7 @@
 }
 .notification-card .right .fa-circle {
   font-size: 8px;
-  color: var(--inputBorderColor);
+  color: var(--inputBorder);
   padding: 4px;
 }
 .notification-card .right .fa-circle.unread {

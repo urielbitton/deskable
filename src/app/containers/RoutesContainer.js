@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext } from 'react'
 import './styles/RoutesContainer.css'
 import ErrorPage from "app/pages/ErrorPage"
 import HomePage from 'app/pages/HomePage'
-import { StoreContext } from "app/store/store"
 import { Routes, Route } from "react-router"
 import ProjectsPage from "app/pages/ProjectsPage"
 import EmployeesPage from "app/pages/EmployeesPage"
@@ -14,18 +13,18 @@ import ResourcesPage from "app/pages/ResourcesPage"
 import SettingsPage from "app/pages/SettingsPage"
 import CalendarPage from "app/pages/CalendarPage"
 import EmployeePage from "app/pages/EmployeePage"
+import { StoreContext } from "app/store/store"
+import NewEmployeePage from "app/pages/NewEmployeePage"
 
 export default function RoutesContainer() {
 
-  const { compactNav } = useContext(StoreContext)
-  const windowRef = useRef(null)
+  const { myMemberType } = useContext(StoreContext)
+  const isClassA = myMemberType === "classa"
 
   return (
-    <div className={`routes-container ${compactNav ? 'compact' : ''}`} ref={windowRef}>
+    <div className={`routes-container`}>
       <Routes>
         <Route index element={<HomePage />} />
-        <Route path="employees" element={<EmployeesPage />} />
-        <Route path="employee/:employeeID" element={<EmployeePage />} />
         <Route path="posts" element={<PostsPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="messages" element={<MessagesPage />} />
@@ -36,6 +35,14 @@ export default function RoutesContainer() {
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
+        {
+          isClassA &&
+          <>
+          <Route path="employees" element={<EmployeesPage />} />
+          <Route path="employee/:employeeID" element={<EmployeePage />} />
+          <Route path="employees/new" element={<NewEmployeePage />} />
+          </>
+        }
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>

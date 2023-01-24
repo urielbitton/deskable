@@ -45,3 +45,22 @@ export const supportIssuesOptions = [
     value: 'other',
   }
 ]
+
+export const employeeStatusOptions = [
+  {
+    label: 'Active',
+    value: 'active',
+  },
+  {
+    label: 'Inactive',
+    value: 'inactive',
+  },
+  {
+    label: 'Terminated',
+    value: 'terminated',
+  },
+  {
+    label: 'On Leave',
+    value: 'on-leave',
+  },
+]

@@ -1,6 +1,5 @@
 import { infoToast } from "app/data/toastsTemplates"
 import { useCalendarMonthEvents, useTodayTasks } from "app/hooks/calendarHooks"
-import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { createTaskService, dateChangeService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
@@ -12,10 +11,7 @@ import AppButton from "../ui/AppButton"
 import AppCalendar from "../ui/AppCalendar"
 import { AppInput, AppSwitch } from "../ui/AppInputs"
 import AppTabsBar from "../ui/AppTabsBar"
-import IconContainer from "../ui/IconContainer"
-import NavDropdown from "./NavDropdown"
 import NewEventModal from "./NewEventModal"
-import NotificationElement from "./NotificationElement"
 import ProfileDropdown from "./ProfileDropdown"
 import './styles/RightBar.css'
 
@@ -32,18 +28,9 @@ export default function RightBar() {
   const [showAllTasks, setShowAllTasks] = useState(true)
   const calendarRef = useRef(null)
   const monthEvents = useCalendarMonthEvents(calendarRangeStartDate)
-  const unreadNotifications = useUnreadNotifications(myUserID)
-  const notifications = useAllNotifications(myUserID, 5)
   const todayTasks = useTodayTasks()
   const calendarAPI = calendarRef?.current?.getApi()
   const todayDateText = convertClassicDate(new Date())
-
-  const notificationsList = notifications?.map((notif, index) => {
-    return <NotificationElement
-      key={index}
-      notif={notif}
-    />
-  })
 
   const eventsList = monthEvents?.map((event, index) => {
     return <EventItem
@@ -96,47 +83,10 @@ export default function RightBar() {
     <div className="rightbar">
       <div className="header">
         <div className="row">
-          <IconContainer
-            icon="fas fa-bell"
-            inverted
-            iconColor="var(--lightGrayText)"
-            iconSize="18px"
-            dimensions="32px"
-            tooltip="Notifications"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowMenu(showMenu === 'notifications' ? null : 'notifications')
-            }}
-            badgeValue={unreadNotifications.length}
-            badgeBgColor="var(--lightGrayText)"
-            badgeTextColor="var(--darkGrayText)"
-          />
           <ProfileDropdown
             showMenu={showMenu}
             setShowMenu={setShowMenu}
             avatarDimensions="67px"
-          />
-          <IconContainer
-            icon="fas fa-comment"
-            inverted
-            iconColor="var(--lightGrayText)"
-            iconSize="18px"
-            dimensions="32px"
-            tooltip="Messages"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowMenu(showMenu === 'messages' ? null : 'messages')
-            }}
-            badgeBgColor="var(--lightGrayText)"
-            badgeTextColor="var(--darkGrayText)"
-          />
-          <NavDropdown
-            label="Notifications"
-            viewAllURL="/notifications"
-            menuName="notifications"
-            showDropdown={showMenu}
-            setShowDropdown={setShowMenu}
-            itemsRender={notificationsList}
           />
         </div>
         <h4>{myUserName}</h4>

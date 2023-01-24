@@ -7,13 +7,14 @@ import { StoreContext } from "app/store/store"
 export default function AvatarUploader(props) {
 
   const { setToasts } = useContext(StoreContext)
-  const { dimensions=140, className, imgOnClick, saveOnClick, src, alt, 
-    editRights=true, setLoading, uploadedImg, setUploadedImg,
-    directSaving } = props
+  const { dimensions=140, className, handleImgClick, handleSave, 
+    src, alt, editRights=true, setLoading, uploadedImg, 
+    setUploadedImg, directSaving, uploadRef } = props
   const maxFileUploadSize = 1024 * 1024 * 4
 
-  const cancelOnClick = () => {
+  const handleCancel = () => {
     setUploadedImg(null)
+    uploadRef.current.value = null
   }
 
   return (
@@ -23,7 +24,7 @@ export default function AvatarUploader(props) {
     >
       <img
         src={src || 'https://i.imgur.com/D4fLSKa.png'}
-        onClick={imgOnClick}
+        onClick={handleImgClick}
         alt={alt || 'avatar'}
       />
       {
@@ -35,6 +36,7 @@ export default function AvatarUploader(props) {
               type="file" 
               accept="image/*"
               hidden
+              ref={uploadRef}
               onChange={(e) => uploadFileLocal(e, maxFileUploadSize, setUploadedImg, setLoading, setToasts)}
             />
           </label>
@@ -43,13 +45,13 @@ export default function AvatarUploader(props) {
             <>
             <span 
               className="avatar-icon save-icon"
-              onClick={saveOnClick}
+              onClick={handleSave}
             >
               <i className="far fa-check"/>
             </span>
             <span 
               className="avatar-icon cancel-icon"
-              onClick={cancelOnClick}
+              onClick={handleCancel}
             >
               <i className="far fa-times"/>
             </span>

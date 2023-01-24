@@ -29,7 +29,7 @@ export default function FileUploader(props) {
             bgColor="#fff"
             dimensions="30px"
             round={false}
-            style={{border: "1px solid var(--inputBorderColor)"}}
+            style={{border: "1px solid var(--inputBorder)"}}
           />
           {
             file?.file?.type.includes("image") ?

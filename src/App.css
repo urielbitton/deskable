@@ -10,6 +10,8 @@ html, body {
   --extraLightPrimary: #7dc24426;
   --secondary: #BAB69B;
   --red: #ff4d4d;
+  --blue: #1890ff;
+  --lightBlue: #daf3ff;
   --lightRed: #ffe2e2;
   --bg: #f8f8ff;
   --grayText: #696e93;
@@ -20,7 +22,7 @@ html, body {
   --primaryShadow: 0 10px 12px 1px var(--primaryTrans);
   --morphShadow: 0 0 6px 2px rgba(23, 143, 255, 0.09);
   --primaryGradient: linear-gradient(130deg, var(--primary) 0%, var(--lightPrimary) 100%);
-  --inputBorderColor: #e4ecfb;
+  --inputBorder: #e4ecfb;
   --tableBorderColor: #d5deef;
   --inputPlaceholderColor: #c5cee1;
   --shadow: 0 5px 10px rgba(0,0,0,0.1);
@@ -28,9 +30,10 @@ html, body {
   --cardShadowHover: 0 2px 4px 1px rgba(0,0,0,0.1);
   --newCardShadow: 0 0 3px 1px #e4ecfb;
   --navbarHeight: 60px;
-  --sidebarWidth: 120px;
+  --sidebarWidth: 110px;
   --rightBarWidth: 300px;
   --siteGridWidth: 1350px;
+  --maxPageWidth: 1080px;
   --dark1: #1B2430;
   --dark2: #151b23;
 }  
@@ -85,7 +88,7 @@ a.linkable:hover {
 }
 input, select, textarea {
   padding: 7px 10px;
-  border: 1px solid var(--inputBorderColor);
+  border: 1px solid var(--inputBorder);
   border-radius: 5px;
   width: 100%;
   color: var(--darkGrayText);

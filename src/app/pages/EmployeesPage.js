@@ -52,7 +52,7 @@ export default function EmployeesPage() {
 
   return (
     <div className="employees-page">
-      <HelmetTitle title="Invoices" />
+      <HelmetTitle title="Employees" />
       <AppSelectBar
         labelText1={labelText1}
         searchQuery={query}

@@ -36,3 +36,12 @@
 .page-title-bar .left h5 span {
   font-weight: 700;
 }
+
+.page-title-bar .right .dropdown-icon {
+  background: #eee;
+  border-radius: 100%;
+  transition: all 0.2s;
+}
+.page-title-bar .right .dropdown-icon:hover {
+  background: #e5e5e5;
+}

@@ -1,0 +1,14 @@
+.posts-page {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
+  width: 100%;
+  max-width: var(--maxPageWidth);
+}
+.posts-page .posts-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 500px;
+}

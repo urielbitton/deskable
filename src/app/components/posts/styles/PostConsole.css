@@ -1,0 +1,45 @@
+.post-console {
+  width: 100%;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: var(--newCardShadow);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.post-console .top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.post-console .top h5 {
+  color: var(--darkGrayText);
+  font-size: 15px;
+}
+
+.post-console .bottom {
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 5px;
+}
+.post-console .bottom .avatar-container img {
+  min-width: 33px;
+}
+
+.post-console .emoji-picker-textarea {
+  border: none;
+}
+
+.post-console .actions {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.post-console .actions button {
+  padding: 8px 25px;
+}

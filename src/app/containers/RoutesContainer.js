@@ -15,6 +15,7 @@ import CalendarPage from "app/pages/CalendarPage"
 import EmployeePage from "app/pages/EmployeePage"
 import { StoreContext } from "app/store/store"
 import NewEmployeePage from "app/pages/NewEmployeePage"
+import TasksPage from "app/pages/TasksPage"
 
 export default function RoutesContainer() {
 
@@ -33,6 +34,7 @@ export default function RoutesContainer() {
         <Route path="resources" element={<ResourcesPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="tasks" element={<TasksPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         {

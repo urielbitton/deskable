@@ -8,10 +8,12 @@ export default function AppSelectBar(props) {
   const { labelText1, sortSelectOptions, searchValue, searchOnChange,
     handleOnKeyPress, showAmountSelect, rightComponent, searchQuery,
     amountSelectValue, amountSelectOnChange, searchPlaceholder, yearSelectOptions,
-    monthSelectOptions, yearValue, monthValue, yearOnChange, monthOnChange } = props
+    monthSelectOptions, yearValue, monthValue, yearOnChange, monthOnChange,
+    title } = props
 
   return (
     <div className="app-select-bar">
+      {title && <h4>{title}</h4> }
       <div className="select-item">
         <h6>{labelText1}</h6>
       </div>

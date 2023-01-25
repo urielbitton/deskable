@@ -1,6 +1,6 @@
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import DropdownButton from "../ui/DropdownButton"
 import IconContainer from "../ui/IconContainer"
 import NavDropdown from "./NavDropdown"
@@ -22,6 +22,13 @@ export default function Navbar() {
       notif={notif}
     />
   })
+
+  useEffect(() => {
+    if (showMenu !== null) {
+      window.onclick = () => setShowMenu(null)
+    }
+    return () => window.onclick = null
+  }, [showMenu])
 
   return (
     <nav className="navbar">

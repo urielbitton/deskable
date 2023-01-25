@@ -16,18 +16,18 @@ import "./styles/EmployeePage.css"
 
 export default function EmployeePage() {
 
-  const { myActiveOrgID, setToasts, setPageLoading } = useContext(StoreContext)
+  const { myOrgID, setToasts, setPageLoading } = useContext(StoreContext)
   const [showTaskMenu, setShowTaskMenu] = useState(null)
   const employeeID = useParams().employeeID
-  const employee = useEmployee(myActiveOrgID, employeeID)
-  const organization = useOrganization(myActiveOrgID)
+  const employee = useEmployee(myOrgID, employeeID)
+  const organization = useOrganization(myOrgID)
   const navigate = useNavigate()
 
   const handleDelete = () => {
     const confirm = window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName} from your employees?`)
     if (!confirm) return setToasts(infoToast("Employee not deleted."))
     deleteEmployeeService(
-      myActiveOrgID,
+      myOrgID,
       employeeID,
       setPageLoading,
       setToasts

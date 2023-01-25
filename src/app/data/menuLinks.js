@@ -6,6 +6,12 @@ export const menuLinks = [
     require: 'any'
   },
   {
+    name: 'Posts',
+    url: '/posts',
+    icon: 'fas fa-newspaper',
+    require: 'any'
+  },
+  {
     name: 'Calendar',
     url: '/calendar',
     icon: 'fas fa-calendar-alt',
@@ -16,12 +22,6 @@ export const menuLinks = [
     url: '/employees',
     icon: 'fas fa-users', 
     require: 'classa'
-  },
-  {
-    name: 'Posts',
-    url: '/posts',
-    icon: 'fas fa-newspaper',
-    require: 'any'
   },
   {
     name: 'Projects',

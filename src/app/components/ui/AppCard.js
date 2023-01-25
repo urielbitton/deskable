@@ -8,7 +8,7 @@ export default function AppCard(props) {
 
   return (
     <div 
-      className={`app-card ${shadow ? 'shadow' : ''} ${className ?? ''} ${withBorder ? 'withBorder' : ''}`}
+      className={`app-card ${shadow ? 'shadow' : ''} ${className ?? ''} ${withBorder ? 'with-border' : ''}`}
       style={{ padding }}
       onClick={(e) => onClick && onClick(e)}
       onDoubleClick={(e) => onDoubleClick && onDoubleClick(e)}

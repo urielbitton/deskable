@@ -48,7 +48,7 @@ export const uploadMultipleFilesLocal = (e, maxSize, setFiles, setLoading=setLoa
   for (let i = 0; i < files.length; i++) {
     if (files[i].size > maxSize) {
       setLoading(false)
-      return setToasts(infoToast(`One or more of the uploaded files are too large. Max file size is ${maxSize / 1000000} MB`))
+      return setToasts(infoToast(`One or more of the uploaded files are too large. Max file size is ${(maxSize/1000000).toFixed(0)} MB`))
     }
   }
   let filesArray = []

@@ -19,11 +19,11 @@ import CountryStateCity from "app/components/ui/CountryStateCity"
 
 export default function NewEmployeePage() {
 
-  const { myActiveOrgID, setToasts, pageLoading, setPageLoading } = useContext(StoreContext)
+  const { myOrgID, setToasts, pageLoading, setPageLoading } = useContext(StoreContext)
   const [searchParams, setSearchParams] = useSearchParams()
   const editMode = searchParams.get('edit') === 'true'
   const editEmployeeID = searchParams.get('employeeID')
-  const editEmployee = useEmployee(myActiveOrgID, editEmployeeID)
+  const editEmployee = useEmployee(myOrgID, editEmployeeID)
   const [showTaskMenu, setShowTaskMenu] = useState(null)
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -60,7 +60,7 @@ export default function NewEmployeePage() {
   const handleCreate = () => {
     preHandle()
     createEmployeeService(
-      myActiveOrgID,
+      myOrgID,
       uploadedImg,
       {
         firstName, lastName, email, phone,
@@ -86,7 +86,7 @@ export default function NewEmployeePage() {
   const handleUpdate = () => {
     preHandle()
     updateEmployeeService(
-      myActiveOrgID,
+      myOrgID,
       uploadedImg,
       editEmployeeID,
       {
@@ -114,7 +114,7 @@ export default function NewEmployeePage() {
     if (!confirm) return setToasts(infoToast("Employee not deleted"))
     setPageLoading(true)
     deleteEmployeeService(
-      myActiveOrgID,
+      myOrgID,
       editEmployeeID,
       setPageLoading,
       setToasts

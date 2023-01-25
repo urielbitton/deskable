@@ -13,7 +13,7 @@ import { useYearMonthOrAllEmployees } from "app/hooks/employeeHooks"
 
 export default function EmployeesPage() {
 
-  const { myUser, myActiveOrgID } = useContext(StoreContext)
+  const { myUser, myOrgID } = useContext(StoreContext)
   const [searchString, setSearchString] = useState("")
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -25,8 +25,8 @@ export default function EmployeesPage() {
   const [selectedMonth, setSelectedMonth] = useState('all')
   const limitsNum = 10
   const [employeesLimit, setEmployeesLimit] = useState(limitsNum)
-  const dbEmployees = useYearMonthOrAllEmployees(myActiveOrgID, selectedYear, selectedMonth, employeesLimit)
-  const filters = `orgID:${myActiveOrgID}`
+  const dbEmployees = useYearMonthOrAllEmployees(myOrgID, selectedYear, selectedMonth, employeesLimit)
+  const filters = `orgID:${myOrgID}`
   const showAll = false
   const userYearJoined = myUser?.dateJoined?.toDate().getFullYear()
 
@@ -54,6 +54,7 @@ export default function EmployeesPage() {
     <div className="employees-page">
       <HelmetTitle title="Employees" />
       <AppSelectBar
+        title="Employees"
         labelText1={labelText1}
         searchQuery={query}
         sortSelectOptions={[

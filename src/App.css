@@ -69,7 +69,8 @@ button:not(.react-calendar button) {
   background: var(--primary);
 }
 button:active {
-  transform: scale(0.97)
+  transform: scale(0.98);
+  filter: brightness(90%);
 }
 button:disabled {
   opacity: 0.5;
@@ -138,6 +139,9 @@ hr {
 }
 .commoninput h6 {
   cursor: auto;
+}
+em-emoji-picker {
+  position: absolute;
 }
 
 .error-boundary {

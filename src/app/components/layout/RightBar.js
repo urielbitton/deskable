@@ -72,13 +72,6 @@ export default function RightBar() {
     }
   }
 
-  useEffect(() => {
-    if (showMenu !== null) {
-      window.onclick = () => setShowMenu(null)
-    }
-    return () => window.onclick = null
-  }, [showMenu])
-
   return (
     <div className="rightbar">
       <div className="header">

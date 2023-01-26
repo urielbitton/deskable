@@ -264,3 +264,7 @@ export const upper = (string) => {
 export const cleanHtml = (html) => {
   return html.replace(/<[^>]*>?/gm, ' ')
 }
+
+export const removeNullOrUndefined = (arr) => {
+  return arr.filter(item => item !== null && item !== undefined)
+}

@@ -12,3 +12,8 @@
   gap: 20px;
   width: 500px;
 }
+.posts-page .posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

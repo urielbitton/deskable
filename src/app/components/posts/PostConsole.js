@@ -1,4 +1,3 @@
-import { infoToast } from "app/data/toastsTemplates"
 import { createOrgPostService } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useRef, useState } from 'react'
@@ -16,7 +15,7 @@ export default function PostConsole(props) {
   const [uploadedImgs, setUploadedImgs] = useState([])
   const [loading, setLoading] = useState(false)
   const uploadRef = useRef(null)
-  const isNotEmptyMessage = /\S/.test(messageText)
+  const isNotEmptyMessage = /\S/.test(messageText) || uploadedImgs.length > 0
 
   const handlePressEnter = (e) => {
     if(!isNotEmptyMessage || loading) return 
@@ -28,6 +27,10 @@ export default function PostConsole(props) {
       setLoading,
       setToasts
     )
+    .then(() => {
+      setMessageText('')
+      setUploadedImgs([])
+    })
   }
 
   return (
@@ -60,6 +63,7 @@ export default function PostConsole(props) {
           <AppButton
             label="Post"
             onClick={handlePressEnter}
+            rightIcon={loading && 'fal fa-spinner-third fa-spin'}
             disabled={!isNotEmptyMessage || loading}
           />
         </div>

@@ -1,4 +1,5 @@
 import { db } from "app/firebase/fire"
+import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { getRandomDocID, setDB } from "./CrudDB"
 
 export const createNotification = (userID, title, text, icon, url) => {
@@ -15,37 +16,41 @@ export const createNotification = (userID, title, text, icon, url) => {
   })
 }
 
-export const getUnreadNotifications = (userID, setNotifs) => {
-  db.collection('users')
-  .doc(userID)
-  .collection('notifications')
-  .where('isRead', '==', false)
-  .orderBy('dateCreated', 'desc')
-  .limit(50)
-  .onSnapshot(snapshot => {
+export const getUnreadNotifications = (userID, setNotifs, lim) => {
+  const notifsRef = collection(db, `users/${userID}/notifications`)
+  const q = query(
+    notifsRef,
+    where('isRead', '==', false),
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setNotifs(snapshot.docs.map(doc => doc.data()))
+  })
+  
+}
+
+export const getReadNotifications = (userID, setNotifs, lim) => {
+  const notifsRef = collection(db, `users/${userID}/notifications`)
+  const q = query(
+    notifsRef,
+    where('isRead', '==', true),
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
     setNotifs(snapshot.docs.map(doc => doc.data()))
   })
 }
 
-export const getReadNotifications = (userID, setNotifs, limit) => {
-  db.collection('users')
-  .doc(userID)
-  .collection('notifications')
-  .where('isRead', '==', true)
-  .orderBy('dateCreated', 'desc')
-  .limit(limit)
-  .onSnapshot(snapshot => {
-    setNotifs(snapshot.docs.map(doc => doc.data()))
-  })
-}
-
-export const getAllNotifications = (userID, setNotifs, limit) => {
-  db.collection('users')
-  .doc(userID)
-  .collection('notifications')
-  .orderBy('dateCreated', 'desc')
-  .limit(limit)
-  .onSnapshot(snapshot => {
+export const getAllNotifications = (userID, setNotifs, lim) => {
+  const notifsRef = collection(db, `users/${userID}/notifications`)
+  const q = query(
+    notifsRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
     setNotifs(snapshot.docs.map(doc => doc.data()))
   })
 }

@@ -1,29 +1,29 @@
 import React, { useContext, useState } from 'react'
-import firebase from 'firebase'
 import AuthHandlerPage from "app/components/ui/AuthHandlerPage"
 import resetPasswordImg from 'app/assets/images/reset-password.png'
 import AppButton from "app/components/ui/AppButton"
 import { useNavigate } from "react-router-dom"
 import { StoreContext } from "app/store/store"
 import { errorToast, successToast, infoToast } from "app/data/toastsTemplates"
+import { auth } from "app/firebase/fire"
+import { confirmPasswordReset, signInWithEmailAndPassword, verifyPasswordResetCode } from "firebase/auth"
 
 export default function ResetPasswordHandler({oobCode}) {
 
   const { setToasts } = useContext(StoreContext)
   const [newPassword, setNewPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const auth = firebase.auth()
   const navigate = useNavigate()
 
   const handleResetPassword = (oobCode) => {
     if(newPassword.length < 5) return setToasts(infoToast('Password must be at least 5 characters long.'))
     setLoading(true)
-    auth.verifyPasswordResetCode(oobCode)
+    verifyPasswordResetCode(auth, oobCode)
     .then((email) => {
-      return auth.confirmPasswordReset(oobCode, newPassword)
+      return confirmPasswordReset(auth, oobCode, newPassword)
       .then((res) => {
         setToasts(successToast('Password reset successful. Signing you in...'))
-        return auth.signInWithEmailAndPassword(email, newPassword)
+        return signInWithEmailAndPassword(auth, email, newPassword)
         .then(() => {
           navigate('/')
           setLoading(false)

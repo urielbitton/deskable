@@ -13,15 +13,6 @@ class ErrorBoundary extends React.Component {
     return { hasError: true };
   }
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    //send email to admin with error log
-    // const user = firebase.auth().currentUser
-    // const docID = db.collection('errorLogs').doc().id
-    // setDB('errorLogs', docID, {
-    //   userID: user?.uid ?? "Guest User",
-    //   dateCreated: new Date(),
-    //   errorMessage: errorInfo
-    // })
   }
 
   render() {

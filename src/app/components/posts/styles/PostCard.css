@@ -22,11 +22,11 @@
   gap: 1px;
 }
 .post-card .header .texts h5 {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--darkGrayText);
 }
 .post-card .header .texts h6 {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--grayText);
   opacity: 0.6;
   font-weight: 600;
@@ -48,6 +48,64 @@
   padding-bottom: 5px;
 }
 
+.post-card .content .imgs-masonry {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  height: 270px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+.post-card .content .imgs-masonry.two {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: flex-start;
+  gap: 5px;
+}
+.post-card .content .imgs-masonry.three {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+.post-card .content .imgs-masonry .img-item {
+  border-radius: 10px;
+  height: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.post-card .content .imgs-masonry .img-item img {
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+}
+.post-card .content .imgs-masonry.three .img-item:first-child {
+  grid-row: span 2;
+}
+.post-card .content .imgs-masonry .img-item:hover {
+  filter: brightness(0.9);
+}
+.post-card .content .imgs-masonry .cover-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.post-card .content .imgs-masonry .cover-item h6 {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+}
+
 .post-card .content .user-actions {
   display: flex;
   align-items: center;
@@ -60,7 +118,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 20px;
+  padding: 10px 25px;
   cursor: pointer;
   transition: all 0.2s;
   border-radius: 10px;

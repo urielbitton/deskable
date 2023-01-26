@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import { createUserDocService } from "app/services/userServices"
 import { StoreContext } from "app/store/store"
-import firebase from 'firebase'
+import firebase from 'firebase/compat/app'
 import verifyAccountImg from 'app/assets/images/verify-account.png'
 import { errorToast, successToast } from "app/data/toastsTemplates"
 

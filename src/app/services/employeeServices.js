@@ -1,53 +1,54 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
+import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getEmployeeByID = (orgID, employeeID, setEmployee) => {
-  db.collection('organizations')
-    .doc(orgID)
-    .collection('employees')
-    .doc(employeeID)
-    .onSnapshot(snapshot => {
-      setEmployee(snapshot.data())
-    })
+  const employeeRef = collection(db, 'organizations', orgID, 'employees', employeeID)
+  const q = query(employeeRef)
+  onSnapshot(q, snapshot => {
+    setEmployee(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
-export const getYearEmployeesByOrgID = (orgID, year, setEmployees, limit) => {
-  db.collection('organizations')
-    .doc(orgID)
-    .collection('employees')
-    .where('dateJoined', '>=', new Date(year, 0, 1))
-    .where('dateJoined', '<=', new Date(year, 11, 31))
-    .orderBy('dateJoined', 'desc')
-    .limit(limit)
-    .onSnapshot(snapshot => {
-      setEmployees(snapshot.docs.map(doc => doc.data()))
-    })
+export const getYearEmployeesByOrgID = (orgID, year, setEmployees, lim) => {
+  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const q = query(
+    employeeRef, 
+    where('dateJoined', '>=', new Date(year, 0, 0)), 
+    where('dateJoined', '<=', new Date(year, 11, 31)), 
+    orderBy('dateJoined', 'desc'), 
+    limit(lim)
+  )
+  onSnapshot(q, snapshot => {
+    setEmployees(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
-export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees, limit) => {
-  db.collection('organizations')
-    .doc(orgID)
-    .collection('employees')
-    .where('dateJoined', '>=', new Date(year, month, 0))
-    .where('dateJoined', '<=', new Date(year, month, 31))
-    .orderBy('dateJoined', 'desc')
-    .limit(limit)
-    .onSnapshot(snapshot => {
-      setEmployees(snapshot.docs.map(doc => doc.data()))
-    })
+export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees, lim) => {
+  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const q = query(
+    employeeRef, 
+    where('dateJoined', '>=', new Date(year, month, 0)), 
+    where('dateJoined', '<=', new Date(year, month, 31)), 
+    orderBy('dateJoined', 'desc'), limit(lim)
+  )
+  onSnapshot(q, snapshot => {
+    setEmployees(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
-export const getEmployeesByOrgID = (orgID, setEmployees, limit) => {
-  db.collection('organizations')
-    .doc(orgID)
-    .collection('employees')
-    .orderBy('dateJoined', 'desc')
-    .limit(limit)
-    .onSnapshot(snapshot => {
-      setEmployees(snapshot.docs.map(doc => doc.data()))
-    })
+export const getEmployeesByOrgID = (orgID, setEmployees, lim) => {
+  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const q = query(
+    employeeRef, 
+    orderBy('dateJoined', 'desc'), 
+    limit(lim)
+  )
+  onSnapshot(q, snapshot => {
+    setEmployees(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const createEmployeeService = (orgID, uploadedImg, employee, setToasts, setLoading) => {

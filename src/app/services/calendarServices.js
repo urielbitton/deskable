@@ -2,6 +2,7 @@ import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { reformatDateToMonthDayYear } from "app/utils/dateUtils"
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns"
+import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 
 export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle, setCalendarRangeStartDate, setCalendarRangeEndDate) => {
@@ -58,27 +59,29 @@ export const eventClickService = (e, setNewEventModal) => {
 }
 
 export const getWeekCalendarEventsService = (userID, calendarDate, setEvents) => {
-  return db.collection('users')
-    .doc(userID)
-    .collection('events')
-    .where('startingDate', '>=', startOfWeek(calendarDate))
-    .where('startingDate', '<=', endOfWeek(calendarDate))
-    .orderBy('startingDate', 'asc')
-    .onSnapshot(snapshot => {
-      setEvents(snapshot.docs.map(doc => doc.data()))
-    })
+  const eventsRef = collection(db, `users/${userID}/events`)
+  const q = query(
+    eventsRef, 
+    where('startingDate', '>=', startOfWeek(calendarDate)),
+    where('startingDate', '<=', endOfWeek(calendarDate)),
+    orderBy('startingDate', 'desc') 
+  )
+  onSnapshot(q, (snapshot) => {
+    setEvents(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const getMonthCalendarEventsService = (userID, calendarDate, setEvents) => {
-  return db.collection('users')
-    .doc(userID)
-    .collection('events')
-    .where('startingDate', '>=', startOfMonth(calendarDate))
-    .where('startingDate', '<=', endOfMonth(calendarDate))
-    .orderBy('startingDate', 'asc')
-    .onSnapshot(snapshot => {
-      setEvents(snapshot.docs.map(doc => doc.data()))
-    })
+  const eventsRef = collection(db, `users/${userID}/events`)
+  const q = query(
+    eventsRef, 
+    where('startingDate', '>=', startOfMonth(calendarDate)),
+    where('startingDate', '<=', endOfMonth(calendarDate)),
+    orderBy('startingDate', 'desc') 
+  )
+  onSnapshot(q, (snapshot) => {
+    setEvents(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
 
@@ -134,15 +137,16 @@ export const deleteCalendarEventService = (userID, eventID, setToasts, setLoadin
 }
 
 export const getTodayTasksService = (userID, setTasks) => {
-  return db.collection('users')
-    .doc(userID)
-    .collection('tasks')
-    .where('dateCreated', '>=', startOfDay(new Date()))
-    .where('dateCreated', '<=', endOfDay(new Date()))
-    .orderBy('dateCreated', 'asc')
-    .onSnapshot(snapshot => {
-      setTasks(snapshot.docs.map(doc => doc.data()))
-    })
+  const tasksRef = collection(db, `users/${userID}/tasks`)
+  const q = query(
+    tasksRef,
+    where('dateCreated', '>=', startOfDay(new Date())),
+    where('dateCreated', '<=', endOfDay(new Date())),
+    orderBy('dateCreated', 'desc')
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const createTaskService = (userID, title, setToasts, setLoading) => {

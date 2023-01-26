@@ -1,26 +1,29 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
+import { removeNullOrUndefined } from "app/utils/generalUtils"
+import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
-export const getPostsByOrgID = (orgID, setPosts, limit) => {
-  db.collection('organizations')
-  .doc(orgID)
-  .collection('posts')
-  .orderBy('dateCreated', 'desc')
-  .limit(limit)
-  .onSnapshot(snapshot => {
+export const getPostsByOrgID = (orgID, setPosts, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/posts`)
+  const q = query(
+    docRef, 
+    orderBy('dateCreated', 'desc'), 
+    limit(lim)
+  )
+  onSnapshot(q, snapshot => {
     setPosts(snapshot.docs.map(doc => doc.data()))
   })
 }
 
 export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts`
-  uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? uploadedImgs.map(img => img.file) : null, postStoragePath)
-    .then(res => {
-      const postsPath = `organizations/${orgID}/posts`
-      const docID = getRandomDocID(postsPath)
+  const postsPath = `organizations/${orgID}/posts`
+  const docID = getRandomDocID(postsPath)
+  const postStoragePath = `organizations/${orgID}/posts/${docID}/files`
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img?.file)) : null, postStoragePath, null)
+    .then(data => {
       return setDB(postsPath, docID, {
         authorID: userID,
         commentsNum: 0,
@@ -30,15 +33,16 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
         postText: message,
         postID: docID,
         orgID,
-        ...(res && {
-          files: res.map((file, i) => ({
+        ...(data && {
+          files: data.map((file, i) => ({
             url: file.downloadURL,
-            name: file.file.name,
+            name: file.filename,
             type: file.file.type,
             size: file.file.size
           }))
         })
       })
+      .catch(err => console.log(err))
     })
     .then(() => {
       setLoading(false)
@@ -53,8 +57,8 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
 
 export const updateOrgPostService = (userID, orgID, postID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts`
-  uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? uploadedImgs.map(img => img.file) : null, postStoragePath)
+  const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
+  uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, postStoragePath, null)
     .then(res => {
       const postsPath = `organizations/${orgID}/posts/${postID}`
       return updateDB(postsPath, {
@@ -69,7 +73,7 @@ export const updateOrgPostService = (userID, orgID, postID, message, uploadedImg
         ...(res && {
           files: res.map((file, i) => ({
             url: file.downloadURL,
-            name: file.file.name,
+            name: file.filename,
             type: file.file.type,
             size: file.file.size
           }))
@@ -89,7 +93,7 @@ export const updateOrgPostService = (userID, orgID, postID, message, uploadedImg
 
 export const deleteOrgPostService = (orgID, postID, fileNames, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts`
+  const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
   return deleteMultipleStorageFiles(postStoragePath, fileNames)
   .then(() => {
     const postsPath = `organizations/${orgID}/posts`

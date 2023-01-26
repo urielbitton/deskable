@@ -49,7 +49,7 @@ export default function EmojiTextarea(props) {
           placeholder="Type a message..."
           onChange={(e) => setMessageText((e.target.value))}
           value={messageText}
-          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handlePressEnter(e)}
+          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handlePressEnter && handlePressEnter(e)}
           className="emoji-picker-textarea"
           cacheMeasurements
           maxRows={maxRows}

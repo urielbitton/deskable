@@ -1,44 +1,46 @@
 import { db } from "app/firebase/fire"
+import { collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { setDB, updateDB } from "./CrudDB"
 import { createNotification } from "./notifServices"
 import { uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getUserByID = (userID, setUser) => {
-  db.collection('users')
-    .doc(userID)
-    .onSnapshot(snap => {
-      setUser(snap.data())
-    })
+  const query = doc(db, 'users', userID)
+  onSnapshot(query, (doc) => {
+    setUser(doc.data())
+  })
 }
 
 export const doGetUserByID = (userID) => {
-  return db.collection('users')
-    .doc(userID)
-    .get()
-    .then(snap => {
-      return snap.data()
-    })
+  const query = doc(db, 'users', userID)
+  return getDoc(query)
+  .then(doc => {
+    return doc.data()
+  })
 }
 
-export const getNotificationsByUserID = (userID, setNotifs, limit) => {
-  db.collection('users')
-    .doc(userID)
-    .collection('notifications')
-    .orderBy('dateCreated', 'desc')
-    .limit(limit)
-    .onSnapshot(snap => {
-      setNotifs(snap.docs.map(doc => doc.data()))
-    })
+export const getNotificationsByUserID = (userID, setNotifs, lim) => {
+  const notifsRef = collection(db, `users/${userID}/notifications`)
+  const q = query(
+    notifsRef, 
+    orderBy('dateCreated', 'desc'), 
+    limit(lim)
+  )
+  onSnapshot(q, (querySnapshot) => {
+    setNotifs(querySnapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const getUnreadNotificationsByUserID = (userID, setNotifs) => {
-  db.collection('users')
-    .doc(userID)
-    .collection('notifications')
-    .where('isRead', '==', false)
-    .onSnapshot(snap => {
-      setNotifs(snap.docs.map(doc => doc.data()))
-    })
+  const notifsRef = collection(db, `users/${userID}/notifications`)
+  const q = query(
+    notifsRef, 
+    orderBy('dateCreated', 'desc'), 
+    where('isRead', '==', false)
+  )
+  onSnapshot(q, (querySnapshot) => {
+    setNotifs(querySnapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const saveAccountInfoService = (userID, data, uploadedImg, contactStoragePath) => {

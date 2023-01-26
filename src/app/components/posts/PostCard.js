@@ -8,9 +8,30 @@ import './styles/PostCard.css'
 
 export default function PostCard(props) {
 
-  const { authorID, dateCreated, postID, postText } = props.post
+  const { authorID, dateCreated, postID, postText, files } = props.post
   const [showPostOptions, setShowPostOptions] = useState(false)
   const postAuthor = useUser(authorID)
+  const fileImgs = files?.filter(file => file.type.includes('image'))
+  const hasImgs = fileImgs?.length > 0
+
+  const imgsRender = fileImgs.map((img, index) => {
+    return <div 
+      className="img-item"
+      key={index}
+    >
+      <img
+        src={img.url}
+        alt="post-img"
+      />
+      {
+        fileImgs.length > 2 && index === 2 &&
+        <div className="cover-item">
+          <h6>+{fileImgs.length - 2} More</h6>
+        </div>
+      }
+      <div></div>
+    </div>
+  })
 
   const editPost = () => {
 
@@ -25,9 +46,9 @@ export default function PostCard(props) {
   }
 
   return (
-    <AppCard 
+    <AppCard
       className="post-card"
-      withBorder 
+      withBorder
       padding="0"
     >
       <div className="header">
@@ -56,15 +77,21 @@ export default function PostCard(props) {
               setShowPostOptions(showPostOptions === postID ? null : postID)
             }}
             items={[
-              { label: "Edit", icon: "fas fa-pen", onClick: () => editPost()},
-              { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost()},
-              { label: "Save Post", icon: "fas fa-bookmark", onClick: () => bookmarkPost()},
+              { label: "Edit", icon: "fas fa-pen", onClick: () => editPost() },
+              { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost() },
+              { label: "Save Post", icon: "fas fa-bookmark", onClick: () => bookmarkPost() },
             ]}
           />
         </div>
       </div>
       <div className="content">
         <p>{postText}</p>
+        {
+          hasImgs &&
+          <div className={`imgs-masonry ${fileImgs.length > 1 ? 'two' : fileImgs.length > 2 ? 'three' : ''}`}>
+            {imgsRender}
+          </div>
+        }
         <div className="user-actions">
           <div>
             <i className="far fa-comment" />

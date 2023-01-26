@@ -12,7 +12,7 @@ export default function Navbar() {
 
   const { myUserID, setShowMobileSidebar, myMemberType } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
-  const unreadNotifications = useUnreadNotifications(myUserID)
+  const unreadNotifications = useUnreadNotifications(myUserID, 50)
   const notifications = useAllNotifications(myUserID, 5)
   const isClassA = myMemberType === 'classa'
 

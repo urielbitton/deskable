@@ -1,24 +1,27 @@
 import { auth, db } from 'app/firebase/fire'
-import firebase from 'firebase'
+import { browserSessionPersistence, setPersistence } from "firebase/auth"
+import firebase from 'firebase/compat/app'
+import { addDoc, collection, deleteDoc, 
+  doc, getCountFromServer, query, setDoc, updateDoc } from "firebase/firestore"
 
-export function setDB(path, doc, value, merge = true) {
-  return db.collection(path).doc(doc).set(value, { merge })
+export function setDB(path, doc_, value, merge=true) {
+  return setDoc(doc(db, path, doc_), value, { merge })
 }
 
-export function updateDB(path, doc, value) {
-  return db.collection(path).doc(doc).update(value)
+export function updateDB(path, doc_, value) {
+  return updateDoc(doc(db, path, doc_), value)
 }
 
-export function deleteDB(path, doc) {
-  return db.collection(path).doc(doc).delete()
+export function deleteDB(path, doc_) {
+  return deleteDoc(doc(db, path, doc_))
 }
 
 export const addDB = (path, value) => {
-  return db.collection(path).add(value)
+  return addDoc(collection(db, path), value)
 }
 
 export const getRandomDocID = (path) => {
-  return db.collection(path).doc().id
+  return doc(collection(db, path)).id
 }
 
 export const getFireTimeStampFromDate = (date) => {
@@ -37,8 +40,18 @@ export const firebaseArrayRemove = (value) => {
   return firebase.firestore.FieldValue.arrayRemove(value)
 }
 
+export const getDocsCount = (path) => {
+  const docRef = collection(db, path)
+  const q = query(docRef)
+  return getCountFromServer(q)
+  .then((snap) => {
+    return snap.data().count
+  })
+  .catch(err => console.log(err))
+}
+
 export const clearAuthState = (checked) => {
-  return auth.setPersistence(checked ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION)
+  return setPersistence(auth, browserSessionPersistence)
 }
 
 export const signOut = (setLoading) => {

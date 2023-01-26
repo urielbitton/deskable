@@ -2,12 +2,12 @@ import { getAllNotifications, getReadNotifications,
   getUnreadNotifications } from "app/services/notifServices"
 import { useEffect, useState } from "react"
 
-export const useUnreadNotifications = (userID) => {
+export const useUnreadNotifications = (userID, limit) => {
 
   const [unreadNotifs, setUnreadNotifs] = useState([])
 
   useEffect(() => {
-    getUnreadNotifications(userID, setUnreadNotifs)
+    getUnreadNotifications(userID, setUnreadNotifs, limit)
   }, [userID])
 
   return unreadNotifs

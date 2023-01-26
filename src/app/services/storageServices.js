@@ -1,12 +1,15 @@
 import { storage } from "app/firebase/fire"
+import { deleteObject, getDownloadURL, ref, 
+  uploadBytesResumable } from "firebase/storage"
 
 export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, setUploadProgress) => {
   return new Promise((resolve, reject) => {
     if(!files?.length) return resolve([])
     const fileURLs = []
     files.forEach((file, i) => {
-      const storageRef = storage.ref(storagePath)
-      const uploadTask = storageRef.child(fileNames[i] || file.name).put(file)
+      const filename = `${file.name}-${Date.now()}`
+      const storageRef = ref(storage, `${storagePath}/${fileNames ? fileNames[i] : filename}`)
+      const uploadTask = uploadBytesResumable(storageRef, file)
       uploadTask.on('state_changed', (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         setUploadProgress && setUploadProgress(progress)
@@ -14,9 +17,9 @@ export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, 
         console.log(error)
         reject(error)
       }, () => {
-        uploadTask.snapshot.ref.getDownloadURL()
+        getDownloadURL(uploadTask.snapshot.ref)
         .then(downloadURL => {
-          fileURLs.push({downloadURL, file})
+          fileURLs.push({downloadURL, file, filename})
           if (fileURLs.length === files.length) {
             resolve(fileURLs)
           }
@@ -34,8 +37,8 @@ export const deleteMultipleStorageFiles = (storagePath, filenames) => {
   return new Promise((resolve, reject) => {
     if(!filenames?.length) return resolve()
     filenames.forEach((file, i) => {
-      let storageRef = storage.ref(storagePath).child(file)
-      storageRef.delete()
+      let storageRef = ref(storage, `${storagePath}/${file}`)
+      deleteObject(storageRef)
       .then(() => {
         if(i === filenames.length-1) {
           resolve()

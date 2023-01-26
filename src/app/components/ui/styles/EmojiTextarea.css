@@ -39,6 +39,7 @@
 .emoji-textarea em-emoji-picker {
   top: 15px;
   right: 0;
+  z-index: 1000;
 }
 
 .emoji-textarea .bottom-side .uploaded-files-row {

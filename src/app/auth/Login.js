@@ -10,8 +10,10 @@ import { clearAuthState } from "app/services/CrudDB"
 import loginCover from 'app/assets/images/login-cover.png'
 import logo from 'app/assets/images/logo.png'
 import AppButton from "app/components/ui/AppButton"
-import { createAccountOnLoginService, facebookAuthService, googleAuthService } from "app/services/authServices"
+import { createAccountOnLoginService, 
+  facebookAuthService, googleAuthService } from "app/services/authServices"
 import { infoToast } from "app/data/toastsTemplates"
+import { signInWithEmailAndPassword } from "firebase/auth"
 
 export default function Login() {
 
@@ -31,7 +33,7 @@ export default function Login() {
   const handleLogin = () => {
     setLoading(true)
     clearErrors()
-    auth.signInWithEmailAndPassword(email.replaceAll(' ', ''), password.replaceAll(' ', ''))
+    signInWithEmailAndPassword(auth, email.replaceAll(' ', ''), password.replaceAll(' ', ''))
       .then((userCredential) => {
         if (!createAccount || !userID) {
           setLoading(false)

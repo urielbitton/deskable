@@ -1,8 +1,10 @@
 import { auth, db } from "app/firebase/fire"
 import { createUserDocService, doGetUserByID } from "./userServices"
-import firebase from "firebase"
+import firebase from "firebase/compat/app"
 import { successToast, infoToast, errorToast } from "app/data/toastsTemplates"
 import { deleteDB } from "./CrudDB"
+import { signInWithPopup } from "firebase/auth"
+import { collection, query, writeBatch } from "firebase/firestore"
 
 export const completeRegistrationService = (user, authMode, res, userName, setLoading) => {
   const photoURLPlaceholder = 'https://firebasestorage.googleapis.com/v0/b/your-app.appspot.com/o/placeholder.png?alt=media&token=your-token'
@@ -40,7 +42,7 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
 export const plainAuthService = (firstName, lastName, email, password, setLoading, setEmailError, setPassError) => {
   const userName = { firstName, lastName }
   setLoading(true)
-  return auth.createUserWithEmailAndPassword(email.replaceAll(' ', ''), password.replaceAll(' ', ''))
+  return firebase.auth().createUserWithEmailAndPassword(email.replaceAll(' ', ''), password.replaceAll(' ', ''))
     .then(() => {
       return auth.onAuthStateChanged(user => {
         if (user) {
@@ -69,8 +71,9 @@ export const googleAuthService = (setMyUser, setLoading, setToasts) => {
   setLoading(true)
   const provider = new firebase.auth.GoogleAuthProvider()
   provider.addScope('email')
-  return auth.signInWithPopup(provider)
+  return signInWithPopup(auth, provider)
     .then((res) => {
+      // @ts-ignore
       if (res.additionalUserInfo.isNewUser) {
         return completeRegistrationService(res.user, 'google', res, null, setLoading)
       }
@@ -132,31 +135,17 @@ export const createAccountOnLoginService = (loggedInUser, setLoading, setToasts)
 
 export const deleteAccountService = (setToasts, setLoading) => {
   setLoading(true)
-  const settingsArr = ['general', 'invoices', 'estimates', 'contacts', 'payments', 'notifications', 'emails']
-  const batch = db.batch()
-  settingsArr.forEach(setting => {
-    const docRef = db.collection('users').doc(auth.currentUser.uid).collection('settings').doc(setting)
-    batch.delete(docRef)
-  })
-  return batch.commit()
+  return deleteDB('users', auth.currentUser.uid)
     .then(() => {
-      return deleteDB('users', auth.currentUser.uid)
+      firebase.auth().currentUser.delete()
         .then(() => {
-          firebase.auth().currentUser.delete()
-            .then(() => {
-              setToasts(successToast('Account deleted.'))
-              setLoading(false)
-            })
-            .catch(err => {
-              setToasts(infoToast('There was an error deleting your account. Please try again.'))
-              console.log(err)
-              setLoading(false)
-            })
+          setToasts(successToast('Account deleted.'))
+          setLoading(false)
         })
         .catch(err => {
-          setLoading(false)
           setToasts(infoToast('There was an error deleting your account. Please try again.'))
           console.log(err)
+          setLoading(false)
         })
     })
     .catch(err => {

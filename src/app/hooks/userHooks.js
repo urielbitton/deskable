@@ -1,3 +1,4 @@
+import { getDocsCount } from "app/services/CrudDB"
 import { doGetUserByID, getUserByID } from "app/services/userServices"
 import React, { useEffect, useState } from 'react'
 
@@ -30,3 +31,16 @@ export function useUsers(userIDs) {
   return appUsers
 }
 
+export const useDocsCount = (path) => {
+
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    getDocsCount(path)
+    .then(data => {
+      setCount(data.data().count)
+    })
+  }, [path])
+
+  return count
+}

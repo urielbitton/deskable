@@ -2,7 +2,7 @@ import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { removeNullOrUndefined } from "app/utils/generalUtils"
 import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore"
-import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getPostsByOrgID = (orgID, setPosts, lim) => {
@@ -26,12 +26,12 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
     .then(data => {
       return setDB(postsPath, docID, {
         authorID: userID,
-        commentsNum: 0,
-        likesNum: 0,
         dateCreated: new Date(),
         isEdited: false,
         postText: message,
         postID: docID,
+        likes: [],
+        saved: [],
         orgID,
         ...(data && {
           files: data.map((file, i) => ({
@@ -60,11 +60,9 @@ export const updateOrgPostService = (userID, orgID, postID, message, uploadedImg
   const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
   uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, postStoragePath, null)
     .then(res => {
-      const postsPath = `organizations/${orgID}/posts/${postID}`
-      return updateDB(postsPath, {
+      const postsPath = `organizations/${orgID}/posts`
+      return updateDB(postsPath, postID, {
         authorID: userID,
-        commentsNum: 0,
-        likesNum: 0,
         dateCreated: new Date(),
         isEdited: true,
         postText: message,
@@ -107,5 +105,45 @@ export const deleteOrgPostService = (orgID, postID, fileNames, setLoading, setTo
     console.log(err)
     setLoading(false)
     setToasts(errorToast("Error deleting post. Please try again later.")) 
+  })
+}
+
+export const addPostLikeService = (userID, orgID, postID, setToasts) => {
+  return updateDB(`organizations/${orgID}/posts`, postID, {
+    likes: firebaseArrayAdd(userID)
+  })
+  .catch(err => {
+    console.log(err)
+    setToasts(errorToast("Error liking post. Please try again later.")) 
+  })
+}
+
+export const removePostLikeService = (userID, orgID, postID, setToasts) => {
+  return updateDB(`organizations/${orgID}/posts`, postID, {
+    likes: firebaseArrayRemove(userID)
+  })
+  .catch(err => {
+    console.log(err)
+    setToasts(errorToast("Error unliking post. Please try again later.")) 
+  })
+}
+
+export const addPostSavedService = (userID, orgID, postID, setToasts) => {
+  return updateDB(`organizations/${orgID}/posts`, postID, {
+    saved: firebaseArrayAdd(userID)
+  })
+  .catch(err => {
+    console.log(err)
+    setToasts(errorToast("Error saving post. Please try again later.")) 
+  })
+}
+
+export const removePostSavedService = (userID, orgID, postID, setToasts) => {
+  return updateDB(`organizations/${orgID}/posts`, postID, {
+    saved: firebaseArrayRemove(userID)
+  })
+  .catch(err => {
+    console.log(err)
+    setToasts(errorToast("Error unsaving post. Please try again later.")) 
   })
 }

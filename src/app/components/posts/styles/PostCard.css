@@ -47,6 +47,33 @@
   font-weight: 500;
   padding-bottom: 5px;
 }
+.post-card .content p a {
+  color: var(--blue);
+  font-weight: 600;
+}
+.post-card .content p a:hover {
+  text-decoration: underline;
+}
+.post-card .content textarea {
+  resize: none;
+}
+.post-card .content textarea::-webkit-scrollbar {
+  display: none;
+}
+.post-card .content .edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.post-card .content .edit-container .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.post-card .content .edit-container button {
+  padding: 8px 15px;
+}
 
 .post-card .content .imgs-masonry {
   display: flex;
@@ -70,6 +97,7 @@
 .post-card .content .imgs-masonry .img-item {
   border-radius: 10px;
   height: 100%;
+  width: 100%;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.2s;
@@ -82,8 +110,18 @@
 .post-card .content .imgs-masonry.three .img-item:first-child {
   grid-row: span 2;
 }
-.post-card .content .imgs-masonry .img-item:hover {
+.post-card .content .imgs-masonry .img-item:not(.deleted):hover {
   filter: brightness(0.9);
+}
+.post-card .content .imgs-masonry .img-item .delete-img-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 20;
+  box-shadow: var(--shadow);
+}
+.post-card .content .imgs-masonry .img-item.deleted img {
+  opacity: 0.2;
 }
 .post-card .content .imgs-masonry .cover-item {
   position: absolute;
@@ -128,7 +166,7 @@
   transform: scale(0.97);
 }
 .post-card .content .user-actions > div:hover {
-  background: var(--bg);
+  background: #f3f3f3;
 }
 .post-card .content .user-actions i {
   font-size: 14px;

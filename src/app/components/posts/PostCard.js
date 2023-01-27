@@ -12,7 +12,6 @@ import AppCard from "../ui/AppCard"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import './styles/PostCard.css'
-import TextareaAutosize from 'react-textarea-autosize'
 import { infoToast } from "app/data/toastsTemplates"
 import EmojiTextarea from "../ui/EmojiTextarea"
 import AppButton from "../ui/AppButton"
@@ -24,6 +23,7 @@ export default function PostCard(props) {
   const { myUserID, setToasts } = useContext(StoreContext)
   const { authorID, dateCreated, postID, postText, files,
     orgID, likes, saved } = props.post
+  const { setShowReportModal } = props
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -34,7 +34,7 @@ export default function PostCard(props) {
   const [deletedFiles, setDeletedFiles] = useState([])
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
-  const fileImgs = files?.filter(file => file.type.includes('image'))
+  const fileImgs = files?.filter(file => file?.type?.includes('image'))
   const hasImgs = fileImgs?.length > 0
   const commentsNum = useDocsCount(`organizations/${orgID}/posts/${postID}/comments`)
   const likesNum = likes.length
@@ -46,8 +46,11 @@ export default function PostCard(props) {
     && editPostText.length > 0
     && !loading)
     || editUploadedImgs.length > 0
+    || deletedFiles.length > 0
 
-  const imgsRender = fileImgs.map((img, index) => {
+  const imgsRender = fileImgs
+  ?.slice(0, 3)
+  .map((img, index) => {
     return <div
       className={`img-item ${deletedFiles.includes(img.name) ? 'deleted' : ''}`}
       key={index}
@@ -57,9 +60,9 @@ export default function PostCard(props) {
         alt="post-img"
       />
       {
-        fileImgs.length > 2 && index === 2 &&
+        fileImgs.length > 3 && index === 2 &&
         <div className="cover-item">
-          <h6>+{fileImgs.length - 2} More</h6>
+          <h6>+{fileImgs.length - 3} More</h6>
         </div>
       }
       {
@@ -71,11 +74,7 @@ export default function PostCard(props) {
           iconSize="15px"
           tooltip="Remove image"
           dimensions={25}
-          onClick={() => {
-            !deletedFiles.includes(img.name) ? 
-            setDeletedFiles(prev => [...prev, img.name]) : 
-            setDeletedFiles(prev => prev.filter(file => file !== img.name))
-          }}
+          onClick={() => removeExistingImg(img.name)}
           className="delete-img-icon"
         />
       }
@@ -94,18 +93,31 @@ export default function PostCard(props) {
     setDeletedFiles([])
   }
 
-  const savePost = () => {
+  const removeExistingImg = (imgName) => {
+    if (!deletedFiles.includes(imgName)) {
+      setDeletedFiles(prev => [...prev, imgName])
+    }
+    else {
+      setDeletedFiles(prev => prev.filter(file => file !== imgName))
+    }
+  }
+
+  const updatePost = () => {
+    if(myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
+    if (!allowEditSave) return setToasts(infoToast("Please add some text or images to save."))
+    setLoading(true)
     deleteMultipleStorageFiles(
       `organizations/${orgID}/posts/${postID}/files`,
       deletedFiles
     )
       .then(() => {
         return updateOrgPostService(
-          myUserID,
           orgID,
           postID,
           editPostText,
+          files,
           editUploadedImgs,
+          deletedFiles,
           setLoading,
           setToasts
         )
@@ -115,14 +127,17 @@ export default function PostCard(props) {
         setEditPostText('')
         setEditUploadedImgs([])
         setDeletedFiles([])
+        setLoading(false)
       })
       .catch(err => {
         console.log(err)
+        setLoading(false)
         setToasts(infoToast("Error deleting files. Please try again later."))
       })
   }
 
   const deletePost = () => {
+    if(myUserID !== authorID) return setToasts(infoToast("You do not have permission to delete this post."))
     const confirm = window.confirm("Are you sure you want to delete this post?")
     if (!confirm) return setToasts(infoToast("Post not deleted."))
     deleteOrgPostService(
@@ -133,11 +148,7 @@ export default function PostCard(props) {
       setToasts
     )
   }
-
-  const bookmarkPost = () => {
-
-  }
-
+  
   const handleLike = () => {
     if (!userHasLiked)
       addPostLikeService(myUserID, orgID, postID, setToasts)
@@ -145,7 +156,7 @@ export default function PostCard(props) {
       removePostLikeService(myUserID, orgID, postID, setToasts)
   }
 
-  const handleSave = () => {
+  const bookmarkPost = () => {
     if (!userHasSaved)
       addPostSavedService(myUserID, orgID, postID, setToasts)
     else
@@ -184,9 +195,10 @@ export default function PostCard(props) {
               setShowPostOptions(showPostOptions === postID ? null : postID)
             }}
             items={[
-              { label: "Edit", icon: "fas fa-pen", onClick: () => initEditPost() },
-              { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost() },
-              { label: "Save Post", icon: "fas fa-bookmark", onClick: () => bookmarkPost() },
+              { label: "Edit", icon: "fas fa-pen", onClick: () => initEditPost(), private: authorID !== myUserID },
+              { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost(), private: authorID !== myUserID },
+              { label: userHasSaved ? 'Unsave Post' : 'Save Post', icon: "fas fa-bookmark", onClick: () => bookmarkPost() },
+              { label: "Report", icon: "fas fa-flag", onClick: () => setShowReportModal(true) },
             ]}
           />
         </div>
@@ -214,20 +226,19 @@ export default function PostCard(props) {
                 <AppButton
                   label="Save Post"
                   rightIcon={loading ? "fas fa-spinner fa-spin" : null}
-                  onClick={() => savePost()}
+                  onClick={() => updatePost()}
                   disabled={!allowEditSave}
                 />
                 <AppButton
                   label="Cancel"
                   onClick={() => cancelEditPost()}
-                  disabled={editPostText.length < 1}
                 />
               </div>
             </div>
         }
         {
           hasImgs &&
-          <div className={`imgs-masonry ${fileImgs.length > 2 ? 'three' : fileImgs.length > 1 ? 'two' : ''}`}>
+          <div className={`imgs-masonry ${fileImgs.length > 2 ? 'three' : fileImgs.length > 1 ? 'two' : ''} ${editMode ? 'edit-mode' : ''}`}>
             {imgsRender}
           </div>
         }
@@ -240,7 +251,7 @@ export default function PostCard(props) {
             <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
             <h6>{likesNum > 0 ? likesNum : ''} Like{likesNum > 0}</h6>
           </div>
-          <div onClick={() => handleSave()}>
+          <div onClick={() => bookmarkPost()}>
             <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />
             <h6>{savedNum > 0 ? savedNum : ''} Save{savedNum > 0}</h6>
           </div>

@@ -143,6 +143,18 @@
   font-size: 17px;
   font-weight: 600;
 }
+.post-card .content .imgs-masonry.edit-mode {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+.post-card .content .imgs-masonry.edit-mode .img-item {
+  width: 140px;
+  height: 180px;
+}
+.post-card .content .imgs-masonry.edit-mode .cover-item {
+  display: none;
+}
 
 .post-card .content .user-actions {
   display: flex;

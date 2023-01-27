@@ -48,7 +48,6 @@ exports.deleteFromIndexEmployees = functions
   })
 
 
-
   //utility functions
 function createNotification(userID, title, text, icon, url) {
   const notifPath = `users/${userID}/notifications`

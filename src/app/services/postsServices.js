@@ -55,26 +55,30 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
     })
 }
 
-export const updateOrgPostService = (userID, orgID, postID, message, uploadedImgs, setLoading, setToasts) => {
+export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs, deletedFiles, setLoading, setToasts) => {
   setLoading(true)
   const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
+  const deletedFilesFiltered = files.filter(file => !deletedFiles.find(name => name === file.name))
   uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, postStoragePath, null)
     .then(res => {
       const postsPath = `organizations/${orgID}/posts`
       return updateDB(postsPath, postID, {
-        authorID: userID,
-        dateCreated: new Date(),
+        dateModified: new Date(),
         isEdited: true,
         postText: message,
-        postID,
-        orgID,
-        ...(res && {
-          files: res.map((file, i) => ({
-            url: file.downloadURL,
-            name: file.filename,
-            type: file.file.type,
-            size: file.file.size
-          }))
+        ...(deletedFiles.length > 0 && {
+          files: deletedFilesFiltered
+        }),
+        ...(res.length > 0 && {
+          files: [
+            ...deletedFilesFiltered,
+            ...res.map((file) => ({
+              url: file.downloadURL,
+              name: file.filename,
+              type: file.file.type,
+              size: file.file.size
+            }))
+          ]
         })
       })
     })

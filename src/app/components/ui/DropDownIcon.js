@@ -10,7 +10,7 @@ export default function DropdownIcon(props) {
     dropdownPosition = "place-right-bottom", onClick } = props
 
   const itemsList = items
-    ?.filter(item => item)
+    ?.filter(item => item && !item.private)
     .map((item, index) => {
       return (
         !item.url ?

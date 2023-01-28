@@ -26,9 +26,6 @@
   padding: 20px;
   gap: 5px;
 }
-.post-console .bottom .avatar-container img {
-  min-width: 33px;
-}
 
 .post-console .emoji-picker-textarea {
   border: none;

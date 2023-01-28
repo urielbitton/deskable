@@ -137,10 +137,11 @@
   cursor: pointer;
   transition: all 0.2s;
   z-index: 10;
+  user-select: none;
 }
 .post-card .content .imgs-masonry .cover-item h6 {
   color: #fff;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
 }
 .post-card .content .imgs-masonry.edit-mode {
@@ -156,15 +157,16 @@
   display: none;
 }
 
-.post-card .content .user-actions {
+.post-card .user-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--inputBorder);
+  border-bottom: 1px solid var(--inputBorder);
   padding: 4px;
   margin-top: 5px;
 }
-.post-card .content .user-actions > div {
+.post-card .user-actions > div {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -174,18 +176,33 @@
   border-radius: 10px;
   user-select: none;
 }
-.post-card .content .user-actions > div:active {
+.post-card .user-actions > div:active {
   transform: scale(0.97);
 }
-.post-card .content .user-actions > div:hover {
+.post-card .user-actions > div:hover {
   background: #f3f3f3;
 }
-.post-card .content .user-actions i {
+.post-card .user-actions i {
   font-size: 14px;
   color: var(--grayText);
 }
-.post-card .content .user-actions h6 {
+.post-card .user-actions h6 {
   font-size: 11px;
   color: var(--darkGrayText);
   font-weight: 600;
+}
+
+.post-card .stats-info {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.post-card .stats-info small {
+  color: #444;
+  font-size: 12px;
+  cursor: pointer;
+}
+.post-card .stats-info small:hover {
+  text-decoration: underline;
 }

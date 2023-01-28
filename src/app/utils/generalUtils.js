@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 export const addLeadingZeros = (number) => {
   return number < 10 ? "0" + number : number
 }
@@ -21,31 +20,6 @@ export const formatCurrency = (number) => {
   return number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-export const formatCardNumber = (number) => {
-  let numeric = number.replace(/\D/g, '')
-  var v = numeric.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
-  var matches = v.match(/\d{4,16}/g);
-  var match = (matches && matches[0]) || ''
-  var parts = []
-  for (let i = 0, len = match.length; i < len; i += 4) {
-    parts.push(match.substring(i, i + 4))
-  }
-  if (parts.length) {
-    return parts.join(' ')
-  }
-  else {
-    return numeric
-  }
-}
-
-export const formatExpiryNum = (number) => {
-  return number.replace(/\D/g, '')
-} 
-
-export const formatCvcNum = (number) => {
-  return number.replace(/\D/g, '')
-}
-
 export const validateEmail = (email) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
@@ -54,20 +28,6 @@ export const validateEmail = (email) => {
 export const validatePhone = (phone) => {
   const re = /^\d{10}$/
   return re.test(String(phone))
-}
-
-export const isExpiryInFuture = (expiryMonth, expiryYear) => {
-  const currentYear = new Date().getFullYear()
-  const currentMonth = new Date().getMonth() + 1
-  const expiryYearNum = +(`20${expiryYear}`)
-  const expiryMonthNum = +(expiryMonth)
-  if (expiryYearNum > currentYear) {
-    return true
-  }
-  else if (expiryYearNum === currentYear && expiryMonthNum >= currentMonth) {
-    return true
-  }
-  return false
 }
 
 export const isEmptyObject = (obj) => {
@@ -79,7 +39,7 @@ export const textHasURL = (text) => {
   return urlRegex.test(text)
 }
 
-export const extractLinkFromText = (text) => {
+export const extractFirstLinkFromText = (text) => {
   const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
   let match = urlRegex.exec(text)
   if (match !== null) {
@@ -182,40 +142,6 @@ export const toggleFullScreen = () => {
   } else if (elem.msRequestFullscreen) {
     elem.msRequestFullscreen()
   }
-}
-
-export const convertMetersPerSecondToKmPerHour = (metersPerSecond) => {
-  return metersPerSecond * 3.6
-}
-
-export const divideRateByTime = (rate, time) => {
-  if (time === 'Day')
-    return +rate / 24
-  else if (time === 'Week')
-    return +rate / 168
-  else if (time === 'Month')
-    return +rate / 720
-  else
-    return +rate
-}
-
-export const shuffleString = (string) => {
-  return string.split('').sort(() => 0.5 - Math.random()).join('')
-}
-
-export const generateOrderID = () => {
-  const timestamp = Date.now().toString()
-  const scrambledTimestamp = shuffleString(timestamp)
-  const orderID = `${(scrambledTimestamp.slice(0, 4))}-` +
-    `${(scrambledTimestamp.slice(4, 10))}` +
-    `-${(scrambledTimestamp.slice(10, 13))}${Math.floor(Math.random() * 1000)}`
-  return orderID
-}
-
-export const calculatePriceTotal = (subtotal, taxPercent, quantity) => {
-  const tax = subtotal * taxPercent
-  const total = (subtotal + tax) * quantity
-  return total
 }
 
 export const printElement = (ref) => {

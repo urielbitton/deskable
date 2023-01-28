@@ -8,7 +8,7 @@ export default function Avatar(props) {
   return (
     <div 
       className="avatar-container"
-      style={{width: dimensions, height: dimensions, border}}
+      style={{width: dimensions, height: dimensions, minWidth: dimensions, border}}
       title={title}
     >
       <img 

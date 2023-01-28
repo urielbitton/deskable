@@ -24,8 +24,6 @@ Tech Stack
 - Vercel 
 
 To Dos
-- start by cretaing an org (invitation only)
-- role based accounts (see User Types)
-- Layout: Left Menu Sidebar, main content, calendar & profile right sidebar
-- 
+- start by creating an org (invitation only)
+- Link preview feature for posts & chats (use your own server for cors bypass)
 

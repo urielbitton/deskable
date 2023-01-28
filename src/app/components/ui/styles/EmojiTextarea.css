@@ -10,6 +10,9 @@
   justify-content: space-between;
   gap: 10px;
 }
+.emoji-textarea .top-side .avatar-container {
+  align-self: flex-start;
+}
 
 .emoji-textarea .icon-container:hover {
   background: var(--bg);

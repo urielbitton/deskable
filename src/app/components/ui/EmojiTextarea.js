@@ -6,13 +6,15 @@ import TextareaAutosize from "react-textarea-autosize"
 import IconContainer from "./IconContainer"
 import { uploadMultipleFilesLocal } from "app/utils/fileUtils"
 import { StoreContext } from "app/store/store"
+import Avatar from "./Avatar"
 
 export default function EmojiTextarea(props) {
 
   const { setToasts } = useContext(StoreContext)
   const { showPicker, setShowPicker, messageText, setMessageText,
     handlePressEnter, uploadedImgs, setUploadedImgs, loading, setLoading,
-    enableImgUploading, showSend, uploadRef, maxRows } = props
+    enableImgUploading, uploadRef, maxRows, avatar, showSendIcon,
+    avatarSize } = props
   const isNotEmptyMessage = /\S/.test(messageText)
   const uploadedImgFiles = uploadedImgs.map(img => img)
   const maxFileSize = 1024 * 1024 * 2
@@ -45,6 +47,14 @@ export default function EmojiTextarea(props) {
   return (
     <div className="emoji-textarea">
       <div className="top-side">
+        {
+          avatar &&
+          <Avatar
+            src={avatar}
+            dimensions={avatarSize}
+            alt="avatar"
+          />
+        }
         <TextareaAutosize
           placeholder="Type a message..."
           onChange={(e) => setMessageText((e.target.value))}
@@ -55,8 +65,17 @@ export default function EmojiTextarea(props) {
           maxRows={maxRows}
         />
         {
+          (!loading && showSendIcon) ?
+            <i
+              className={`fas fa-paper-plane sendIcon ${(!isNotEmptyMessage && !uploadedImgs?.length) ? 'cant-send' : ''}`}
+              onClick={(e) => handlePressEnter(e)}
+            /> :
+            loading &&
+            <i className="fas fa-spinner fa-spin" />
+        }
+        {
           showPicker &&
-          <div 
+          <div
             className="picker-container"
             onClick={(e) => e.stopPropagation()}
           >
@@ -67,15 +86,6 @@ export default function EmojiTextarea(props) {
           </div>
         }
         <div className="icons-row">
-          {
-            (!loading && showSend) ?
-              <i
-                className={`fas fa-paper-plane sendIcon ${(!isNotEmptyMessage && !uploadedImgs?.length) ? 'cant-send' : ''}`}
-                onClick={(e) => handlePressEnter(e)}
-              /> :
-              loading &&
-              <i className="fas fa-spinner fa-spin" />
-          }
           {
             enableImgUploading &&
             <label className="icon-container">

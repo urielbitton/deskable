@@ -1,0 +1,45 @@
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.comment-item .avatar-container {
+  top: 1px;
+}
+.comment-item .comment-bubble {
+  background: var(--inputBg);
+  border-radius: 10px;
+  padding: 7px 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+.comment-item .comment-bubble h6 {
+  color: VAR(--darkGrayText);
+}
+.comment-item .comment-bubble p {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+}
+
+.comment-item .comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+  padding-left: 5px;
+}
+.comment-item .comment-actions small {
+  font-size: 10px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.comment-item .comment-actions small span {
+  color: #777;
+  font-weight: 500;
+}
+.comment-item .comment-actions small:not(.no-underline):hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

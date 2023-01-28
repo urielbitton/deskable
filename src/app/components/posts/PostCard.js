@@ -6,7 +6,6 @@ import {
 } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
-import { detectAndUnderlineAllLinksInText } from "app/utils/generalUtils"
 import React, { useContext, useRef, useState } from 'react'
 import AppCard from "../ui/AppCard"
 import Avatar from "../ui/Avatar"
@@ -17,6 +16,8 @@ import EmojiTextarea from "../ui/EmojiTextarea"
 import AppButton from "../ui/AppButton"
 import IconContainer from "../ui/IconContainer"
 import { deleteMultipleStorageFiles } from "app/services/storageServices"
+import PostComments from "./PostComments"
+import AppLink from "../ui/AppLink"
 
 export default function PostCard(props) {
 
@@ -49,37 +50,37 @@ export default function PostCard(props) {
     || deletedFiles.length > 0
 
   const imgsRender = fileImgs
-  ?.slice(0, 3)
-  .map((img, index) => {
-    return <div
-      className={`img-item ${deletedFiles.includes(img.name) ? 'deleted' : ''}`}
-      key={index}
-    >
-      <img
-        src={img.url}
-        alt="post-img"
-      />
-      {
-        fileImgs.length > 3 && index === 2 &&
-        <div className="cover-item">
-          <h6>+{fileImgs.length - 3} More</h6>
-        </div>
-      }
-      {
-        editMode &&
-        <IconContainer
-          icon={!deletedFiles.includes(img.name) ? "fas fa-trash" : "fas fa-undo-alt"}
-          bgColor="#fff"
-          iconColor="var(--red)"
-          iconSize="15px"
-          tooltip="Remove image"
-          dimensions={25}
-          onClick={() => removeExistingImg(img.name)}
-          className="delete-img-icon"
+    ?.slice(0, 3)
+    .map((img, index) => {
+      return <div
+        className={`img-item ${deletedFiles.includes(img.name) ? 'deleted' : ''}`}
+        key={index}
+      >
+        <img
+          src={img.url}
+          alt="post-img"
         />
-      }
-    </div>
-  })
+        {
+          fileImgs.length > 3 && index === 2 &&
+          <div className="cover-item">
+            <h6>+{fileImgs.length - 3} More</h6>
+          </div>
+        }
+        {
+          editMode &&
+          <IconContainer
+            icon={!deletedFiles.includes(img.name) ? "fas fa-trash" : "fas fa-undo-alt"}
+            bgColor="#fff"
+            iconColor="var(--red)"
+            iconSize="15px"
+            tooltip="Remove image"
+            dimensions={25}
+            onClick={() => removeExistingImg(img.name)}
+            className="delete-img-icon"
+          />
+        }
+      </div>
+    })
 
   const initEditPost = () => {
     setEditMode(true)
@@ -103,7 +104,7 @@ export default function PostCard(props) {
   }
 
   const updatePost = () => {
-    if(myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
+    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
     if (!allowEditSave) return setToasts(infoToast("Please add some text or images to save."))
     setLoading(true)
     deleteMultipleStorageFiles(
@@ -137,7 +138,7 @@ export default function PostCard(props) {
   }
 
   const deletePost = () => {
-    if(myUserID !== authorID) return setToasts(infoToast("You do not have permission to delete this post."))
+    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to delete this post."))
     const confirm = window.confirm("Are you sure you want to delete this post?")
     if (!confirm) return setToasts(infoToast("Post not deleted."))
     deleteOrgPostService(
@@ -148,7 +149,7 @@ export default function PostCard(props) {
       setToasts
     )
   }
-  
+
   const handleLike = () => {
     if (!userHasLiked)
       addPostLikeService(myUserID, orgID, postID, setToasts)
@@ -207,7 +208,7 @@ export default function PostCard(props) {
         {
           !editMode ?
             <p>
-              <span dangerouslySetInnerHTML={{ __html: detectAndUnderlineAllLinksInText(postText) }} />
+              <AppLink text={postText} />
             </p> :
             <div className="edit-container">
               <EmojiTextarea
@@ -242,21 +243,41 @@ export default function PostCard(props) {
             {imgsRender}
           </div>
         }
-        <div className="user-actions">
-          <div onClick={() => setShowComments(prev => !prev)}>
-            <i className="far fa-comment" />
-            <h6>{commentsNum > 0 ? commentsNum : ''} Comment{commentsNum > 1}</h6>
-          </div>
-          <div onClick={() => handleLike()}>
-            <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
-            <h6>{likesNum > 0 ? likesNum : ''} Like{likesNum > 0}</h6>
-          </div>
-          <div onClick={() => bookmarkPost()}>
-            <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />
-            <h6>{savedNum > 0 ? savedNum : ''} Save{savedNum > 0}</h6>
-          </div>
+        <div className="stats-info">
+          {
+            likesNum > 0 &&
+            <small>{likesNum} like{likesNum !== 1 ? 's' : ''}</small>
+          }
+          {
+            commentsNum > 0 &&
+            <small 
+              onClick={() => setShowComments(prev => !prev)}
+            >{commentsNum} comment{commentsNum !== 1 ? 's' : ''}</small>
+          }
+          {
+            savedNum > 0 &&
+            <small>{savedNum} save{savedNum !== 1 ? 'd' : ''}</small>
+          }
         </div>
       </div>
+      <div className="user-actions">
+        <div onClick={() => setShowComments(true)}>
+          <i className="far fa-comment" />
+          <h6>Comment</h6>
+        </div>
+        <div onClick={() => handleLike()}>
+          <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
+          <h6>Like</h6>
+        </div>
+        <div onClick={() => bookmarkPost()}>
+          <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />
+          <h6>Save</h6>
+        </div>
+      </div>
+      <PostComments
+        post={props.post}
+        showComments={showComments}
+      />
     </AppCard>
   )
 }

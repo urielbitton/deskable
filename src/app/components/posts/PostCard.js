@@ -251,7 +251,7 @@ export default function PostCard(props) {
           {
             commentsNum > 0 &&
             <small 
-              onClick={() => setShowComments(prev => !prev)}
+              onClick={() => setShowComments(true)}
             >{commentsNum} comment{commentsNum !== 1 ? 's' : ''}</small>
           }
           {
@@ -261,7 +261,7 @@ export default function PostCard(props) {
         </div>
       </div>
       <div className="user-actions">
-        <div onClick={() => setShowComments(true)}>
+        <div onClick={() => setShowComments(prev => !prev)}>
           <i className="far fa-comment" />
           <h6>Comment</h6>
         </div>

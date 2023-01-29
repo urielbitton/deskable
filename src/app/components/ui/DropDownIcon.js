@@ -6,7 +6,7 @@ import IconContainer from "./IconContainer"
 export default function DropdownIcon(props) {
 
   const { items, showMenu, setShowMenu, icon="far fa-ellipsis-v",
-    iconColor, iconSize="19px", dimensions=32, tooltip,
+    iconColor, iconSize="19px", dimensions=32, tooltip, bgColor,
     dropdownPosition = "place-right-bottom", onClick } = props
 
   const itemsList = items
@@ -49,6 +49,7 @@ export default function DropdownIcon(props) {
         icon={icon}
         iconColor={iconColor}
         iconSize={iconSize}
+        bgColor={bgColor}
         dimensions={dimensions}
         tooltip={tooltip}
       />

@@ -168,8 +168,8 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
   setLoading(true)
   const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
   const docID = getRandomDocID(commentsPath)
-  const postStoragePath = `organizations/${orgID}/posts/${postID}/comments/${docID}/files`
-  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, postStoragePath, null)
+  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${docID}/files`
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, commentsStoragePath, null)
     .then((data) => {
       return setDB(commentsPath, docID, {
         authorID: userID,
@@ -200,14 +200,26 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
     })
 }
 
-export const updateOrgPostCommentService = (orgID, postID, commentID, message, setLoading, setToasts) => {
+export const updateOrgPostCommentService = (orgID, postID, commentID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
   const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
-  return updateDB(commentsPath, commentID, {
-    dateModified: new Date(),
-    isEdited: true,
-    commentText: message,
-  })
+  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/files`
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, commentsStoragePath, null)
+    .then((data) => {
+      return updateDB(commentsPath, commentID, {
+        dateModified: new Date(),
+        isEdited: true,
+        commentText: message,
+        ...(uploadedImgs.length > 0 && {
+          file: {
+            url: data[0].downloadURL,
+            name: data[0].filename,
+            type: data[0].file.type,
+            size: data[0].file.size
+          }
+        })
+      })
+    })
     .then(() => {
       setLoading(false)
     })
@@ -218,15 +230,16 @@ export const updateOrgPostCommentService = (orgID, postID, commentID, message, s
     })
 }
 
-export const deleteOrgPostCommentService = (orgID, postID, commentID, files, setLoading, setToasts) => {
+export const deleteOrgPostCommentService = (orgID, postID, commentID, filenames, setLoading, setToasts) => {
   setLoading(true)
   const postStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/files`
-  return deleteMultipleStorageFiles(postStoragePath, files)
+  return deleteMultipleStorageFiles(postStoragePath, filenames)
     .then(() => {
       const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
       return deleteDB(commentsPath, commentID)
     })
     .then(() => {
+      setToasts(successToast("Comment deleted successfully."))
       setLoading(false)
     })
     .catch(err => {

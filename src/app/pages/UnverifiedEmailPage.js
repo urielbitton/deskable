@@ -4,6 +4,7 @@ import AuthHandlerPage from "app/components/ui/AuthHandlerPage"
 import { auth } from "app/firebase/fire"
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { StoreContext } from "app/store/store"
+import { sendEmailVerification } from "firebase/auth"
 
 export default function UnverifiedEmailPage() {
 
@@ -16,7 +17,7 @@ export default function UnverifiedEmailPage() {
     const ActionCodeSettings = {
       url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${user.displayName.split(' ')[0]}&lastName=${user.displayName.split(' ')[1]}`,
     }
-    user.sendEmailVerification(ActionCodeSettings)
+    sendEmailVerification(user, ActionCodeSettings)
     .then(() => {
       setToasts(successToast('Verification email sent!'))
       setLoading(false)

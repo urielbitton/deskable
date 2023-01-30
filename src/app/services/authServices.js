@@ -3,8 +3,8 @@ import { createUserDocService, doGetUserByID } from "./userServices"
 import firebase from "firebase/compat/app"
 import { successToast, infoToast, errorToast } from "app/data/toastsTemplates"
 import { deleteDB } from "./CrudDB"
-import {
-  createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification,
+import { createUserWithEmailAndPassword, onAuthStateChanged, 
+  sendEmailVerification,
   signInWithPopup, updateProfile
 } from "firebase/auth"
 

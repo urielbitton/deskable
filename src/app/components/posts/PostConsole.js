@@ -1,3 +1,4 @@
+import { infoToast } from "app/data/toastsTemplates"
 import { createOrgPostService } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useRef, useState } from 'react'
@@ -17,8 +18,9 @@ export default function PostConsole(props) {
   const uploadRef = useRef(null)
   const isNotEmptyMessage = /\S/.test(messageText) || uploadedImgs.length > 0
 
-  const handlePressEnter = (e) => {
+  const createPost = (e) => {
     if(!isNotEmptyMessage || loading) return 
+    if(uploadedImgs.length > 15) return setToasts(infoToast('You can only upload a maximum of 15 images.', true))
     createOrgPostService(
       myUserID,
       myOrgID,
@@ -62,7 +64,7 @@ export default function PostConsole(props) {
         <div className="actions">
           <AppButton
             label="Post"
-            onClick={handlePressEnter}
+            onClick={createPost}
             rightIcon={loading && 'fal fa-spinner-third fa-spin'}
             disabled={!isNotEmptyMessage || loading}
           />

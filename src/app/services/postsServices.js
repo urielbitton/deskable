@@ -164,6 +164,18 @@ export const getOrgPostComments = (orgID, postID, setComments, lim) => {
   })
 }
 
+export const getOrgPostSubComments = (orgID, postID, commentID, setSubComments, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, snapshot => {
+    setSubComments(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
 export const createOrgPostCommentService = (userID, orgID, postID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
   const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
@@ -200,11 +212,46 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
     })
 }
 
-export const updateOrgPostCommentService = (orgID, postID, commentID, message, uploadedImgs, setLoading, setToasts) => {
+export const createOrgPostSubCommentService = (userID, orgID, postID, commentID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
-  const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
-  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/files`
+  const commentsPath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments`
+  const docID = getRandomDocID(commentsPath)
+  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments/${docID}/files`
   return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, commentsStoragePath, null)
+    .then((data) => {
+      return setDB(commentsPath, docID, {
+        authorID: userID,
+        dateCreated: new Date(),
+        isEdited: false,
+        commentText: message,
+        commentID,
+        subCommentID: docID,
+        orgID,
+        postID,
+        likes: [],
+        ...(data.length > 0 && {
+          file: {
+            url: data[0].downloadURL,
+            name: data[0].filename,
+            type: data[0].file.type,
+            size: data[0].file.size
+          }
+        })
+      })
+    })
+    .then(() => {
+      setLoading(false)
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast("Error creating comment. Please try again later."))
+    })
+}
+
+export const updateOrgPostCommentService = (commentsPath, storagePath, commentID, message, uploadedImgs, setLoading, setToasts) => {
+  setLoading(true)
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, storagePath, null)
     .then((data) => {
       return updateDB(commentsPath, commentID, {
         dateModified: new Date(),
@@ -230,12 +277,10 @@ export const updateOrgPostCommentService = (orgID, postID, commentID, message, u
     })
 }
 
-export const deleteOrgPostCommentService = (orgID, postID, commentID, filenames, setLoading, setToasts) => {
+export const deleteOrgPostCommentService = (commentsPath, storagePath, commentID, filenames, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/files`
-  return deleteMultipleStorageFiles(postStoragePath, filenames)
+  return deleteMultipleStorageFiles(storagePath, filenames)
     .then(() => {
-      const commentsPath = `organizations/${orgID}/posts/${postID}/comments`
       return deleteDB(commentsPath, commentID)
     })
     .then(() => {
@@ -246,5 +291,25 @@ export const deleteOrgPostCommentService = (orgID, postID, commentID, filenames,
       console.log(err)
       setLoading(false)
       setToasts(errorToast("Error deleting comment. Please try again later."))
+    })
+}
+
+export const addPostCommentLikeService = (path, userID, commentID, setToasts) => {
+  return updateDB(path, commentID, {
+    likes: firebaseArrayAdd(userID)
+  })
+    .catch(err => {
+      console.log(err)
+      setToasts(errorToast("Error liking comment. Please try again later."))
+    })
+}
+
+export const removePostCommentLikeService = (path, userID, commentID, setToasts) => {
+  return updateDB(path, commentID, {
+    likes: firebaseArrayRemove(userID)
+  })
+    .catch(err => {
+      console.log(err)
+      setToasts(errorToast("Error unliking comment. Please try again later."))
     })
 }

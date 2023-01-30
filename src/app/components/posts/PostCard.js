@@ -106,6 +106,7 @@ export default function PostCard(props) {
   const updatePost = () => {
     if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
     if (!allowEditSave) return setToasts(infoToast("Please add some text or images to save."))
+    if(editUploadedImgs.length > 15) return setToasts(infoToast("You can only upload a maximum of 15 images.", true))
     setLoading(true)
     deleteMultipleStorageFiles(
       `organizations/${orgID}/posts/${postID}/files`,
@@ -246,17 +247,26 @@ export default function PostCard(props) {
         <div className="stats-info">
           {
             likesNum > 0 &&
-            <small>{likesNum} like{likesNum !== 1 ? 's' : ''}</small>
+            <small>
+              <i className="far fa-heart" />
+              {likesNum} like{likesNum !== 1 ? 's' : ''}
+            </small>
           }
           {
             commentsNum > 0 &&
             <small 
               onClick={() => setShowComments(true)}
-            >{commentsNum} comment{commentsNum !== 1 ? 's' : ''}</small>
+            >
+              <i className="far fa-comment" />
+              {commentsNum} comment{commentsNum !== 1 ? 's' : ''}
+            </small>
           }
           {
             savedNum > 0 &&
-            <small>{savedNum} save{savedNum !== 1 ? 'd' : ''}</small>
+            <small>
+              <i className="far fa-bookmark" />
+              {savedNum} save{savedNum !== 1 ? 'd' : ''}
+            </small>
           }
         </div>
       </div>
@@ -277,6 +287,7 @@ export default function PostCard(props) {
       <PostComments
         post={props.post}
         showComments={showComments}
+        commentsNum={commentsNum}
       />
     </AppCard>
   )

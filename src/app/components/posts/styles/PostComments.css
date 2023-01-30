@@ -8,11 +8,49 @@
   border-radius: 40px;
   background: var(--inputBg);
   border: none;
-  padding-left: 20px;
+  padding-left: 12px;
 }
 
 .post-comments .comments-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.post-comments .comments-list .view-more-text {
+  font-size: 11px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  cursor: pointer;
+}
+.post-comments .comments-list .view-more-text:hover {
+  text-decoration: underline;
+}
+
+.post-comments .sub-comments-list {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+.post-comments .sub-comments-list.has-comments {
+  margin-top: 15px;
+  display: flex;
+}
+.post-comments .toggle-sub-comments-text {
+  font-size: 11px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  cursor: pointer;
+  padding-left: 3px;
+  display: block;
+  margin-top: 10px;
+}
+.post-comments .toggle-sub-comments-text i {
+  margin-right: 5px;
+  transform: rotate(180deg);
+}
+.post-comments .toggle-sub-comments-text i.reverse {
+  transform: rotate(0deg);
+}
+.post-comments .toggle-sub-comments-text:hover {
+  text-decoration: underline;
 }

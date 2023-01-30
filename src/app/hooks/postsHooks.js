@@ -1,4 +1,4 @@
-import { getOrgPostComments, getPostsByOrgID } from "app/services/postsServices"
+import { getOrgPostComments, getOrgPostSubComments, getPostsByOrgID } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -25,3 +25,15 @@ export const useOrgPostComments = (postID, limit) => {
 
   return comments
 }
+
+export const useOrgPostSubComments = (postID, commentID, limit) => {
+  
+    const { myOrgID } = useContext(StoreContext)
+    const [subComments, setSubComments] = useState([])
+  
+    useEffect(() => {
+      getOrgPostSubComments(myOrgID, postID, commentID, setSubComments, limit)
+    },[myOrgID, postID, commentID, limit])
+  
+    return subComments
+  }

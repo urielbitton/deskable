@@ -13,8 +13,8 @@ export default function EmojiTextarea(props) {
   const { setToasts } = useContext(StoreContext)
   const { showPicker, setShowPicker, messageText, setMessageText,
     handlePressEnter, uploadedImgs, setUploadedImgs, loading, setLoading,
-    enableImgUploading, uploadRef, maxRows, avatar, showSendIcon,
-    avatarSize } = props
+    enableImgUploading, uploadRef, maxRows, avatar, avatarDimensions,
+    showSendIcon } = props
   const isNotEmptyMessage = /\S/.test(messageText)
   const uploadedImgFiles = uploadedImgs.map(img => img)
   const maxFileSize = 1024 * 1024 * 2
@@ -51,7 +51,7 @@ export default function EmojiTextarea(props) {
           avatar &&
           <Avatar
             src={avatar}
-            dimensions={avatarSize}
+            dimensions={avatarDimensions}
             alt="avatar"
           />
         }

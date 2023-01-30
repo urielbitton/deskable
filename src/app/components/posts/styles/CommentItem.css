@@ -23,6 +23,9 @@
   font-weight: 500;
 }
 
+.comment-item .right-side {
+  width: 100%;
+}
 .comment-item .comment-top {
   display: flex;
   align-items: center;
@@ -101,4 +104,9 @@
   position: absolute;
   top: -7px;
   right: -5px;
+}
+
+.comment-item .comment-reply-section {
+  margin-top: 15px;
+  margin-bottom: 10px;
 }

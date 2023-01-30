@@ -1,5 +1,9 @@
-import useUser from "app/hooks/userHooks"
-import { deleteOrgPostCommentService, updateOrgPostCommentService } from "app/services/postsServices"
+import useUser, { useDocsCount } from "app/hooks/userHooks"
+import {
+  addPostCommentLikeService, deleteOrgPostCommentService,
+  removePostCommentLikeService,
+  updateOrgPostCommentService
+} from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
 import React, { useContext, useRef, useState } from 'react'
@@ -8,6 +12,7 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import EmojiTextarea from "../ui/EmojiTextarea"
 import IconContainer from "../ui/IconContainer"
+import PostSubComments from "./PostSubComments"
 import './styles/CommentItem.css'
 
 export default function CommentItem(props) {
@@ -15,6 +20,7 @@ export default function CommentItem(props) {
   const { myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID } = props.comment
+  const { showReplySection, setShowReplySection } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
@@ -26,6 +32,10 @@ export default function CommentItem(props) {
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
   const hidePrivateOptions = myUserID !== authorID
+  const userHasLiked = likes?.includes(myUserID)
+  const commentsPath = `organizations/${myOrgID}/posts/${postID}/comments`
+  const commentsStoragePath = `organizations/${myOrgID}/posts/${postID}/comments/${commentID}/files`
+  const subCommentsNum = useDocsCount(`organizations/${myOrgID}/posts/${postID}/comments/${commentID}/subComments`)
 
   const editComment = () => {
     setEditMode(true)
@@ -39,27 +49,49 @@ export default function CommentItem(props) {
     editUploadRef.current.value = ''
   }
 
-  const saveComment = () => {
-    updateOrgPostCommentService(
-      myOrgID,
-      postID,
-      commentID,
-      editPostText,
-      editUploadedImgs,
-      setLoading,
-      setToasts
-    )
-      .then(() => {
-        resetEdit()
-      })
+  const toggleLikeComment = () => {
+    if (!userHasLiked) {
+      addPostCommentLikeService(
+        commentsPath,
+        myUserID,
+        commentID,
+        setToasts
+      )
+    }
+    else {
+      removePostCommentLikeService(
+        commentsPath,
+        myUserID,
+        commentID,
+        setToasts
+      )
+    }
+  }
+
+  const saveComment = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      updateOrgPostCommentService(
+        commentsPath,
+        commentsStoragePath,
+        commentID,
+        editPostText,
+        editUploadedImgs,
+        setLoading,
+        setToasts
+      )
+        .then(() => {
+          resetEdit()
+        })
+    }
   }
 
   const deleteComment = () => {
     const confirm = window.confirm('Are you sure you want to delete this comment?')
     if (!confirm) return
     deleteOrgPostCommentService(
-      myOrgID,
-      postID,
+      commentsPath,
+      commentsStoragePath,
       commentID,
       file ? [file?.name] : null,
       setLoading,
@@ -96,6 +128,7 @@ export default function CommentItem(props) {
                     setMessageText={setEditPostText}
                     uploadedImgs={editUploadedImgs}
                     setUploadedImgs={setEditUploadedImgs}
+                    handlePressEnter={saveComment}
                     loading={loading}
                     setLoading={setLoading}
                     enableImgUploading
@@ -143,12 +176,19 @@ export default function CommentItem(props) {
           />
         </div>
         <div className="comment-actions">
-          <small>Like</small>
-          <small>Reply</small>
+          <small onClick={() => toggleLikeComment()}>Like</small>
+          <small onClick={() => setShowReplySection(prev => prev !== commentID ? commentID : null)}>Reply</small>
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>
           </small>
         </div>
+        <PostSubComments
+          showReplySection={showReplySection}
+          setShowReplySection={setShowReplySection}
+          postID={postID}
+          commentID={commentID}
+          subCommentsNum={subCommentsNum}
+        />
       </div>
     </div>
   )

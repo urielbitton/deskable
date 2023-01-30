@@ -206,3 +206,6 @@
 .post-card .stats-info small:hover {
   text-decoration: underline;
 }
+.post-card .stats-info small i {
+  margin-right: 5px;
+}

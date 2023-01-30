@@ -3,18 +3,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import { createUserDocService } from "app/services/userServices"
 import { StoreContext } from "app/store/store"
-import firebase from 'firebase/compat/app'
 import verifyAccountImg from 'app/assets/images/verify-account.png'
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { applyActionCode } from "firebase/auth"
+import { auth } from "app/firebase/fire"
 
 export default function VerifyEmailHandler({ oobCode, continueUrl }) {
 
-  const { setPageLoading, setToasts } = useContext(StoreContext)
+  const { setPageLoading, setToasts, user } = useContext(StoreContext)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const auth = firebase.auth()
-  const user = auth.currentUser
   const userID = continueUrl.split('userID=')[1]
 
   const handleVerifyEmail = (auth, oobCode) => {

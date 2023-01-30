@@ -1,19 +1,18 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
-import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
+import { collection, doc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getEmployeeByID = (orgID, employeeID, setEmployee) => {
-  const employeeRef = collection(db, 'organizations', orgID, 'employees', employeeID)
-  const q = query(employeeRef)
-  onSnapshot(q, snapshot => {
-    setEmployee(snapshot.docs.map(doc => doc.data()))
+  const employeeRef = doc(db, `organizations/${orgID}/employees`, employeeID)
+  onSnapshot(employeeRef, snapshot => {
+    setEmployee(snapshot.data())
   })
 }
 
 export const getYearEmployeesByOrgID = (orgID, year, setEmployees, lim) => {
-  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const employeeRef = collection(db, `organizations/${orgID}/employees`)
   const q = query(
     employeeRef, 
     where('dateJoined', '>=', new Date(year, 0, 0)), 
@@ -27,7 +26,7 @@ export const getYearEmployeesByOrgID = (orgID, year, setEmployees, lim) => {
 }
 
 export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees, lim) => {
-  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const employeeRef = collection(db, `organizations/${orgID}/employees`)
   const q = query(
     employeeRef, 
     where('dateJoined', '>=', new Date(year, month, 0)), 
@@ -40,7 +39,7 @@ export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees
 }
 
 export const getEmployeesByOrgID = (orgID, setEmployees, lim) => {
-  const employeeRef = collection(db, 'organizations', orgID, 'employees')
+  const employeeRef = collection(db, `organizations/${orgID}/employees`)
   const q = query(
     employeeRef, 
     orderBy('dateJoined', 'desc'), 

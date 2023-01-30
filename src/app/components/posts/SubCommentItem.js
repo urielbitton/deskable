@@ -19,6 +19,7 @@ export default function SubCommentItem(props) {
   const { myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID, subCommentID } = props.subComment
+  const { setShowLikesModal, setLikesStats } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
@@ -100,8 +101,13 @@ export default function SubCommentItem(props) {
 
   }
 
+  const initLikesStats = () => {
+    setShowLikesModal(true)
+    setLikesStats(likes)
+  }
+
   return author && (
-    <div className="comment-item">
+    <div className="comment-item sub-comment-item">
       <div className="left-side">
         <Avatar
           src={author?.photoURL}
@@ -119,6 +125,7 @@ export default function SubCommentItem(props) {
                 </p> :
                 <div className="edit-container">
                   <EmojiTextarea
+                    placeholder="Write a reply..."
                     showPicker={showEditPicker}
                     setShowPicker={setShowEditPicker}
                     messageText={editPostText}
@@ -155,12 +162,23 @@ export default function SubCommentItem(props) {
                 }
               </div>
             }
+            {
+              likesNum > 0 &&
+              <div 
+                className="likes-counter"
+                onClick={() => initLikesStats()}
+              >
+                <div className="like-btn">
+                  <i className="fas fa-heart" />
+                </div>
+                <small>{likesNum}</small>
+              </div>
+            }
           </div>
           <DropdownIcon
             icon="far fa-ellipsis-h"
             iconSize="15px"
             iconColor="var(--grayText)"
-            bgColor="var(--inputBg)"
             dimensions={25}
             showMenu={showCommentMenu}
             setShowMenu={setShowCommentMenu}

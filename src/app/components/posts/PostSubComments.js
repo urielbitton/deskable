@@ -2,7 +2,7 @@ import { infoToast } from "app/data/toastsTemplates"
 import { useOrgPostSubComments } from "app/hooks/postsHooks"
 import { createOrgPostSubCommentService } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import EmojiTextarea from "../ui/EmojiTextarea"
 import SubCommentItem from "./SubCommentItem"
 import './styles/PostComments.css'
@@ -11,12 +11,12 @@ export default function PostSubComments(props) {
 
   const { myUserImg, myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { postID, showReplySection, setShowReplySection, 
-    commentID, subCommentsNum } = props
+    commentID, subCommentsNum, commentInputRef, setShowLikesModal,
+    setLikesStats } = props
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [subCommentText, setSubCommentText] = useState('')
   const [commentUploadedImgs, setCommentUploadedImgs] = useState([])
   const [loading, setLoading] = useState(false)
-  const [showReplies, setShowReplies] = useState(null)
   const limitsNum = 7
   const [commentsLimit, setCommentsLimit] = useState(limitsNum)
   const commentUploadRef = useRef(null)
@@ -27,6 +27,8 @@ export default function PostSubComments(props) {
     return <SubCommentItem
       key={index}
       subComment={subComment}
+      setShowLikesModal={setShowLikesModal}
+      setLikesStats={setLikesStats}
     />
   })
 
@@ -53,12 +55,18 @@ export default function PostSubComments(props) {
     }
   }
 
+  useEffect(() => {
+    if(showReplySection === commentID) 
+      commentInputRef.current.focus()
+  },[showReplySection])
+
   return (
     <div className="post-sub-comments">
       {
         showReplySection === commentID &&
         <div className="comment-reply-section">
           <EmojiTextarea
+            placeholder="Write a reply..."
             showPicker={showEditPicker}
             setShowPicker={setShowEditPicker}
             messageText={subCommentText}
@@ -70,6 +78,7 @@ export default function PostSubComments(props) {
             setLoading={setLoading}
             enableImgUploading
             uploadRef={commentUploadRef}
+            inputRef={commentInputRef}
             avatar={myUserImg}
             avatarDimensions={27}
           />

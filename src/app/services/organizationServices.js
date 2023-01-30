@@ -1,10 +1,9 @@
 import { db } from "app/firebase/fire"
-import { collection, onSnapshot, query } from "firebase/firestore"
+import { collection, doc, onSnapshot } from "firebase/firestore"
 
 export const getOrganizationByID = (orgID, setOrg) => {
-  const docRef = collection(db, `organizations/${orgID}`)
-  const q = query(docRef)
-  onSnapshot(q, (snapshot) => {
-    setOrg(snapshot.docs.map(doc => doc.data()))
+  const docRef = doc(db, 'organizations', orgID)
+  onSnapshot(docRef, snapshot => {
+    setOrg(snapshot.data())
   })
 }

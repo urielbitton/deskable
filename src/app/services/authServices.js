@@ -1,14 +1,16 @@
-import { auth, db } from "app/firebase/fire"
+import { auth } from "app/firebase/fire"
 import { createUserDocService, doGetUserByID } from "./userServices"
 import firebase from "firebase/compat/app"
 import { successToast, infoToast, errorToast } from "app/data/toastsTemplates"
 import { deleteDB } from "./CrudDB"
-import { signInWithPopup } from "firebase/auth"
-import { collection, query, writeBatch } from "firebase/firestore"
+import {
+  createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification,
+  signInWithPopup, updateProfile
+} from "firebase/auth"
 
 export const completeRegistrationService = (user, authMode, res, userName, setLoading) => {
   const photoURLPlaceholder = 'https://firebasestorage.googleapis.com/v0/b/your-app.appspot.com/o/placeholder.png?alt=media&token=your-token'
-  user.updateProfile({
+  updateProfile(user, {
     displayName: authMode === 'plain' ? `${userName.firstName} ${userName.lastName}` : authMode === 'google' ? res.additionalUserInfo.profile.name : res.name,
     photoURL: authMode === 'facebook' ? res.picture.data.url : photoURLPlaceholder
   })
@@ -26,7 +28,7 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
     const ActionCodeSettings = {
       url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${userName.firstName}&lastName=${userName.lastName}`,
     }
-    user.sendEmailVerification(ActionCodeSettings)
+    sendEmailVerification(user, ActionCodeSettings)
       .then(() => {
         console.log('Email verification sent!')
         setLoading(false)
@@ -42,9 +44,9 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
 export const plainAuthService = (firstName, lastName, email, password, setLoading, setEmailError, setPassError) => {
   const userName = { firstName, lastName }
   setLoading(true)
-  return firebase.auth().createUserWithEmailAndPassword(email.replaceAll(' ', ''), password.replaceAll(' ', ''))
+  return createUserWithEmailAndPassword(auth, email.replaceAll(' ', ''), password.replaceAll(' ', ''))
     .then(() => {
-      return auth.onAuthStateChanged(user => {
+      return onAuthStateChanged(auth, user => {
         if (user) {
           return completeRegistrationService(user, 'plain', null, userName, setLoading)
         }
@@ -137,7 +139,7 @@ export const deleteAccountService = (setToasts, setLoading) => {
   setLoading(true)
   return deleteDB('users', auth.currentUser.uid)
     .then(() => {
-      firebase.auth().currentUser.delete()
+      auth.currentUser.delete()
         .then(() => {
           setToasts(successToast('Account deleted.'))
           setLoading(false)

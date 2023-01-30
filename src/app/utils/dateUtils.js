@@ -1,6 +1,6 @@
 // @ts-nocheck
 export const msToDays = (ms) => {
-  return (ms / (60*60*24*1000))
+  return (ms / (60 * 60 * 24 * 1000))
 }
 
 export const convertClassicDate = (date, withTime) => {
@@ -68,18 +68,18 @@ export const convertDateToTimeString = (date) => {
 }
 
 export const getDateTimeString = (date) => {
-  if(date?.toLocaleTimeString().length > 10) {
-    return date?.toLocaleTimeString().slice(0,5)
+  if (date?.toLocaleTimeString().length > 10) {
+    return date?.toLocaleTimeString().slice(0, 5)
   }
-  return date?.toLocaleTimeString().slice(0,4)
+  return date?.toLocaleTimeString().slice(0, 4)
 }
 
 export const getTimeStringIn24h = (date) => {
-  return date?.toTimeString().slice(0,5)
+  return date?.toTimeString().slice(0, 5)
 }
 
 export const getTimeFromDate = (date) => {
-  return date?.toTimeString().slice(0,5)
+  return date?.toTimeString().slice(0, 5)
 }
 
 export const getNearestTimeToQuarterHour = (date) => {
@@ -87,7 +87,7 @@ export const getNearestTimeToQuarterHour = (date) => {
   const nearestQuarterHour = Math.round(minutes / 15) * 15
   if (nearestQuarterHour <= minutes) {
     date.setMinutes(nearestQuarterHour + 15)
-  } 
+  }
   else {
     date.setMinutes(nearestQuarterHour)
   }
@@ -149,13 +149,13 @@ export const shortAndLongMonthNames = [
 ]
 
 export const msToTime = (ms) => {
-    let seconds = Math.floor((ms / 1000) % 60),
+  let seconds = Math.floor((ms / 1000) % 60),
     minutes = Math.floor((ms / (1000 * 60)) % 60),
     hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    return hours + ":" + minutes + ":" + seconds
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+  return hours + ":" + minutes + ":" + seconds
 }
 
 export const getDaysAgo = (date) => {
@@ -164,19 +164,21 @@ export const getDaysAgo = (date) => {
 
 export const getTimeAgo = (date) => {
   const seconds = Math.floor((Date.now() - date) / 1000)
-  if(seconds < 1)
+  if (seconds < 1)
     return 'Just now'
-  else if(seconds < 60)
+  else if (seconds < 60)
     return seconds + 's'
-  else if(seconds < 3600)
+  else if (seconds < 3600)
     return Math.floor(seconds / 60) + 'm'
-  else if(seconds < 86400)
+  else if (seconds < 86400)
     return Math.floor(seconds / 3600) + 'h'
-  else if(seconds < 259200) //if less than 3 days
+  else if (seconds < 259200) //if less than 3 days
     return Math.floor(seconds / 86400) + 'd'
-  else
+  else if (date.getFullYear() !== new Date().getFullYear())
     return convertClassicDate(date)
-  }
+  else
+    return `${date?.toLocaleDateString('en-CA', { day: 'numeric', month: 'short' })} at ${convertClassicTime(date)}`
+}
 
 export const militaryTimeToAMPM = (time) => {
   const [hours, minutes] = time.split(':')
@@ -250,7 +252,7 @@ export const datesAreInSameMonth = (date1, date2) => {
   return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
 }
 
-export const dateToMonthName = (date, length='long') => {
+export const dateToMonthName = (date, length = 'long') => {
   return date.toLocaleString('en-CA', { month: length })
 }
 
@@ -263,7 +265,7 @@ export const getWeekOfMonth = (date) => {
   const firstDayOfMonthWeekday = firstDayOfMonth.getDay()
   const firstWeekLength = 7 - firstDayOfMonthWeekday
   const dayOfMonth = date.getDate()
-  if(dayOfMonth <= firstWeekLength)
+  if (dayOfMonth <= firstWeekLength)
     return `week1`
   else
     return `week${Math.ceil((dayOfMonth - firstWeekLength) / 7) + 1}`
@@ -273,7 +275,7 @@ export const getWeekOfMonth = (date) => {
 export const getDatesInMonthIterate = (date) => {
   const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
   const dates = []
-  for(let i = 1; i <= daysInMonth; i++) {
+  for (let i = 1; i <= daysInMonth; i++) {
     dates.push(i)
   }
   return dates
@@ -285,8 +287,8 @@ export const splitDocsIntoMonths = (docs, dateKey) => {
     const docDate = new Date(doc[dateKey]?.toDate())
     monthNames.forEach(monthName => {
       const monthDate = monthNameToDate(monthName)
-      if(datesAreInSameMonth(docDate, monthDate)) {
-        if(months[monthName]) {
+      if (datesAreInSameMonth(docDate, monthDate)) {
+        if (months[monthName]) {
           months[monthName].push(doc)
         }
         else {
@@ -296,7 +298,7 @@ export const splitDocsIntoMonths = (docs, dateKey) => {
     })
   })
   monthNames.forEach(monthName => {
-    if(!months[monthName]) {
+    if (!months[monthName]) {
       months[monthName] = []
     }
   })
@@ -308,16 +310,16 @@ export const splitDocsIntoWeeksOfMonth = (docs, dateKey) => {
   docs && docs.forEach(doc => {
     const docDate = new Date(doc[dateKey]?.toDate())
     const weekOfMonth = getWeekOfMonth(docDate)
-    if(weeks[weekOfMonth]) {
+    if (weeks[weekOfMonth]) {
       weeks[weekOfMonth].push(doc)
     }
     else {
       weeks[weekOfMonth] = [doc]
     }
   })
-  const weeksArr = ['week1','week2','week3','week4']
+  const weeksArr = ['week1', 'week2', 'week3', 'week4']
   weeksArr.forEach(weekNum => {
-    if(!weeks[weekNum]) {
+    if (!weeks[weekNum]) {
       weeks[weekNum] = []
     }
   })
@@ -330,44 +332,44 @@ export const splitMonthDocsIntoDays = (docs, dateKey) => {
     const docDate = new Date(doc[dateKey]?.toDate())
     const day = docDate.getDate()
     const dayName = getNameDayOfTheWeekFromDate(docDate)
-    if(days[day]) {
-      days[day].push({...doc, dayName})
+    if (days[day]) {
+      days[day].push({ ...doc, dayName })
     }
     else {
-      days[day] = [{...doc, dayName}]
+      days[day] = [{ ...doc, dayName }]
     }
   })
   const daysInMonth = getDatesInMonthIterate(new Date())
   daysInMonth.forEach(day => {
-    if(!days[day]) {
-      days[day] = [{dayName: getNameDayOfTheWeekFromDate(new Date(new Date().getFullYear(), new Date().getMonth(), day))}]
+    if (!days[day]) {
+      days[day] = [{ dayName: getNameDayOfTheWeekFromDate(new Date(new Date().getFullYear(), new Date().getMonth(), day)) }]
     }
   })
   return days
 }
 
 export const displayThStNdRd = (num) => {
-  if(num > 3 && num < 21) return `${num}th`
+  if (num > 3 && num < 21) return `${num}th`
   switch (num % 10) {
-    case 1:  return `${num}st`
-    case 2:  return `${num}nd`
-    case 3:  return `${num}rd`
+    case 1: return `${num}st`
+    case 2: return `${num}nd`
+    case 3: return `${num}rd`
     default: return `${num}th`
   }
 }
 
 export const dayOfMonthNumbers = () => {
   const options = []
-  for(let i = 1; i <= 31; i++) {
-    options.push({value: i, label: i})
+  for (let i = 1; i <= 31; i++) {
+    options.push({ value: i, label: i })
   }
   return options
 }
 
 export const getYearsBetween = (startYear, endYear) => {
   const years = []
-  for(let i = endYear; i >= startYear; i--) {
-    years.push({value: i, label: i})
+  for (let i = endYear; i >= startYear; i--) {
+    years.push({ value: i, label: i })
   }
   return years
 }

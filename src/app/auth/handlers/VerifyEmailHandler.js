@@ -6,6 +6,7 @@ import { StoreContext } from "app/store/store"
 import firebase from 'firebase/compat/app'
 import verifyAccountImg from 'app/assets/images/verify-account.png'
 import { errorToast, successToast } from "app/data/toastsTemplates"
+import { applyActionCode } from "firebase/auth"
 
 export default function VerifyEmailHandler({ oobCode, continueUrl }) {
 
@@ -19,7 +20,7 @@ export default function VerifyEmailHandler({ oobCode, continueUrl }) {
   const handleVerifyEmail = (auth, oobCode) => {
     if (!oobCode) return setToasts(errorToast('Invalid action code. Please make sure your email link is valid.'))
     setLoading(true)
-    auth.applyActionCode(oobCode)
+    applyActionCode(auth, oobCode)
       .then(() => {
         if (user) {
           setToasts(successToast('Your email has been verified. Redirecting to homepage...'))

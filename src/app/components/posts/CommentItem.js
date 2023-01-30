@@ -20,7 +20,8 @@ export default function CommentItem(props) {
   const { myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID } = props.comment
-  const { showReplySection, setShowReplySection } = props
+  const { showReplySection, setShowReplySection, commentInputRef,
+    setShowLikesModal, setLikesStats } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
@@ -29,6 +30,7 @@ export default function CommentItem(props) {
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
+  const subCommentInputRef = useRef(null)
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
   const hidePrivateOptions = myUserID !== authorID
@@ -47,6 +49,11 @@ export default function CommentItem(props) {
     setEditPostText('')
     setEditUploadedImgs([])
     editUploadRef.current.value = ''
+  }
+
+  const initReply = () => {
+    setShowReplySection(prev => prev !== commentID ? commentID : null)
+    commentInputRef.current.focus()
   }
 
   const toggleLikeComment = () => {
@@ -103,6 +110,11 @@ export default function CommentItem(props) {
 
   }
 
+  const initLikesStats = () => {
+    setShowLikesModal(true)
+    setLikesStats(likes)
+  }
+
   return author && (
     <div className="comment-item">
       <div className="left-side">
@@ -122,6 +134,7 @@ export default function CommentItem(props) {
                 </p> :
                 <div className="edit-container">
                   <EmojiTextarea
+                    placeholder="Write a comment..."
                     showPicker={showEditPicker}
                     setShowPicker={setShowEditPicker}
                     messageText={editPostText}
@@ -158,12 +171,23 @@ export default function CommentItem(props) {
                 }
               </div>
             }
+            {
+              likesNum > 0 &&
+              <div 
+                className="likes-counter"
+                onClick={() => initLikesStats()}
+              >
+                <div className="like-btn">
+                  <i className="fas fa-heart" />
+                </div>
+                <small>{likesNum}</small>
+              </div>
+            }
           </div>
           <DropdownIcon
             icon="far fa-ellipsis-h"
             iconSize="15px"
             iconColor="var(--grayText)"
-            bgColor="var(--inputBg)"
             dimensions={25}
             showMenu={showCommentMenu}
             setShowMenu={setShowCommentMenu}
@@ -177,7 +201,7 @@ export default function CommentItem(props) {
         </div>
         <div className="comment-actions">
           <small onClick={() => toggleLikeComment()}>Like</small>
-          <small onClick={() => setShowReplySection(prev => prev !== commentID ? commentID : null)}>Reply</small>
+          <small onClick={() => initReply()}>Reply</small>
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>
           </small>
@@ -188,6 +212,9 @@ export default function CommentItem(props) {
           postID={postID}
           commentID={commentID}
           subCommentsNum={subCommentsNum}
+          commentInputRef={subCommentInputRef}
+          setShowLikesModal={setShowLikesModal}
+          setLikesStats={setLikesStats}
         />
       </div>
     </div>

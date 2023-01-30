@@ -6,7 +6,7 @@ import {
 } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import AppCard from "../ui/AppCard"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
@@ -24,7 +24,8 @@ export default function PostCard(props) {
   const { myUserID, setToasts } = useContext(StoreContext)
   const { authorID, dateCreated, postID, postText, files,
     orgID, likes, saved } = props.post
-  const { setShowReportModal } = props
+  const { setShowReportModal, setShowLikesModal, setLikesStats,
+    setShowSavedModal, setSavedStats } = props
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -35,6 +36,7 @@ export default function PostCard(props) {
   const [deletedFiles, setDeletedFiles] = useState([])
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
+  const commentInputRef = useRef(null)
   const fileImgs = files?.filter(file => file?.type?.includes('image'))
   const hasImgs = fileImgs?.length > 0
   const commentsNum = useDocsCount(`organizations/${orgID}/posts/${postID}/comments`)
@@ -165,6 +167,22 @@ export default function PostCard(props) {
       removePostSavedService(myUserID, orgID, postID, setToasts)
   }
 
+  const initLikesStats = () => {
+    setShowLikesModal(true)
+    setLikesStats(likes)
+  }
+
+  const initSavedStats = () => {
+    setShowSavedModal(true)
+    setSavedStats(saved)
+  } 
+
+  useEffect(() => {
+    if(showComments) {
+      commentInputRef.current?.focus()
+    }
+  },[showComments])
+
   return (
     <AppCard
       className="post-card"
@@ -247,7 +265,7 @@ export default function PostCard(props) {
         <div className="stats-info">
           {
             likesNum > 0 &&
-            <small>
+            <small onClick={() => initLikesStats()}>
               <i className="far fa-heart" />
               {likesNum} like{likesNum !== 1 ? 's' : ''}
             </small>
@@ -263,7 +281,7 @@ export default function PostCard(props) {
           }
           {
             savedNum > 0 &&
-            <small>
+            <small onClick={() => initSavedStats()}>
               <i className="far fa-bookmark" />
               {savedNum} save{savedNum !== 1 ? 'd' : ''}
             </small>
@@ -277,17 +295,22 @@ export default function PostCard(props) {
         </div>
         <div onClick={() => handleLike()}>
           <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
-          <h6>Like</h6>
+          <h6>Like{userHasLiked && 'd'}</h6>
         </div>
         <div onClick={() => bookmarkPost()}>
           <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />
-          <h6>Save</h6>
+          <h6>Save{userHasSaved && 'd'}</h6>
         </div>
       </div>
       <PostComments
         post={props.post}
         showComments={showComments}
         commentsNum={commentsNum}
+        commentInputRef={commentInputRef}
+        setShowLikesModal={setShowLikesModal}
+        setLikesStats={setLikesStats}
+        setShowSavedModal={setShowSavedModal}
+        setSavedStats={setSavedStats}
       />
     </AppCard>
   )

@@ -34,7 +34,10 @@
 .comment-item .comment-top .dropdown-icon {
   opacity: 0;
 }
-.comment-item:hover .comment-top .dropdown-icon {
+.comment-item:hover > .right-side > .comment-top .dropdown-icon {
+  opacity: 1;
+}
+.sub-comment-item:hover .comment-top .dropdown-icon {
   opacity: 1;
 }
 
@@ -109,4 +112,38 @@
 .comment-item .comment-reply-section {
   margin-top: 15px;
   margin-bottom: 10px;
+}
+
+.comment-item .comment-bubble .likes-counter {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #f1f1f1;
+  border-radius: 20px;
+  bottom: -6px;
+  box-shadow: 0 0 4px 0 rgb(0 0 0 / 20%);
+  cursor: pointer;
+  gap: 3px;
+  padding-right: 5px;
+  position: absolute;
+  right: -5px;
+  transition: all .2s;
+  z-index: 10;
+}
+.comment-item .comment-bubble .likes-counter .like-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  border-radius: 100%;
+  height: 13px;
+  width: 13px;
+}
+.comment-item .comment-bubble .likes-counter .like-btn i {
+  font-size: 7px;
+  color: #fff;
+}
+.comment-item .comment-bubble .likes-counter small {
+  color: var(--darkGrayText);
+  font-size: 10px;
 }

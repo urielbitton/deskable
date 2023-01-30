@@ -193,7 +193,7 @@
 }
 
 .post-card .stats-info {
-  padding: 5px 10px;
+  padding: 5px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -202,6 +202,7 @@
   color: #444;
   font-size: 12px;
   cursor: pointer;
+  user-select: none;
 }
 .post-card .stats-info small:hover {
   text-decoration: underline;

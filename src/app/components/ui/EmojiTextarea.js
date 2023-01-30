@@ -14,7 +14,7 @@ export default function EmojiTextarea(props) {
   const { showPicker, setShowPicker, messageText, setMessageText,
     handlePressEnter, uploadedImgs, setUploadedImgs, loading, setLoading,
     enableImgUploading, uploadRef, maxRows, avatar, avatarDimensions,
-    showSendIcon } = props
+    showSendIcon, inputRef, placeholder } = props
   const isNotEmptyMessage = /\S/.test(messageText)
   const uploadedImgFiles = uploadedImgs.map(img => img)
   const maxFileSize = 1024 * 1024 * 2
@@ -56,13 +56,14 @@ export default function EmojiTextarea(props) {
           />
         }
         <TextareaAutosize
-          placeholder="Type a message..."
+          placeholder={placeholder}
           onChange={(e) => setMessageText((e.target.value))}
           value={messageText}
           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handlePressEnter && handlePressEnter(e)}
           className="emoji-picker-textarea"
           cacheMeasurements
           maxRows={maxRows}
+          ref={inputRef}
         />
         {
           (!loading && showSendIcon) ?
@@ -89,7 +90,7 @@ export default function EmojiTextarea(props) {
           {
             enableImgUploading &&
             <label className="icon-container">
-              <i className="far fa-images" />
+              <i className="far fa-image" />
               <input
                 style={{ display: 'none' }}
                 type="file"

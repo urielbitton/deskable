@@ -10,7 +10,8 @@ import './styles/PostComments.css'
 export default function PostComments(props) {
 
   const { myUserImg, myUserID, myOrgID, setToasts } = useContext(StoreContext)
-  const { showComments, post, commentsNum } = props
+  const { showComments, post, commentsNum, commentInputRef,
+    setShowLikesModal, setLikesStats } = props
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [commentUploadedImgs, setCommentUploadedImg] = useState([])
@@ -28,6 +29,8 @@ export default function PostComments(props) {
       comment={comment}
       showReplySection={showReplySection}
       setShowReplySection={setShowReplySection}
+      setShowLikesModal={setShowLikesModal}
+      setLikesStats={setLikesStats}
     />
   })
 
@@ -61,6 +64,7 @@ export default function PostComments(props) {
     <div className="post-comments">
       <div className="add-comment-section">
         <EmojiTextarea
+          placeholder="Write a comment..."
           showPicker={showEditPicker}
           setShowPicker={setShowEditPicker}
           messageText={commentText}
@@ -72,6 +76,7 @@ export default function PostComments(props) {
           handlePressEnter={(e) => handlePressEnter(e)}
           enableImgUploading
           uploadRef={commentUploadRef}
+          inputRef={commentInputRef}
           avatar={myUserImg}
           avatarDimensions={33}
         />

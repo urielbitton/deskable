@@ -15,9 +15,9 @@ const config = {
 }
 const firebaseApp = initializeApp(config)
 
-initializeFirestore(firebaseApp, {
-  ignoreUndefinedProperties: true,
-})
+// initializeFirestore(firebaseApp, {
+//   ignoreUndefinedProperties: true,
+// })
 
 const db = getFirestore(firebaseApp)
 const auth = getAuth(firebaseApp)

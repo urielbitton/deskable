@@ -12,6 +12,9 @@
   z-index: 100;
   user-select: none;
 }
+.dropdown-button .dropdown-menu.show {
+  display: flex;
+}
 .dropdown-button .dropdown-menu.place-left-bottom {
   left: 0;
   right: auto;
@@ -31,9 +34,6 @@
   right: 0;
   top: auto;
   bottom: 40px;
-}
-.dropdown-button .dropdown-menu.show {
-  display: flex;
 }
 .dropdown-button .dropdown-menu h5.title {
   font-size: 14px;

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
-import './styles/DropdownButton.css'
 import { Link } from "react-router-dom"
 import IconContainer from "./IconContainer"
+import './styles/DropdownButton.css'
 
 export default function DropdownIcon(props) {
 
-  const { items, showMenu, setShowMenu, icon="far fa-ellipsis-v",
-    iconColor, iconSize="19px", dimensions=32, tooltip, bgColor,
-    dropdownPosition = "place-right-bottom", onClick } = props
+  const { items, showMenu, setShowMenu, icon="far fa-ellipsis-v", 
+    iconColor, iconSize="19px", dimensions=32, tooltip, bgColor, 
+    dropdownPosition="place-right-bottom", onClick } = props
 
   const itemsList = items
     ?.filter(item => item && !item.private)
@@ -43,7 +43,10 @@ export default function DropdownIcon(props) {
   return (
     <div
       className="dropdown-button dropdown-icon"
-      onClick={(e) => onClick(e)}
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick(e)
+      }}
     >
       <IconContainer
         icon={icon}

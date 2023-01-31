@@ -1,6 +1,5 @@
 import PostCard from "app/components/posts/PostCard"
 import PostConsole from "app/components/posts/PostConsole"
-import AppModal from "app/components/ui/AppModal"
 import HelmetTitle from "app/components/ui/HelmetTitle"
 import LikesStatsModal from "app/components/ui/LikesStatsModal"
 import { useOrgPosts } from "app/hooks/postsHooks"
@@ -11,7 +10,6 @@ export default function PostsPage() {
 
   const limitsNum = 10
   const [postsLimit, setPostsLimit] = useState(limitsNum)
-  const [showReportModal, setShowReportModal] = useState(false)
   const [showLikesModal, setShowLikesModal] = useState(false)
   const [likesStats, setLikesStats] = useState([])
   const [showSavedModal, setShowSavedModal] = useState(false)
@@ -22,13 +20,16 @@ export default function PostsPage() {
     return <PostCard
       key={index}
       post={post}
-      setShowReportModal={setShowReportModal}
       setLikesStats={setLikesStats}
       setShowLikesModal={setShowLikesModal}
       setShowSavedModal={setShowSavedModal}
       setSavedStats={setSavedStats}
     />
   })
+
+  const loadMorePosts = () => {
+
+  }
 
   return (
     <div className="posts-page">
@@ -44,14 +45,6 @@ export default function PostsPage() {
       <div className="posts-sidebar">
 
       </div>
-      <AppModal
-        showModal={showReportModal}
-        setShowModal={setShowReportModal}
-        label="Report Post"
-        portalClassName="report-post-modal"
-      >
-        {/* reports go to the org admin, not to system admin */}
-      </AppModal>
       <LikesStatsModal
         showModal={showLikesModal}
         setShowModal={setShowLikesModal}

@@ -1,3 +1,4 @@
+import { reportOrgPostOptions } from "app/data/general"
 import useUser, { useDocsCount } from "app/hooks/userHooks"
 import {
   addPostCommentLikeService, deleteOrgPostCommentService,
@@ -8,12 +9,12 @@ import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
 import { sendCursorToEnd } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from "react-router-dom"
 import AppLink from "../ui/AppLink"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import EmojiTextarea from "../ui/EmojiTextarea"
 import IconContainer from "../ui/IconContainer"
+import ReportModal from "../ui/ReportModal"
 import PostSubComments from "./PostSubComments"
 import './styles/CommentItem.css'
 
@@ -30,11 +31,14 @@ export default function CommentItem(props) {
   const [editPostText, setEditPostText] = useState('')
   const [loading, setLoading] = useState(false)
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportMessage, setReportMessage] = useState('')
+  const [reportLoading, setReportLoading] = useState(false)
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
   const subCommentInputRef = useRef(null)
   const editCommentInputRef = useRef(null)
-  const navigate = useNavigate()
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
   const hidePrivateOptions = myUserID !== authorID
@@ -57,7 +61,8 @@ export default function CommentItem(props) {
 
   const initReply = () => {
     setShowReplySection(prev => prev !== commentID ? commentID : null)
-    commentInputRef.current.focus()
+    if(showReplySection !== commentID)
+      commentInputRef.current.focus()
   }
 
   const toggleLikeComment = () => {
@@ -110,10 +115,6 @@ export default function CommentItem(props) {
     )
   }
 
-  const reportComment = () => {
-
-  }
-
   const initLikesStats = () => {
     setShowLikesModal(true)
     setLikesStats(likes)
@@ -129,10 +130,10 @@ export default function CommentItem(props) {
   }
 
   useEffect(() => {
-    if(editMode === commentID) {
+    if (editMode === commentID) {
       sendCursorToEnd(editCommentInputRef)
     }
-  },[editMode])
+  }, [editMode])
 
   return author && (
     <div className="comment-item">
@@ -212,14 +213,14 @@ export default function CommentItem(props) {
               iconSize="15px"
               iconColor="var(--grayText)"
               dimensions={25}
-              showMenu={showCommentMenu}
+              showMenu={showCommentMenu === commentID}
               setShowMenu={setShowCommentMenu}
               items={[
                 { label: 'Edit', icon: 'fas fa-pen', onClick: () => editComment(), private: hidePrivateOptions },
                 { label: 'Delete', icon: 'fas fa-trash', onClick: () => deleteComment(), private: hidePrivateOptions },
-                { label: 'Report', icon: 'fas fa-flag', onClick: () => reportComment(), private: myUserID === authorID },
+                { label: 'Report', icon: 'fas fa-flag', onClick: () => setShowReportModal(true), private: myUserID === authorID },
               ]}
-              onClick={() => setShowCommentMenu(prev => !prev)}
+              onClick={() => setShowCommentMenu(prev => prev !== commentID ? commentID : null)}
             />
           }
         </div>
@@ -247,6 +248,18 @@ export default function CommentItem(props) {
           setEditMode={setEditMode}
         />
       </div>
+      <ReportModal
+        reportOptions={reportOrgPostOptions}
+        showModal={showReportModal}
+        setShowModal={setShowReportModal}
+        reportReason={reportReason}
+        setReportReason={setReportReason}
+        reportMessage={reportMessage}
+        setReportMessage={setReportMessage}
+        loading={reportLoading}
+        setReportLoading={setReportLoading}
+        reportedContent={commentText}
+      />
     </div>
   )
 }

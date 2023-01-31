@@ -10,13 +10,12 @@ import { createSupportTicketService } from "app/services/emailServices"
 
 export default function HelpAndSupport() {
 
-  const { myUser, setCompactNav, setToasts, myUserID, 
-    setPageLoading } = useContext(StoreContext)
+  const { setCompactNav, setToasts, setPageLoading } = useContext(StoreContext)
   const [supportType, setSupportType] = useState(null)
   const [subject, setSubject] = useState("")
   const [message, setMessage] = useState("")
   const [issueType, setIssueType] = useState("technical")
-  const allowSendMessage = issueType && message && (issueType !== "other" || subject)
+  const allowSend = issueType && message && (issueType !== "other" || subject)
 
   const clearForm = () => {
     setSubject("")
@@ -25,7 +24,7 @@ export default function HelpAndSupport() {
   }
 
   const sendMessage = () => {
-    if (!!!allowSendMessage) return setToasts(infoToast("Please add a message to submit the form."))
+    if (!!!allowSend) return setToasts(infoToast("Please add a message to submit the form."))
     const confirm = window.confirm("Send message to support?")
     if(!confirm) return setToasts(infoToast("Message not sent."))
     setPageLoading(true)
@@ -85,7 +84,6 @@ export default function HelpAndSupport() {
             <AppButton
               label="Send Message"
               onClick={() => sendMessage()}
-              disabled={!!!allowSendMessage}
             />
           </form>
         </div>

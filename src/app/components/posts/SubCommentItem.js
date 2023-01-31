@@ -1,3 +1,4 @@
+import { reportOrgPostOptions } from "app/data/general"
 import useUser from "app/hooks/userHooks"
 import {
   addPostCommentLikeService, deleteOrgPostCommentService,
@@ -13,6 +14,7 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import EmojiTextarea from "../ui/EmojiTextarea"
 import IconContainer from "../ui/IconContainer"
+import ReportModal from "../ui/ReportModal"
 import './styles/CommentItem.css'
 
 export default function SubCommentItem(props) {
@@ -27,6 +29,10 @@ export default function SubCommentItem(props) {
   const [editPostText, setEditPostText] = useState('')
   const [loading, setLoading] = useState(false)
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState("")
+  const [reportMessage, setReportMessage] = useState("")
+  const [reportLoading, setReportLoading] = useState(false)
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
   const editCommentInputRef = useRef(null)
@@ -51,8 +57,7 @@ export default function SubCommentItem(props) {
 
   const initReplySubComment = () => {
     commentInputRef.current.focus()
-    commentInputRef.current.value = `@${author.firstName} ${author.lastName} `
-  } 
+  }
 
   const toggleLikeComment = () => {
     if (!userHasLiked) {
@@ -104,17 +109,13 @@ export default function SubCommentItem(props) {
     )
   }
 
-  const reportComment = () => {
-
-  }
-
   const initLikesStats = () => {
     setShowLikesModal(true)
     setLikesStats(likes)
   }
 
   const initShowPhotoModal = () => {
-    if(editMode !== subCommentID) { 
+    if (editMode !== subCommentID) {
       setShowPhotosModal({
         show: true,
         photos: [file],
@@ -123,10 +124,10 @@ export default function SubCommentItem(props) {
   }
 
   useEffect(() => {
-    if(editMode === subCommentID) {
+    if (editMode === subCommentID) {
       sendCursorToEnd(editCommentInputRef)
     }
-  },[editMode])
+  }, [editMode])
 
   return author && (
     <div className="comment-item sub-comment-item">
@@ -188,7 +189,7 @@ export default function SubCommentItem(props) {
             }
             {
               likesNum > 0 &&
-              <div 
+              <div
                 className="likes-counter"
                 onClick={() => initLikesStats()}
               >
@@ -204,18 +205,18 @@ export default function SubCommentItem(props) {
             iconSize="15px"
             iconColor="var(--grayText)"
             dimensions={25}
-            showMenu={showCommentMenu}
+            showMenu={showCommentMenu === subCommentID}
             setShowMenu={setShowCommentMenu}
             items={[
               { label: 'Edit', icon: 'fas fa-pen', onClick: () => editComment(), private: hidePrivateOptions },
               { label: 'Delete', icon: 'fas fa-trash', onClick: () => deleteComment(), private: hidePrivateOptions },
-              { label: 'Report', icon: 'fas fa-flag', onClick: () => reportComment(), private: myUserID === authorID },
+              { label: 'Report', icon: 'fas fa-flag', onClick: () => setShowReportModal(true), private: myUserID === authorID },
             ]}
-            onClick={() => setShowCommentMenu(prev => !prev)}
+            onClick={() => setShowCommentMenu(prev => prev !== subCommentID ? subCommentID : null)}
           />
         </div>
         <div className="comment-actions">
-          <small 
+          <small
             onClick={() => toggleLikeComment()}
             className={userHasLiked ? 'liked' : ''}
           >
@@ -229,6 +230,18 @@ export default function SubCommentItem(props) {
           </small>
         </div>
       </div>
+      <ReportModal
+        reportOptions={reportOrgPostOptions}
+        showModal={showReportModal}
+        setShowModal={setShowReportModal}
+        reportReason={reportReason}
+        setReportReason={setReportReason}
+        reportMessage={reportMessage}
+        setReportMessage={setReportMessage}
+        loading={reportLoading}
+        setReportLoading={setReportLoading}
+        reportedContent={commentText}
+      />
     </div>
   )
 }

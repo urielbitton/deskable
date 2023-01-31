@@ -20,14 +20,17 @@ import PostComments from "./PostComments"
 import AppLink from "../ui/AppLink"
 import { useNavigate } from "react-router-dom"
 import PhotosModal from "../ui/PhotosModal"
+import ReportModal from "../ui/ReportModal"
+import { reportOrgPostOptions } from "app/data/general"
 
 export default function PostCard(props) {
 
   const { myUserID, setToasts } = useContext(StoreContext)
   const { authorID, dateCreated, postID, postText, files,
     orgID, likes, saved } = props.post
-  const { setShowReportModal, setShowLikesModal, setLikesStats,
-    setShowSavedModal, setSavedStats } = props
+  const { setShowLikesModal, setLikesStats, setShowSavedModal, 
+    setSavedStats } = props
+  const [showReportModal, setShowReportModal] = useState(false)
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [editMode, setEditMode] = useState(null)
@@ -37,6 +40,9 @@ export default function PostCard(props) {
   const [loading, setLoading] = useState(false)
   const [deletedFiles, setDeletedFiles] = useState([])
   const [showPhotosModal, setShowPhotosModal] = useState({show: false, photos: []})
+  const [reportReason, setReportReason] = useState("")
+  const [reportMessage, setReportMessage] = useState("")
+  const [reportLoading, setReportLoading] = useState(false)
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -215,10 +221,7 @@ export default function PostCard(props) {
             dimensions={27}
             showMenu={showPostOptions === postID}
             setShowMenu={setShowPostOptions}
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowPostOptions(showPostOptions === postID ? null : postID)
-            }}
+            onClick={(e) => setShowPostOptions(showPostOptions === postID ? null : postID)}
             items={[
               { label: "Edit", icon: "fas fa-pen", onClick: () => initEditPost(), private: authorID !== myUserID },
               { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost(), private: authorID !== myUserID },
@@ -324,6 +327,18 @@ export default function PostCard(props) {
         showModal={showPhotosModal.show}
         photos={showPhotosModal.photos}
         onClose={() => setShowPhotosModal({ show: false, photos: [] })}
+      />
+      <ReportModal
+        reportOptions={reportOrgPostOptions}
+        showModal={showReportModal}
+        setShowModal={setShowReportModal}
+        reportReason={reportReason}
+        setReportReason={setReportReason}
+        reportMessage={reportMessage}
+        setReportMessage={setReportMessage}
+        loading={reportLoading}
+        setReportLoading={setReportLoading}
+        reportedContent={postText}
       />
     </AppCard>
   )

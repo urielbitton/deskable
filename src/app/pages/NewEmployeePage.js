@@ -162,10 +162,7 @@ export default function NewEmployeePage() {
               tooltip="Actions"
               showMenu={showTaskMenu}
               setShowMenu={setShowTaskMenu}
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowTaskMenu(prev => !prev)
-              }}
+              onClick={(e) => setShowTaskMenu(prev => !prev)}
               items={[
                 { label: !editMode ? 'Create' : 'Save', icon: `fas fa-${!editMode ? 'fas fa-user-plus' : 'fas fa-save'}`, onClick: () => !editMode ? handleCreate() : handleUpdate() },
                 { label: "Cancel", icon: "fas fa-times", onClick: () => navigate(-1) },

@@ -25,6 +25,11 @@ export const monthSelectOptions = [
 
 export const supportIssuesOptions = [
   {
+    label: 'Choose a support issue',
+    value: '',
+    disabled: true,
+  },
+  {
     label: 'Technical issue',
     value: 'technical',
   },
@@ -62,5 +67,45 @@ export const employeeStatusOptions = [
   {
     label: 'On Leave',
     value: 'on-leave',
+  },
+]
+
+export const reportOrgPostOptions = [
+  {
+    label: 'Choose a report reason',
+    value: '',
+    disabled: true,
+  },
+  {
+    label: 'Inappropriate/Offensive content',
+    value: 'inappropriate/offensive content',
+  },
+  {
+    label: 'Hate speech',
+    value: 'hate speech',
+  },
+  {
+    label: 'Unprofessional content',
+    value: 'unprofessional content',
+  },
+  {
+    label: 'Spam',
+    value: 'spam',
+  },
+  {
+    label: 'Racism',
+    value: 'racism',
+  },
+  {
+    label: 'Sexism',
+    value: 'sexism',
+  },
+  {
+    label: 'Instigation',
+    value: 'instigation',
+  },
+  {
+    label: 'Other',
+    value: 'other',
   },
 ]

@@ -106,10 +106,7 @@ export default function TaskItem(props) {
           tooltip="Actions"
           showMenu={showTaskMenu === taskID}
           setShowMenu={setShowTaskMenu}
-          onClick={(e) => {
-            e.stopPropagation()
-            setShowTaskMenu(showTaskMenu === taskID ? null : taskID)
-          }}
+          onClick={(e) => setShowTaskMenu(showTaskMenu === taskID ? null : taskID)}
           items={[
             { label: "Edit", icon: "fas fa-pen", onClick: () => editTask() },
             { label: "Delete", icon: "fas fa-trash", onClick: () => deleteTask() },

@@ -49,10 +49,7 @@ export default function EmployeePage() {
             tooltip="Actions"
             showMenu={showTaskMenu}
             setShowMenu={setShowTaskMenu}
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowTaskMenu(prev => !prev)
-            }}
+            onClick={(e) => setShowTaskMenu(prev => !prev)}
             items={[
               { label: "New Employee", icon: "fas fa-plus", url: "/employees/new" },
               { label: "Edit", icon: "fas fa-pen", url: `/employees/new?employeeID=${employeeID}&edit=true` },

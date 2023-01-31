@@ -19,7 +19,7 @@ export default function SubCommentItem(props) {
   const { myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID, subCommentID } = props.subComment
-  const { setShowLikesModal, setLikesStats } = props
+  const { setShowLikesModal, setLikesStats, setShowPhotosModal } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
@@ -106,6 +106,15 @@ export default function SubCommentItem(props) {
     setLikesStats(likes)
   }
 
+  const initShowPhotoModal = () => {
+    if(!editMode) { 
+      setShowPhotosModal({
+        show: true,
+        photos: [file],
+      })
+    }
+  }
+
   return author && (
     <div className="comment-item sub-comment-item">
       <div className="left-side">
@@ -150,6 +159,7 @@ export default function SubCommentItem(props) {
                 <img
                   src={file.url}
                   alt="comment-img"
+                  onClick={() => initShowPhotoModal()}
                 />
                 {
                   editMode &&

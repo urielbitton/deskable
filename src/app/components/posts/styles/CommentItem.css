@@ -31,13 +31,13 @@
   align-items: center;
   gap: 5px;
 }
-.comment-item .comment-top .dropdown-icon {
+.comment-item .comment-top .dropdown-icon .icon-container {
   opacity: 0;
 }
-.comment-item:hover > .right-side > .comment-top .dropdown-icon {
+.comment-item:hover > .right-side > .comment-top .dropdown-icon .icon-container {
   opacity: 1;
 }
-.sub-comment-item:hover .comment-top .dropdown-icon {
+.sub-comment-item:hover .comment-top .dropdown-icon .icon-container {
   opacity: 1;
 }
 

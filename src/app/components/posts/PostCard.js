@@ -19,6 +19,7 @@ import { deleteMultipleStorageFiles } from "app/services/storageServices"
 import PostComments from "./PostComments"
 import AppLink from "../ui/AppLink"
 import { useNavigate } from "react-router-dom"
+import PhotosModal from "../ui/PhotosModal"
 
 export default function PostCard(props) {
 
@@ -35,6 +36,7 @@ export default function PostCard(props) {
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
   const [loading, setLoading] = useState(false)
   const [deletedFiles, setDeletedFiles] = useState([])
+  const [showPhotosModal, setShowPhotosModal] = useState({show: false, photos: []})
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -58,7 +60,7 @@ export default function PostCard(props) {
     .map((img, index) => {
       return <div
         className={`img-item ${deletedFiles.includes(img.name) ? 'deleted' : ''}`}
-        onClick={() => navigate(`/posts/${postID}/photos?name=${img.name}`)}
+        onClick={() => navigate(`/posts/${postID}/photos?index=${index}`)}
         key={index}
       >
         <img
@@ -111,7 +113,7 @@ export default function PostCard(props) {
   const updatePost = () => {
     if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
     if (!allowEditSave) return setToasts(infoToast("Please add some text or images to save."))
-    if(editUploadedImgs.length > 15) return setToasts(infoToast("You can only upload a maximum of 15 images.", true))
+    if (editUploadedImgs.length > 15) return setToasts(infoToast("You can only upload a maximum of 15 images.", true))
     setLoading(true)
     deleteMultipleStorageFiles(
       `organizations/${orgID}/posts/${postID}/files`,
@@ -178,13 +180,13 @@ export default function PostCard(props) {
   const initSavedStats = () => {
     setShowSavedModal(true)
     setSavedStats(saved)
-  } 
+  }
 
   useEffect(() => {
-    if(showComments) {
+    if (showComments) {
       commentInputRef.current?.focus()
     }
-  },[showComments])
+  }, [showComments])
 
   return (
     <AppCard
@@ -275,7 +277,7 @@ export default function PostCard(props) {
           }
           {
             commentsNum > 0 &&
-            <small 
+            <small
               onClick={() => setShowComments(true)}
             >
               <i className="far fa-comment" />
@@ -314,6 +316,12 @@ export default function PostCard(props) {
         setLikesStats={setLikesStats}
         setShowSavedModal={setShowSavedModal}
         setSavedStats={setSavedStats}
+        setShowPhotosModal={setShowPhotosModal}
+      />
+      <PhotosModal
+        showModal={showPhotosModal.show}
+        photos={showPhotosModal.photos}
+        onClose={() => setShowPhotosModal({ show: false, photos: [] })}
       />
     </AppCard>
   )

@@ -7,6 +7,7 @@ import {
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
 import React, { useContext, useRef, useState } from 'react'
+import { useNavigate } from "react-router-dom"
 import AppLink from "../ui/AppLink"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
@@ -21,7 +22,7 @@ export default function CommentItem(props) {
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID } = props.comment
   const { showReplySection, setShowReplySection, commentInputRef,
-    setShowLikesModal, setLikesStats } = props
+    setShowLikesModal, setLikesStats, setShowPhotosModal } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
@@ -31,6 +32,7 @@ export default function CommentItem(props) {
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
   const subCommentInputRef = useRef(null)
+  const navigate = useNavigate()
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
   const hidePrivateOptions = myUserID !== authorID
@@ -115,6 +117,15 @@ export default function CommentItem(props) {
     setLikesStats(likes)
   }
 
+  const initShowPhotoModal = () => {
+    if(!editMode) { 
+      setShowPhotosModal({
+        show: true,
+        photos: [file],
+      })
+    }
+  }
+
   return author && (
     <div className="comment-item">
       <div className="left-side">
@@ -159,6 +170,7 @@ export default function CommentItem(props) {
                 <img
                   src={file.url}
                   alt="comment-img"
+                  onClick={() => initShowPhotoModal()}
                 />
                 {
                   editMode &&
@@ -218,6 +230,7 @@ export default function CommentItem(props) {
           commentInputRef={subCommentInputRef}
           setShowLikesModal={setShowLikesModal}
           setLikesStats={setLikesStats}
+          setShowPhotosModal={setShowPhotosModal}
         />
       </div>
     </div>

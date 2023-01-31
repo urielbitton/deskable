@@ -12,7 +12,7 @@ export default function PostSubComments(props) {
   const { myUserImg, myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { postID, showReplySection, setShowReplySection, 
     commentID, subCommentsNum, commentInputRef, setShowLikesModal,
-    setLikesStats } = props
+    setLikesStats, setShowPhotosModal } = props
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [subCommentText, setSubCommentText] = useState('')
   const [commentUploadedImgs, setCommentUploadedImgs] = useState([])
@@ -29,6 +29,7 @@ export default function PostSubComments(props) {
       subComment={subComment}
       setShowLikesModal={setShowLikesModal}
       setLikesStats={setLikesStats}
+      setShowPhotosModal={setShowPhotosModal}
     />
   })
 

@@ -53,6 +53,9 @@
   color: var(--darkGrayText);
   font-weight: 600;
 }
+.comment-item .comment-actions small.liked {
+  color: var(--primary);
+}
 .comment-item .comment-actions small span {
   color: #777;
   font-weight: 500;

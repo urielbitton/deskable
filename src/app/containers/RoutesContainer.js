@@ -16,6 +16,8 @@ import EmployeePage from "app/pages/EmployeePage"
 import { StoreContext } from "app/store/store"
 import NewEmployeePage from "app/pages/NewEmployeePage"
 import TasksPage from "app/pages/TasksPage"
+import PostPhotosModalPage from "app/pages/PostPhotosModalPage"
+import PostPage from "app/pages/PostPage"
 
 export default function RoutesContainer() {
 
@@ -27,6 +29,8 @@ export default function RoutesContainer() {
       <Routes>
         <Route index element={<HomePage />} />
         <Route path="posts" element={<PostsPage />} />
+        <Route path="posts/:postID" element={<PostPage />} />
+        <Route path="posts/:postID/photos" element={<PostPhotosModalPage />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="meetings" element={<MeetingsPage />} />

@@ -191,7 +191,10 @@ export default function SubCommentItem(props) {
           />
         </div>
         <div className="comment-actions">
-          <small onClick={() => toggleLikeComment()}>Like</small>
+          <small 
+            onClick={() => toggleLikeComment()}
+            className={userHasLiked ? 'liked' : ''}
+          >{!userHasLiked ? 'Like' : 'Unlike'}</small>
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>
           </small>

@@ -35,6 +35,7 @@
 
 .emoji-picker-textarea {
   resize: none;
+  font-size: 13px;
 }
 .emoji-picker-textarea::-webkit-scrollbar {
   width: 4px;

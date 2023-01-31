@@ -1,7 +1,7 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { removeNullOrUndefined } from "app/utils/generalUtils"
-import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore"
+import { collection, doc, limit, onSnapshot, orderBy, query } from "firebase/firestore"
 import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
@@ -14,6 +14,13 @@ export const getPostsByOrgID = (orgID, setPosts, lim) => {
   )
   onSnapshot(q, snapshot => {
     setPosts(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getOrgPostByID = (orgID, postID, setPost) => {
+  const docRef = doc(db, `organizations/${orgID}/posts`, postID)
+  onSnapshot(docRef, snapshot => {
+    setPost(snapshot.data())
   })
 }
 

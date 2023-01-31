@@ -18,6 +18,7 @@ import IconContainer from "../ui/IconContainer"
 import { deleteMultipleStorageFiles } from "app/services/storageServices"
 import PostComments from "./PostComments"
 import AppLink from "../ui/AppLink"
+import { useNavigate } from "react-router-dom"
 
 export default function PostCard(props) {
 
@@ -44,6 +45,7 @@ export default function PostCard(props) {
   const savedNum = saved.length
   const userHasLiked = likes.includes(myUserID)
   const userHasSaved = saved.includes(myUserID)
+  const navigate = useNavigate()
 
   const allowEditSave = (editPostText !== postText
     && editPostText.length > 0
@@ -56,6 +58,7 @@ export default function PostCard(props) {
     .map((img, index) => {
       return <div
         className={`img-item ${deletedFiles.includes(img.name) ? 'deleted' : ''}`}
+        onClick={() => navigate(`/posts/${postID}/photos?name=${img.name}`)}
         key={index}
       >
         <img

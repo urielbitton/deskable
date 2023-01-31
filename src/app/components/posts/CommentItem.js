@@ -200,7 +200,10 @@ export default function CommentItem(props) {
           />
         </div>
         <div className="comment-actions">
-          <small onClick={() => toggleLikeComment()}>Like</small>
+          <small 
+            onClick={() => toggleLikeComment()}
+            className={userHasLiked ? 'liked' : ''}
+          >{!userHasLiked ? 'Like' : 'Unlike'}</small>
           <small onClick={() => initReply()}>Reply</small>
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>

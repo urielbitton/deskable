@@ -194,3 +194,8 @@ export const cleanHtml = (html) => {
 export const removeNullOrUndefined = (arr) => {
   return arr.filter(item => item !== null && item !== undefined)
 }
+
+export const sendCursorToEnd = (ref) => {
+  ref.current.focus()
+  ref.current.setSelectionRange(ref.current.value.length, ref.current.value.length)
+}

@@ -11,7 +11,8 @@ export default function PostComments(props) {
 
   const { myUserImg, myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { showComments, post, commentsNum, commentInputRef,
-    setShowLikesModal, setLikesStats, setShowPhotosModal } = props
+    setShowLikesModal, setLikesStats, setShowPhotosModal,
+    editMode, setEditMode } = props
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [commentUploadedImgs, setCommentUploadedImg] = useState([])
@@ -32,6 +33,8 @@ export default function PostComments(props) {
       setShowLikesModal={setShowLikesModal}
       setLikesStats={setLikesStats}
       setShowPhotosModal={setShowPhotosModal}
+      editMode={editMode}
+      setEditMode={setEditMode}
     />
   })
 

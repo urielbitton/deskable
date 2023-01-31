@@ -1,6 +1,10 @@
-import { convertClassicDate } from "app/utils/dateUtils"
+import { infoToast } from "app/data/toastsTemplates"
+import { updatePostFileDescriptionService } from "app/services/postsServices"
+import { StoreContext } from "app/store/store"
+import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import { convertBytesToKbMbGb } from "app/utils/fileUtils"
-import React, { useState } from 'react'
+import { sendCursorToEnd } from "app/utils/generalUtils"
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from "react-router-dom"
 import AppPortal from "./AppPortal"
 import IconContainer from "./IconContainer"
@@ -8,12 +12,19 @@ import './styles/PhotosModal.css'
 
 export default function PhotosModal(props) {
 
-  const { showModal, portalClassName, photos, onClose } = props
+  const { myUserID, setToasts } = useContext(StoreContext)
+  const { showModal, portalClassName, photos, onClose,
+    photosOwnerID, photosDocPath, parentDocID } = props
   const [showInfo, setShowInfo] = useState({ show: false, file: null })
+  const [editMode, setEditMode] = useState(false)
+  const [description, setDescription] = useState("")
   const [searchParams, setSearchParams] = useSearchParams()
   const photoIndex = searchParams.get("index") || 0
   const [slideIndex, setSlideIndex] = useState(+photoIndex)
   const photosNum = photos?.length
+  const isPhotosOwner = photosOwnerID === myUserID
+  const currentPhoto = photos?.[slideIndex]
+  const inputRef = useRef(null)
 
   const photosList = photos
     ?.slice(slideIndex, slideIndex + 1)
@@ -24,6 +35,43 @@ export default function PhotosModal(props) {
         alt={photo.name}
       />
     })
+
+  const initEditDescription = () => {
+    setEditMode(true)
+    setDescription(currentPhoto?.description || "")
+  }
+
+  const saveDescription = () => {
+    if(!photosOwnerID || !photosDocPath || !parentDocID) return 
+    if(!description) return setToasts(infoToast("Please enter a description"))
+    updatePostFileDescriptionService(
+      photosDocPath, 
+      parentDocID, 
+      photos, 
+      currentPhoto, 
+      description, 
+      setToasts
+    )
+    .then(() => {
+      resetEdit()
+    })
+  }
+
+  const resetEdit = () => {
+    setEditMode(false)
+    setDescription("")
+  }
+
+  useEffect(() => {
+    if(editMode) 
+      sendCursorToEnd(inputRef)
+  },[editMode])
+
+  useEffect(() => {
+    if(!showInfo.show) {
+      resetEdit()
+    }
+  },[showInfo])
 
   return (
     <AppPortal
@@ -65,7 +113,7 @@ export default function PhotosModal(props) {
             />
             <IconContainer
               icon="fas fa-info-circle"
-              onClick={() => setShowInfo({ show: true, file: photos[slideIndex] })}
+              onClick={() => setShowInfo({ show: true, file: currentPhoto })}
               iconSize="15px"
               iconColor="#fff"
               dimensions={30}
@@ -111,23 +159,47 @@ export default function PhotosModal(props) {
               <div className="content">
                 <div className="row">
                   <h5>File Name</h5>
-                  <h6>{showInfo.file?.name}</h6>
+                  <h6>{currentPhoto?.name}</h6>
                 </div>
                 <div className="row">
                   <h5>File Type</h5>
-                  <h6>{showInfo.file?.type}</h6>
+                  <h6>{currentPhoto?.type}</h6>
                 </div>
                 <div className="row">
                   <h5>File Size</h5>
-                  <h6>{convertBytesToKbMbGb(showInfo.file?.size)}</h6>
+                  <h6>{convertBytesToKbMbGb(currentPhoto?.size)}</h6>
                 </div>
                 <div className="row">
                   <h5>Date Uploaded</h5>
-                  <h6>{convertClassicDate(showInfo.file?.dateCreated?.toDate())}</h6>
+                  <h6>{convertClassicDateAndTime(currentPhoto?.dateUploaded?.toDate())}</h6>
                 </div>
                 <div className="row">
-                  <h5>File Description</h5>
-                  <h6>{showInfo.file?.description}</h6>
+                  <h5>
+                    File Description
+                    {
+                      isPhotosOwner &&
+                      <i
+                        className="fas fa-pen"
+                        onClick={() => initEditDescription()}
+                      />
+                    }
+                  </h5>
+                  {
+                    !editMode ?
+                      <h6>{currentPhoto?.description}</h6> :
+                      <div className="edit-container">
+                        <textarea
+                          placeholder="Enter a description..."
+                          value={description}
+                          onChange={e => setDescription(e.target.value)}
+                          ref={inputRef}
+                        />
+                        <div className="btn-group">
+                          <small onClick={() => saveDescription()}>Save</small>
+                          <small onClick={() => resetEdit()}>Cancel</small>
+                        </div>
+                      </div>
+                  }
                 </div>
               </div>
             </div>

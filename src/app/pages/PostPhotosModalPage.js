@@ -9,12 +9,16 @@ export default function PostPhotosModalPage() {
   const post = useOrgPost(postID)
   const photos = post?.files?.filter(file => file?.type?.includes("image"))
   const navigate = useNavigate()
+  const photosDocPath = `organizations/${post?.orgID}/posts`
 
   return (
     <PhotosModal
       showModal
       photos={photos}
       onClose={() => navigate(-1)}
+      photosOwnerID={post?.authorID}
+      photosDocPath={photosDocPath}
+      parentDocID={postID}
     />
   )
 }

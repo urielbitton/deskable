@@ -30,7 +30,7 @@ export default function PostCard(props) {
     setShowSavedModal, setSavedStats } = props
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(null)
   const [editPostText, setEditPostText] = useState('')
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
@@ -74,7 +74,7 @@ export default function PostCard(props) {
           </div>
         }
         {
-          editMode &&
+          editMode === postID &&
           <IconContainer
             icon={!deletedFiles.includes(img.name) ? "fas fa-trash" : "fas fa-undo-alt"}
             bgColor="#fff"
@@ -90,12 +90,12 @@ export default function PostCard(props) {
     })
 
   const initEditPost = () => {
-    setEditMode(true)
+    setEditMode(postID)
     setEditPostText(postText)
   }
 
   const cancelEditPost = () => {
-    setEditMode(false)
+    setEditMode(null)
     setEditPostText('')
     setEditUploadedImgs([])
     setDeletedFiles([])
@@ -132,7 +132,7 @@ export default function PostCard(props) {
         )
       })
       .then(() => {
-        setEditMode(false)
+        setEditMode(null)
         setEditPostText('')
         setEditUploadedImgs([])
         setDeletedFiles([])
@@ -230,7 +230,7 @@ export default function PostCard(props) {
       </div>
       <div className="content">
         {
-          !editMode ?
+          editMode !== postID ?
             <p>
               <AppLink text={postText} />
             </p> :
@@ -263,7 +263,7 @@ export default function PostCard(props) {
         }
         {
           hasImgs &&
-          <div className={`imgs-masonry ${fileImgs.length > 2 ? 'three' : fileImgs.length > 1 ? 'two' : ''} ${editMode ? 'edit-mode' : ''}`}>
+          <div className={`imgs-masonry ${fileImgs.length > 2 ? 'three' : fileImgs.length > 1 ? 'two' : ''} ${editMode === postID ? 'edit-mode' : ''}`}>
             {imgsRender}
           </div>
         }
@@ -317,6 +317,8 @@ export default function PostCard(props) {
         setShowSavedModal={setShowSavedModal}
         setSavedStats={setSavedStats}
         setShowPhotosModal={setShowPhotosModal}
+        editMode={editMode}
+        setEditMode={setEditMode}
       />
       <PhotosModal
         showModal={showPhotosModal.show}

@@ -45,7 +45,9 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
             url: file.downloadURL,
             name: file.filename,
             type: file.file.type,
-            size: file.file.size
+            size: file.file.size,
+            dateUploaded: new Date(),
+            description: ''
           }))
         })
       })
@@ -83,7 +85,9 @@ export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs
               url: file.downloadURL,
               name: file.filename,
               type: file.file.type,
-              size: file.file.size
+              size: file.file.size,
+              dateUploaded: new Date(),
+              description: ''
             }))
           ]
         })
@@ -204,44 +208,9 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
             url: data[0].downloadURL,
             name: data[0].filename,
             type: data[0].file.type,
-            size: data[0].file.size
-          }
-        })
-      })
-    })
-    .then(() => {
-      setLoading(false)
-    })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast("Error creating comment. Please try again later."))
-    })
-}
-
-export const createOrgPostSubCommentService = (userID, orgID, postID, commentID, message, uploadedImgs, setLoading, setToasts) => {
-  setLoading(true)
-  const commentsPath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments`
-  const docID = getRandomDocID(commentsPath)
-  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments/${docID}/files`
-  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, commentsStoragePath, null)
-    .then((data) => {
-      return setDB(commentsPath, docID, {
-        authorID: userID,
-        dateCreated: new Date(),
-        isEdited: false,
-        commentText: message,
-        commentID,
-        subCommentID: docID,
-        orgID,
-        postID,
-        likes: [],
-        ...(data.length > 0 && {
-          file: {
-            url: data[0].downloadURL,
-            name: data[0].filename,
-            type: data[0].file.type,
-            size: data[0].file.size
+            size: data[0].file.size,
+            dateUploaded: new Date(),
+            description: ''
           }
         })
       })
@@ -269,7 +238,9 @@ export const updateOrgPostCommentService = (commentsPath, storagePath, commentID
             url: data[0].downloadURL,
             name: data[0].filename,
             type: data[0].file.type,
-            size: data[0].file.size
+            size: data[0].file.size,
+            dateUploaded: new Date(),
+            description: ''
           }
         })
       })
@@ -281,6 +252,45 @@ export const updateOrgPostCommentService = (commentsPath, storagePath, commentID
       console.log(err)
       setLoading(false)
       setToasts(errorToast("Error updating comment. Please try again later."))
+    })
+}
+
+export const createOrgPostSubCommentService = (userID, orgID, postID, commentID, message, uploadedImgs, setLoading, setToasts) => {
+  setLoading(true)
+  const commentsPath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments`
+  const docID = getRandomDocID(commentsPath)
+  const commentsStoragePath = `organizations/${orgID}/posts/${postID}/comments/${commentID}/subComments/${docID}/files`
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, commentsStoragePath, null)
+    .then((data) => {
+      return setDB(commentsPath, docID, {
+        authorID: userID,
+        dateCreated: new Date(),
+        isEdited: false,
+        commentText: message,
+        commentID,
+        subCommentID: docID,
+        orgID,
+        postID,
+        likes: [],
+        ...(data.length > 0 && {
+          file: {
+            url: data[0].downloadURL,
+            name: data[0].filename,
+            type: data[0].file.type,
+            size: data[0].file.size,
+            dateUploaded: new Date(),
+            description: ''
+          }
+        })
+      })
+    })
+    .then(() => {
+      setLoading(false)
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast("Error creating comment. Please try again later."))
     })
 }
 
@@ -318,5 +328,19 @@ export const removePostCommentLikeService = (path, userID, commentID, setToasts)
     .catch(err => {
       console.log(err)
       setToasts(errorToast("Error unliking comment. Please try again later."))
+    })
+}
+
+export const updatePostFileDescriptionService = (path, docID, files, updateFile, description, setToasts) => {
+  updateFile.description = description
+  return updateDB(path, docID, {
+    files
+  })
+  .then(() => {
+    setToasts(successToast("File description updated successfully."))
+  })
+    .catch(err => {
+      console.log(err)
+      setToasts(errorToast("Error updating file description. Please try again later."))
     })
 }

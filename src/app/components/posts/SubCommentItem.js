@@ -6,7 +6,8 @@ import {
 } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
-import React, { useContext, useRef, useState } from 'react'
+import { sendCursorToEnd } from "app/utils/generalUtils"
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import AppLink from "../ui/AppLink"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
@@ -19,15 +20,16 @@ export default function SubCommentItem(props) {
   const { myUserID, myOrgID, setToasts } = useContext(StoreContext)
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID, subCommentID } = props.subComment
-  const { setShowLikesModal, setLikesStats, setShowPhotosModal } = props
+  const { setShowLikesModal, setLikesStats, setShowPhotosModal,
+    editMode, setEditMode, commentInputRef } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
-  const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [editPostText, setEditPostText] = useState('')
   const [loading, setLoading] = useState(false)
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
+  const editCommentInputRef = useRef(null)
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
   const hidePrivateOptions = myUserID !== authorID
@@ -36,16 +38,21 @@ export default function SubCommentItem(props) {
   const subCommentsStoragePath = `organizations/${myOrgID}/posts/${postID}/comments/${commentID}/subComments/${subCommentID}/files`
 
   const editComment = () => {
-    setEditMode(true)
+    setEditMode(subCommentID)
     setEditPostText(commentText)
   }
 
   const resetEdit = () => {
-    setEditMode(false)
+    setEditMode(null)
     setEditPostText('')
     setEditUploadedImgs([])
     editUploadRef.current.value = ''
   }
+
+  const initReplySubComment = () => {
+    commentInputRef.current.focus()
+    commentInputRef.current.value = `@${author.firstName} ${author.lastName} `
+  } 
 
   const toggleLikeComment = () => {
     if (!userHasLiked) {
@@ -107,13 +114,19 @@ export default function SubCommentItem(props) {
   }
 
   const initShowPhotoModal = () => {
-    if(!editMode) { 
+    if(editMode !== subCommentID) { 
       setShowPhotosModal({
         show: true,
         photos: [file],
       })
     }
   }
+
+  useEffect(() => {
+    if(editMode === subCommentID) {
+      sendCursorToEnd(editCommentInputRef)
+    }
+  },[editMode])
 
   return author && (
     <div className="comment-item sub-comment-item">
@@ -128,7 +141,7 @@ export default function SubCommentItem(props) {
           <div className="comment-bubble">
             <h6>{author.firstName} {author.lastName}</h6>
             {
-              !editMode ?
+              editMode !== subCommentID ?
                 <p>
                   <AppLink text={commentText} />
                 </p> :
@@ -146,6 +159,7 @@ export default function SubCommentItem(props) {
                     setLoading={setLoading}
                     enableImgUploading
                     uploadRef={editUploadRef}
+                    inputRef={editCommentInputRef}
                   />
                   <div className="btn-group">
                     <small onClick={() => saveComment()}>Save</small>
@@ -162,7 +176,7 @@ export default function SubCommentItem(props) {
                   onClick={() => initShowPhotoModal()}
                 />
                 {
-                  editMode &&
+                  editMode === subCommentID &&
                   <IconContainer
                     icon="fas fa-times"
                     iconSize="15px"
@@ -204,7 +218,12 @@ export default function SubCommentItem(props) {
           <small 
             onClick={() => toggleLikeComment()}
             className={userHasLiked ? 'liked' : ''}
-          >{!userHasLiked ? 'Like' : 'Unlike'}</small>
+          >
+            {!userHasLiked ? 'Like' : 'Unlike'}
+          </small>
+          <small onClick={() => initReplySubComment()}>
+            Reply
+          </small>
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>
           </small>

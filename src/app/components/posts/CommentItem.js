@@ -6,7 +6,8 @@ import {
 } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
-import React, { useContext, useRef, useState } from 'react'
+import { sendCursorToEnd } from "app/utils/generalUtils"
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import AppLink from "../ui/AppLink"
 import Avatar from "../ui/Avatar"
@@ -22,9 +23,9 @@ export default function CommentItem(props) {
   const { commentText, dateCreated, likes, authorID, file,
     postID, commentID } = props.comment
   const { showReplySection, setShowReplySection, commentInputRef,
-    setShowLikesModal, setLikesStats, setShowPhotosModal } = props
+    setShowLikesModal, setLikesStats, setShowPhotosModal,
+    editMode, setEditMode } = props
   const [showCommentMenu, setShowCommentMenu] = useState(false)
-  const [editMode, setEditMode] = useState(false)
   const [showEditPicker, setShowEditPicker] = useState(false)
   const [editPostText, setEditPostText] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,6 +33,7 @@ export default function CommentItem(props) {
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
   const subCommentInputRef = useRef(null)
+  const editCommentInputRef = useRef(null)
   const navigate = useNavigate()
   const hasImg = file?.type?.includes('image')
   const likesNum = likes?.length
@@ -42,12 +44,12 @@ export default function CommentItem(props) {
   const subCommentsNum = useDocsCount(`organizations/${myOrgID}/posts/${postID}/comments/${commentID}/subComments`)
 
   const editComment = () => {
-    setEditMode(true)
+    setEditMode(commentID)
     setEditPostText(commentText)
   }
 
   const resetEdit = () => {
-    setEditMode(false)
+    setEditMode(null)
     setEditPostText('')
     setEditUploadedImgs([])
     editUploadRef.current.value = ''
@@ -118,13 +120,19 @@ export default function CommentItem(props) {
   }
 
   const initShowPhotoModal = () => {
-    if(!editMode) { 
+    if (editMode !== commentID) {
       setShowPhotosModal({
         show: true,
         photos: [file],
       })
     }
   }
+
+  useEffect(() => {
+    if(editMode === commentID) {
+      sendCursorToEnd(editCommentInputRef)
+    }
+  },[editMode])
 
   return author && (
     <div className="comment-item">
@@ -139,13 +147,13 @@ export default function CommentItem(props) {
           <div className="comment-bubble">
             <h6>{author.firstName} {author.lastName}</h6>
             {
-              !editMode ?
+              editMode !== commentID ?
                 <p>
                   <AppLink text={commentText} />
                 </p> :
                 <div className="edit-container">
                   <EmojiTextarea
-                    placeholder="Write a comment..."
+                    placeholder="Edit comment..."
                     showPicker={showEditPicker}
                     setShowPicker={setShowEditPicker}
                     messageText={editPostText}
@@ -157,6 +165,7 @@ export default function CommentItem(props) {
                     setLoading={setLoading}
                     enableImgUploading
                     uploadRef={editUploadRef}
+                    inputRef={editCommentInputRef}
                   />
                   <div className="btn-group">
                     <small onClick={() => saveComment()}>Save</small>
@@ -173,7 +182,7 @@ export default function CommentItem(props) {
                   onClick={() => initShowPhotoModal()}
                 />
                 {
-                  editMode &&
+                  editMode === commentID &&
                   <IconContainer
                     icon="fas fa-times"
                     iconSize="15px"
@@ -185,7 +194,7 @@ export default function CommentItem(props) {
             }
             {
               likesNum > 0 &&
-              <div 
+              <div
                 className="likes-counter"
                 onClick={() => initLikesStats()}
               >
@@ -196,23 +205,26 @@ export default function CommentItem(props) {
               </div>
             }
           </div>
-          <DropdownIcon
-            icon="far fa-ellipsis-h"
-            iconSize="15px"
-            iconColor="var(--grayText)"
-            dimensions={25}
-            showMenu={showCommentMenu}
-            setShowMenu={setShowCommentMenu}
-            items={[
-              { label: 'Edit', icon: 'fas fa-pen', onClick: () => editComment(), private: hidePrivateOptions },
-              { label: 'Delete', icon: 'fas fa-trash', onClick: () => deleteComment(), private: hidePrivateOptions },
-              { label: 'Report', icon: 'fas fa-flag', onClick: () => reportComment(), private: myUserID === authorID },
-            ]}
-            onClick={() => setShowCommentMenu(prev => !prev)}
-          />
+          {
+            editMode !== commentID &&
+            <DropdownIcon
+              icon="far fa-ellipsis-h"
+              iconSize="15px"
+              iconColor="var(--grayText)"
+              dimensions={25}
+              showMenu={showCommentMenu}
+              setShowMenu={setShowCommentMenu}
+              items={[
+                { label: 'Edit', icon: 'fas fa-pen', onClick: () => editComment(), private: hidePrivateOptions },
+                { label: 'Delete', icon: 'fas fa-trash', onClick: () => deleteComment(), private: hidePrivateOptions },
+                { label: 'Report', icon: 'fas fa-flag', onClick: () => reportComment(), private: myUserID === authorID },
+              ]}
+              onClick={() => setShowCommentMenu(prev => !prev)}
+            />
+          }
         </div>
         <div className="comment-actions">
-          <small 
+          <small
             onClick={() => toggleLikeComment()}
             className={userHasLiked ? 'liked' : ''}
           >{!userHasLiked ? 'Like' : 'Unlike'}</small>
@@ -231,6 +243,8 @@ export default function CommentItem(props) {
           setShowLikesModal={setShowLikesModal}
           setLikesStats={setLikesStats}
           setShowPhotosModal={setShowPhotosModal}
+          editMode={editMode}
+          setEditMode={setEditMode}
         />
       </div>
     </div>

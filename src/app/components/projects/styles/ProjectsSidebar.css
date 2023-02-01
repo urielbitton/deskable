@@ -1,0 +1,125 @@
+.projects-sidebar {
+  padding: 20px;
+  background: var(--inputBg);
+  border-right: 1px solid var(--inputBorder);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.projects-sidebar .profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.projects-sidebar .profile-section .texts {
+  display: flex;
+  flex-direction: column;
+}
+.projects-sidebar .profile-section .texts h5 {
+  font-size: 12px;
+  color: var(--darkGrayText);
+}
+.projects-sidebar .profile-section .texts h6 {
+  font-size: 11px;
+  color: var(--grayText);
+  font-weight: 500;
+}
+
+.projects-sidebar .section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lightGrayText);
+}
+.projects-sidebar .section > h5 {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--grayText);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.projects-sidebar .section > h5 small {
+  font-size: 10px;
+  color: var(--grayText);
+  text-transform: capitalize;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.projects-sidebar .section > h5 small i {
+  margin-right: 4px;
+}
+.projects-sidebar .section > h5 small:hover {
+  background: var(--lightGrayText);
+}
+
+
+.projects-sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lightGrayText);
+}
+.projects-sidebar .menu a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grayText);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.projects-sidebar .menu a:hover {
+  background: var(--lightGrayText);
+}
+.projects-sidebar .menu a i {
+  width: 20px;
+}
+
+.projects-sidebar .all-projects-list {
+  display: flex;
+  flex-direction: column;
+}
+.projects-sidebar .all-projects-list a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grayText);
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.projects-sidebar .all-projects-list a:hover {
+  background: var(--lightGrayText);
+}
+.projects-sidebar .all-projects-list a h6 {
+  font-size: 12px;
+  font-weight: 600;
+}
+.projects-sidebar .all-projects-list a span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.projects-sidebar .all-projects-list a i.fa-arrow-right {
+  left: -5px;
+  transition: all 0.2s;
+  opacity: 0;
+}
+.projects-sidebar .all-projects-list a:hover i.fa-arrow-right {
+  opacity: 1;
+  left: 0;
+}
+.projects-sidebar .all-projects-list a.active {
+  background: var(--lightGrayText);
+}
+.projects-sidebar .all-projects-list a.active i.fa-arrow-right {
+  opacity: 1;
+  left: 0;
+}

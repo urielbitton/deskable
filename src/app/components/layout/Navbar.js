@@ -34,6 +34,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="topbar">
         <div className="left">
+          <h4>Deskable</h4>
           <NavSearch />
           <div
             className="mobile-btn"

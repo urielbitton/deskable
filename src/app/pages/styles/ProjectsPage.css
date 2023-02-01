@@ -1,0 +1,4 @@
+.projects-page {
+  display: grid;
+  grid-template-columns: 240px calc(100% - 240px);
+}

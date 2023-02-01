@@ -29,6 +29,7 @@
 
 .post-console .emoji-picker-textarea {
   border: none;
+  font-size: 14px;
 }
 
 .post-console .actions {

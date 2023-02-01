@@ -47,6 +47,7 @@ export default function PostConsole(props) {
           alt="avatar"
         />
         <EmojiTextarea
+          placeholder="Write a post..."
           showPicker={showPicker}
           setShowPicker={setShowPicker}
           messageText={messageText}

@@ -20,15 +20,7 @@ export default function ProjectsSidebar() {
       to={`/projects/${project?.projectID}`}
     >
       <span>
-        {
-          project?.photoURL ?
-            <Avatar
-              src={project?.photoURL}
-              alt={project?.name}
-              dimensions={22}
-            /> :
-            <i className="fas fa-hashtag" />
-        }
+        <i className="fas fa-hashtag" />
         <h6>{truncateText(project?.name, 20)}</h6>
       </span>
       <i className="fas fa-arrow-right" />
@@ -74,7 +66,7 @@ export default function ProjectsSidebar() {
         </div>
       </div>
       <div className="section">
-        <h5>Tasks To Do</h5>
+        <h5>Project Tasks</h5>
         {/* display tasks that are due this week from all projects (limit to 3 most recent projects) */}
       </div>
     </div>

@@ -9,6 +9,14 @@
   box-shadow: var(--morphShadow);
 }
 
+.rightbar > .icon-container {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 100;
+}
+
 .rightbar .header {
   display: flex;
   flex-direction: column;

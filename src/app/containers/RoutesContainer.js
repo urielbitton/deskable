@@ -31,7 +31,7 @@ export default function RoutesContainer() {
         <Route path="posts" element={<PostsPage />} />
         <Route path="posts/:postID" element={<PostPage />} />
         <Route path="posts/:postID/photos" element={<PostPhotosModalPage />} />
-        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="projects/*" element={<ProjectsPage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="meetings" element={<MeetingsPage />} />
         <Route path="events" element={<EventsPage />} />

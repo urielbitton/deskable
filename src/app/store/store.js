@@ -23,6 +23,7 @@ const StoreContextProvider = ({children}) => {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [toasts, setToasts] = useState([])
   const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
+  const [hideRightBar, setHideRightBar] = useState(false)
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -61,7 +62,8 @@ const StoreContextProvider = ({children}) => {
     windowIsFocused,
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,
-    newEventModal, setNewEventModal
+    newEventModal, setNewEventModal,
+    hideRightBar, setHideRightBar
   }}>
     {children}
   </StoreContext.Provider>

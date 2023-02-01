@@ -10,7 +10,8 @@ import './styles/Navbar.css'
 
 export default function Navbar() {
 
-  const { myUserID, setShowMobileSidebar, myMemberType } = useContext(StoreContext)
+  const { myUserID, setShowMobileSidebar, myMemberType,
+    hideRightBar, setHideRightBar } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const unreadNotifications = useUnreadNotifications(myUserID, 50)
   const notifications = useAllNotifications(myUserID, 5)
@@ -101,6 +102,18 @@ export default function Navbar() {
           <div className="rightbar-btn">
             <i className="fal fa-bars" />
           </div>
+          {
+            hideRightBar &&
+            <IconContainer
+              icon="fas fa-grip-lines-vertical"
+              inverted
+              iconColor="#fff"
+              iconSize="16px"
+              dimensions="30px"
+              tooltip="Show Calendar Bar"
+              onClick={() => setHideRightBar(false)}
+            />
+          }
         </div>
       </div>
       <div className="shapes-container">

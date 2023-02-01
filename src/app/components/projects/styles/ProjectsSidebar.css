@@ -83,6 +83,7 @@
 .projects-sidebar .all-projects-list {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 .projects-sidebar .all-projects-list a {
   font-size: 13px;
@@ -118,8 +119,4 @@
 }
 .projects-sidebar .all-projects-list a.active {
   background: var(--lightGrayText);
-}
-.projects-sidebar .all-projects-list a.active i.fa-arrow-right {
-  opacity: 1;
-  left: 0;
 }

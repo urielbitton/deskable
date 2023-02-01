@@ -1,0 +1,108 @@
+.single-project {
+  display: flex;
+  flex-direction: column;
+}
+.single-project .project-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--inputBorder);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.single-project .project-header .titles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.single-project .project-header .titles h3 {
+  color: var(--darkGrayText);
+  font-size: 17px;
+}
+.single-project .project-header .details {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+.single-project .project-header .details .info {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.single-project .project-header .details small {
+  color: var(--grayText);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.single-project .project-header .details small span {
+  color: var(--darkGrayText);
+  font-weight: 700;
+}
+.single-project .project-header .details .appInput {
+  width: 200px;
+}
+.single-project .project-header .details .appInput input {
+  height: 34px;
+  background: var(--lightInputBg);
+  padding-right: 20px;
+}
+.single-project .project-header .details .appInput i {
+  top: 9px;
+  right: 9px;
+  font-size: 14px;
+  color: var(--grayText);
+}
+
+.single-project .project-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px 0;
+  padding-top: 15px;
+}
+.single-project .project-toolbar .left-side {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.single-project .project-toolbar .left-side h5 {
+  color: var(--darkGrayText);
+  font-size: 14px;
+}
+.single-project .project-toolbar .left-side p {
+  color: var(--grayText);
+  font-size: 12px;
+  font-weight: 500;
+}
+.single-project .project-toolbar .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.single-project .project-toolbar .btn-group .dropdown-btn {
+  padding: 5px 12px;
+  border-color: var(--lightGrayText);
+}
+.single-project .project-toolbar .btn-group .dropdown-btn:hover {
+  background: var(--grayText);
+}
+.single-project .project-toolbar .btn-group .dropdown-button .dropdown-item {
+  font-size: 12px;
+}
+.single-project .project-toolbar .btn-group .dropdown-button .dropdown-item:hover {
+  background: var(--grayText);
+}
+
+.single-project .board {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 800px;
+  width: 100%;
+  overflow: auto;
+  margin-top: 15px;
+}

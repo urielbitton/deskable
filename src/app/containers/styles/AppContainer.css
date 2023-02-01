@@ -6,10 +6,16 @@
   overflow: hidden;
   background: var(--bg);
 }
+.app-container.hide-rightbar {
+  grid-template-columns: var(--sidebarWidth) auto;
+}
 
 .main-content {
   width: calc(100vw - var(--sidebarWidth) - var(--rightBarWidth));
   height: 100%;
+}
+.app-container.hide-rightbar .main-content {
+  width: calc(100vw - var(--sidebarWidth));
 }
 
 .mobile-sidebar-overlay {

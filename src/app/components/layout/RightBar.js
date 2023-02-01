@@ -3,7 +3,7 @@ import { useCalendarMonthEvents, useTodayTasks } from "app/hooks/calendarHooks"
 import { createTaskService, dateChangeService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Link } from "react-router-dom"
 import EventItem from "../calendars/EventItem"
 import TaskItem from "../calendars/TaskItem"
@@ -11,13 +11,15 @@ import AppButton from "../ui/AppButton"
 import AppCalendar from "../ui/AppCalendar"
 import { AppInput, AppSwitch } from "../ui/AppInputs"
 import AppTabsBar from "../ui/AppTabsBar"
+import IconContainer from "../ui/IconContainer"
 import NewEventModal from "./NewEventModal"
 import ProfileDropdown from "./ProfileDropdown"
 import './styles/RightBar.css'
 
 export default function RightBar() {
 
-  const { myUser, myUserID, myUserName, setToasts } = useContext(StoreContext)
+  const { myUser, myUserID, myUserName, setToasts,
+    hideRightBar, setHideRightBar } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const [tabsBarIndex, setTabsBarIndex] = useState(0)
   const [calendarRangeStartDate, setCalendarRangeStartDate] = useState(new Date())
@@ -74,6 +76,18 @@ export default function RightBar() {
 
   return (
     <div className="rightbar">
+      {
+        !hideRightBar &&
+        <IconContainer
+          icon="fas fa-grip-lines-vertical"
+          inverted
+          iconColor="var(--grayText)"
+          iconSize="16px"
+          dimensions="30px"
+          tooltip="Hide Calendar Bar"
+          onClick={() => setHideRightBar(true)}
+        />
+      }
       <div className="header">
         <div className="row">
           <ProfileDropdown

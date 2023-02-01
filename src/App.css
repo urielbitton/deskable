@@ -18,6 +18,7 @@ html, body {
   --darkGrayText: #3c4160;
   --lightGrayText: #D5D7E5;
   --inputBg: #f0f2f5;
+  --lightInputBg: #F6F8FA;
   --primarToast: rgba(124, 194, 68, 0.9);
   --primaryTrans: rgba(124, 194, 68, 0.2);
   --primaryShadow: 0 10px 12px 1px var(--primaryTrans);

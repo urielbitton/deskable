@@ -13,7 +13,7 @@ import RightBar from "app/components/layout/RightBar"
 
 export default function AppContainer() {
 
-  const { darkMode, pageLoading } = useContext(StoreContext)
+  const { darkMode, pageLoading, hideRightBar } = useContext(StoreContext)
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -28,14 +28,14 @@ export default function AppContainer() {
   },[])
 
   return (
-    <div className={`app-container ${ darkMode ? "dark-app" : "" }`}>
+    <div className={`app-container ${ darkMode ? "dark-app" : "" } ${hideRightBar ? 'hide-rightbar' : ''}`}>
       <HelmetTitle />
       <Sidebar />
       <div className="main-content">
         <Navbar />
         <RoutesContainer />
       </div>
-      <RightBar />
+      { !hideRightBar && <RightBar /> }
       <PageLoader loading={pageLoading} />
       <PreventTabClose preventClose={pageLoading} />
     </div>

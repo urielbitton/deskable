@@ -19,11 +19,15 @@
   flex-wrap: wrap;
 }
 .app-tabs-bar.no-spread .tab-header,
-.app-tabs-bar.no-spread .tab-item {
+.app-tabs-bar.no-spread > a {
   width: auto;
 }
 
-.app-tabs-bar .tab-item {
+.app-tabs-bar > a {
+  font-size: 14px;
+  color: var(--darkGrayText);
+}
+.app-tabs-bar > a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,43 +37,32 @@
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
   border-radius: 5px 5px 0 0;
-  font-size: 14px;
-  color: #aaa;
-  font-weight: 600;
-  background: #f1f1f1;
 }
-.app-tabs-bar .tab-item i {
-  margin-right: 10px;
-}
-.app-tabs-bar .tab-item::after {
+.app-tabs-bar > a::after {
   content: '';
   position: absolute;
-  top: -3px;
+  bottom: -3px;
   left: 0;
   right: 0;
   margin: auto;
   width: 0;
-  height: 3px;
+  height: 2px;
   background: var(--primary);
   transition: all 0.3s;
 }
-.app-tabs-bar .tab-item:hover::after,
-.app-tabs-bar .tab-item.active::after {
+.app-tabs-bar > a:hover::after,
+.app-tabs-bar > a.active::after {
   width: 100%;
 }
-.app-tabs-bar .tab-item:hover {
-  background: #f7f7f7;
+.app-tabs-bar > a.active {
+  color: var(--primary);
 }
-.app-tabs-bar .tab-item.active {
-  color: var(--darkGrayText);
-  background: #fff;
-}
-.app-tabs-bar .tab-item.not-active::after {
+.app-tabs-bar > a.not-active::after {
   width: 0;
 }
-.app-tabs-bar .tab-item.not-active:hover::after {
+.app-tabs-bar > a.not-active:hover::after {
   width: 100%;
 }
-.app-tabs-bar .tab-item.not-active {
+.app-tabs-bar > a.not-active {
   color: var(--darkGrayText);
 }

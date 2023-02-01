@@ -17,7 +17,7 @@ export default function ProjectsSidebar() {
   const projectsList = projects?.map((project, index) => {
     return <NavLink
       key={index}
-      to={`/projects/${project?.projectID}`}
+      to={`/projects/${project?.projectID}/current-sprint`}
     >
       <span>
         <i className="fas fa-hashtag" />

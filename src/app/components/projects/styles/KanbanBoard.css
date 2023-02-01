@@ -1,0 +1,18 @@
+.react-kanban-board {
+
+}
+.react-kanban-column {
+  background: var(--inputBg);
+  border-radius: 5px;
+  padding: 10px;
+}
+.react-kanban-board .board-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #fff;
+}
+.react-kanban-board .board-column-header .icon-container:hover {
+  background: var(--lightGrayText);
+}

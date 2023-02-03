@@ -1,56 +1,60 @@
-import React from 'react'
+import { infoToast } from "app/data/toastsTemplates"
+import { useBuildProjectBoard } from "app/hooks/projectsHooks"
+import { createProjectTaskService, deleteProjectColumnService, renameBoardColumnService } from "app/services/projectsServices"
+import { StoreContext } from "app/store/store"
+import React, { useContext, useState } from 'react'
+import { useParams } from "react-router-dom"
+import AppModal from "../ui/AppModal"
 import KanbanBoard from "./KanbanBoard"
 
-export default function ProjectBoard() {
+export default function ProjectBoard({project}) {
 
-  const board = {
-    columns: [
-      {
-        id: 1,
-        title: 'To Do',
-        cards: [
-          {
-            id: 1,
-            title: 'Add card',
-            description: 'Add capability to add a card in a column'
-          },
-        ]
-      },
-      {
-        id: 2,
-        title: 'Doing',
-        cards: [
-          {
-            id: 2,
-            title: 'Drag-n-drop support',
-            description: 'Move a card between the columns'
-          },
-        ]
-      },
-      {
-        id: 3,
-        title: 'Done',
-        cards: [
-          {
-            id: 3,
-            title: 'Done task',
-            description: 'Move a card between the columns'
-          },
-        ]
-      }
-    ]
+  const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
+  const projectID = useParams().projectID
+  const board = useBuildProjectBoard(projectID)
+  const [editTitleMode, setEditTitleMode] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false)
+
+  const removeColumn = (columnID) => {
+    const confirm = window.confirm('Are you sure you want to delete this column?')
+    if (!confirm) return setToasts(infoToast('Column deletion cancelled.'))
+    setPageLoading(true)
+    deleteProjectColumnService(
+      myOrgID, 
+      projectID, 
+      columnID, 
+      setPageLoading, 
+      setToasts
+    )
   }
 
-  const removeColumn = () => {
-
+  const renameColumn = (columnID, title) => {
+    renameBoardColumnService(
+      myOrgID,
+      projectID, 
+      columnID, 
+      title, 
+      setToasts
+    )
+    .then(() => {
+      setEditTitleMode(null)
+    })
   }
 
-  const renameColumn = () => {
-
-  }
-
-  const addCard = () => {
-
+  const addTask = (columnID, title) => {
+    createProjectTaskService(
+      myOrgID, 
+      myUserID, 
+      project, 
+      {
+        columnID,
+        title,
+      }, 
+      {
+        //entire task object from new task modal 
+      }, 
+      setLoading, setToasts)
   }
 
   return (
@@ -59,8 +63,17 @@ export default function ProjectBoard() {
         board={board}
         removeColumn={removeColumn}
         renameColumn={renameColumn}
-        addCard={addCard}
+        addTask={addTask}
+        editTitleMode={editTitleMode}
+        setEditTitleMode={setEditTitleMode}
       />
+      <AppModal
+        showModal={showNewTaskModal}
+        setShowModal={setShowNewTaskModal}
+        label="New Task"
+      >
+        {/* New task modal */}
+      </AppModal>
     </div>
   )
 }

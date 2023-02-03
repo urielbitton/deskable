@@ -31,7 +31,7 @@
 .notifications-page .toolbar select {
   background: none;
   border: none;
-  border-bottom: 1px solid var(--tableBorderColor);
+  border-bottom: 1px solid var(--tableBorder);
   border-radius: 0;
 }
 

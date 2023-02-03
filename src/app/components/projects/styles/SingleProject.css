@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-x: auto;
 }
 .single-project .project-header {
   padding-bottom: 10px;
@@ -95,13 +94,21 @@
   border-color: var(--lightGrayText);
 }
 .single-project .project-toolbar .btn-group .dropdown-btn:hover {
-  background: var(--grayText);
+  background: var(--inputBg);
+  color: var(--darkGrayText);
+}
+.single-project .project-toolbar .btn-group .dropdown-button {
+  z-index: 1000;
 }
 .single-project .project-toolbar .btn-group .dropdown-button .dropdown-item {
   font-size: 12px;
 }
 .single-project .project-toolbar .btn-group .dropdown-button .dropdown-item:hover {
-  background: var(--grayText);
+  background: var(--inputBg);
+}
+.single-project .project-toolbar .btn-group .dropdown-button .dropdown-item:hover span,
+.single-project .project-toolbar .btn-group .dropdown-button .dropdown-item:hover i {
+  color: var(--darkGrayText);
 }
 
 .single-project .project-toolbar .app-tabs-bar a {
@@ -115,4 +122,15 @@
   width: 100%;
   overflow: auto;
   margin-top: 10px;
+}
+
+.add-column-modal .appInput {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.add-column-modal .appInput h6 {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--darkGrayText);
 }

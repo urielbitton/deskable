@@ -17,7 +17,7 @@ export default function ProjectsSidebar() {
   const projectsList = projects?.map((project, index) => {
     return <NavLink
       key={index}
-      to={`/projects/${project?.projectID}/current-sprint`}
+      to={`/projects/${project?.projectID}/board`}
     >
       <span>
         <i className="fas fa-hashtag" />
@@ -41,8 +41,8 @@ export default function ProjectsSidebar() {
       </div>
       <div className="menu">
         <NavLink to="/projects">
-          <i className="fas fa-home" />
-          Home
+          <i className="fas fa-browser" />
+          Dashboard
         </NavLink>
         <NavLink to="/projects/updates">
           <i className="fas fa-clock" />

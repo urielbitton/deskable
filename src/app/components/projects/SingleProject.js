@@ -1,23 +1,71 @@
+import { infoToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
+import { createProjectColumnService } from "app/services/projectsServices"
+import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
-import React, { useState } from 'react'
-import { Link, NavLink, Route, Routes, useParams } from "react-router-dom"
+import React, { useContext, useState } from 'react'
+import { NavLink, Route, Routes, useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
+import AppModal from "../ui/AppModal"
 import AppTabsBar from "../ui/AppTabsBar"
 import Avatar from "../ui/Avatar"
 import DropdownButton from "../ui/DropdownButton"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
+import ProjectTasks from "./ProjectTasks"
 import './styles/SingleProject.css'
 
 export default function SingleProject() {
 
+  const { myOrgID, setToasts } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
   const [searchString, setSearchString] = useState('')
   const [showOptions, setShowOptions] = useState(false)
+  const [showColumnModal, setShowColumnModal] = useState(false)
+  const [columnTitle, setColumnTitle] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const resetColumnModal = () => {
+    setShowColumnModal(false)
+    setColumnTitle('')
+  }
+
+  const addColumn = () => {
+    if (!columnTitle) return setToasts(infoToast('Please enter a title for the column.'))
+    createProjectColumnService(
+      myOrgID,
+      projectID,
+      columnTitle,
+      setLoading,
+      setToasts
+    )
+    .then(() => {
+      resetColumnModal()
+    })
+  }
+
+  const addTask = () => {
+
+  }
+
+  const starProject = () => {
+
+  }
+
+  const initEditProject = () => {
+
+  }
+
+  const deleteProject = () => {
+
+  }
+
+  const archiveProject = () => {
+
+  }
 
   return project ? (
     <div className="single-project">
@@ -50,7 +98,7 @@ export default function SingleProject() {
             </small>
           </div>
           <AppInput
-            placeholder="Search"
+            placeholder="Search this project..."
             value={searchString}
             onChange={e => setSearchString(e.target.value)}
             iconright={<i className="fal fa-search" />}
@@ -82,25 +130,60 @@ export default function SingleProject() {
               setShowMenu={setShowOptions}
               className="dropdown-btn"
               items={[
-                { label: 'Add to favorites', icon: 'fas fa-star', onClick: () => console.log('Add to favorites') },
-                { label: 'Edit', icon: 'fas fa-pen', onClick: () => console.log('Edit') },
-                { label: 'Delete', icon: 'fas fa-trash', onClick: () => console.log('Delete') },
-                { label: 'Archive', icon: 'fas fa-archive', onClick: () => console.log('Archive') },
+                { label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) },
+                { label: 'Add Task', icon: 'fas fa-tasks', onClick: () => addTask() },
+                { label: 'Star Project', icon: 'fas fa-star', onClick: () => starProject() },
+                { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
+                { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
+                { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
               ]}
             />
           </div>
         </div>
         <div className="bottom-side">
-          <AppTabsBar noSpread spacedOut>
+          <AppTabsBar
+            noSpread
+            spacedOut={10}
+          >
             <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
-            <NavLink to={`/projects/${projectID}/current-sprint`}>Sprint</NavLink>
+            <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
+            <NavLink to={`/projects/${projectID}/tasks`}>Tasks</NavLink>
           </AppTabsBar>
         </div>
       </div>
       <Routes>
         <Route path="backlog" element={<ProjectBacklog />} />
-        <Route path="current-sprint" element={<ProjectBoard />} />
+        <Route path="board" element={<ProjectBoard project={project} />} />
+        <Route path="tasks" element={<ProjectTasks />} />
       </Routes>
+      <AppModal
+        showModal={showColumnModal}
+        setShowModal={setShowColumnModal}
+        label="Add Column"
+        portalClassName="add-column-modal"
+        actions={
+          <>
+            <AppButton
+              label="Add Column"
+              buttonType="primaryBtn"
+              onClick={() => addColumn()}
+              rightIcon={loading ? "fas fa-spinner fa-spin" : null}
+            />
+            <AppButton
+              label="Cancel"
+              buttonType="outlineBtn"
+              onClick={() => resetColumnModal()}
+            />
+          </>
+        }
+      >
+        <AppInput
+          label="Column Title"
+          placeholder="Enter a column title"
+          value={columnTitle}
+          onChange={e => setColumnTitle(e.target.value)}
+        />
+      </AppModal>
     </div>
   ) :
     null

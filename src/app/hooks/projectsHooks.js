@@ -1,4 +1,4 @@
-import { getOrgProjectByID, getOrgProjectTaskByID, getOrgProjectTasks, getProjectsByOrgID } from "app/services/projectsServices"
+import { getOrgProjectByID, getOrgProjectColumnByID, getOrgProjectColumns, getOrgProjectTaskByID, getOrgProjectTasks, getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, getProjectsByOrgID } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -26,13 +26,13 @@ export const useOrgProject = (projectID) => {
   return project
 }
 
-export const useOrgProjectTasks = (projectID) => {
+export const useOrgProjectTasks = (projectID, limit) => {
 
   const { myOrgID } = useContext(StoreContext)
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
-    getOrgProjectTasks(myOrgID, projectID, setTasks)
+    getOrgProjectTasks(myOrgID, projectID, setTasks, limit)
   }, [myOrgID, projectID])
 
   return tasks
@@ -48,4 +48,65 @@ export const useOrgProjectTask = (projectID, taskID) => {
   }, [myOrgID, projectID, taskID])
 
   return task
+}
+
+export const useOrgProjectColumns = (projectID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [columns, setColumns] = useState([])
+
+  useEffect(() => {
+    getOrgProjectColumns(myOrgID, projectID, setColumns)
+  }, [myOrgID, projectID])
+
+  return columns
+}
+
+export const useOrgProjectColumn = (projectID, columnID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [column, setColumn] = useState(null)
+
+  useEffect(() => {
+    getOrgProjectColumnByID(myOrgID, projectID, columnID, setColumn)
+  }, [myOrgID, projectID, columnID])
+
+  return column
+}
+
+export const useOrgProjectColumnTasks = (projectID, columnID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    getOrgProjectTasksByColumnID(myOrgID, projectID, columnID, setTasks)
+  }, [myOrgID, projectID, columnID])
+
+  return tasks
+}
+
+export const useBuildProjectBoard = (projectID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const columns = useOrgProjectColumns(projectID)
+  const [tasks, setTasks] = useState(null)
+
+  useEffect(() => {
+    getOrgProjectTasksByColumnsArray(myOrgID, projectID, columns, setTasks)
+  }, [myOrgID, projectID, columns])
+
+  return {
+    columns: columns?.map(column => ({
+      id: column?.columnID,
+      title: column?.title,
+      cards: tasks
+      ?.filter(task => task?.columnID === column?.columnID)
+      .map(task => ({
+        id: task?.taskID,
+        title: task?.title,
+        description: task?.description
+      }))
+    }))
+  }
 }

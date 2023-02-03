@@ -54,7 +54,7 @@
   border: none;
   font-size: 13px;
   background: none;
-  border-bottom: 1px solid var(--tableBorderColor);
+  border-bottom: 1px solid var(--tableBorder);
   width: 200px;
   border-radius: 0;
 }

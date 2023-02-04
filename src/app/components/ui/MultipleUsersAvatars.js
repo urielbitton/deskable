@@ -6,12 +6,12 @@ import './styles/MultipleUsersAvatars.css'
 
 export default function MultipleUsersAvatars(props) {
 
-  const { userIDs, avatarsToDisplay, avatarDimensions } = props
+  const { userIDs, maxAvatars, avatarDimensions } = props
   const avatarUsers = useUsers(userIDs)
   const navigate = useNavigate()
 
   const avatarRows = avatarUsers
-    ?.slice(0, avatarsToDisplay)
+    ?.slice(0, maxAvatars)
     .map((user, index) => {
       return <Avatar
         key={index}
@@ -28,12 +28,12 @@ export default function MultipleUsersAvatars(props) {
     <div className="multiple-users-avatars">
       {avatarRows}
       {
-        avatarUsers?.length > avatarsToDisplay &&
+        avatarUsers?.length > maxAvatars &&
         <div
           className="more-avatars-circle"
           style={{ width: avatarDimensions, height: avatarDimensions }}
         >
-          +${avatarUsers.length - avatarsToDisplay}
+          +${avatarUsers.length - maxAvatars}
         </div>
       }
     </div>

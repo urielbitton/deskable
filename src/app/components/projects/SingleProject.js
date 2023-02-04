@@ -92,7 +92,7 @@ export default function SingleProject() {
               Team:
               <MultipleUsersAvatars
                 userIDs={project.members}
-                avatarsToDisplay={4}
+                maxAvatars={4}
                 avatarDimensions={24}
               />
             </small>

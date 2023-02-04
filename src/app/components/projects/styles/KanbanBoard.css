@@ -5,12 +5,12 @@
   background: var(--inputBg);
   border-radius: 5px;
   padding: 10px;
+  width: 300px;
 }
 .react-kanban-board .board-column-header {
   display: flex;
   flex-direction: column;
   padding-bottom: 10px;
-  border-bottom: 2px solid #fff;
 }
 .react-kanban-board .board-column-header .dropdown-item:hover {
   background: var(--inputBg);

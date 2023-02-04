@@ -9,16 +9,6 @@
 .app-badge.light {
   background: var(--extraLightPrimary);
 }
-.app-badge.blue {
-  background: var(--lightBlue);
-}
-.app-badge.blue h6,
-.app-badge.blue i {
-  color: var(--blue);
-}
-.app-badge.clickable {
-  cursor: pointer;
-}
 .app-badge.light h6,
 .app-badge.light i {
   color: var(--primary);
@@ -29,4 +19,7 @@
 }
 .app-badge i {
   color: #fff;
+}
+.app-badge.clickable {
+  cursor: pointer;
 }

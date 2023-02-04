@@ -11,9 +11,10 @@ import { StoreContext } from "app/store/store"
 export default function FileUploader(props) {
 
   const { setToasts } = useContext(StoreContext)
-  const { inputRef, isDragging, setIsDragging, uploadedFiles, setUploadedFiles,
-    maxFileSize, icon, text, accept="image/*, application/*",
-    truncateFilenameAmpount=25 } = props
+  const { inputRef, isDragging, setIsDragging, uploadedFiles, 
+    setUploadedFiles, maxFileSize, icon, text, 
+    accept="image/*, application/*", truncateFilenameAmpount=25,
+    label, className="" } = props
   const [loading, setLoading] = useState(false)
   const preventClose = !!uploadedFiles?.length || loading
 
@@ -49,7 +50,8 @@ export default function FileUploader(props) {
   })
 
   return (
-    <div className="app-file-uploader">
+    <div className={`app-file-uploader ${className}`}>
+      { label && <h6>{label}</h6> }
       <label className={`upload-container ${isDragging ? 'dragging' : ''}`}>
         <input 
           type="file" 

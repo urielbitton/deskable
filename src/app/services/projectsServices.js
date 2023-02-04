@@ -1,7 +1,11 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
-import { collection, doc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
+import {
+  collection, doc, getDocs, limit,
+  onSnapshot, orderBy, query, where, writeBatch
+} from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import { uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getProjectsByOrgID = (orgID, setProjects, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects`)
@@ -11,7 +15,7 @@ export const getProjectsByOrgID = (orgID, setProjects, lim) => {
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
-    setProjects(snapshot.docs.map(doc => doc.data() ))
+    setProjects(snapshot.docs.map(doc => doc.data()))
   })
 }
 
@@ -67,7 +71,8 @@ export const getOrgProjectTasksByColumnID = (orgID, projectID, columnID, setTask
   })
 }
 
-export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columnsArray, setTasks) => {
+export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columnsArray) => {
+  const tasks = []
   return Promise.all(columnsArray.map(column => {
     const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
     const q = query(
@@ -75,16 +80,19 @@ export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columnsArray,
       orderBy('number', 'asc'),
       where('columnID', '==', column.columnID)
     )
-    onSnapshot(q, (snapshot) => {
-      return snapshot.docs.map(doc => doc.data())
-    })
+    return getDocs(q)
+      .then((snapshot) => {
+        if(!snapshot.empty) {
+          return tasks.push(...snapshot.docs.map(doc => doc.data()))
+        }
+      })
   }))
-  .then((tasks) => {
-    setTasks(tasks)
-  })
-  .catch(err => {
-    console.log(err)
-  })
+    .then(() => {
+      return tasks
+    })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 export const renameBoardColumnService = (orgID, projectID, columnID, title, setToasts) => {
@@ -92,13 +100,13 @@ export const renameBoardColumnService = (orgID, projectID, columnID, title, setT
   return updateDB(path, columnID, {
     title
   })
-  .then(() => {
-    setToasts(successToast('Column title updated successfully.'))
-  })
-  .catch(err => {
-    console.log(err)
-    setToasts(errorToast('There was a problem updating the column title. Please try again.'))
-  })
+    .then(() => {
+      setToasts(successToast('Column title updated successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setToasts(errorToast('There was a problem updating the column title. Please try again.'))
+    })
 }
 
 export const createProjectColumnService = (orgID, projectID, title, setLoading, setToasts) => {
@@ -114,61 +122,104 @@ export const createProjectColumnService = (orgID, projectID, title, setLoading, 
     projectID,
     tasksNum: 0,
   })
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast('Column created successfully.'))
-  })
-  .catch(err => {
-    console.log(err)
-    setLoading(false)
-    setToasts(errorToast('There was a problem creating the column. Please try again.'))
-  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Column created successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem creating the column. Please try again.'))
+    })
 }
 
 export const deleteProjectColumnService = (orgID, projectID, columnID, setLoading, setToasts) => {
   setLoading(true)
   const path = `organizations/${orgID}/projects/${projectID}/columns`
   return deleteDB(path, columnID)
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast('Column deleted successfully.'))
-  })
-  .catch(err => {
-    console.log(err)
-    setLoading(false)
-    setToasts(errorToast('There was a problem deleting the column. Please try again.'))
-  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Column deleted successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem deleting the column. Please try again.'))
+    })
 }
 
-export const createProjectTaskService = (orgID, userID, project, column, task, setLoading, setToasts) => {
+export const createProjectTaskService = (orgID, userID, project, columnID, task, files, setLoading, setToasts) => {
   setLoading(true)
-  const taskNumber = task.number + 1 || 0
   const path = `organizations/${orgID}/projects/${project.projectID}/tasks`
   const docID = getRandomDocID(path)
-  return setDB(path, docID, {
-    assigneesIDs: task.assigneesIDs,
-    columnID: column.columnID,
-    creatorID: userID,
-    dateCreated: new Date(),
-    dateModified: new Date(),
-    description: task.description,
-    number: taskNumber,
-    priority: task.priority,
-    projectID: project.projectID,
-    sprintID: null,
-    status: column.title.toLowerCase(),
-    taskID: docID,
-    taskNum: `${project.name.slice(0, 3).toUpperCase()}-${taskNumber < 10 && '0'}${taskNumber}`,
-    taskType: task.taskTpe,
-    title: task.title
-  })
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast('Task created successfully.'))
-  })
-  .catch(err => {
-    console.log(err)
-    setLoading(false)
-    setToasts(errorToast('There was a problem creating the task. Please try again.'))
-  })
+  const storagePath = `organizations/${orgID}/projects/${project.projectID}/tasks/${docID}/files`
+  return uploadMultipleFilesToFireStorage(files, storagePath, null)
+    .then((uploadedFiles) => {
+      return setDB(path, docID, {
+        assigneesIDs: task.assigneesIDs,
+        columnID,
+        creatorID: userID,
+        dateCreated: new Date(),
+        dateModified: new Date(),
+        description: task.description,
+        number: task.taskNumber,
+        priority: task.priority,
+        projectID: project.projectID,
+        sprintID: null,
+        status: task.status,
+        taskID: docID,
+        taskNum: `${project.name.slice(0, 3).toUpperCase()}-${task.taskNumber < 10 && '0'}${task.taskNumber}`,
+        taskType: task.taskType,
+        title: task.taskTitle
+      })
+        .then(() => {
+          if (!uploadedFiles.length) {
+            return Promise.resolve()
+          }
+          const batch = writeBatch(db)
+          uploadedFiles.forEach(file => {
+            const filesPath = `organizations/${orgID}/projects/${project.projectID}/tasks/${docID}/files`
+            const filesDocID = getRandomDocID(filesPath)
+            const fileRef = doc(db, filesPath, filesDocID)
+            batch.set(fileRef, {
+              dateUploaded: new Date(),
+              fileID: filesDocID,
+              name: file.file.name,
+              projectID: project.projectID,
+              size: file.file.size,
+              taskID: docID,
+              type: file.file.type,
+              url: file.downloadURL
+            })
+          })
+          return batch.commit()
+        })
+        .catch(err => {
+          console.log(err)
+          setLoading(false)
+          setToasts(errorToast('There was a problem creating the task. Please try again.'))
+        })
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Task created successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem creating the task. Please try again.'))
+    })
+}
+
+export const getLastProjectTaskNumber = (orgID, projectID) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    orderBy('number', 'desc'),
+    limit(1)
+  )
+  return getDocs(q)
+    .then((snapshot) => {
+      return snapshot.docs.map(doc => doc.data().number)
+    })
 }

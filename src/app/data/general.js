@@ -109,3 +109,53 @@ export const reportOrgPostOptions = [
     value: 'other',
   },
 ]
+
+export const taskPriorityOptions = [
+  {
+    label: 'Standby',
+    value: 'standby',
+  },
+  {
+    label: 'Low',
+    value: 'low',
+  },
+  {
+    label: 'Medium',
+    value: 'medium',
+  },
+  {
+    label: 'High',
+    value: 'high',
+  },
+  {
+    label: 'Urgent',
+    value: 'urgent',
+  }
+]
+
+export const taskTypeOptions = [
+  {
+    label: 'Story',
+    value: 'story',
+  },
+  {
+    label: 'Feature',
+    value: 'feature',
+  },
+  {
+    label: 'Task',
+    value: 'task',
+  },
+  {
+    label: 'Bug',
+    value: 'bug',
+  },
+  {
+    label: 'Refactor',
+    value: 'refactor',
+  },
+  {
+    label: 'Test',
+    value: 'test',
+  },
+]

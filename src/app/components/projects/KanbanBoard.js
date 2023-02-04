@@ -7,7 +7,7 @@ import { AppInput } from "../ui/AppInputs"
 
 export default function KanbanBoard(props) {
 
-  const { board, removeColumn, renameColumn, addTask,
+  const { board, removeColumn, renameColumn, initAddTask,
     editTitleMode, setEditTitleMode } = props
 
   return (
@@ -17,7 +17,7 @@ export default function KanbanBoard(props) {
           title={title}
           renameColumn={renameColumn}
           removeColumn={removeColumn}
-          addTask={addTask}
+          initAddTask={initAddTask}
           columnID={id}
           editTitleMode={editTitleMode}
           setEditTitleMode={setEditTitleMode}
@@ -32,7 +32,7 @@ export default function KanbanBoard(props) {
 
 export function ColumnHeader(props) {
 
-  const { title, columnID, renameColumn, removeColumn, addTask,
+  const { title, columnID, renameColumn, removeColumn, initAddTask,
     editTitleMode, setEditTitleMode } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const [editTitle, setEditTitle] = useState('')
@@ -56,8 +56,8 @@ export function ColumnHeader(props) {
     removeColumn(columnID)
   }
 
-  const addColumnTask = () => {
-    addTask(columnID, title)
+  const initAddColumnTask = () => {
+    initAddTask(columnID)
   }
 
   return (
@@ -99,7 +99,7 @@ export function ColumnHeader(props) {
       </div>
       <div
         className="add-card-bar"
-        onClick={addColumnTask}
+        onClick={initAddColumnTask}
       >
         <i className="fal fa-plus" />
       </div>

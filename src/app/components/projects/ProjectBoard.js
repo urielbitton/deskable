@@ -1,20 +1,35 @@
 import { infoToast } from "app/data/toastsTemplates"
-import { useBuildProjectBoard } from "app/hooks/projectsHooks"
-import { createProjectTaskService, deleteProjectColumnService, renameBoardColumnService } from "app/services/projectsServices"
+import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
+import { createProjectTaskService, deleteProjectColumnService, getLastProjectTaskNumber, renameBoardColumnService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
-import AppModal from "../ui/AppModal"
 import KanbanBoard from "./KanbanBoard"
+import NewTaskModal from "./NewTaskModal"
+import TaskModal from "./TaskModal"
 
 export default function ProjectBoard({project}) {
 
   const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
   const board = useBuildProjectBoard(projectID)
+  const columns = useOrgProjectColumns(projectID)
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
+  const [viewTaskModal, setViewTaskModal] = useState(false)
+  const [newColumnID, setNewColumnID] = useState(null)
+  const [taskType, setTaskType] = useState('')
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskNumber, setTaskNumber] = useState(0)
+  const [status, setStatus] = useState('')
+  const [addTo, setAddTo] = useState('sprint')
+  const [description, setDescription] = useState('')
+  const [files, setFiles] = useState([])
+  const [priority, setPriority] = useState('medium')
+  const [assigneesIDs, setAssigneesIDs] = useState([])
+
+  const allowAddTask = taskTitle.length > 0
 
   const removeColumn = (columnID) => {
     const confirm = window.confirm('Are you sure you want to delete this column?')
@@ -42,19 +57,46 @@ export default function ProjectBoard({project}) {
     })
   }
 
-  const addTask = (columnID, title) => {
+  const initAddTask = (columnID) => {
+    getLastProjectTaskNumber(myOrgID, projectID)
+    .then((number) => {
+      setTaskNumber(+number)
+      setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${(+number+1) < 10 && '0'}${+number+1}`)
+      setNewColumnID(columnID)
+      setShowNewTaskModal(true)
+      setStatus(columns[0].title)
+    })
+  }
+
+  const resetNewTaskModal = () => {
+    setNewColumnID(null)
+    setTaskTitle(null)
+    setShowNewTaskModal(false)
+  }
+
+  const addTask = () => {
+    if(!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
     createProjectTaskService(
       myOrgID, 
       myUserID, 
       project, 
+      newColumnID,
       {
-        columnID,
-        title,
+        assigneesIDs,
+        description,
+        taskNumber,
+        priority,
+        status,
+        taskType,
+        taskTitle,
       }, 
-      {
-        //entire task object from new task modal 
-      }, 
-      setLoading, setToasts)
+      files,
+      setLoading, 
+      setToasts
+    )
+    .then(() => {
+      resetNewTaskModal()
+    })
   }
 
   return (
@@ -63,17 +105,40 @@ export default function ProjectBoard({project}) {
         board={board}
         removeColumn={removeColumn}
         renameColumn={renameColumn}
-        addTask={addTask}
+        initAddTask={initAddTask}
         editTitleMode={editTitleMode}
         setEditTitleMode={setEditTitleMode}
       />
-      <AppModal
+      <NewTaskModal
         showModal={showNewTaskModal}
         setShowModal={setShowNewTaskModal}
-        label="New Task"
-      >
-        {/* New task modal */}
-      </AppModal>
+        label="Create Task"
+        onSubmit={addTask}
+        onCancel={() => resetNewTaskModal()}
+        columns={columns}
+        taskType={taskType}
+        setTaskType={setTaskType}
+        taskTitle={taskTitle}
+        setTaskTitle={setTaskTitle}
+        status={status}
+        setStatus={setStatus}
+        addTo={addTo}
+        setAddTo={setAddTo}
+        description={description}
+        setDescription={setDescription}
+        files={files}
+        setFiles={setFiles}
+        priority={priority}
+        setPriority={setPriority}
+        assigneesIDs={assigneesIDs}
+        setAssigneesIDs={setAssigneesIDs}
+        loading={loading}
+      />
+      <TaskModal
+        showModal={viewTaskModal}
+        setShowModal={setViewTaskModal}
+        label="Task Details"
+      />
     </div>
   )
 }

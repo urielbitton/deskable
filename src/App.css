@@ -58,7 +58,7 @@ img {
   object-fit: cover;
   max-width: 100%;
 }
-button:not(.react-calendar button) {
+button:not(.react-calendar button, .rsw-editor button) {
   outline: none;
   user-select: none;
   cursor: pointer;
@@ -78,6 +78,13 @@ button:disabled {
   opacity: 0.5;
   pointer-events: none;
   cursor: auto;
+}
+.rsw-editor button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 40px;
 }
 a { 
   text-decoration: none;

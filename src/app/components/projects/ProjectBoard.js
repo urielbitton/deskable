@@ -1,4 +1,4 @@
-import { taskTypeOptions } from "app/data/general"
+import { taskTypeOptions } from "app/data/projectsData"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
 import { createProjectTaskService, deleteProjectColumnService, 
@@ -13,10 +13,9 @@ import TaskModal from "./TaskModal"
 export default function ProjectBoard({project}) {
 
   const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
-  const [columnUpdate, setColumnUpdate] = useState(0)
   const projectID = useParams().projectID
+  const board = useBuildProjectBoard(projectID)
   const columns = useOrgProjectColumns(projectID)
-  const board = useBuildProjectBoard(projectID, columnUpdate)
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
@@ -99,9 +98,12 @@ export default function ProjectBoard({project}) {
       setToasts
     )
     .then(() => {
-      setColumnUpdate(Date.now())
       resetNewTaskModal()
     })
+  }
+
+  const onCardDragEnd = (card, from, to) => {
+    console.log(card, from, to)
   }
 
   return (
@@ -111,6 +113,7 @@ export default function ProjectBoard({project}) {
         removeColumn={removeColumn}
         renameColumn={renameColumn}
         initAddTask={initAddTask}
+        onCardDragEnd={onCardDragEnd}
         editTitleMode={editTitleMode}
         setEditTitleMode={setEditTitleMode}
         tasksPath={tasksPath}

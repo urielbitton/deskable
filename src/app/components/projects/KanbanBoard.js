@@ -8,7 +8,8 @@ import BoardCard from "./BoardCard"
 export default function KanbanBoard(props) {
 
   const { board, removeColumn, renameColumn, initAddTask,
-    editTitleMode, setEditTitleMode, tasksPath } = props
+    editTitleMode, setEditTitleMode, tasksPath, 
+    onCardDragEnd } = props
 
   return (
     <Board
@@ -32,6 +33,7 @@ export default function KanbanBoard(props) {
           tasksPath={tasksPath}
         />
       )}
+      onCardDragEnd={onCardDragEnd}
     >
       {board}
     </Board>

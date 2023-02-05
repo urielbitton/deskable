@@ -1,4 +1,4 @@
-import { taskPriorityOptions, taskTypeOptions } from "app/data/general"
+import { taskPriorityOptions, taskTypeOptions } from "app/data/projectsData"
 import React, { useState } from 'react'
 import AppButton from "../ui/AppButton"
 import { AppInput, AppSelect } from "../ui/AppInputs"

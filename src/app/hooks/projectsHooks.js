@@ -93,12 +93,8 @@ export const useBuildProjectBoard = (projectID, columnUpdate) => {
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
-    if (myOrgID && projectID && columns)
-      getOrgProjectTasksByColumnsArray(myOrgID, projectID, columns)
-      .then((tasks) => {
-        // @ts-ignore
-        setTasks(tasks)
-      })
+    if (myOrgID && projectID && columns.length)
+      getOrgProjectTasksByColumnsArray(myOrgID, projectID, columns, setTasks)
   }, [myOrgID, projectID, columns, columnUpdate])
 
   return {

@@ -30,7 +30,7 @@ export const getOrgProjectTasks = (orgID, projectID, setTasks, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('number', 'asc'),
+    orderBy('position', 'asc'),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -63,7 +63,7 @@ export const getOrgProjectTasksByColumnID = (orgID, projectID, columnID, setTask
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('number', 'asc'),
+    orderBy('position', 'asc'),
     where('columnID', '==', columnID)
   )
   onSnapshot(q, (snapshot) => {
@@ -71,28 +71,16 @@ export const getOrgProjectTasksByColumnID = (orgID, projectID, columnID, setTask
   })
 }
 
-export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columnsArray) => {
-  const tasks = []
-  return Promise.all(columnsArray.map(column => {
-    const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
-    const q = query(
-      docRef,
-      orderBy('number', 'asc'),
-      where('columnID', '==', column.columnID)
-    )
-    return getDocs(q)
-      .then((snapshot) => {
-        if(!snapshot.empty) {
-          return tasks.push(...snapshot.docs.map(doc => doc.data()))
-        }
-      })
-  }))
-    .then(() => {
-      return tasks
-    })
-    .catch(err => {
-      console.log(err)
-    })
+export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columns, setTasks) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    orderBy('position', 'asc'),
+    where('columnID', 'in', columns.map(column => column.columnID))
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
 }
 
 export const renameBoardColumnService = (orgID, projectID, columnID, title, setToasts) => {
@@ -161,7 +149,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         dateCreated: new Date(),
         dateModified: new Date(),
         description: task.description,
-        number: task.taskNumber,
+        position: task.taskNumber,
         priority: task.priority,
         projectID: project.projectID,
         sprintID: null,
@@ -278,11 +266,11 @@ export const getLastProjectTaskNumber = (orgID, projectID) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('number', 'desc'),
+    orderBy('position', 'desc'),
     limit(1)
   )
   return getDocs(q)
     .then((snapshot) => {
-      return snapshot.docs.map(doc => doc.data().number)
+      return snapshot.docs.map(doc => doc.data().position)
     })
 }

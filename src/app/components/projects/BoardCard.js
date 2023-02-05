@@ -1,3 +1,4 @@
+import { switchTaskType } from "app/data/projectsData"
 import { useDocsCount } from "app/hooks/userHooks"
 import React, { useState } from 'react'
 import AppBadge from "../ui/AppBadge"
@@ -40,6 +41,10 @@ export default function BoardCard(props) {
           <small>{taskNum}</small>
           <AppBadge
             label={taskType}
+            color={switchTaskType(taskType).color}
+            bgColor={`${switchTaskType(taskType).color}22`}
+            icon={switchTaskType(taskType).icon}
+            iconSize="10px"
             fontSize="11px"
           />
         </div>

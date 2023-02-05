@@ -31,7 +31,7 @@ export function useUsers(userIDs) {
   return appUsers
 }
 
-export const useDocsCount = (path) => {
+export const useDocsCount = (path, updateTrigger) => {
 
   const [count, setCount] = useState(0)
 
@@ -40,7 +40,7 @@ export const useDocsCount = (path) => {
     .then(data => {
       setCount(data.data().count)
     })
-  }, [path])
+  }, [path, updateTrigger])
 
   return count
 }

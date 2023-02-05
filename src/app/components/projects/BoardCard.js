@@ -1,3 +1,4 @@
+import { useDocsCount } from "app/hooks/userHooks"
 import React, { useState } from 'react'
 import AppBadge from "../ui/AppBadge"
 import DropdownIcon from "../ui/DropDownIcon"
@@ -8,8 +9,10 @@ export default function BoardCard(props) {
 
   const { taskID, title, taskNum, taskType, assigneesIDs,
     projectID } = props.task
-  const { dragging } = props
+  const { dragging, tasksPath } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
+  const filesNum = useDocsCount(`${tasksPath}/${taskID}/files`)
+  const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
   // const comments = useProjectTaskComments(projectID, taskID)
 
   return (
@@ -49,10 +52,10 @@ export default function BoardCard(props) {
         />
         <div className="stats">
           <span>
-            3 <i className="fas fa-comment" />
+            {filesNum} <i className="fas fa-comment" />
           </span>
           <span>
-            2 <i className="fas fa-paperclip" />
+            {commentsNum} <i className="fas fa-paperclip" />
           </span>
         </div>
       </div>

@@ -5,7 +5,7 @@ import DropdownIcon from "../ui/DropDownIcon"
 export default function BoardColumn(props) {
 
   const { title, columnID, renameColumn, removeColumn, initAddTask,
-    editTitleMode, setEditTitleMode } = props
+    editTitleMode, setEditTitleMode, tasksNum } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const [editTitle, setEditTitle] = useState('')
   const notColumnEditing = editTitleMode !== columnID
@@ -37,7 +37,7 @@ export default function BoardColumn(props) {
       <div className="top">
         {
           editTitleMode !== columnID ?
-            <h5>{title}</h5> :
+            <h5>{title} {tasksNum > 0 && `(${tasksNum})`}</h5> :
             <AppInput
               placeholder="Column title"
               value={editTitle}

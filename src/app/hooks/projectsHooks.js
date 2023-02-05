@@ -103,8 +103,8 @@ export const useBuildProjectBoard = (projectID, columnUpdate) => {
 
   return {
     columns: columns?.map(column => ({
+      ...column,
       id: column?.columnID,
-      title: column?.title,
       cards: tasks
         ?.filter(task => task?.columnID === column?.columnID)
         .map(task => ({

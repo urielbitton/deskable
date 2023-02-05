@@ -31,6 +31,7 @@ export default function ProjectBoard({project}) {
   const [files, setFiles] = useState([])
   const [priority, setPriority] = useState('medium')
   const [assigneesIDs, setAssigneesIDs] = useState([])
+  const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
 
   const allowAddTask = taskTitle?.length > 0
 
@@ -112,6 +113,7 @@ export default function ProjectBoard({project}) {
         initAddTask={initAddTask}
         editTitleMode={editTitleMode}
         setEditTitleMode={setEditTitleMode}
+        tasksPath={tasksPath}
       />
       <NewTaskModal
         showModal={showNewTaskModal}

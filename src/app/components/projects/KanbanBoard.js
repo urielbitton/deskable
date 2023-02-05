@@ -8,7 +8,7 @@ import BoardCard from "./BoardCard"
 export default function KanbanBoard(props) {
 
   const { board, removeColumn, renameColumn, initAddTask,
-    editTitleMode, setEditTitleMode } = props
+    editTitleMode, setEditTitleMode, tasksPath } = props
 
   return (
     <Board
@@ -19,6 +19,7 @@ export default function KanbanBoard(props) {
           removeColumn={removeColumn}
           initAddTask={initAddTask}
           columnID={column.id}
+          tasksNum={column.tasksNum}
           editTitleMode={editTitleMode}
           setEditTitleMode={setEditTitleMode}
         />
@@ -28,6 +29,7 @@ export default function KanbanBoard(props) {
         <BoardCard 
           dragging={dragging}
           task={task}
+          tasksPath={tasksPath}
         />
       )}
     >

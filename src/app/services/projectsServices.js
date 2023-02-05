@@ -210,6 +210,70 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
     })
 }
 
+export const updateProjectTaskService = (orgID, projectID, taskID, task, files, setLoading, setToasts) => {
+  setLoading(true)
+  const path = `organizations/${orgID}/projects/${projectID}/tasks`
+  const storagePath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
+  return uploadMultipleFilesToFireStorage(files, storagePath, null)
+    .then((uploadedFiles) => {
+      return updateDB(path, taskID, {
+        ...task,
+        dateModified: new Date()
+      })
+        .then(() => {
+          if (!uploadedFiles.length) {
+            return Promise.resolve()
+          }
+          const batch = writeBatch(db)
+          uploadedFiles.forEach(file => {
+            const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
+            const filesDocID = getRandomDocID(filesPath)
+            const fileRef = doc(db, filesPath, filesDocID)
+            batch.set(fileRef, {
+              dateUploaded: new Date(),
+              fileID: filesDocID,
+              name: file.file.name,
+              projectID,
+              size: file.file.size,
+              taskID,
+              type: file.file.type,
+              url: file.downloadURL
+            })
+          })
+          return batch.commit()
+        })
+        .catch(err => {
+          console.log(err)
+          setLoading(false)
+          setToasts(errorToast('There was a problem updating the task. Please try again.', true))
+        })
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Task updated successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem updating the task. Please try again.', true))
+    })
+}
+
+export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, setToasts) => {
+  setLoading(true)
+  const path = `organizations/${orgID}/projects/${projectID}/tasks`
+  return deleteDB(path, taskID)
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Task deleted successfully.'))
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem deleting the task. Please try again.', true))
+    })
+}
+
 export const getLastProjectTaskNumber = (orgID, projectID) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(

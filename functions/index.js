@@ -18,11 +18,11 @@ const employeesIndex = client.initIndex('employees_index')
 
 exports.addToIndexEmployees = functions
   .region('northamerica-northeast1')
-  .firestore.document('organizations/{organizationID}/employees/{employeeID}').onCreate((snapshot, context) => {
+  .firestore.document('organizations/{orgID}/employees/{employeeID}').onCreate((snapshot, context) => {
     const data = snapshot.data()
     return updateDB('organizations', data.orgID, {
-        employeesIDs: firebaseArrayAdd(data.employeeID),
-      })
+      employeesIDs: firebaseArrayAdd(data.employeeID),
+    })
       .then(() => {
         return employeesIndex.saveObject({ ...data, objectID: snapshot.id })
       })
@@ -30,14 +30,14 @@ exports.addToIndexEmployees = functions
 
 exports.updateIndexEmployees = functions
   .region('northamerica-northeast1')
-  .firestore.document('organizations/{organizationID}/employees/{employeeID}').onUpdate((change) => {
+  .firestore.document('organizations/{orgID}/employees/{employeeID}').onUpdate((change) => {
     const newData = change.after.data()
     return employeesIndex.saveObject({ ...newData, objectID: change.after.id })
   })
 
 exports.deleteFromIndexEmployees = functions
   .region('northamerica-northeast1')
-  .firestore.document('organizations/{organizationID}/employees/{employeeID}').onDelete((snapshot, context) => {
+  .firestore.document('organizations/{orgID}/employees/{employeeID}').onDelete((snapshot, context) => {
     const data = snapshot.data()
     return updateDB('organizations', data.orgID, {
       employeesIDs: firebaseArrayRemove(data.employeeID),
@@ -47,8 +47,28 @@ exports.deleteFromIndexEmployees = functions
       })
   })
 
+exports.onCreateProjectTask = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onCreate((snapshot, context) => {
+    const orgID = context.params.orgID
+    const data = snapshot.data()
+    return updateDB(`organizations/${orgID}/projects/${data.projectID}/columns`, data.columnID, {
+      tasksNum: firebaseIncrement(1),
+    })
+  })
 
-  //utility functions
+exports.onDeleteProjectTask = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onDelete((snapshot, context) => {
+    const orgID = context.params.orgID
+    const data = snapshot.data()
+    return updateDB(`organizations/${orgID}/projects/${data.projectID}/columns`, data.columnID, {
+      tasksNum: firebaseIncrement(-1),
+    })
+  })
+
+
+//utility functions
 function createNotification(userID, title, text, icon, url) {
   const notifPath = `users/${userID}/notifications`
   const docID = getRandomDocID(notifPath)
@@ -87,7 +107,7 @@ function firebaseArrayAdd(value) {
   return firebase.firestore.FieldValue.arrayUnion(value)
 }
 
-function firebaseArrayRemove (value) {
+function firebaseArrayRemove(value) {
   return firebase.firestore.FieldValue.arrayRemove(value)
 }
 

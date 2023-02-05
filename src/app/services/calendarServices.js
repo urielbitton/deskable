@@ -103,7 +103,7 @@ export const createCalendarEventService = (userID, event, setToasts, setLoading)
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast('Error saving event. Please try again.'))
+      setToasts(errorToast('Error saving event. Please try again.', true))
     })
 }
 
@@ -119,7 +119,7 @@ export const updateCalendarEventService = (userID, event, setToasts, setLoading)
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast('Error updating event. Please try again.'))
+      setToasts(errorToast('Error updating event. Please try again.', true))
     })
 }
 

@@ -86,7 +86,7 @@ export const useOrgProjectColumnTasks = (projectID, columnID) => {
   return tasks
 }
 
-export const useBuildProjectBoard = (projectID) => {
+export const useBuildProjectBoard = (projectID, columnUpdate) => {
 
   const { myOrgID } = useContext(StoreContext)
   const columns = useOrgProjectColumns(projectID)
@@ -95,20 +95,21 @@ export const useBuildProjectBoard = (projectID) => {
   useEffect(() => {
     if (myOrgID && projectID && columns)
       getOrgProjectTasksByColumnsArray(myOrgID, projectID, columns)
-        .then((tasks) => {
-          // @ts-ignore
-          setTasks(tasks)
-        })
-  }, [myOrgID, projectID, columns])
+      .then((tasks) => {
+        // @ts-ignore
+        setTasks(tasks)
+      })
+  }, [myOrgID, projectID, columns, columnUpdate])
 
   return {
     columns: columns?.map(column => ({
-      columnID: column?.columnID,
+      id: column?.columnID,
       title: column?.title,
       cards: tasks
         ?.filter(task => task?.columnID === column?.columnID)
         .map(task => ({
-          ...task
+          ...task,
+          id: task?.taskID,
         }))
     }))
   }

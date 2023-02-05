@@ -18,11 +18,12 @@ export default function KanbanBoard(props) {
           renameColumn={renameColumn}
           removeColumn={removeColumn}
           initAddTask={initAddTask}
-          columnID={column.columnID}
+          columnID={column.id}
           editTitleMode={editTitleMode}
           setEditTitleMode={setEditTitleMode}
         />
       )}
+      disableColumnDrag
       renderCard={(task, {dragging}) => (
         <BoardCard 
           dragging={dragging}

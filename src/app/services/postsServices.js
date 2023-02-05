@@ -60,7 +60,7 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error creating post. Please try again later."))
+      setToasts(errorToast("Error creating post. Please try again later.", true))
     })
 }
 
@@ -100,7 +100,7 @@ export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error updating post. Please try again later."))
+      setToasts(errorToast("Error updating post. Please try again later.", true))
     })
 }
 
@@ -119,7 +119,7 @@ export const deleteOrgPostService = (orgID, postID, fileNames, setLoading, setTo
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error deleting post. Please try again later."))
+      setToasts(errorToast("Error deleting post. Please try again later.", true))
     })
 }
 

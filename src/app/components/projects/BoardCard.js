@@ -6,7 +6,7 @@ import './styles/BoardCard.css'
 
 export default function BoardCard(props) {
 
-  const { title, taskNum, taskType, assigneesIDs,
+  const { taskID, title, taskNum, taskType, assigneesIDs,
     projectID } = props.task
   const { dragging } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
@@ -45,7 +45,7 @@ export default function BoardCard(props) {
         <MultipleUsersAvatars
           userIDs={assigneesIDs}
           maxAvatars={4}
-          avatarDimensions={22}
+          avatarDimensions={25}
         />
         <div className="stats">
           <span>

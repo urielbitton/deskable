@@ -1,6 +1,8 @@
+import { taskTypeOptions } from "app/data/general"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
-import { createProjectTaskService, deleteProjectColumnService, getLastProjectTaskNumber, renameBoardColumnService } from "app/services/projectsServices"
+import { createProjectTaskService, deleteProjectColumnService, 
+  getLastProjectTaskNumber, renameBoardColumnService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
@@ -11,25 +13,26 @@ import TaskModal from "./TaskModal"
 export default function ProjectBoard({project}) {
 
   const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
+  const [columnUpdate, setColumnUpdate] = useState(0)
   const projectID = useParams().projectID
-  const board = useBuildProjectBoard(projectID)
   const columns = useOrgProjectColumns(projectID)
+  const board = useBuildProjectBoard(projectID, columnUpdate)
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
   const [viewTaskModal, setViewTaskModal] = useState(false)
   const [newColumnID, setNewColumnID] = useState(null)
-  const [taskType, setTaskType] = useState('')
+  const [taskType, setTaskType] = useState(taskTypeOptions[0].value)
   const [taskTitle, setTaskTitle] = useState('')
   const [taskNumber, setTaskNumber] = useState(0)
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState(columns[0]?.title)
   const [addTo, setAddTo] = useState('sprint')
   const [description, setDescription] = useState('')
   const [files, setFiles] = useState([])
   const [priority, setPriority] = useState('medium')
   const [assigneesIDs, setAssigneesIDs] = useState([])
 
-  const allowAddTask = taskTitle.length > 0
+  const allowAddTask = taskTitle?.length > 0
 
   const removeColumn = (columnID) => {
     const confirm = window.confirm('Are you sure you want to delete this column?')
@@ -60,11 +63,11 @@ export default function ProjectBoard({project}) {
   const initAddTask = (columnID) => {
     getLastProjectTaskNumber(myOrgID, projectID)
     .then((number) => {
-      setTaskNumber(+number)
+      setTaskNumber(+number+1)
       setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${(+number+1) < 10 && '0'}${+number+1}`)
       setNewColumnID(columnID)
       setShowNewTaskModal(true)
-      setStatus(columns[0].title)
+      setStatus(columns?.find(column => column.columnID === columnID)?.title)
     })
   }
 
@@ -95,6 +98,7 @@ export default function ProjectBoard({project}) {
       setToasts
     )
     .then(() => {
+      setColumnUpdate(Date.now())
       resetNewTaskModal()
     })
   }

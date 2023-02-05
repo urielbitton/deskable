@@ -118,7 +118,6 @@ export const createProjectColumnService = (orgID, projectID, title, setLoading, 
     title,
     dateCreated: new Date(),
     isActive: true,
-    number: 0,
     projectID,
     tasksNum: 0,
   })
@@ -129,7 +128,7 @@ export const createProjectColumnService = (orgID, projectID, title, setLoading, 
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast('There was a problem creating the column. Please try again.'))
+      setToasts(errorToast('There was a problem creating the column. Please try again.', true))
     })
 }
 
@@ -144,7 +143,7 @@ export const deleteProjectColumnService = (orgID, projectID, columnID, setLoadin
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast('There was a problem deleting the column. Please try again.'))
+      setToasts(errorToast('There was a problem deleting the column. Please try again.', true))
     })
 }
 
@@ -197,17 +196,17 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         .catch(err => {
           console.log(err)
           setLoading(false)
-          setToasts(errorToast('There was a problem creating the task. Please try again.'))
+          setToasts(errorToast('There was a problem creating the task. Please try again.', true))
         })
     })
     .then(() => {
       setLoading(false)
-      setToasts(successToast('Task created successfully.'))
+      setToasts(successToast(`Task created successfully. ${task.addTo === 'sprint' && 'Adding to sprint...'}`))
     })
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast('There was a problem creating the task. Please try again.'))
+      setToasts(errorToast('There was a problem creating the task. Please try again.', true))
     })
 }
 

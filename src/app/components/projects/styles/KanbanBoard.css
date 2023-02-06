@@ -1,5 +1,5 @@
 .react-kanban-board {
-
+  padding: 0;
 }
 .react-kanban-column {
   background: var(--inputBg);

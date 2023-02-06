@@ -7,7 +7,7 @@ import './styles/ProjectsPage.css'
 
 export default function ProjectsPage() {
 
-  const { setHideRightBar } = useContext(StoreContext)
+  const { setHideRightBar, showProjectsSidebar } = useContext(StoreContext)
 
   useEffect(() => {
     setHideRightBar(true)
@@ -16,7 +16,7 @@ export default function ProjectsPage() {
 
   return (
     <AppCard 
-      className="projects-page"
+      className={`projects-page ${!showProjectsSidebar ? 'minimized' : ''}`}
       padding="0"
       withBorder
     >

@@ -19,7 +19,7 @@ import './styles/SingleProject.css'
 
 export default function SingleProject() {
 
-  const { myOrgID, setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
   const [searchString, setSearchString] = useState('')
@@ -27,6 +27,7 @@ export default function SingleProject() {
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
   const [loading, setLoading] = useState(false)
+  const userIsMember = project?.members?.includes(myUserID)
 
   const resetColumnModal = () => {
     setShowColumnModal(false)
@@ -67,7 +68,7 @@ export default function SingleProject() {
 
   }
 
-  return project ? (
+  return project && userIsMember ? (
     <div className="single-project">
       <div className="project-header">
         <div className="titles">
@@ -185,6 +186,14 @@ export default function SingleProject() {
         />
       </AppModal>
     </div>
+  ) : 
+  project && !userIsMember ? (
+    <div>
+      <h4>You are not a member of this project.</h4>
+      <p>You can ask your organization admin for access here.</p>
+    </div>
   ) :
-    null
+  <div style={{width: '100%', height: '100%', minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    <i className="fal fa-spinner fa-spin" style={{fontSize: 20}}  />
+  </div>
 }

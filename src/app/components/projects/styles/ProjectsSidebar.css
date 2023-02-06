@@ -6,6 +6,18 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.projects-sidebar .toggle-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+}
+.projects-sidebar .toggle-icon:hover {
+  background: var(--inputBg);
+  filter: brightness(0.95);
+}
+
 .projects-sidebar .profile-section {
   display: flex;
   align-items: center;
@@ -45,18 +57,21 @@
 }
 .projects-sidebar .section > h5 small {
   font-size: 10px;
-  color: var(--grayText);
-  text-transform: capitalize;
-  padding: 5px;
+  color: var(--primary);
+  background: #fff;
+  box-shadow: var(--newCardShadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--inputBorder);
+  width: 17px;
+  height: 17px;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s;
 }
-.projects-sidebar .section > h5 small i {
-  margin-right: 4px;
-}
 .projects-sidebar .section > h5 small:hover {
-  background: var(--lightGrayText);
+  background: #fafafa;
 }
 
 
@@ -119,4 +134,55 @@
 }
 .projects-sidebar .all-projects-list a.active {
   background: var(--lightGrayText);
+}
+
+/* Minimized sidebar */
+.projects-sidebar.minimized {
+  padding: 10px 5px;
+  align-items: center;
+}
+.projects-sidebar.minimized .toggle-icon {
+  position: relative;
+  top: auto;
+  right: auto;
+}
+.projects-sidebar.minimized .profile-section {
+  justify-content: center;
+}
+.projects-sidebar.minimized .profile-section .texts {
+  display: none;
+}
+.projects-sidebar.minimized .menu span {
+  display: none;
+}
+.projects-sidebar.minimized .menu a {
+  padding: 10px;
+}
+.projects-sidebar.minimized .menu i {
+  width: auto;
+}
+.projects-sidebar.minimized .section-projects {
+  display: flex;
+  align-items: center;
+}
+.projects-sidebar.minimized .section-projects h5,
+.projects-sidebar.minimized .section-tasks h5 {
+  display: none;
+}
+.projects-sidebar.minimized .section-projects > i {
+  font-size: 13px;
+  color: var(--grayText);
+  margin-bottom: 5px;
+}
+.projects-sidebar.minimized .section-projects .all-projects-list a {
+  padding: 5px;
+}
+.projects-sidebar.minimized .section-projects .all-projects-list a > i {
+  display: none;
+}
+.projects-sidebar.minimized .section-projects .all-projects-list a span {
+  gap: 1px;
+}
+.projects-sidebar.minimized .section-projects .all-projects-list a span h6 {
+  text-transform: uppercase;
 }

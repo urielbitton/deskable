@@ -4,31 +4,43 @@ import { truncateText } from "app/utils/generalUtils"
 import React, { useContext, useState } from 'react'
 import { NavLink, useNavigate } from "react-router-dom"
 import Avatar from "../ui/Avatar"
+import IconContainer from "../ui/IconContainer"
 import './styles/ProjectsSidebar.css'
 
 export default function ProjectsSidebar() {
 
-  const { myUserImg, myUserName, myUser } = useContext(StoreContext)
+  const { myUserImg, myUserName, myUser, showProjectsSidebar,
+    setShowProjectsSidebar } = useContext(StoreContext)
   const navigate = useNavigate()
-  const limitsNum = 5
-  const [projectsLimit, setProjectsLimit] = useState(limitsNum)
+  const projectsLimit = 5
   const projects = useOrgProjects(projectsLimit)
 
   const projectsList = projects?.map((project, index) => {
     return <NavLink
       key={index}
       to={`/projects/${project?.projectID}/board`}
+      title={!showProjectsSidebar && project?.name}
     >
       <span>
         <i className="fas fa-hashtag" />
-        <h6>{truncateText(project?.name, 20)}</h6>
+        <h6>{showProjectsSidebar ? truncateText(project?.name, 20) : `${project?.name?.slice(0,2)}`}</h6>
       </span>
       <i className="fas fa-arrow-right" />
     </NavLink>
   })
 
   return (
-    <div className="projects-sidebar">
+    <div className={`projects-sidebar ${!showProjectsSidebar ? 'minimized' : ''}`}>
+      <IconContainer
+        icon="fas fa-grip-lines-vertical"
+        inverted
+        iconColor="var(--grayText)"
+        iconSize="15px"
+        dimensions="25px"
+        tooltip={showProjectsSidebar ? 'Hide Projects Sidebar' : 'Show Projects Sidebar'}
+        onClick={() => setShowProjectsSidebar(prev => !prev)}
+        className="toggle-icon"
+      />
       <div className="profile-section">
         <Avatar
           src={myUserImg}
@@ -42,30 +54,33 @@ export default function ProjectsSidebar() {
       <div className="menu">
         <NavLink to="/projects">
           <i className="fas fa-browser" />
-          Dashboard
+          <span>Dashboard</span>
         </NavLink>
         <NavLink to="/projects/updates">
           <i className="fas fa-clock" />
-          Updates
+          <span>Updates</span>
         </NavLink>
         <NavLink to="/projects/settings">
           <i className="fas fa-sliders-v" />
-          Settings
+          <span>Settings</span>
         </NavLink>
       </div>
-      <div className="section">
+      <div className="section section-projects">
+        {
+          !showProjectsSidebar &&
+          <i className="fas fa-project-diagram" />
+        }
         <h5>
           <span>Projects</span>
           <small onClick={() => navigate('/projects/new')}>
             <i className="far fa-plus" />
-            New Project
           </small>
         </h5>
         <div className="all-projects-list">
           {projectsList}
         </div>
       </div>
-      <div className="section">
+      <div className="section section-tasks">
         <h5>Project Tasks</h5>
         {/* display tasks that are due this week from all projects (limit to 3 most recent projects) */}
       </div>

@@ -1,8 +1,10 @@
 import { taskTypeOptions } from "app/data/projectsData"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
-import { changeProjectTaskPositionService, createProjectTaskService, deleteProjectColumnService, 
-  getLastProjectTaskNumber, renameBoardColumnService } from "app/services/projectsServices"
+import { changeSameColumnTaskPositionService, 
+  changeDiffColumnTaskPositionService,
+  createProjectTaskService, deleteProjectColumnService, 
+  getLastColumnTaskPosition, renameBoardColumnService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
@@ -23,7 +25,7 @@ export default function ProjectBoard({project}) {
   const [newColumnID, setNewColumnID] = useState(null)
   const [taskType, setTaskType] = useState(taskTypeOptions[0].value)
   const [taskTitle, setTaskTitle] = useState('')
-  const [taskNumber, setTaskNumber] = useState(0)
+  const [taskPosition, setTaskPosition] = useState(0)
   const [status, setStatus] = useState(columns[0]?.title)
   const [addTo, setAddTo] = useState('sprint')
   const [description, setDescription] = useState('')
@@ -61,10 +63,10 @@ export default function ProjectBoard({project}) {
   }
 
   const initAddTask = (columnID) => {
-    getLastProjectTaskNumber(myOrgID, projectID)
-    .then((number) => {
-      setTaskNumber(+number+1)
-      setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${(+number+1) < 10 && '0'}${+number+1}`)
+    getLastColumnTaskPosition(myOrgID, projectID, columnID)
+    .then((pos) => {
+      setTaskPosition(pos+1)
+      setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${(pos+1) < 10 && '0'}${pos+1}`)
       setNewColumnID(columnID)
       setShowNewTaskModal(true)
       setStatus(columns?.find(column => column.columnID === columnID)?.title)
@@ -87,7 +89,7 @@ export default function ProjectBoard({project}) {
       {
         assigneesIDs,
         description,
-        taskNumber,
+        taskPosition,
         priority,
         status,
         taskType,
@@ -103,7 +105,12 @@ export default function ProjectBoard({project}) {
   }
 
   const onCardDragEnd = (task, from, to) => {
-    changeProjectTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
+    if(from.fromColumnId === to.toColumnId) {
+      changeSameColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
+    }
+    else {
+      changeDiffColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, to.toColumnId, setLoading, setToasts)
+    }
   }
 
   return (

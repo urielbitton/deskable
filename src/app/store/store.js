@@ -24,6 +24,7 @@ const StoreContextProvider = ({children}) => {
   const [toasts, setToasts] = useState([])
   const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
   const [hideRightBar, setHideRightBar] = useState(false)
+  const [showProjectsSidebar, setShowProjectsSidebar] = useState(false)
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -63,7 +64,7 @@ const StoreContextProvider = ({children}) => {
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,
     newEventModal, setNewEventModal,
-    hideRightBar, setHideRightBar
+    hideRightBar, setHideRightBar, showProjectsSidebar, setShowProjectsSidebar
   }}>
     {children}
   </StoreContext.Provider>

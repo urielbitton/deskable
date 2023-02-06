@@ -31,6 +31,7 @@ export const getOrgProjectTasks = (orgID, projectID, setTasks, lim) => {
   const q = query(
     docRef,
     orderBy('position', 'asc'),
+    orderBy('title', 'asc'),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -149,13 +150,13 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         dateCreated: new Date(),
         dateModified: new Date(),
         description: task.description,
-        position: task.taskNumber,
+        position: task.taskPosition,
         priority: task.priority,
         projectID: project.projectID,
         sprintID: null,
         status: task.status,
         taskID: docID,
-        taskNum: `${project.name.slice(0, 3).toUpperCase()}-${task.taskNumber < 10 && '0'}${task.taskNumber}`,
+        taskNum: `${project?.name?.slice(0, 3)?.toUpperCase()}-${task.taskPosition < 10 ? '0' : ''}${task.taskPosition || ''}`,
         taskType: task.taskType,
         title: task.taskTitle
       })
@@ -262,29 +263,32 @@ export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, s
     })
 }
 
-export const getLastProjectTaskNumber = (orgID, projectID) => {
+export const getLastColumnTaskPosition = (orgID, projectID, columnID) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
+    where('columnID', '==', columnID),
     orderBy('position', 'desc'),
     limit(1)
   )
   return getDocs(q)
     .then((snapshot) => {
-      return snapshot.docs.map(doc => doc.data().position)
+      return snapshot.docs.map(doc => doc.data().position)[0] || 0
+    })
+    .catch(err => {
+      console.log(err)
     })
 }
 
-export const changeProjectTaskPositionService = (orgID, projectID, task, newPosition, setLoading, setToasts) => {
+export const changeSameColumnTaskPositionService = (orgID, projectID, task, newPosition, setLoading, setToasts) => {
   const taskID = task.taskID
   const columnID = task.columnID
+  const oldPosition = task.position
   const tasksRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
   runTransaction(db, (transaction) => {
     return transaction.get(tasksRef)
       .then((snapshot) => {
-        const task = snapshot.data()
-        const oldPosition = task.position
         const path = `organizations/${orgID}/projects/${projectID}/tasks`
         const q = query(
           collection(db, path),
@@ -318,8 +322,63 @@ export const changeProjectTaskPositionService = (orgID, projectID, task, newPosi
                   })
                 }
             }
-            else {
+          })
+        })
+      })
+  })
+    .then(() => {
+      return batch.commit()
+        .then(() => {
+          setLoading(false)
+        })
+        .catch(err => {
+          console.log(err)
+          setLoading(false)
+          setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
+        })
+    })
+    .catch(err => {
+      console.log(err)
+      setLoading(false)
+      setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
+    })
+}
 
+export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, newColumnID, setLoading, setToasts) => {
+  const taskID = task.taskID
+  const columnID = task.columnID
+  const oldPosition = task.position
+  const tasksRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const batch = writeBatch(db)
+  runTransaction(db, (transaction) => {
+    return transaction.get(tasksRef)
+      .then((snapshot) => {
+        const path = `organizations/${orgID}/projects/${projectID}/tasks`
+        const colRef = collection(db, path)
+        const q = query(colRef)
+        onSnapshot(q, (snapshot) => {
+          snapshot.forEach((snap) => {
+            const data = snap.data()
+            const docID = snap.id
+            if(data.columnID === columnID) {
+              if (data.position > oldPosition) {
+                batch.update(doc(db, path, docID), {
+                  position: firebaseIncrement(-1)
+                })
+              }
+            }
+            if(data.columnID !== columnID) {
+              if (data.position > newPosition) {
+                batch.update(doc(db, path, docID), {
+                  position: firebaseIncrement(1)
+                })
+              }
+            }
+            if(data.taskID === taskID) {
+              batch.update(doc(db, path, docID), {
+                position: newPosition,
+                columnID: newColumnID
+              })
             }
           })
         })

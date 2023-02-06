@@ -367,8 +367,8 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
                 })
               }
             }
-            if(data.columnID !== columnID) {
-              if (data.position > newPosition) {
+            if(data.columnID === newColumnID) {
+              if (data.position >= newPosition) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(1)
                 })

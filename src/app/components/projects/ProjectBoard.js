@@ -1,7 +1,7 @@
 import { taskTypeOptions } from "app/data/projectsData"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
-import { createProjectTaskService, deleteProjectColumnService, 
+import { changeProjectTaskPositionService, createProjectTaskService, deleteProjectColumnService, 
   getLastProjectTaskNumber, renameBoardColumnService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
@@ -102,8 +102,8 @@ export default function ProjectBoard({project}) {
     })
   }
 
-  const onCardDragEnd = (card, from, to) => {
-    console.log(card, from, to)
+  const onCardDragEnd = (task, from, to) => {
+    changeProjectTaskPositionService(myOrgID, projectID, task.taskID, to.toPosition, setLoading, setToasts) 
   }
 
   return (

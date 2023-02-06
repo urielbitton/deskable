@@ -275,55 +275,66 @@ export const getLastProjectTaskNumber = (orgID, projectID) => {
     })
 }
 
-export const changeProjectTaskPositionService = (orgID, projectID, taskID, newPosition, setLoading, setToasts) => {
+export const changeProjectTaskPositionService = (orgID, projectID, task, newPosition, setLoading, setToasts) => {
+  const taskID = task.taskID
+  const columnID = task.columnID
   const tasksRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
   runTransaction(db, (transaction) => {
     return transaction.get(tasksRef)
-    .then((snapshot) => {
-      const task = snapshot.data()
-      const oldPosition = task.position
-      const path = `organizations/${orgID}/projects/${projectID}/tasks`
-      const q = query(
-        collection(db, path),
-        where('position', '>=', Math.min(oldPosition, newPosition)),
-        where('position', '<=', Math.max(oldPosition, newPosition))
-      )
-      onSnapshot(q, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          const data = change.doc.data()
-          const docID = change.doc.id
-          if (change.type === 'added') {
-            if(data.position <= newPosition && data.taskID !== taskID) {
-              batch.update(doc(db, path, docID), {
-                position: firebaseIncrement(-1)
-              })
+      .then((snapshot) => {
+        const task = snapshot.data()
+        const oldPosition = task.position
+        const path = `organizations/${orgID}/projects/${projectID}/tasks`
+        const q = query(
+          collection(db, path),
+          where('columnID', '==', columnID),
+          where('position', '>=', Math.min(oldPosition, newPosition)),
+          where('position', '<=', Math.max(oldPosition, newPosition))
+        )
+        onSnapshot(q, (snapshot) => {
+          snapshot.forEach((snap) => {
+            const data = snap.data()
+            const docID = snap.id
+            if (data.columnID === columnID) {
+                if (data.position < newPosition && data.taskID !== taskID) {
+                  batch.update(doc(db, path, docID), {
+                    position: firebaseIncrement(-1)
+                  })
+                }
+                if (data.position > newPosition && data.taskID !== taskID) {
+                  batch.update(doc(db, path, docID), {
+                    position: firebaseIncrement(1)
+                  })
+                }
+                if (data.position === newPosition &&  data.taskID !== taskID) {
+                  batch.update(doc(db, path, docID), {
+                    position: firebaseIncrement(data.position < oldPosition ? 1 : -1)
+                  })
+                }
+                if (data.taskID === taskID) {
+                  batch.update(doc(db, path, docID), {
+                    position: newPosition
+                  })
+                }
             }
-            if(data.position >= newPosition && data.taskID !== taskID) {
-              batch.update(doc(db, path, docID), {
-                position: firebaseIncrement(1)
-              })
+            else {
+
             }
-            if(data.taskID === taskID) {
-              batch.update(doc(db, path, docID), {
-                position: newPosition
-              })
-            }
-          }
+          })
         })
       })
-    })
   })
     .then(() => {
       return batch.commit()
-      .then(() => {
-        setLoading(false)
-      })
-      .catch(err => {
-        console.log(err)
-        setLoading(false)
-        setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
-      })
+        .then(() => {
+          setLoading(false)
+        })
+        .catch(err => {
+          console.log(err)
+          setLoading(false)
+          setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
+        })
     })
     .catch(err => {
       console.log(err)

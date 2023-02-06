@@ -103,7 +103,7 @@ export default function ProjectBoard({project}) {
   }
 
   const onCardDragEnd = (task, from, to) => {
-    changeProjectTaskPositionService(myOrgID, projectID, task.taskID, to.toPosition, setLoading, setToasts) 
+    changeProjectTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
   }
 
   return (

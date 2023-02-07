@@ -18,6 +18,7 @@ export default function EmojiTextarea(props) {
   const isNotEmptyMessage = /\S/.test(messageText)
   const uploadedImgFiles = uploadedImgs.map(img => img)
   const maxFileSize = 1024 * 1024 * 2
+  const maxFilesNum = 20
 
   const uploadedImgFilesRender = uploadedImgFiles?.map((file, index) => {
     return file?.src ? <div
@@ -92,12 +93,12 @@ export default function EmojiTextarea(props) {
             <label className="icon-container">
               <i className="far fa-image" />
               <input
-                style={{ display: 'none' }}
+                hidden
                 type="file"
                 accept="image/*"
                 multiple
                 ref={uploadRef}
-                onChange={(e) => uploadMultipleFilesLocal(e, maxFileSize, setUploadedImgs, setLoading, setToasts)}
+                onChange={(e) => uploadMultipleFilesLocal(e, maxFileSize, maxFilesNum, setUploadedImgs, setLoading, setToasts)}
               />
             </label>
           }

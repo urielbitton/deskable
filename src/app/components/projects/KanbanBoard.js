@@ -8,8 +8,9 @@ import BoardCard from "./BoardCard"
 export default function KanbanBoard(props) {
 
   const { board, removeColumn, renameColumn, initAddTask,
-    editTitleMode, setEditTitleMode, tasksPath, 
-    onCardDragEnd, handleDeleteTask, setIsDragging } = props
+    editTitleMode, setEditTitleMode, tasksPath,
+    onCardDragEnd, handleDeleteTask, setIsDragging,
+    handleOpenTask } = props
 
   return (
     <Board
@@ -25,16 +26,17 @@ export default function KanbanBoard(props) {
           setEditTitleMode={setEditTitleMode}
         />
       )}
-      disableColumnDrag
-      renderCard={(task, {dragging}) => (
-        <BoardCard 
+      renderCard={(task, { dragging }) => (
+        <BoardCard
           dragging={dragging}
           task={task}
           tasksPath={tasksPath}
           handleDeleteTask={handleDeleteTask}
+          handleOpenTask={handleOpenTask}
           setIsDragging={setIsDragging}
         />
       )}
+      disableColumnDrag
       onCardDragEnd={onCardDragEnd}
     >
       {board}

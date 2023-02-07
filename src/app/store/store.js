@@ -24,7 +24,7 @@ const StoreContextProvider = ({children}) => {
   const [toasts, setToasts] = useState([])
   const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
   const [hideRightBar, setHideRightBar] = useState(false)
-  const [showProjectsSidebar, setShowProjectsSidebar] = useState(false)
+  const [showProjectsSidebar, setShowProjectsSidebar] = useState(true)
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {

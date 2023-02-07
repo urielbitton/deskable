@@ -14,7 +14,7 @@ export default function FileUploader(props) {
   const { inputRef, isDragging, setIsDragging, uploadedFiles, 
     setUploadedFiles, maxFileSize, icon, text, 
     accept="image/*, application/*", truncateFilenameAmpount=25,
-    label, className="" } = props
+    label, className="", maxFilesNum=20 } = props
   const [loading, setLoading] = useState(false)
   const preventClose = !!uploadedFiles?.length || loading
 
@@ -58,7 +58,7 @@ export default function FileUploader(props) {
           multiple 
           accept={accept}
           ref={inputRef}
-          onChange={(e) => uploadMultipleFilesLocal(e, maxFileSize, setUploadedFiles, setLoading, setToasts)}
+          onChange={(e) => uploadMultipleFilesLocal(e, maxFileSize, maxFilesNum, setUploadedFiles, setLoading, setToasts)}
           onDragEnter={() => setIsDragging(true)}
           onDrop={() => setIsDragging(false)}
           onDragLeave={() => setIsDragging(false)}

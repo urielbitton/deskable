@@ -1,0 +1,61 @@
+.attachment-item {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  height: 130px;
+  border-radius: 5px;
+  border: 1px solid var(--tableBorder);
+  cursor: pointer;
+  transition: all 0.2s;
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--inputBg);
+}
+
+.attachment-item .top {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.attachment-item .top img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.attachment-item .bottom {
+  width: 100%;
+  height: calc(100% - 90px);
+  display: flex;
+  flex-direction: column;
+  padding: 5px 7px;
+  background: var(--inputBg);
+  overflow: hidden;
+}
+.attachment-item .bottom h6 {
+  font-size: 12px;
+  color: var(--darkGrayText);
+  margin-bottom: 5px;
+}
+.attachment-item .bottom small {
+  font-size: 10px;
+  color: var(--grayText);
+}
+
+.attachment-item:hover .cover {
+  opacity: 1;
+  visibility: visible;
+}
+.attachment-item .cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}

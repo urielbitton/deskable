@@ -86,6 +86,31 @@ export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columns, setT
   })
 }
 
+export const getOrgProjectTaskFiles = (orgID, projectID, taskID, setFiles, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`)
+  const q = query(
+    docRef,
+    orderBy('dateUploaded', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setFiles(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getOrgProjectTaskComments = (orgID, projectID, taskID, setComments, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setComments(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+
 export const catchCode = (err, errorText, setToasts, setLoading) => {
   console.log(err)
   setLoading && setLoading(false)
@@ -230,6 +255,18 @@ export const updateProjectTaskService = (orgID, projectID, taskID, task, files, 
     .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts, setLoading))
 }
 
+export const updateSingleTaskItemService = (orgID, projectID, taskID, item, setToasts) => {
+  const path = `organizations/${orgID}/projects/${projectID}/tasks`
+  return updateDB(path, taskID, {
+    ...item,
+    dateModified: new Date()
+  })
+    .then(() => {
+      setToasts(successToast('Task updated successfully.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
+}
+
 export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, setToasts) => {
   setLoading(true)
   const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
@@ -260,11 +297,11 @@ export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, s
   })
     .then(() => {
       return batch.commit()
-      .then(() => {
-        setLoading(false)
-        setToasts(successToast('Task deleted successfully.'))
-      })
-      .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
+        .then(() => {
+          setLoading(false)
+          setToasts(successToast('Task deleted successfully.'))
+        })
+        .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
     })
     .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
 }
@@ -305,26 +342,26 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
             const data = snap.data()
             const docID = snap.id
             if (data.columnID === columnID) {
-                if (data.position < newPosition && data.taskID !== taskID) {
-                  batch.update(doc(db, path, docID), {
-                    position: firebaseIncrement(-1)
-                  })
-                }
-                if (data.position > newPosition && data.taskID !== taskID) {
-                  batch.update(doc(db, path, docID), {
-                    position: firebaseIncrement(1)
-                  })
-                }
-                if (data.position === newPosition &&  data.taskID !== taskID) {
-                  batch.update(doc(db, path, docID), {
-                    position: firebaseIncrement(data.position < oldPosition ? 1 : -1)
-                  })
-                }
-                if (data.taskID === taskID) {
-                  batch.update(doc(db, path, docID), {
-                    position: newPosition
-                  })
-                }
+              if (data.position < newPosition && data.taskID !== taskID) {
+                batch.update(doc(db, path, docID), {
+                  position: firebaseIncrement(-1)
+                })
+              }
+              if (data.position > newPosition && data.taskID !== taskID) {
+                batch.update(doc(db, path, docID), {
+                  position: firebaseIncrement(1)
+                })
+              }
+              if (data.position === newPosition && data.taskID !== taskID) {
+                batch.update(doc(db, path, docID), {
+                  position: firebaseIncrement(data.position < oldPosition ? 1 : -1)
+                })
+              }
+              if (data.taskID === taskID) {
+                batch.update(doc(db, path, docID), {
+                  position: newPosition
+                })
+              }
             }
           })
         })
@@ -356,21 +393,21 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
           snapshot.forEach((snap) => {
             const data = snap.data()
             const docID = snap.id
-            if(data.columnID === columnID) {
+            if (data.columnID === columnID) {
               if (data.position > oldPosition) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(-1)
                 })
               }
             }
-            if(data.columnID === newColumnID) {
+            if (data.columnID === newColumnID) {
               if (data.position >= newPosition) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(1)
                 })
               }
             }
-            if(data.taskID === taskID) {
+            if (data.taskID === taskID) {
               batch.update(doc(db, path, docID), {
                 position: newPosition,
                 columnID: newColumnID
@@ -391,4 +428,32 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
         .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
     })
     .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
+}
+
+export const uploadOrgProjectTaskFiles = (orgID, projectID, taskID, files, filesStoragePath, setLoading, setToasts) => {
+  return uploadMultipleFilesToFireStorage(files, filesStoragePath, null, null)
+    .then((uploadedFiles) => {
+      const batch = writeBatch(db)
+      uploadedFiles.forEach(file => {
+        const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
+        const filesDocID = getRandomDocID(filesPath)
+        const fileRef = doc(db, filesPath, filesDocID)
+        batch.set(fileRef, {
+          dateUploaded: new Date(),
+          fileID: filesDocID,
+          name: file.file.name,
+          projectID,
+          size: file.file.size,
+          taskID,
+          type: file.file.type,
+          url: file.downloadURL
+        })
+      })
+      return batch.commit()
+        .then(() => {
+          setLoading(false)
+          setToasts(successToast('Files uploaded successfully.'))
+        })
+        .catch(err => catchCode(err, 'There was a problem uploading the files. Please try again.', setToasts, setLoading))
+    })
 }

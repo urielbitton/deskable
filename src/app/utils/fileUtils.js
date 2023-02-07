@@ -3,11 +3,11 @@ import { infoToast } from "app/data/toastsTemplates"
 function setLoadingDef(num) { }
 
 export const fileTypeConverter = (string) => {
-  if (string?.includes('wordprocessingml'))
+  if (string?.includes('wordprocessingml') || string?.includes('word'))
     return { icon: 'fas fa-file-word', color: '#2194ff', name: 'Word', docType: 'word' }
-  else if (string?.includes('spreadsheetml'))
+  else if (string?.includes('spreadsheetml') || string?.includes('excel'))
     return { icon: 'fas fa-file-excel', color: '#73d609', name: 'Excel', docType: 'excel' }
-  else if (string?.includes('presentationml'))
+  else if (string?.includes('presentationml') || string?.includes('powerpoint'))
     return { icon: 'fas fa-file-powerpoint', color: '#ff640a', name: 'PowerPoint', docType: 'powerpoint' }
   else if (string?.includes('pdf'))
     return { icon: 'fas fa-file-pdf', color: '#ff0a37', name: 'PDF', docType: 'pdf' }
@@ -42,9 +42,11 @@ export const fileTypePathConverter = (string) => {
     return 'other'
 }
 
-export const uploadMultipleFilesLocal = (e, maxSize, setFiles, setLoading=setLoadingDef, setToasts) => {
-  setLoading(true)
+export const uploadMultipleFilesLocal = (e, maxSize, maxFilesNum=20, setFiles, setLoading=setLoadingDef, setToasts) => {
   let files = e.target.files
+  if(files.length > maxFilesNum) 
+    return setToasts(infoToast(`You can only upload ${maxFilesNum} files at a time`))
+  setLoading(true)
   for (let i = 0; i < files.length; i++) {
     if (files[i].size > maxSize) {
       setLoading(false)

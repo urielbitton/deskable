@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #111;
+  background-color: #22272B;
   z-index: 10000;
   display: flex;
   justify-content: center;
@@ -37,7 +37,7 @@
 .photos-modal-container .top-bar {
   height: 55px;
   transition: all 0.2s;
-  background: #111;
+  background: #22272B;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +131,8 @@
   font-size: 24px;
   color: #333;
   cursor: pointer;
-  padding: 5px;
+  padding: 10px;
+  z-index: 100;
 }
 .photos-modal-container .photo-info .content {
   display: grid;

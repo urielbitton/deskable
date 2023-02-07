@@ -1,4 +1,4 @@
-import { getOrgProjectByID, getOrgProjectColumnByID, getOrgProjectColumns, getOrgProjectTaskByID, getOrgProjectTasks, getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, getProjectsByOrgID } from "app/services/projectsServices"
+import { getOrgProjectByID, getOrgProjectColumnByID, getOrgProjectColumns, getOrgProjectTaskByID, getOrgProjectTaskComments, getOrgProjectTaskFiles, getOrgProjectTasks, getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, getProjectsByOrgID } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -8,7 +8,8 @@ export const useOrgProjects = (limit) => {
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
-    getProjectsByOrgID(myOrgID, setProjects, limit)
+    if (myOrgID)
+      getProjectsByOrgID(myOrgID, setProjects, limit)
   }, [myOrgID, limit])
 
   return projects
@@ -20,7 +21,8 @@ export const useOrgProject = (projectID) => {
   const [project, setProject] = useState(null)
 
   useEffect(() => {
-    getOrgProjectByID(myOrgID, projectID, setProject)
+    if (myOrgID && projectID)
+      getOrgProjectByID(myOrgID, projectID, setProject)
   }, [myOrgID, projectID])
 
   return project
@@ -32,7 +34,8 @@ export const useOrgProjectTasks = (projectID, limit) => {
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
-    getOrgProjectTasks(myOrgID, projectID, setTasks, limit)
+    if (myOrgID && projectID)
+      getOrgProjectTasks(myOrgID, projectID, setTasks, limit)
   }, [myOrgID, projectID])
 
   return tasks
@@ -44,7 +47,8 @@ export const useOrgProjectTask = (projectID, taskID) => {
   const [task, setTask] = useState(null)
 
   useEffect(() => {
-    getOrgProjectTaskByID(myOrgID, projectID, taskID, setTask)
+    if (taskID && projectID && myOrgID)
+      getOrgProjectTaskByID(myOrgID, projectID, taskID, setTask)
   }, [myOrgID, projectID, taskID])
 
   return task
@@ -56,7 +60,8 @@ export const useOrgProjectColumns = (projectID) => {
   const [columns, setColumns] = useState([])
 
   useEffect(() => {
-    getOrgProjectColumns(myOrgID, projectID, setColumns)
+    if (myOrgID && projectID)
+      getOrgProjectColumns(myOrgID, projectID, setColumns)
   }, [myOrgID, projectID])
 
   return columns
@@ -68,7 +73,8 @@ export const useOrgProjectColumn = (projectID, columnID) => {
   const [column, setColumn] = useState(null)
 
   useEffect(() => {
-    getOrgProjectColumnByID(myOrgID, projectID, columnID, setColumn)
+    if (myOrgID && projectID && columnID)
+      getOrgProjectColumnByID(myOrgID, projectID, columnID, setColumn)
   }, [myOrgID, projectID, columnID])
 
   return column
@@ -80,7 +86,8 @@ export const useOrgProjectColumnTasks = (projectID, columnID) => {
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
-    getOrgProjectTasksByColumnID(myOrgID, projectID, columnID, setTasks)
+    if (myOrgID && projectID && columnID)
+      getOrgProjectTasksByColumnID(myOrgID, projectID, columnID, setTasks)
   }, [myOrgID, projectID, columnID])
 
   return tasks
@@ -110,3 +117,29 @@ export const useBuildProjectBoard = (projectID, columnUpdate) => {
     }))
   }
 }
+
+export const useOrgProjectTaskFiles = (projectID, taskID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [files, setFiles] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID && taskID)
+      getOrgProjectTaskFiles(myOrgID, projectID, taskID, setFiles, limit)
+  }, [myOrgID, projectID, taskID])
+
+  return files
+}
+
+export const useOrgProjectTaskComments = (projectID, taskID, limit) => {
+  
+    const { myOrgID } = useContext(StoreContext)
+    const [comments, setComments] = useState([])
+  
+    useEffect(() => {
+      if (myOrgID && projectID && taskID)
+        getOrgProjectTaskComments(myOrgID, projectID, taskID, setComments, limit)
+    }, [myOrgID, projectID, taskID])
+  
+    return comments
+  }

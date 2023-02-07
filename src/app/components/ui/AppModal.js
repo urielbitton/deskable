@@ -5,7 +5,8 @@ import AppPortal from "./AppPortal"
 export default function AppModal(props) {
 
   const { label, children, actions, showModal, setShowModal,
-    className, sectionClassName, portalClassName, noHeader } = props
+    className, sectionClassName, portalClassName, noHeader,
+    onClose } = props
 
   return (
     <AppPortal
@@ -14,7 +15,10 @@ export default function AppModal(props) {
     >
       <div
         className={`app-modal-container ${showModal ? "show" : ""}`}
-        onMouseDown={() => setShowModal(false)}
+        onMouseDown={() => {
+          onClose && onClose()
+          setShowModal(false)
+        }}
       >
         <div
           className={`app-modal ${className ?? ''}`}
@@ -26,7 +30,10 @@ export default function AppModal(props) {
               <h4>{label}</h4>
               <div
                 className="icon-container"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  onClose && onClose()
+                  setShowModal(false)
+                }}
               >
                 <i className="fal fa-times"></i>
               </div>

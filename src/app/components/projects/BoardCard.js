@@ -9,28 +9,21 @@ import './styles/BoardCard.css'
 export default function BoardCard(props) {
 
   const { taskID, title, taskNum, taskType, assigneesIDs } = props.task
-  const { tasksPath, handleDeleteTask, dragging, setIsDragging } = props
+  const { tasksPath, handleDeleteTask, dragging, setIsDragging,
+    handleOpenTask } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const filesNum = useDocsCount(`${tasksPath}/${taskID}/files`)
   const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
-  // const comments = useProjectTaskComments(projectID, taskID)
-
-  const deleteTask = () => {
-    handleDeleteTask(taskID)
-  }
-
-  const openTask = () => {
-
-  }
 
   useEffect(() => {
     setIsDragging(dragging)
+    return () => setIsDragging(false)
   },[dragging])
 
   return (
     <div 
       className="board-card"
-      onClick={openTask}
+      onClick={() => handleOpenTask(taskID)}
     >
       <div className="top">
         <div className="header">
@@ -47,8 +40,8 @@ export default function BoardCard(props) {
               setShowHeaderMenu(prev => !prev)
             }}
             items={[
-              { label: 'Edit Task', icon: 'fas fa-pen', onClick: () => { } },
-              { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => deleteTask() },
+              { label: 'Edit Task', icon: 'fas fa-pen', onClick: () => handleOpenTask(taskID) },
+              { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask(taskID) },
               { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => { } },
               { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => { } },
             ]}

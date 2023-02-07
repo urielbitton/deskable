@@ -8,8 +8,8 @@ import { changeSameColumnTaskPositionService,
   getLastColumnTaskPosition, renameBoardColumnService, 
   deleteProjectTaskService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useState } from 'react'
-import { useParams } from "react-router-dom"
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams, useSearchParams } from "react-router-dom"
 import KanbanBoard from "./KanbanBoard"
 import NewTaskModal from "./NewTaskModal"
 import TaskModal from "./TaskModal"
@@ -20,6 +20,7 @@ export default function ProjectBoard({project}) {
   const projectID = useParams().projectID
   const board = useBuildProjectBoard(projectID)
   const columns = useOrgProjectColumns(projectID)
+  const [searchParams, setSearchParams] = useSearchParams()
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
@@ -36,7 +37,6 @@ export default function ProjectBoard({project}) {
   const [assigneesIDs, setAssigneesIDs] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
-  console.log(isDragging)
 
   const allowAddTask = taskTitle?.length > 0
 
@@ -116,6 +116,11 @@ export default function ProjectBoard({project}) {
     deleteProjectTaskService(myOrgID, projectID, taskID, setLoading, setToasts)
   }
 
+  const handleOpenTask = (taskID) => {
+    setSearchParams(`?projectID=${projectID}&taskID=${taskID}&viewModal=true`)
+    setViewTaskModal(true)
+  }
+
   const onCardDragEnd = (task, from, to) => {
     if(from.fromColumnId === to.toColumnId) {
       changeSameColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
@@ -125,6 +130,13 @@ export default function ProjectBoard({project}) {
     }
   }
 
+  useEffect(() => {
+    if(searchParams.get('viewModal') === 'true') {
+      setViewTaskModal(true)
+    }
+    return () => setSearchParams(null)
+  },[])
+
   return (
     <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>
       <KanbanBoard
@@ -133,6 +145,7 @@ export default function ProjectBoard({project}) {
         renameColumn={renameColumn}
         initAddTask={initAddTask}
         handleDeleteTask={handleDeleteTask}
+        handleOpenTask={handleOpenTask}
         onCardDragEnd={onCardDragEnd}
         editTitleMode={editTitleMode}
         setEditTitleMode={setEditTitleMode}
@@ -168,7 +181,6 @@ export default function ProjectBoard({project}) {
       <TaskModal
         showModal={viewTaskModal}
         setShowModal={setViewTaskModal}
-        label="Task Details"
       />
     </div>
   )

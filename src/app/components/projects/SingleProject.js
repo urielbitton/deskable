@@ -146,8 +146,8 @@ export default function SingleProject() {
             noSpread
             spacedOut={10}
           >
-            <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
             <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
+            <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
             <NavLink to={`/projects/${projectID}/tasks`}>Tasks</NavLink>
           </AppTabsBar>
         </div>

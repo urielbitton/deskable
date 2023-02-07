@@ -19,6 +19,7 @@ html, body {
   --lightGrayText: #D5D7E5;
   --inputBg: #f0f2f5;
   --lightInputBg: #F6F8FA;
+  --darkInputBg: rgb(219, 223, 231);
   --primarToast: rgba(124, 194, 68, 0.9);
   --primaryTrans: rgba(124, 194, 68, 0.2);
   --primaryShadow: 0 10px 12px 1px var(--primaryTrans);

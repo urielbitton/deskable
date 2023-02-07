@@ -1,6 +1,6 @@
 import { switchTaskType } from "app/data/projectsData"
 import { useDocsCount } from "app/hooks/userHooks"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AppBadge from "../ui/AppBadge"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
@@ -8,30 +8,47 @@ import './styles/BoardCard.css'
 
 export default function BoardCard(props) {
 
-  const { taskID, title, taskNum, taskType, assigneesIDs,
-    projectID } = props.task
-  const { dragging, tasksPath } = props
+  const { taskID, title, taskNum, taskType, assigneesIDs } = props.task
+  const { tasksPath, handleDeleteTask, dragging, setIsDragging } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const filesNum = useDocsCount(`${tasksPath}/${taskID}/files`)
   const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
   // const comments = useProjectTaskComments(projectID, taskID)
 
+  const deleteTask = () => {
+    handleDeleteTask(taskID)
+  }
+
+  const openTask = () => {
+
+  }
+
+  useEffect(() => {
+    setIsDragging(dragging)
+  },[dragging])
+
   return (
-    <div className="board-card">
+    <div 
+      className="board-card"
+      onClick={openTask}
+    >
       <div className="top">
         <div className="header">
           <h5>{title}</h5>
           <DropdownIcon
             icon="far fa-ellipsis-h"
-            iconSize="14px"
+            iconSize="15px"
             iconColor="var(--grayText)"
-            dimensions={22}
+            dimensions={24}
             showMenu={showHeaderMenu}
             setShowMenu={setShowHeaderMenu}
-            onClick={() => setShowHeaderMenu(prev => !prev)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowHeaderMenu(prev => !prev)
+            }}
             items={[
               { label: 'Edit Task', icon: 'fas fa-pen', onClick: () => { } },
-              { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => { } },
+              { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => deleteTask() },
               { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => { } },
               { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => { } },
             ]}

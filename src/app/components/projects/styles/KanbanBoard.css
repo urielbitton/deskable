@@ -61,3 +61,7 @@
   font-size: 17px;
   color: var(--grayText);
 }
+
+.kanban-board-container.is-dragging .react-kanban-column {
+  border: 2px dashed #aaa;
+}

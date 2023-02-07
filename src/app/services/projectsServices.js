@@ -1,9 +1,10 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
-import { db } from "app/firebase/fire"
+import { db, functions } from "app/firebase/fire"
 import {
   collection, doc, getDocs, limit,
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
+import { httpsCallable } from "firebase/functions"
 import { deleteDB, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { uploadMultipleFilesToFireStorage } from "./storageServices"
 
@@ -77,11 +78,18 @@ export const getOrgProjectTasksByColumnsArray = (orgID, projectID, columns, setT
   const q = query(
     docRef,
     orderBy('position', 'asc'),
-    where('columnID', 'in', columns.map(column => column.columnID))
+    where('columnID', 'in', columns.map(column => column.columnID)),
+    where('inSprint', '==', true)
   )
   onSnapshot(q, (snapshot) => {
     setTasks(snapshot.docs.map(doc => doc.data()))
   })
+}
+
+export const catchCode = (err, errorText, setToasts, setLoading) => {
+  console.log(err)
+  setLoading && setLoading(false)
+  setToasts && setToasts(errorToast(errorText, true))
 }
 
 export const renameBoardColumnService = (orgID, projectID, columnID, title, setToasts) => {
@@ -92,10 +100,7 @@ export const renameBoardColumnService = (orgID, projectID, columnID, title, setT
     .then(() => {
       setToasts(successToast('Column title updated successfully.'))
     })
-    .catch(err => {
-      console.log(err)
-      setToasts(errorToast('There was a problem updating the column title. Please try again.'))
-    })
+    .catch(err => catchCode(err, 'There was an error updating the column title. Please try again', setToasts))
 }
 
 export const createProjectColumnService = (orgID, projectID, title, setLoading, setToasts) => {
@@ -114,11 +119,7 @@ export const createProjectColumnService = (orgID, projectID, title, setLoading, 
       setLoading(false)
       setToasts(successToast('Column created successfully.'))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem creating the column. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem creating the column. Please try again.', setToasts, setLoading))
 }
 
 export const deleteProjectColumnService = (orgID, projectID, columnID, setLoading, setToasts) => {
@@ -129,14 +130,10 @@ export const deleteProjectColumnService = (orgID, projectID, columnID, setLoadin
       setLoading(false)
       setToasts(successToast('Column deleted successfully.'))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem deleting the column. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem deleting the column. Please try again.', setToasts, setLoading))
 }
 
-export const createProjectTaskService = (orgID, userID, project, columnID, task, files, setLoading, setToasts) => {
+export const createProjectTaskService = (orgID, userID, project, columnID, task, taskNum, files, setLoading, setToasts) => {
   setLoading(true)
   const path = `organizations/${orgID}/projects/${project.projectID}/tasks`
   const docID = getRandomDocID(path)
@@ -146,6 +143,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
       return setDB(path, docID, {
         assigneesIDs: task.assigneesIDs,
         columnID,
+        inSprint: task.addTo === 'sprint',
         creatorID: userID,
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -156,7 +154,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         sprintID: null,
         status: task.status,
         taskID: docID,
-        taskNum: `${project?.name?.slice(0, 3)?.toUpperCase()}-${task.taskPosition < 10 ? '0' : ''}${task.taskPosition || ''}`,
+        taskNum: `${project?.name?.slice(0, 3)?.toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum || ''}`,
         taskType: task.taskType,
         title: task.taskTitle
       })
@@ -182,21 +180,13 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
           })
           return batch.commit()
         })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-          setToasts(errorToast('There was a problem creating the task. Please try again.', true))
-        })
+        .catch(err => catchCode(err, 'There was a problem creating the task. Please try again.', setToasts, setLoading))
     })
     .then(() => {
       setLoading(false)
       setToasts(successToast(`Task created successfully. ${task.addTo === 'sprint' && 'Adding to sprint...'}`))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem creating the task. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem creating the task. Please try again.', setToasts, setLoading))
 }
 
 export const updateProjectTaskService = (orgID, projectID, taskID, task, files, setLoading, setToasts) => {
@@ -231,36 +221,52 @@ export const updateProjectTaskService = (orgID, projectID, taskID, task, files, 
           })
           return batch.commit()
         })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-          setToasts(errorToast('There was a problem updating the task. Please try again.', true))
-        })
+        .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts, setLoading))
     })
     .then(() => {
       setLoading(false)
       setToasts(successToast('Task updated successfully.'))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem updating the task. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts, setLoading))
 }
 
 export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, setToasts) => {
   setLoading(true)
-  const path = `organizations/${orgID}/projects/${projectID}/tasks`
-  return deleteDB(path, taskID)
+  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const batch = writeBatch(db)
+  runTransaction(db, (transaction) => {
+    return transaction.get(taskRef)
+      .then((snapshot) => {
+        batch.delete(taskRef)
+        const columnID = snapshot.data().columnID
+        const position = snapshot.data().position
+        const path = `organizations/${orgID}/projects/${projectID}/tasks`
+        const colRef = collection(db, path)
+        const q = query(
+          colRef,
+          where('columnID', '==', columnID),
+          where('position', '>', position)
+        )
+        onSnapshot(q, (snapshot) => {
+          snapshot.forEach((snap) => {
+            const docID = snap.id
+            batch.update(doc(db, path, docID), {
+              position: firebaseIncrement(-1)
+            })
+          })
+        })
+      })
+      .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
+  })
     .then(() => {
-      setLoading(false)
-      setToasts(successToast('Task deleted successfully.'))
+      return batch.commit()
+      .then(() => {
+        setLoading(false)
+        setToasts(successToast('Task deleted successfully.'))
+      })
+      .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem deleting the task. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem deleting the task. Please try again.', setToasts, setLoading))
 }
 
 export const getLastColumnTaskPosition = (orgID, projectID, columnID) => {
@@ -275,19 +281,17 @@ export const getLastColumnTaskPosition = (orgID, projectID, columnID) => {
     .then((snapshot) => {
       return snapshot.docs.map(doc => doc.data().position)[0] || 0
     })
-    .catch(err => {
-      console.log(err)
-    })
+    .catch(err => console.log(err))
 }
 
 export const changeSameColumnTaskPositionService = (orgID, projectID, task, newPosition, setLoading, setToasts) => {
   const taskID = task.taskID
   const columnID = task.columnID
   const oldPosition = task.position
-  const tasksRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
   runTransaction(db, (transaction) => {
-    return transaction.get(tasksRef)
+    return transaction.get(taskRef)
       .then((snapshot) => {
         const path = `organizations/${orgID}/projects/${projectID}/tasks`
         const q = query(
@@ -331,27 +335,19 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
         .then(() => {
           setLoading(false)
         })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-          setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
-        })
+        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
 }
 
-export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, newColumnID, setLoading, setToasts) => {
+export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID, newColumnID, setLoading, setToasts) => {
   const taskID = task.taskID
   const columnID = task.columnID
   const oldPosition = task.position
-  const tasksRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
   runTransaction(db, (transaction) => {
-    return transaction.get(tasksRef)
+    return transaction.get(taskRef)
       .then((snapshot) => {
         const path = `organizations/${orgID}/projects/${projectID}/tasks`
         const colRef = collection(db, path)
@@ -387,17 +383,12 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
     .then(() => {
       return batch.commit()
         .then(() => {
+          httpsCallable(functions, 'onProjectTaskChange')({
+            orgID, projectID, oldColumnID, newColumnID
+          })
           setLoading(false)
         })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-          setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
-        })
+        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('There was a problem updating the task position. Please try again.', true))
-    })
+    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
 }

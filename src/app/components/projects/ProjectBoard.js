@@ -1,10 +1,12 @@
 import { taskTypeOptions } from "app/data/projectsData"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
+import { getDocsCount } from "app/services/CrudDB"
 import { changeSameColumnTaskPositionService, 
   changeDiffColumnTaskPositionService,
   createProjectTaskService, deleteProjectColumnService, 
-  getLastColumnTaskPosition, renameBoardColumnService } from "app/services/projectsServices"
+  getLastColumnTaskPosition, renameBoardColumnService, 
+  deleteProjectTaskService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
@@ -32,7 +34,9 @@ export default function ProjectBoard({project}) {
   const [files, setFiles] = useState([])
   const [priority, setPriority] = useState('medium')
   const [assigneesIDs, setAssigneesIDs] = useState([])
+  const [isDragging, setIsDragging] = useState(false)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
+  console.log(isDragging)
 
   const allowAddTask = taskTitle?.length > 0
 
@@ -81,6 +85,7 @@ export default function ProjectBoard({project}) {
 
   const addTask = () => {
     if(!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
+    const taskNum = +getDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks`) + 1
     createProjectTaskService(
       myOrgID, 
       myUserID, 
@@ -95,6 +100,7 @@ export default function ProjectBoard({project}) {
         taskType,
         taskTitle,
       }, 
+      taskNum,
       files,
       setLoading, 
       setToasts
@@ -104,26 +110,35 @@ export default function ProjectBoard({project}) {
     })
   }
 
+  const handleDeleteTask = (taskID) => {
+    const confirm = window.confirm('Are you sure you want to delete this task?')
+    if (!confirm) return setToasts(infoToast('Task deletion cancelled.'))
+    deleteProjectTaskService(myOrgID, projectID, taskID, setLoading, setToasts)
+  }
+
   const onCardDragEnd = (task, from, to) => {
     if(from.fromColumnId === to.toColumnId) {
       changeSameColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
     }
     else {
-      changeDiffColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, to.toColumnId, setLoading, setToasts)
+      changeDiffColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, from.fromColumnId, to.toColumnId, setLoading, setToasts)
     }
   }
 
   return (
-    <div className="kanban-board-container">
+    <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>
       <KanbanBoard
         board={board}
         removeColumn={removeColumn}
         renameColumn={renameColumn}
         initAddTask={initAddTask}
+        handleDeleteTask={handleDeleteTask}
         onCardDragEnd={onCardDragEnd}
         editTitleMode={editTitleMode}
         setEditTitleMode={setEditTitleMode}
         tasksPath={tasksPath}
+        isDragging={isDragging}
+        setIsDragging={setIsDragging}
       />
       <NewTaskModal
         showModal={showNewTaskModal}

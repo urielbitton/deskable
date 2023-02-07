@@ -67,6 +67,19 @@ exports.onDeleteProjectTask = functions
     })
   })
 
+exports.onProjectTaskChange = functions
+  .https.onCall((data, context) => {
+    return updateDB(`organizations/${data.orgID}/projects/${data.projectID}/columns`, data.newColumnID, {
+      tasksNum: firebaseIncrement(1),
+    })
+      .then(() => {
+        return updateDB(`organizations/${data.orgID}/projects/${data.projectID}/columns`, data.oldColumnID, {
+          tasksNum: firebaseIncrement(-1),
+        })
+      })
+  })
+
+
 
 //utility functions
 function createNotification(userID, title, text, icon, url) {

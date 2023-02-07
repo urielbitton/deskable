@@ -9,7 +9,7 @@ export default function KanbanBoard(props) {
 
   const { board, removeColumn, renameColumn, initAddTask,
     editTitleMode, setEditTitleMode, tasksPath, 
-    onCardDragEnd } = props
+    onCardDragEnd, handleDeleteTask, setIsDragging } = props
 
   return (
     <Board
@@ -31,6 +31,8 @@ export default function KanbanBoard(props) {
           dragging={dragging}
           task={task}
           tasksPath={tasksPath}
+          handleDeleteTask={handleDeleteTask}
+          setIsDragging={setIsDragging}
         />
       )}
       onCardDragEnd={onCardDragEnd}

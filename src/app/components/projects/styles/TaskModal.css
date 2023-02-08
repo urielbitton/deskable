@@ -33,7 +33,7 @@
   display: grid;
   grid-template-columns: calc(65% - 15px) 35%;
   gap: 15px;
-  height: calc(100vh - 220px);
+  height: calc(100vh - 200px);
   overflow-y: auto;
 }
 .view-task-content .task-content {

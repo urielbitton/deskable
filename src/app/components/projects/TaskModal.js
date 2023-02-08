@@ -37,6 +37,7 @@ export default function TaskModal(props) {
     return <TaskAttachment
       key={index}
       file={file}
+      setUploadLoading={setUploadLoading}
     />
   })
 

@@ -7,6 +7,12 @@ export const truncateText = (text, charsNum) => {
   return text?.length > charsNum ? (text?.slice(0, charsNum) + "...") : text
 }
 
+export const truncateTextWithExt = (text, charsNum) => {
+  const extension = text?.split('.').pop()
+  const truncatedText = text?.length > charsNum ? (text?.slice(0, charsNum) + "...") : text
+  return truncatedText + '.' + extension
+}
+
 export const formatPhoneNumber = (phoneNumberString) => {
   let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
   let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)

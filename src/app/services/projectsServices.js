@@ -1,4 +1,4 @@
-import { errorToast, successToast } from "app/data/toastsTemplates"
+import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
 import {
   collection, doc, getDocs, limit,
@@ -6,7 +6,7 @@ import {
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
 import { deleteDB, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
-import { uploadMultipleFilesToFireStorage } from "./storageServices"
+import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getProjectsByOrgID = (orgID, setProjects, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects`)
@@ -456,4 +456,25 @@ export const uploadOrgProjectTaskFiles = (orgID, projectID, taskID, files, files
         })
         .catch(err => catchCode(err, 'There was a problem uploading the files. Please try again.', setToasts, setLoading))
     })
+}
+
+export const deleteOrgProjectTaskFilesService = (myOrgID, projectID, taskID, fileID, fileName, setToasts, setLoading) => {
+  setLoading(true)
+  return deleteMultipleStorageFiles(
+    `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`,
+    [fileName]
+  )
+  .then(() => {
+    const path = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
+    return deleteDB(path, fileID)
+  })
+  .then(() => {
+    setToasts(successToast('File deleted successfully.'))
+    setLoading(false)
+  })
+  .catch((err) => {
+    setToasts(errorToast('There was an error deleting the file. Please try again.'))
+    setLoading(false)
+    console.log(err)
+  })
 }

@@ -7,8 +7,7 @@ export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, 
     if(!files?.length) return resolve([])
     const fileURLs = []
     files.forEach((file, i) => {
-      const filename = `${file.name}-${Date.now()}`
-      const storageRef = ref(storage, `${storagePath}/${fileNames ? fileNames[i] : filename}`)
+      const storageRef = ref(storage, `${storagePath}/${fileNames ? fileNames[i] : file.name}`)
       const uploadTask = uploadBytesResumable(storageRef, file)
       uploadTask.on('state_changed', (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
@@ -19,7 +18,7 @@ export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, 
       }, () => {
         getDownloadURL(uploadTask.snapshot.ref)
         .then(downloadURL => {
-          fileURLs.push({downloadURL, file, filename})
+          fileURLs.push({downloadURL, file, filename: file.name})
           if (fileURLs.length === files.length) {
             resolve(fileURLs)
           }

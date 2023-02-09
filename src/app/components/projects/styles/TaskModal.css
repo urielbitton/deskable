@@ -191,7 +191,7 @@
 .view-task-content .task-details {
   border: 1px solid var(--inputBorder);
   border-radius: 5px;
-  padding: 10px;
+  padding: 15px;
   height: 100%;
   overflow-y: auto;
 }
@@ -199,7 +199,42 @@
   font-size: 15px;
   color: var(--darkGrayText);
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+}
+.view-task-content .task-details-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.view-task-content .task-details-flex .commonInput {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.view-task-content .task-details-flex .commonInput h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.view-task-content .task-details-flex select,
+.view-task-content .task-details-flex input {
+  background: var(--lightInputBg);
+  cursor: pointer;
+}
+.view-task-content .task-details-flex select:hover,
+.view-task-content .task-details-flex input:hover {
+  background: var(--inputBg);
+}
+.view-task-content .task-details-flex .assignees-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.view-task-content .task-details-flex .assignees-flex h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
 }
 
 .likes-stats-modal {

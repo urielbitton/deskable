@@ -3,7 +3,7 @@ import { DefaultEditor } from "react-simple-wysiwyg"
 
 export default function WysiwygEditor({ html, setHtml, ...props }) {
 
-  const { placeholder, className='', ref } = props
+  const { placeholder, className='', ref, height="200px" } = props
 
   return (
     <div className={`wysiwyg-container ${className}`}>
@@ -11,7 +11,7 @@ export default function WysiwygEditor({ html, setHtml, ...props }) {
         value={html}
         onChange={(e) => setHtml(e.target.value)}
         placeholder={placeholder}
-        style={{ height: '200px', fontSize: 14, padding: '15px 10px', overflowY: 'auto' }}
+        style={{ height, fontSize: 14, padding: '15px 10px', overflowY: 'auto' }}
         className={className}
         contentEditableRef={ref}
       />

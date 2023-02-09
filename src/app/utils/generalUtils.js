@@ -128,6 +128,17 @@ export const detectAndUnderlineAllLinksInText = (text) => {
   return newText
 }
 
+export const replaceAllLinksInTextWithHttps = (text) => {
+  const links = extractAllLinksFromText(text)
+  let newText = text
+  links.forEach(link => {
+    if (!link.startsWith("http") && !link.startsWith("https")) {
+      newText = newText.replace(link, `https://${link}`)
+    }
+  })
+  return newText
+}
+
 export const isElementInView = (el) => {
   let rect = el.getBoundingClientRect()
   return rect.bottom > 0 && rect.top < (window.innerHeight || document.documentElement.clientHeight + 300)

@@ -16,14 +16,22 @@ User types
 2. Class B user (can create meetings, chats, projects)
 3. Class C user (low level employee, must be invited to chats, projects, meetings, etc)
 
-Tech Stack
-- React 
-- Firebase
-- Node JS
-- NPMs: Sendgrid emails, Twilio video API, React-calendar
-- Vercel 
 
 To Dos
+- projects:
+  - task details
+  - events
+  - project backlog
+  - project all tasks
+  - project sprint (figure out a system for sprints if i can)
+  - task assignees input dropdown
+  - invite colleagues system
+  - search project (results: tasks, comments, events)
+  - project dashboard
+  - projects updates
+  - projects settings
+
+Other Todos
 - start by creating an org (invitation only)
 - Link preview feature for posts & chats (use your own server for cors bypass)
 

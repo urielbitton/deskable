@@ -1,5 +1,8 @@
+import { infoToast } from "app/data/toastsTemplates"
 import useUser from "app/hooks/userHooks"
-import { deleteOrgProjectTaskCommentService, likeOrgProjectTaskCommentService } from "app/services/projectsServices"
+import { deleteOrgProjectTaskCommentService, 
+  likeOrgProjectTaskCommentService, 
+  updateOrgProjectTaskCommentService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import React, { useContext, useState } from 'react'
@@ -22,14 +25,13 @@ export default function TaskComment(props) {
   const user = useUser(authorID)
   const likesNum = likes?.length
   const userHasLiked = likes?.includes(myUserID)
+  const commentsPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/comments`
 
   const toggleLikeComment = () => {
     likeOrgProjectTaskCommentService(
       myUserID,
       userHasLiked,
-      myOrgID,
-      projectID,
-      taskID,
+      commentsPath,
       commentID,
       setToasts
     )
@@ -45,22 +47,30 @@ export default function TaskComment(props) {
     setEditText(text)
   }
 
-  const updateComment = () => {
-    
-  }
-
   const cancelSaveComment = () => {
     setEditMode(false)
     setEditText('')
+  }
+
+  const updateComment = () => {
+    if (!editText) return setToasts(infoToast('Please enter a comment.'))
+    updateOrgProjectTaskCommentService(
+      commentsPath,
+      commentID,
+      editText,
+      setToasts, 
+      setCommentLoading
+    )
+    .then(() => {
+      cancelSaveComment()
+    })
   }
 
   const deleteComment = () => {
     const confirm = window.confirm("Are you sure you want to delete this comment?")
     if (!confirm) return
     deleteOrgProjectTaskCommentService(
-      myOrgID,
-      projectID,
-      taskID,
+      commentsPath,
       commentID,
       setToasts,
     )
@@ -101,9 +111,11 @@ export default function TaskComment(props) {
             <p dangerouslySetInnerHTML={{ __html: text }} /> :
             <div className="editor-container">
               <WysiwygEditor
+                placeholder="Enter a comment..."
                 html={editText}
                 setHtml={setEditText}
                 className="comment-editor"
+                height={100}
               />
               <div className="btn-group">
                 <AppButton

@@ -479,8 +479,8 @@ export const deleteOrgProjectTaskFilesService = (myOrgID, projectID, taskID, fil
   })
 }
 
-export const likeOrgProjectTaskCommentService = (userID, userHasLiked, orgID, projectID, taskID, commentID, setToasts) => {
-  return updateDB(`organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`, commentID, {
+export const likeOrgProjectTaskCommentService = (userID, userHasLiked, commentsPath, commentID, setToasts) => {
+  return updateDB(commentsPath, commentID, {
     likes: !userHasLiked ? firebaseArrayAdd(userID) : firebaseArrayRemove(userID)
   })
   .catch(err => catchCode(err, `There was a problem ${userHasLiked ? 'unliking' : 'liking'} the comment. Please try again.`, setToasts))
@@ -506,9 +506,22 @@ export const createOrgProjectTaskCommentService = (orgID, projectID, taskID, com
   .catch(err => catchCode(err, 'There was a problem creating the comment. Please try again.', setToasts, setLoading))
 }
 
-export const deleteOrgProjectTaskCommentService = (orgID, projectID, taskID, commentID, setToasts) => {
-  const commentPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`
-  return deleteDB(commentPath, commentID)
+export const updateOrgProjectTaskCommentService = (commentsPath, commentID, commentText, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(commentsPath, commentID, {
+    text: commentText,
+    dateModified: new Date(),
+    isEdited: true
+  })
+  .then(() => {
+    setLoading(false)
+    setToasts(successToast('Comment updated successfully.'))
+  })
+  .catch(err => catchCode(err, 'There was a problem updating the comment. Please try again.', setToasts, setLoading))
+}
+
+export const deleteOrgProjectTaskCommentService = (commentsPath, commentID, setToasts) => {
+  return deleteDB(commentsPath, commentID)
     .then(() => {
       setToasts(successToast('Comment deleted successfully.'))
     })

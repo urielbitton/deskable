@@ -1,5 +1,5 @@
-import { switchTaskType } from "app/data/projectsData"
-import {
+import { switchTaskType, taskPriorityOptions } from "app/data/projectsData"
+import { useOrgProjectColumns,
   useOrgProjectTask, useOrgProjectTaskComments,
   useOrgProjectTaskFiles
 } from "app/hooks/projectsHooks"
@@ -20,6 +20,7 @@ import LikesStatsModal from "../ui/LikesStatsModal"
 import Avatar from "../ui/Avatar"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import AppButton from "../ui/AppButton"
+import { AppSelect } from "../ui/AppInputs"
 
 export default function TaskModal(props) {
 
@@ -37,11 +38,15 @@ export default function TaskModal(props) {
   const [likesUserIDs, setLikesUserIDs] = useState([])
   const [showCommentEditor, setShowCommentEditor] = useState(false)
   const [commentText, setCommentText] = useState('')
+  const [taskStatus, setTaskStatus] = useState('')
+  const [taskPriority, setTaskPriority] = useState('')
+  const [taskAddToColumn, setTaskAddToColumn] = useState('')
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
   const taskID = searchParams.get('taskID')
   const projectID = searchParams.get('projectID')
   const task = useOrgProjectTask(projectID, taskID)
+  const columns = useOrgProjectColumns(projectID)
   const comments = useOrgProjectTaskComments(projectID, taskID, commentsLimit)
   const attachments = useOrgProjectTaskFiles(projectID, taskID, filesLimit)
   const commentsNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/comments`)
@@ -50,6 +55,18 @@ export default function TaskModal(props) {
   const filesStoragePath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
+
+  const columnsOptions = columns?.map((column) => {
+    return {
+      label: column.title,
+      value: column.title,
+    }
+  })
+
+  const addToOptions = [
+    { label: 'Add to Sprint', value: 'sprint', disabled: task?.inSprint },
+    { label: 'Add to Backlog', value: 'backlog', disabled: !task?.inSprint },
+  ]
 
   const handleFileClick = (file) => {
     setActiveDocFile(file)
@@ -222,10 +239,12 @@ export default function TaskModal(props) {
                         </div> :
                         <div className="editor-container">
                           <WysiwygEditor
+                            placeholder="Write a comment..."
                             html={commentText}
                             setHtml={setCommentText}
                             className="comment-editor"
                             ref={commentEditorRef}
+                            height="100px"
                           />
                           <div className="btn-group">
                             <AppButton
@@ -276,6 +295,27 @@ export default function TaskModal(props) {
           </div>
           <div className="task-details">
             <h5>Task Details</h5>
+            <div className="task-details-flex">
+              <AppSelect
+                label="Status"
+                options={columnsOptions}
+                value={taskStatus}
+                onChange={(e) => setTaskStatus(e.target.value)}
+              />
+              <div className="assignees-flex">
+                <h6>Assignees</h6>
+              </div>
+              <AppSelect
+                label="Priority"
+                options={taskPriorityOptions}
+                value={taskPriority}
+                onChange={(e) => setTaskPriority(e.target.value)}
+              />
+              <AppSelect
+                label="Move Task To"
+                options={addToOptions}
+              />
+            </div>
           </div>
           <DocViewerModal
             showModal={showDocViewer}

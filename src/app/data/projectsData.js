@@ -1,7 +1,7 @@
 export const taskPriorityOptions = [
   {
-    label: 'Standby',
-    value: 'standby',
+    label: 'Lowest',
+    value: 'lowest',
   },
   {
     label: 'Low',
@@ -16,8 +16,8 @@ export const taskPriorityOptions = [
     value: 'high',
   },
   {
-    label: 'Urgent',
-    value: 'urgent',
+    label: 'Highest',
+    value: 'highest',
   }
 ]
 

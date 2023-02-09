@@ -66,7 +66,6 @@ export default function EmployeePage() {
               <AppBadge
                 label={employee.status}
                 light={false}
-                color="var(--blue)"
               />
             </div>
             <h5>{employee.position}</h5>

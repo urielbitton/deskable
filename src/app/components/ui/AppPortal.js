@@ -2,7 +2,9 @@ import React from 'react'
 import './styles/AppPortal.css'
 import { createPortal } from 'react-dom'
 
-export default function AppPortal({children, showPortal, className="app-portal"}) {
+export default function AppPortal(props) {
+
+  const { children, showPortal, className="app-portal" } = props
 
   if (!showPortal) return null
   return createPortal(
@@ -13,21 +15,3 @@ export default function AppPortal({children, showPortal, className="app-portal"}
   )
 }
 
-export function AppTooltip({top, left, message, isOpen, onClose}) {
-  
-  if (!isOpen) return null
-
-  return (
-    <AppPortal
-      showPortal={isOpen}
-    >
-      <div 
-        className="app-tooltip"
-        style={{top, left}}
-      >
-        <span>{message}</span>
-        <button onClick={onClose}>Close</button>
-      </div>
-    </AppPortal>
-  ) 
-}

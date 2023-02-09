@@ -5,7 +5,6 @@ import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import { convertBytesToKbMbGb } from "app/utils/fileUtils"
 import { sendCursorToEnd } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useSearchParams } from "react-router-dom"
 import AppPortal from "./AppPortal"
 import IconContainer from "./IconContainer"
 import './styles/PhotosModal.css'
@@ -14,16 +13,12 @@ export default function PhotosModal(props) {
 
   const { myUserID, setToasts } = useContext(StoreContext)
   const { showModal, portalClassName, photos, onClose,
-    photosOwnerID, photosDocPath, parentDocID } = props
+    photosOwnerID, photosDocPath, parentDocID, slideIndex,
+    photosNum, currentPhoto, onPrevious, onNext } = props
   const [showInfo, setShowInfo] = useState({ show: false, file: null })
   const [editMode, setEditMode] = useState(false)
   const [description, setDescription] = useState("")
-  const [searchParams, setSearchParams] = useSearchParams()
-  const photoIndex = searchParams.get("index") || 0
-  const [slideIndex, setSlideIndex] = useState(+photoIndex)
-  const photosNum = photos?.length
   const isPhotosOwner = photosOwnerID === myUserID
-  const currentPhoto = photos?.[slideIndex]
   const inputRef = useRef(null)
 
   const photosList = photos
@@ -41,6 +36,11 @@ export default function PhotosModal(props) {
     setDescription(currentPhoto?.description || "")
   }
 
+  const resetEdit = () => {
+    setEditMode(false)
+    setDescription("")
+  }
+
   const saveDescription = () => {
     if(!photosOwnerID || !photosDocPath || !parentDocID) return 
     if(!description) return setToasts(infoToast("Please enter a description"))
@@ -55,11 +55,6 @@ export default function PhotosModal(props) {
     .then(() => {
       resetEdit()
     })
-  }
-
-  const resetEdit = () => {
-    setEditMode(false)
-    setDescription("")
   }
 
   useEffect(() => {
@@ -126,7 +121,7 @@ export default function PhotosModal(props) {
           slideIndex > 0 &&
           <div
             className="photos-nav-left photos-nav-bar"
-            onClick={() => slideIndex > 0 && setSlideIndex(slideIndex - 1)}
+            onClick={onPrevious}
           >
             <i className="fal fa-chevron-left" />
           </div>
@@ -135,7 +130,7 @@ export default function PhotosModal(props) {
           slideIndex < photosNum - 1 &&
           <div
             className="photos-nav-right photos-nav-bar"
-            onClick={() => slideIndex < photosNum - 1 && setSlideIndex(slideIndex + 1)}
+            onClick={onNext}
           >
             <i className="fal fa-chevron-right" />
           </div>

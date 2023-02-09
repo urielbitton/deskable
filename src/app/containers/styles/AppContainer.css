@@ -5,6 +5,7 @@
   grid-template-columns: var(--sidebarWidth) auto var(--rightBarWidth);
   overflow: hidden;
   background: var(--bg);
+  z-index: 1; 
 }
 .app-container.hide-rightbar {
   grid-template-columns: var(--sidebarWidth) auto;

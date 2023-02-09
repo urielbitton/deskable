@@ -79,7 +79,7 @@ export default function NewEmployeePage() {
       .then((employeeID) => {
         setToasts(successToast("Employee created successfully."))
         setPageLoading(false)
-        navigate(`/employee/${employeeID}`)
+        navigate(`/employees/${employeeID}`)
       })
   }
 
@@ -105,7 +105,7 @@ export default function NewEmployeePage() {
       setToasts
     )
       .then(() => {
-        navigate(`/employee/${editEmployeeID}`)
+        navigate(`/employees/${editEmployeeID}`)
       })
   }
 

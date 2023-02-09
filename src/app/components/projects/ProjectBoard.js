@@ -134,7 +134,6 @@ export default function ProjectBoard({project}) {
     if(searchParams.get('viewModal') === 'true') {
       setViewTaskModal(true)
     }
-    return () => setSearchParams(null)
   },[])
 
   return (

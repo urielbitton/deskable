@@ -53,6 +53,7 @@ export function UserLike({ userID }) {
         <AppButton
           label="View Profile"
           url={`/organizations/${myOrgID}/user/${user?.userID}`}
+          buttonType="small"
         />
       </div>
     </div>

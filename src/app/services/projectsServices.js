@@ -5,7 +5,7 @@ import {
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
-import { deleteDB, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getProjectsByOrgID = (orgID, setProjects, lim) => {
@@ -473,8 +473,44 @@ export const deleteOrgProjectTaskFilesService = (myOrgID, projectID, taskID, fil
     setLoading(false)
   })
   .catch((err) => {
-    setToasts(errorToast('There was an error deleting the file. Please try again.'))
+    setToasts(errorToast('There was an error deleting the file. Please try again.', true))
     setLoading(false)
     console.log(err)
   })
+}
+
+export const likeOrgProjectTaskCommentService = (userID, userHasLiked, orgID, projectID, taskID, commentID, setToasts) => {
+  return updateDB(`organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`, commentID, {
+    likes: !userHasLiked ? firebaseArrayAdd(userID) : firebaseArrayRemove(userID)
+  })
+  .catch(err => catchCode(err, `There was a problem ${userHasLiked ? 'unliking' : 'liking'} the comment. Please try again.`, setToasts))
+}
+
+export const createOrgProjectTaskCommentService = (orgID, projectID, taskID, comment, setToasts, setLoading) => {
+  setLoading(true)
+  const commentsPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`
+  const commentID = getRandomDocID(commentsPath)
+  return setDB(commentsPath, commentID, {
+    ...comment,
+    commentID,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+    isEdited: false,
+    likes: [],
+    projectID,
+    taskID,
+  })
+  .then(() => {
+    setLoading(false)
+  })
+  .catch(err => catchCode(err, 'There was a problem creating the comment. Please try again.', setToasts, setLoading))
+}
+
+export const deleteOrgProjectTaskCommentService = (orgID, projectID, taskID, commentID, setToasts) => {
+  const commentPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`
+  return deleteDB(commentPath, commentID)
+    .then(() => {
+      setToasts(successToast('Comment deleted successfully.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem deleting the comment. Please try again.', setToasts))
 }

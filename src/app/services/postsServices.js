@@ -221,7 +221,7 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error creating comment. Please try again later."))
+      setToasts(errorToast("Error creating comment. Please try again later.", true))
     })
 }
 
@@ -251,7 +251,7 @@ export const updateOrgPostCommentService = (commentsPath, storagePath, commentID
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error updating comment. Please try again later."))
+      setToasts(errorToast("Error updating comment. Please try again later.", true))
     })
 }
 
@@ -290,7 +290,7 @@ export const createOrgPostSubCommentService = (userID, orgID, postID, commentID,
     .catch(err => {
       console.log(err)
       setLoading(false)
-      setToasts(errorToast("Error creating comment. Please try again later."))
+      setToasts(errorToast("Error creating comment. Please try again later.", true))
     })
 }
 

@@ -130,7 +130,7 @@ export default function RightBar() {
           />
           <AppButton
             label="Today"
-            buttonType="tabBlueBtn"
+            buttonType="tabInvertBtn"
             onClick={() => goToToday()}
           />
           <div className="events-list">

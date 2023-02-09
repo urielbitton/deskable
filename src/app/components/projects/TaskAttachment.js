@@ -12,7 +12,7 @@ export default function TaskAttachment(props) {
   const { myOrgID, setToasts } = useContext(StoreContext)
   const { name, size, type, dateUploaded, url, 
     projectID, taskID, fileID } = props.file
-  const { setUploadLoading } = props
+  const { setUploadLoading, onClick } = props
   const isPhoto = type.includes('image')
   const isVideo = type.includes('video')
 
@@ -31,7 +31,10 @@ export default function TaskAttachment(props) {
   }
 
   return (
-    <div className="attachment-item">
+    <div 
+      className="attachment-item"
+      onClick={() => onClick(props.file)}
+    >
       <div className="top">
         {
           !isPhoto && !isVideo ?

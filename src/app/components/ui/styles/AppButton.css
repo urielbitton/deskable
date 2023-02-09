@@ -6,6 +6,11 @@
   font-size: 16px;
 }
 
+.appButton.small {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
 .appButton.iconWhiteBtn {
   padding: 10px;
   border: 1px solid var(--inputBorder);
@@ -160,13 +165,13 @@
   color: var(--primary);
 }
 
-.appButton.tabBlueBtn {
+.appButton.tabInvertBtn {
   font-size: 12px;
   padding: 8px 10px;
   color: var(--primary);
   background: none;
 }
-.appButton.tabBlueBtn:hover {
+.appButton.tabInvertBtn:hover {
   background: var(--extraLightPrimary);
 }
 

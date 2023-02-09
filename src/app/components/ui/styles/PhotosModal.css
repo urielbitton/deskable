@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #22272B;
+  background-color: var(--darkBg);
   z-index: 10000;
   display: flex;
   justify-content: center;
@@ -12,7 +12,7 @@
   padding: 20px;
   padding-top: 0;
 }
-
+ 
 .photos-modal-container .close-icon {
   position: fixed;
   top: 10px;
@@ -37,7 +37,7 @@
 .photos-modal-container .top-bar {
   height: 55px;
   transition: all 0.2s;
-  background: #22272B;
+  background: var(--darkBg);
   display: flex;
   align-items: center;
   justify-content: center;

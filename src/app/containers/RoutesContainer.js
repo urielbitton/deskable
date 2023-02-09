@@ -45,8 +45,8 @@ export default function RoutesContainer() {
           isClassA &&
           <>
           <Route path="employees" element={<EmployeesPage />} />
-          <Route path="employee/:employeeID" element={<EmployeePage />} />
           <Route path="employees/new" element={<NewEmployeePage />} />
+          <Route path="employees/:employeeID" element={<EmployeePage />} />
           </>
         }
         <Route path="*" element={<ErrorPage />} />

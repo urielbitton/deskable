@@ -1,0 +1,93 @@
+.doc-viewer-portal {
+  z-index: 200;
+}
+.doc-viewer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--darkBg);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.doc-viewer-container.show {
+  display: flex;
+}
+.doc-viewer {
+  padding-top: 40px;
+  padding-bottom: 10px;
+  width: 95%;
+  height: 100%;
+  display: none;
+}
+.doc-viewer.show {
+  display: block;
+}
+
+.doc-viewer-container .loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--darkBg);
+  width: 95%;
+  height: 100%;
+  z-index: 300;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.doc-viewer-container .loading-container i {
+  font-size: 20px;
+  color: #fff;
+}
+
+.doc-viewer-container .top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75px;
+  background: linear-gradient(0deg, rgba(255,255,255,0) 0%, var(--darkBg) 55%);
+  z-index: 400;
+  padding: 15px 30px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  visibility: hidden;
+  opacity: 0;
+}
+.doc-viewer-container .top-bar.show {
+  visibility: visible;
+  opacity: 1;
+}
+.doc-viewer-container .top-bar:hover {
+  visibility: visible;
+  opacity: 1;
+}
+.doc-viewer-container .top-bar .left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.doc-viewer-container .top-bar .left h5 {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+.doc-viewer-container .top-bar .left small {
+  font-size: 12px;
+  font-weight: 500;
+  color: #eee;
+}
+.doc-viewer-container .top-bar .right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.doc-viewer-container .top-bar .right .icon-container:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

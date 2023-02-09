@@ -46,7 +46,7 @@ export default function EmployeeRow(props) {
             dimensions="23px"
             inverted
             iconSize="13px"
-            onClick={() => navigate(`/employee/${employeeID}`)}
+            onClick={() => navigate(`/employees/${employeeID}`)}
           />
           <IconContainer
             icon="fas fa-pen"
@@ -66,7 +66,7 @@ export default function EmployeeRow(props) {
           />
         </>
       }
-      onDoubleClick={() => navigate(`/employee/${employeeID}`)}
+      onDoubleClick={() => navigate(`/employees/${employeeID}`)}
     />
   )
 }

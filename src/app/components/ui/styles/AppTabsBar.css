@@ -23,22 +23,23 @@
   width: auto;
 }
 
-.app-tabs-bar > a {
-  font-size: 14px;
-  color: var(--darkGrayText);
-}
-.app-tabs-bar > a {
+.app-tabs-bar > a,
+.app-tabs-bar > .tab-item {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   width: 100%;
   padding: 10px;
   cursor: pointer;
+  font-size: 14px;
+  color: var(--darkGrayText);
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
   border-radius: 5px 5px 0 0;
 }
-.app-tabs-bar > a::after {
+.app-tabs-bar > a::after,
+.app-tabs-bar > .tab-item::after {
   content: '';
   position: absolute;
   bottom: -3px;
@@ -51,18 +52,24 @@
   transition: all 0.3s;
 }
 .app-tabs-bar > a:hover::after,
-.app-tabs-bar > a.active::after {
+.app-tabs-bar > a.active::after,
+.app-tabs-bar > .tab-item:hover::after,
+.app-tabs-bar > .tab-item.active::after {
   width: 100%;
 }
-.app-tabs-bar > a.active {
+.app-tabs-bar > a.active,
+.app-tabs-bar > .tab-item.active {
   color: var(--primary);
 }
-.app-tabs-bar > a.not-active::after {
+.app-tabs-bar > a.not-active::after,
+.app-tabs-bar > .tab-item.not-active::after {
   width: 0;
 }
-.app-tabs-bar > a.not-active:hover::after {
+.app-tabs-bar > a.not-active:hover::after,
+.app-tabs-bar > a.not-active.active::after {
   width: 100%;
 }
-.app-tabs-bar > a.not-active {
+.app-tabs-bar > a.not-active,
+.app-tabs-bar > .tab-item.not-active {
   color: var(--darkGrayText);
 }

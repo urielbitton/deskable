@@ -34,12 +34,13 @@
   grid-template-columns: calc(65% - 15px) 35%;
   gap: 15px;
   height: calc(100vh - 200px);
-  overflow-y: auto;
+  overflow: hidden;
 }
 .view-task-content .task-content {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
 }
 .view-task-content .task-content > h3 {
   color: var(--darkGrayText);
@@ -65,6 +66,7 @@
 .view-task-content .task-content .description-section p {
   font-size: 14px;
   color: #333;
+  white-space: pre-wrap;
 }
 .view-task-content .task-content .attachments-section {
   margin-top: 30px;
@@ -88,14 +90,91 @@
   margin-top: 10px;
 }
 
-.view-task-content .task-content .comments-section {
+.view-task-content .task-content .events-tab-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
   margin-top: 30px;
+}
+.view-task-content .task-content .events-tab-header .tab-header {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  background: var(--inputBg);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.view-task-content .task-content .events-tab-header .tab-header:hover {
+  background: var(--lightGrayText);
+}
+.view-task-content .task-content .events-tab-header .tab-header.active {
+  background: var(--grayText);
+  color: #fff;
+}
+
+.view-task-content .task-content .events-section {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 97%;
+  margin-bottom: 20px;
+}
+.view-task-content .task-content .events-section .comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.view-task-content .task-content .events-section .comment-console {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin: 5px 0;
+  margin-bottom: 10px;
+  width: 100%;
+}
+.view-task-content .task-content .events-section .comment-console .avatar-container {
+  top: 1px;
+  min-width: 32px;
+}
+.view-task-content .task-content .events-section .comment-console .fake-input {
+  padding: 10px;
+  transition: all 0.2s;
+  border: 1px solid var(--inputBorder);
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+}
+.view-task-content .task-content .events-section .comment-console .fake-input span {
+  font-size: 14px;
+  opacity: 0.5;
+}
+.view-task-content .task-content .events-section .comment-console .fake-input:hover {
+  background: var(--inputBg);
+}
+.view-task-content .task-content .events-section .comment-console .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.view-task-content .task-content .events-section .comment-console .editor-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   width: 100%;
+  width: calc(100% - 50px);
 }
+.view-task-content .task-content .events-section .comment-console .comment-editor {
+  width: 100%;
+}
+
 
 .view-task-content .task-content .load-more {
   font-size: 12px;
@@ -113,10 +192,16 @@
   border: 1px solid var(--inputBorder);
   border-radius: 5px;
   padding: 10px;
+  height: 100%;
+  overflow-y: auto;
 }
 .view-task-content .task-details > h5 {
   font-size: 15px;
   color: var(--darkGrayText);
   font-weight: 600;
   margin-bottom: 10px;
+}
+
+.likes-stats-modal {
+  z-index: 200;
 }

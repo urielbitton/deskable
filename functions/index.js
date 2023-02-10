@@ -8,13 +8,32 @@ const sgMail = require('@sendgrid/mail')
 
 const APP_ID = functions.config().algolia.app
 const API_KEY = functions.config().algolia.key
-// sgMail.setApiKey(functions.config().sendgrid.key)
-// const twilioSid = functions.config().twilio.sid
-// const twilioToken = functions.config().twilio.token
 
 // @ts-ignore
 const client = algoliasearch(APP_ID, API_KEY)
 const employeesIndex = client.initIndex('employees_index')
+const usersIndex = client.initIndex('users_index')
+
+
+exports.addToIndexUsers = functions
+  .region('northamerica-northeast1')
+  .firestore.document('users/{userID}').onCreate((snapshot, context) => {
+    const data = snapshot.data()
+    return usersIndex.saveObject({ ...data, objectID: snapshot.id })
+  })
+
+exports.updateIndexUsers = functions
+  .region('northamerica-northeast1')
+  .firestore.document('users/{userID}').onUpdate((change) => {
+    const newData = change.after.data()
+    return usersIndex.saveObject({ ...newData, objectID: change.after.id })
+  })
+
+exports.deleteFromIndexUsers = functions  
+  .region('northamerica-northeast1')
+  .firestore.document('users/{userID}').onDelete((snapshot, context) => { 
+    return usersIndex.deleteObject(snapshot.id)
+  })
 
 exports.addToIndexEmployees = functions
   .region('northamerica-northeast1')
@@ -46,6 +65,7 @@ exports.deleteFromIndexEmployees = functions
         return employeesIndex.deleteObject(snapshot.id)
       })
   })
+
 
 exports.onCreateProjectTask = functions
   .region('northamerica-northeast1')

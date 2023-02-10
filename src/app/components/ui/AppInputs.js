@@ -108,29 +108,26 @@ export const AppCoverInput = (props) => {
       title={title ?? ""}
     >
       {label && <h6>{label}</h6>}
-      {
-        showInput ?
-          <>
-            <input
-              onChange={(e) => onChange(e)}
-              value={value}
-              onClick={(e) => e.stopPropagation()}
-              type={type}
-            />
-            {iconright}
-            {iconleft}
-          </> :
-          <div
-            className="coverInput"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              setShowInput(true)
-            }}
-          >
-            {cover}
-          </div>
-      }
+      <input
+        onChange={(e) => onChange(e)}
+        value={value}
+        onClick={(e) => e.stopPropagation()}
+        type={type}
+        style={{ display: showInput ? "block" : "none" }}
+      />
+      {iconright}
+      {iconleft}
+      <div
+        className="coverInput"
+        style={{ display: showInput ? "none" : "block" }}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setShowInput(true)
+        }}
+      >
+        {cover}
+      </div>
     </label>
   )
 }

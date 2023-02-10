@@ -30,10 +30,11 @@ import AppButton from "../ui/AppButton"
 import { AppCoverSelect, AppInput } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
+import OrgUsersTagInput from "./OrgUsersTagInput"
 
 export default function TaskModal(props) {
 
-  const { myOrgID, myUserID, myUserImg, setToasts, 
+  const { myOrgID, myUserID, myUserImg, setToasts,
     setPageLoading } = useContext(StoreContext)
   const { showModal, setShowModal } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
@@ -57,6 +58,8 @@ export default function TaskModal(props) {
   const [showPriorityInput, setShowPriorityInput] = useState(false)
   const [showAddToInput, setShowAddToInput] = useState(false)
   const [showReporterInput, setShowReporterInput] = useState(false)
+  const [showAssigneesInput, setShowAssigneesInput] = useState(false)
+  const [assigneesQuery, setAssigneesQuery] = useState('')
   const [showPointsInput, setShowPointsInput] = useState(false)
   const [showTaskMenu, setShowTaskMenu] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
@@ -74,6 +77,7 @@ export default function TaskModal(props) {
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
+  const orgAlgoliaFilters = `activeOrgID:${myOrgID}`
 
   const columnsOptions = columns?.map((column) => {
     return {
@@ -95,6 +99,10 @@ export default function TaskModal(props) {
         style={{ color: switchTaskPriority(task?.priority)?.color }}
       />
     })
+
+  const assigneesList = task?.assigneesIDs?.map((assignee, index) => {
+    return 
+  })
 
   const handleFileClick = (file) => {
     setActiveDocFile(file)
@@ -182,9 +190,9 @@ export default function TaskModal(props) {
     const confirm = window.confirm('Are you sure you want to delete this task?')
     if (!confirm) return
     deleteProjectTaskService(tasksPath, taskID, setPageLoading, setToasts)
-    .then(() => {
-      resetTaskData()
-    })
+      .then(() => {
+        resetTaskData()
+      })
   }
 
   const moveToBacklog = () => {
@@ -424,13 +432,38 @@ export default function TaskModal(props) {
                 max={10}
                 min={0}
               />
-              <AppInput
+              <OrgUsersTagInput
                 label="Reporter"
+                placeholder="Unassigned"
                 value={taskReporter}
                 onChange={(e) => setTaskReporter(e.target.value)}
+                query={taskReporter}
+                setLoading={() => { }}
+                filters={orgAlgoliaFilters}
+                addedUsers={[]}
+                onUserClick={(e, user) => console.log(user)}
+                onFocus={() => setShowReporterInput(true)}
+                showDropdown={showReporterInput}
+                setShowDropdown={setShowReporterInput}
+                iconleft={<div className="icon"><i className="far fa-user" /></div>}
               />
               <div className="assignees-flex">
-                <h6>Assignees</h6>
+                <OrgUsersTagInput
+                  label="Assignees"
+                  placeholder="Unassigned"
+                  value={assigneesQuery}
+                  onChange={(e) => setAssigneesQuery(e.target.value)}
+                  query={assigneesQuery}
+                  setLoading={() => { }}
+                  filters={orgAlgoliaFilters}
+                  addedUsers={[]}
+                  onUserClick={(e, user) => console.log(user)}
+                  onFocus={() => setShowAssigneesInput(true)}
+                  showDropdown={showAssigneesInput}
+                  setShowDropdown={setShowAssigneesInput}
+                  iconleft={<div className="icon"><i className="far fa-user" /></div>}
+                />
+                {assigneesList}
               </div>
             </div>
             <div className="meta-details-flex">

@@ -174,7 +174,7 @@ export const AppCoverSelect = (props) => {
       </select>
       <div
         className="coverInput"
-        style={{ display: showInput ? "none" : "flex" }}
+        style={{ display: showInput ? "none" : "block" }}
         onClick={(e) => {
           e.stopPropagation()
           setShowInput(true)

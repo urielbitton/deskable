@@ -1,6 +1,7 @@
-import { convertBytesToKbMbGb, downloadUsingFetch, fileTypeConverter } from "app/utils/fileUtils"
+import { convertBytesToKbMbGb, downloadUsingFetch, 
+  fileTypeConverter } from "app/utils/fileUtils"
 import React, { useEffect, useState } from 'react'
-import { DocumentViewer } from 'react-documents'
+import { DocumentViewer } from 'atomics-react-documents' 
 import AppPortal from "../ui/AppPortal"
 import IconContainer from "../ui/IconContainer"
 import './styles/DocViewerModal.css'

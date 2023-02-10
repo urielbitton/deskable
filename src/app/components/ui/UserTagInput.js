@@ -1,7 +1,7 @@
 import React from 'react'
 import { AppInput } from "./AppInputs"
 
-export default function AppTagInput(props) {
+export default function UserTagInput(props) {
 
   const { label, placeholder, value, onChange, users,
     showImgs } = props
@@ -19,7 +19,7 @@ export default function AppTagInput(props) {
   })
 
   return (
-    <div className="app-tag-input">
+    <div className="user-tag-input">
       { label && <h6>{label}</h6> }
       <AppInput
         placeholder={placeholder}

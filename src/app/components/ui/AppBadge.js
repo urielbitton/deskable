@@ -10,7 +10,7 @@ export default function AppBadge(props) {
     <div 
       className={`app-badge ${light ? 'light' : ''} ${onClick ? 'clickable' : ''}`}
       style={{ color, background: bgColor }}
-      onClick={(e) => onClick(e)}
+      onClick={(e) => onClick && onClick(e)}
     >
       { 
         icon && 

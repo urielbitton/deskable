@@ -56,3 +56,11 @@ export const switchTaskType = (type) => {
   if(type === 'test') return { color: '#ffbf00', icon: 'fas fa-vial' }
   return { color: '#0a9bfc', icon: 'fas fa-bookmark' }
 }
+
+export const switchTaskPriority = (priority) => {
+  if(priority === 'lowest') return { color: '#ffde26', icon: 'fas fa-horizontal-rule', loop: 1 }
+  if(priority === 'low') return { color: '#ffaf26', icon: 'fas fa-horizontal-rule', loop: 1 }
+  if(priority === 'medium') return { color: '#ff9a26', icon: 'fas fa-horizontal-rule', loop: 2 }
+  if(priority === 'high') return { color: '#ff7d26', icon: 'fas fa-horizontal-rule', loop: 3 }
+  if(priority === 'highest') return { color: '#ff5126', icon: 'fas fa-horizontal-rule', loop: 3 }
+}

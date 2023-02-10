@@ -1,4 +1,4 @@
-import { switchTaskType } from "app/data/projectsData"
+import { switchTaskPriority, switchTaskType } from "app/data/projectsData"
 import { useDocsCount } from "app/hooks/userHooks"
 import React, { useEffect, useState } from 'react'
 import AppBadge from "../ui/AppBadge"
@@ -8,12 +8,30 @@ import './styles/BoardCard.css'
 
 export default function BoardCard(props) {
 
-  const { taskID, title, taskNum, taskType, assigneesIDs } = props.task
+  const { taskID, title, taskNum, taskType, assigneesIDs,
+    priority } = props.task
   const { tasksPath, handleDeleteTask, dragging, setIsDragging,
     handleOpenTask } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const filesNum = useDocsCount(`${tasksPath}/${taskID}/files`)
   const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
+
+  const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(priority)?.loop })
+  ?.map((_,index) => {
+    return <i 
+      key={index}
+      className={switchTaskPriority(priority)?.icon}
+      style={{ color: switchTaskPriority(priority)?.color}}
+    />
+  })
+
+  const moveToBacklog = () => {
+
+  }
+
+  const archiveTask = () => {
+
+  }
 
   useEffect(() => {
     setIsDragging(dragging)
@@ -42,8 +60,8 @@ export default function BoardCard(props) {
             items={[
               { label: 'Edit Task', icon: 'fas fa-pen', onClick: () => handleOpenTask(taskID) },
               { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask(taskID) },
-              { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => { } },
-              { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => { } },
+              { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => moveToBacklog() },
+              { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => archiveTask() },
             ]}
           />
         </div>
@@ -57,6 +75,12 @@ export default function BoardCard(props) {
             iconSize="10px"
             fontSize="11px"
           />
+          <span 
+            className="task-priority"
+            title={`Priority: ${priority}`}
+          >
+            {taskPriorityIconRender}
+          </span>
         </div>
       </div>
       <div className="footer">

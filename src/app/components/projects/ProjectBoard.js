@@ -35,6 +35,8 @@ export default function ProjectBoard({project}) {
   const [files, setFiles] = useState([])
   const [priority, setPriority] = useState('medium')
   const [assigneesIDs, setAssigneesIDs] = useState([])
+  const [points, setPoints] = useState(null)
+  const [reporter, setReporter] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
 
@@ -99,6 +101,8 @@ export default function ProjectBoard({project}) {
         status,
         taskType,
         taskTitle,
+        points,
+        reporter
       }, 
       taskNum,
       files,
@@ -112,8 +116,8 @@ export default function ProjectBoard({project}) {
 
   const handleDeleteTask = (taskID) => {
     const confirm = window.confirm('Are you sure you want to delete this task?')
-    if (!confirm) return setToasts(infoToast('Task deletion cancelled.'))
-    deleteProjectTaskService(myOrgID, projectID, taskID, setLoading, setToasts)
+    if (!confirm) return 
+    deleteProjectTaskService(tasksPath, taskID, setLoading, setToasts)
   }
 
   const handleOpenTask = (taskID) => {
@@ -123,10 +127,27 @@ export default function ProjectBoard({project}) {
 
   const onCardDragEnd = (task, from, to) => {
     if(from.fromColumnId === to.toColumnId) {
-      changeSameColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, setLoading, setToasts) 
+      changeSameColumnTaskPositionService(
+        myOrgID, 
+        projectID, 
+        task, 
+        to.toPosition, 
+        setLoading, 
+        setToasts
+      ) 
     }
     else {
-      changeDiffColumnTaskPositionService(myOrgID, projectID, task, to.toPosition, from.fromColumnId, to.toColumnId, setLoading, setToasts)
+      changeDiffColumnTaskPositionService(
+        myOrgID, 
+        projectID, 
+        task, 
+        to.toPosition, 
+        from.fromColumnId, 
+        to.toColumnId, 
+        columns,
+        setLoading, 
+        setToasts
+      )
     }
   }
 
@@ -175,6 +196,10 @@ export default function ProjectBoard({project}) {
         setPriority={setPriority}
         assigneesIDs={assigneesIDs}
         setAssigneesIDs={setAssigneesIDs}
+        points={points}
+        setPoints={setPoints}
+        reporter={reporter}
+        setReporter={setReporter}
         loading={loading}
       />
       <TaskModal

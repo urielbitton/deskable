@@ -154,6 +154,12 @@ hr {
 em-emoji-picker {
   position: absolute;
 }
+.rsw-toolbar {
+  background: var(--inputBg)!important;
+}
+.rsw-toolbar button:hover {
+  background: var(--darkInputBg);
+}
 
 .error-boundary {
   width: 100%;

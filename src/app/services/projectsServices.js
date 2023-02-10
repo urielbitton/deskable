@@ -176,6 +176,8 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         position: task.taskPosition,
         priority: task.priority,
         projectID: project.projectID,
+        points: task.points,
+        reporter: task.reporter,
         sprintID: null,
         status: task.status,
         taskID: docID,
@@ -214,47 +216,6 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
     .catch(err => catchCode(err, 'There was a problem creating the task. Please try again.', setToasts, setLoading))
 }
 
-export const updateProjectTaskService = (orgID, projectID, taskID, task, files, setLoading, setToasts) => {
-  setLoading(true)
-  const path = `organizations/${orgID}/projects/${projectID}/tasks`
-  const storagePath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
-  return uploadMultipleFilesToFireStorage(files, storagePath, null)
-    .then((uploadedFiles) => {
-      return updateDB(path, taskID, {
-        ...task,
-        dateModified: new Date()
-      })
-        .then(() => {
-          if (!uploadedFiles.length) {
-            return Promise.resolve()
-          }
-          const batch = writeBatch(db)
-          uploadedFiles.forEach(file => {
-            const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
-            const filesDocID = getRandomDocID(filesPath)
-            const fileRef = doc(db, filesPath, filesDocID)
-            batch.set(fileRef, {
-              dateUploaded: new Date(),
-              fileID: filesDocID,
-              name: file.file.name,
-              projectID,
-              size: file.file.size,
-              taskID,
-              type: file.file.type,
-              url: file.downloadURL
-            })
-          })
-          return batch.commit()
-        })
-        .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts, setLoading))
-    })
-    .then(() => {
-      setLoading(false)
-      setToasts(successToast('Task updated successfully.'))
-    })
-    .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts, setLoading))
-}
-
 export const updateSingleTaskItemService = (orgID, projectID, taskID, item, setToasts) => {
   const path = `organizations/${orgID}/projects/${projectID}/tasks`
   return updateDB(path, taskID, {
@@ -267,17 +228,16 @@ export const updateSingleTaskItemService = (orgID, projectID, taskID, item, setT
     .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
 }
 
-export const deleteProjectTaskService = (orgID, projectID, taskID, setLoading, setToasts) => {
+export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) => {
   setLoading(true)
-  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const taskRef = doc(db, path, taskID)
   const batch = writeBatch(db)
-  runTransaction(db, (transaction) => {
+  return runTransaction(db, (transaction) => {
     return transaction.get(taskRef)
       .then((snapshot) => {
         batch.delete(taskRef)
         const columnID = snapshot.data().columnID
         const position = snapshot.data().position
-        const path = `organizations/${orgID}/projects/${projectID}/tasks`
         const colRef = collection(db, path)
         const q = query(
           colRef,
@@ -377,7 +337,9 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
     .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
 }
 
-export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID, newColumnID, setLoading, setToasts) => {
+export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID, 
+  newColumnID, columns, setLoading, setToasts) => {
+  const newColumnTitle = columns.filter(column => column.columnID === newColumnID)[0].title
   const taskID = task.taskID
   const columnID = task.columnID
   const oldPosition = task.position
@@ -410,7 +372,8 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
             if (data.taskID === taskID) {
               batch.update(doc(db, path, docID), {
                 position: newPosition,
-                columnID: newColumnID
+                columnID: newColumnID,
+                status: newColumnTitle
               })
             }
           })
@@ -458,14 +421,13 @@ export const uploadOrgProjectTaskFiles = (orgID, projectID, taskID, files, files
     })
 }
 
-export const deleteOrgProjectTaskFilesService = (myOrgID, projectID, taskID, fileID, fileName, setToasts, setLoading) => {
+export const deleteOrgProjectTaskFilesService = (path, fileID, fileName, setToasts, setLoading) => {
   setLoading(true)
   return deleteMultipleStorageFiles(
-    `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`,
+    path,
     [fileName]
   )
   .then(() => {
-    const path = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
     return deleteDB(path, fileID)
   })
   .then(() => {

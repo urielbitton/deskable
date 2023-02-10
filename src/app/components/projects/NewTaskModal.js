@@ -13,7 +13,8 @@ export default function NewTaskModal(props) {
     columns, taskType, setTaskType, taskTitle, setTaskTitle,
     status, setStatus, addTo, setAddTo, description, setDescription,
     files, setFiles, priority, setPriority, assigneesIDs, 
-    setAssigneesIDs, loading } = props
+    setAssigneesIDs, points, setPoints, reporter, setReporter,
+    loading } = props
   const [isDragging, setIsDragging] = useState(false)
   const maxFileSize = 1024 * 1024 * 5
 
@@ -100,6 +101,8 @@ export default function NewTaskModal(props) {
           />
           <AppInput
             label="Reporter"
+            value={reporter}
+            onChange={(e) => setReporter(e.target.value)}
           />
           <AppSelect
             label="Add To Sprint/Backlog"
@@ -112,6 +115,11 @@ export default function NewTaskModal(props) {
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
             options={taskPriorityOptions}
+          />
+          <AppInput
+            label="Points"
+            value={points}
+            onChange={(e) => setPoints(e.target.value)}
           />
         </div>
       </div>

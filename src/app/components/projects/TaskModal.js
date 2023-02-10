@@ -1,5 +1,9 @@
-import { switchTaskType, taskPriorityOptions } from "app/data/projectsData"
-import { useOrgProjectColumns,
+import {
+  switchTaskPriority, switchTaskType,
+  taskPriorityOptions
+} from "app/data/projectsData"
+import {
+  useOrgProjectColumns,
   useOrgProjectTask, useOrgProjectTaskComments,
   useOrgProjectTaskFiles
 } from "app/hooks/projectsHooks"
@@ -13,18 +17,24 @@ import './styles/TaskModal.css'
 import TaskComment from "./TaskComment"
 import TaskAttachment from "./TaskAttachment"
 import { errorToast, infoToast } from "app/data/toastsTemplates"
-import { createOrgProjectTaskCommentService, 
-  uploadOrgProjectTaskFiles } from "app/services/projectsServices"
+import {
+  createOrgProjectTaskCommentService,
+  deleteProjectTaskService,
+  uploadOrgProjectTaskFiles
+} from "app/services/projectsServices"
 import DocViewerModal from "./DocViewerModal"
 import LikesStatsModal from "../ui/LikesStatsModal"
 import Avatar from "../ui/Avatar"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import AppButton from "../ui/AppButton"
-import { AppSelect } from "../ui/AppInputs"
+import { AppCoverSelect, AppInput } from "../ui/AppInputs"
+import DropdownIcon from "../ui/DropDownIcon"
+import { convertClassicDateAndTime } from "app/utils/dateUtils"
 
 export default function TaskModal(props) {
 
-  const { myOrgID, myUserID, myUserImg, setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, myUserImg, setToasts, 
+    setPageLoading } = useContext(StoreContext)
   const { showModal, setShowModal } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
   const [filesLimit, setFilesLimit] = useState(5)
@@ -40,7 +50,15 @@ export default function TaskModal(props) {
   const [commentText, setCommentText] = useState('')
   const [taskStatus, setTaskStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
-  const [taskAddToColumn, setTaskAddToColumn] = useState('')
+  const [taskAddTo, setTaskAddTo] = useState('')
+  const [taskReporter, setTaskReporter] = useState('')
+  const [taskPoints, setTaskPoints] = useState('')
+  const [showStatusInput, setShowStatusInput] = useState(false)
+  const [showPriorityInput, setShowPriorityInput] = useState(false)
+  const [showAddToInput, setShowAddToInput] = useState(false)
+  const [showReporterInput, setShowReporterInput] = useState(false)
+  const [showPointsInput, setShowPointsInput] = useState(false)
+  const [showTaskMenu, setShowTaskMenu] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
   const taskID = searchParams.get('taskID')
@@ -53,6 +71,7 @@ export default function TaskModal(props) {
   const eventsNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/events`)
   const filesNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`)
   const filesStoragePath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
+  const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
 
@@ -67,6 +86,15 @@ export default function TaskModal(props) {
     { label: 'Add to Sprint', value: 'sprint', disabled: task?.inSprint },
     { label: 'Add to Backlog', value: 'backlog', disabled: !task?.inSprint },
   ]
+
+  const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(task?.priority)?.loop })
+    ?.map((_, index) => {
+      return <i
+        key={index}
+        className={switchTaskPriority(task?.priority)?.icon}
+        style={{ color: switchTaskPriority(task?.priority)?.color }}
+      />
+    })
 
   const handleFileClick = (file) => {
     setActiveDocFile(file)
@@ -99,6 +127,11 @@ export default function TaskModal(props) {
     setLikesUserIDs([])
     setShowCommentEditor(false)
     setCommentText('')
+    setShowStatusInput(false)
+    setShowPriorityInput(false)
+    setShowAddToInput(false)
+    setShowReporterInput(false)
+    setShowPointsInput(false)
   }
 
   const handleFileUpload = (e) => {
@@ -130,25 +163,52 @@ export default function TaskModal(props) {
   const handleCreateComment = () => {
     if (!commentText) return setToasts(infoToast('Please enter a comment.'))
     createOrgProjectTaskCommentService(
-      myOrgID, 
-      projectID, 
-      taskID, 
+      myOrgID,
+      projectID,
+      taskID,
       {
         text: commentText,
         authorID: myUserID,
-      }, 
-      setToasts, 
+      },
+      setToasts,
       setAddCommentLoading
     )
+      .then(() => {
+        cancelAddComment()
+      })
+  }
+
+  const handleDeleteTask = () => {
+    const confirm = window.confirm('Are you sure you want to delete this task?')
+    if (!confirm) return
+    deleteProjectTaskService(tasksPath, taskID, setPageLoading, setToasts)
     .then(() => {
-      cancelAddComment()
+      resetTaskData()
     })
   }
 
+  const moveToBacklog = () => {
+
+  }
+
+  const archiveTask = () => {
+
+  }
+
   useEffect(() => {
-    if(showCommentEditor && commentEditorRef.current)
+    if (showCommentEditor && commentEditorRef.current)
       commentEditorRef?.current?.focus()
-  },[showCommentEditor, commentEditorRef])
+  }, [showCommentEditor, commentEditorRef])
+
+  useEffect(() => {
+    if (task) {
+      setTaskStatus(task?.status)
+      setTaskPriority(task?.priority)
+      setTaskReporter(task?.reporter)
+      setTaskPoints(task?.points)
+      setTaskAddTo(task?.inSprint ? 'sprint' : 'backlog')
+    }
+  }, [task])
 
   return (
     <AppModal
@@ -215,7 +275,7 @@ export default function TaskModal(props) {
                 className={`tab-header ${activeEventsTab === 'events' && 'active'}`}
                 onClick={() => setActiveEventsTab('events')}
               >
-                <span>Events</span> 
+                <span>Events</span>
               </div>
             </div>
             {
@@ -294,27 +354,98 @@ export default function TaskModal(props) {
             }
           </div>
           <div className="task-details">
-            <h5>Task Details</h5>
+            <div className="titles">
+              <h5>Task Details</h5>
+              <DropdownIcon
+                icon="far fa-ellipsis-h"
+                iconColor="var(--grayText)"
+                iconSize={16}
+                dimensions={28}
+                showMenu={showTaskMenu}
+                setShowMenu={setShowTaskMenu}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowTaskMenu(prev => !prev)
+                }}
+                items={[
+                  { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask() },
+                  { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => moveToBacklog() },
+                  { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => archiveTask() },
+                ]}
+              />
+            </div>
             <div className="task-details-flex">
-              <AppSelect
+              <AppCoverSelect
                 label="Status"
                 options={columnsOptions}
                 value={taskStatus}
                 onChange={(e) => setTaskStatus(e.target.value)}
+                showInput={showStatusInput}
+                setShowInput={setShowStatusInput}
+                cover={
+                  <h5>
+                    <i className="far fa-columns" />
+                    {task.status}
+                  </h5>
+                }
               />
-              <div className="assignees-flex">
-                <h6>Assignees</h6>
-              </div>
-              <AppSelect
+              <AppCoverSelect
                 label="Priority"
                 options={taskPriorityOptions}
                 value={taskPriority}
                 onChange={(e) => setTaskPriority(e.target.value)}
+                showInput={showPriorityInput}
+                setShowInput={setShowPriorityInput}
+                cover={
+                  <h5>
+                    <span className="icons">{taskPriorityIconRender}</span>
+                    {task.priority}
+                  </h5>
+                }
               />
-              <AppSelect
-                label="Move Task To"
+              <AppCoverSelect
+                label="Task Location"
+                placeholder=""
                 options={addToOptions}
+                value={taskAddTo}
+                onChange={(e) => setTaskAddTo(e.target.value)}
+                showInput={showAddToInput}
+                setShowInput={setShowAddToInput}
+                cover={<h5>
+                  <i className="far fa-tasks" />
+                  {task.inSprint ? 'Current Sprint' : 'Backlog'}
+                </h5>}
               />
+              <AppInput
+                label="Task Points"
+                value={taskPoints}
+                onChange={(e) => setTaskPoints(e.target.value)}
+                type="number"
+                max={10}
+                min={0}
+              />
+              <AppInput
+                label="Reporter"
+                value={taskReporter}
+                onChange={(e) => setTaskReporter(e.target.value)}
+              />
+              <div className="assignees-flex">
+                <h6>Assignees</h6>
+              </div>
+            </div>
+            <div className="meta-details-flex">
+              <div>
+                <h6>Created</h6>
+                <span>{convertClassicDateAndTime(task.dateCreated?.toDate())}</span>
+              </div>
+              <div>
+                <h6>Updated</h6>
+                <span>{convertClassicDateAndTime(task.dateModified?.toDate())}</span>
+              </div>
+              <div>
+                <h6>Completed On</h6>
+                <span>N/A</span>
+              </div>
             </div>
           </div>
           <DocViewerModal

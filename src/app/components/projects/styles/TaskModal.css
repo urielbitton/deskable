@@ -2,8 +2,8 @@
   width: 85%;
   max-width: 1200px;
 }
-.app-modal-container .app-modal > section {
-  max-height: calc(95vh - 100px);
+.view-task-modal .app-modal-container .app-modal > section {
+  max-height: calc(100vh - 100px);
 }
 
 .view-task-modal .app-modal > header h4 {
@@ -191,40 +191,45 @@
 .view-task-content .task-details {
   border: 1px solid var(--inputBorder);
   border-radius: 5px;
-  padding: 15px;
   height: 100%;
   overflow-y: auto;
 }
-.view-task-content .task-details > h5 {
+.view-task-content .task-details .titles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.view-task-content .task-details .titles h5 {
   font-size: 15px;
   color: var(--darkGrayText);
   font-weight: 600;
-  margin-bottom: 15px;
+}
+.view-task-content .task-details .titles .icon-container:hover {
+  background: var(--inputBg);
 }
 .view-task-content .task-details-flex {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 10px;
+  padding: 15px;
+  border-bottom: 1px solid var(--inputBorder);
+  padding-bottom: 20px;
 }
 .view-task-content .task-details-flex .commonInput {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 10px;
+  grid-column: 1/-1;
 }
 .view-task-content .task-details-flex .commonInput h6 {
   font-size: 13px;
   color: var(--darkGrayText);
   font-weight: 600;
-}
-.view-task-content .task-details-flex select,
-.view-task-content .task-details-flex input {
-  background: var(--lightInputBg);
-  cursor: pointer;
-}
-.view-task-content .task-details-flex select:hover,
-.view-task-content .task-details-flex input:hover {
-  background: var(--inputBg);
 }
 .view-task-content .task-details-flex .assignees-flex {
   display: flex;
@@ -235,6 +240,54 @@
   font-size: 13px;
   color: var(--darkGrayText);
   font-weight: 600;
+}
+.view-task-content .task-details-flex .coverInput h5 {
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--darkGrayText);
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.view-task-content .task-details-flex .coverInput h5:hover {
+  background: var(--inputBg);
+}
+.view-task-content .task-details-flex .coverInput h5 > i {
+  color: var(--grayText);
+}
+.view-task-content .task-details-flex .coverInput .icons {
+  display: flex;
+  flex-direction: column;
+}
+.view-task-content .task-details-flex .coverInput .icons i {
+  line-height: 0.4;
+}
+
+.view-task-content .meta-details-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+}
+.view-task-content .meta-details-flex > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.view-task-content .meta-details-flex h6 {
+  font-size: 12px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.view-task-content .meta-details-flex span {
+  font-size: 12px;
+  color: var(--grayText);
+  font-weight: 500;
 }
 
 .likes-stats-modal {

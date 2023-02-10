@@ -20,6 +20,7 @@ User types
 To Dos
 - projects:
   - task details
+  - custom appselect for task details
   - events
   - project backlog
   - project all tasks

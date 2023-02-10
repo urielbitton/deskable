@@ -67,7 +67,7 @@
 .app-modal-container .app-modal > section {
   width: 100%;
   padding: 20px 30px;
-  max-height: calc(95vh - 140px);
+  max-height: calc(90vh - 130px);
   overflow-y: auto;
 }
 

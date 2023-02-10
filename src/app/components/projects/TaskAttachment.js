@@ -15,14 +15,13 @@ export default function TaskAttachment(props) {
   const { setUploadLoading, onClick } = props
   const isPhoto = type.includes('image')
   const isVideo = type.includes('video')
+  const filesPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
 
   const handleDeleteFile = () => {
     const confirm = window.confirm(`Are you sure you want to delete this file?`)
     if(!confirm) return 
     deleteOrgProjectTaskFilesService(
-      myOrgID, 
-      projectID, 
-      taskID, 
+      filesPath, 
       fileID, 
       name,
       setToasts, 

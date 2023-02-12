@@ -1,14 +1,13 @@
 import { useUsers } from "app/hooks/userHooks"
 import React from 'react'
-import { useNavigate } from "react-router-dom"
 import Avatar from "./Avatar"
 import './styles/MultipleUsersAvatars.css'
 
 export default function MultipleUsersAvatars(props) {
 
-  const { userIDs, maxAvatars, avatarDimensions } = props
+  const { userIDs, maxAvatars, avatarDimensions, onClick,
+    enableEditing } = props
   const avatarUsers = useUsers(userIDs)
-  const navigate = useNavigate()
 
   const avatarRows = avatarUsers
     ?.slice(0, maxAvatars)
@@ -18,9 +17,11 @@ export default function MultipleUsersAvatars(props) {
         src={user.photoURL}
         dimensions={avatarDimensions}
         border="2px solid #fff"
-        onClick={() => navigate(`/profile/${user.userID}`)}
+        onClick={() => onClick && onClick(user)}
         alt={user.firstName}
         title={`${user.firstName} ${user.lastName}`}
+        enableEditing={enableEditing}
+        removeTitle={`Remove ${user.firstName} ${user.lastName}`}
       />
     })
 

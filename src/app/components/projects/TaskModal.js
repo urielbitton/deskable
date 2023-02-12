@@ -7,7 +7,7 @@ import {
   useOrgProjectTask, useOrgProjectTaskComments,
   useOrgProjectTaskFiles
 } from "app/hooks/projectsHooks"
-import useUser, { useDocsCount } from "app/hooks/userHooks"
+import useUser, { useDocsCount, useUsers } from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from "react-router-dom"
@@ -16,7 +16,7 @@ import FileUploadBtn from "../ui/FileUploadBtn"
 import './styles/TaskModal.css'
 import TaskComment from "./TaskComment"
 import TaskAttachment from "./TaskAttachment"
-import { errorToast, infoToast } from "app/data/toastsTemplates"
+import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import {
   createOrgProjectTaskCommentService,
   deleteProjectTaskService,
@@ -32,6 +32,7 @@ import { AppCoverInput, AppCoverSelect, AppInput } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import OrgUsersTagInput from "./OrgUsersTagInput"
+import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 
 export default function TaskModal(props) {
 
@@ -59,6 +60,7 @@ export default function TaskModal(props) {
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [assigneesQuery, setAssigneesQuery] = useState('')
   const [showTaskMenu, setShowTaskMenu] = useState(false)
+  const [searchLoading, setSearchLoading] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
   const taskID = searchParams.get('taskID')
@@ -76,6 +78,8 @@ export default function TaskModal(props) {
   const maxFilesNum = 5
   const orgAlgoliaFilters = `activeOrgID:${myOrgID}`
   const reporterUser = useUser(taskReporter)
+  const assigneesUsers = useUsers(task?.assigneesIDs)
+  const maxAssignees = 5
 
   const columnsOptions = columns?.map((column) => {
     return {
@@ -99,7 +103,7 @@ export default function TaskModal(props) {
     })
 
   const assigneesList = task?.assigneesIDs?.map((assignee, index) => {
-    return 
+    return
   })
 
   const handleFileClick = (file) => {
@@ -198,7 +202,7 @@ export default function TaskModal(props) {
   }
 
   // Update single task details fields functions
-  
+
   const updateReporter = (e, user) => {
     e.preventDefault()
     updateSingleTaskItemService(
@@ -209,8 +213,37 @@ export default function TaskModal(props) {
       },
       setToasts
     )
+      .then(() => {
+        setShowCoverInput(null)
+      })
+  }
+
+  const addAssignee = (e, user) => {
+    e.preventDefault()
+    updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        assigneesIDs: [...task?.assigneesIDs, user.userID],
+      },
+      setToasts
+    )
+      .then(() => {
+        setShowCoverInput(null)
+      })
+  }
+
+  const removeAssignee = (user) => {
+    updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        assigneesIDs: task?.assigneesIDs?.filter((assignee) => assignee !== user.userID),
+      },
+      setToasts
+    )
     .then(() => {
-      setShowCoverInput(null)
+      setToasts(successToast('User unassigned from this task.'))
     })
   }
 
@@ -459,9 +492,9 @@ export default function TaskModal(props) {
                 placeholder="Unassigned"
                 value={taskReporterQuery}
                 onChange={(e) => setTaskReporterQuery(e.target.value)}
-                setLoading={() => { }}
+                setLoading={setSearchLoading}
                 filters={orgAlgoliaFilters}
-                selectedUser={reporterUser}
+                selectedUsers={[reporterUser]}
                 onUserClick={(e, user) => updateReporter(e, user)}
                 onFocus={() => setShowCoverInput('reporter')}
                 showDropdown={showCoverInput}
@@ -475,14 +508,16 @@ export default function TaskModal(props) {
                   placeholder="Unassigned"
                   value={assigneesQuery}
                   onChange={(e) => setAssigneesQuery(e.target.value)}
-                  setLoading={() => { }}
+                  setLoading={setSearchLoading}
                   filters={orgAlgoliaFilters}
-                  addedUsers={[]}
-                  onUserClick={(e, user) => e.preventDefault()}
+                  onUserClick={(e, user) => addAssignee(e, user)}
+                  onUserRemove={(user) => removeAssignee(user)}
                   onFocus={() => setShowCoverInput('assignees')}
                   showDropdown={showCoverInput}
                   setShowDropdown={setShowCoverInput}
                   iconleft={<div className="icon"><i className="far fa-user" /></div>}
+                  selectedUsers={assigneesUsers}
+                  multiple={task.assigneesIDs.length > 1}
                 />
                 {assigneesList}
               </div>
@@ -517,6 +552,6 @@ export default function TaskModal(props) {
           />
         </div>
       }
-    </AppModal>
+    </AppModal >
   )
 }

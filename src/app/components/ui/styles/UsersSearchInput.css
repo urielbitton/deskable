@@ -4,6 +4,25 @@
   width: 100%;
 }
 
+.users-search-input .selected-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 5px;
+}
+.users-search-input .selected-user:hover {
+  background-color: var(--inputBg);
+}
+.users-search-input .selected-user h6 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+  cursor: pointer;
+}
+
 .users-search-input .users-results-list {
   display: flex;
   flex-direction: column;

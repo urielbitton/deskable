@@ -176,8 +176,8 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         position: task.taskPosition,
         priority: task.priority,
         projectID: project.projectID,
-        points: task.points,
-        reporter: task.reporter,
+        points: +task.points,
+        reporterID: task.reporter,
         sprintID: null,
         status: task.status,
         taskID: docID,
@@ -216,16 +216,12 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
     .catch(err => catchCode(err, 'There was a problem creating the task. Please try again.', setToasts, setLoading))
 }
 
-export const updateSingleTaskItemService = (orgID, projectID, taskID, item, setToasts) => {
-  const path = `organizations/${orgID}/projects/${projectID}/tasks`
-  return updateDB(path, taskID, {
+export const updateSingleTaskItemService = (tasksPath, taskID, item, setToasts) => {
+  return updateDB(tasksPath, taskID, {
     ...item,
     dateModified: new Date()
   })
-    .then(() => {
-      setToasts(successToast('Task updated successfully.'))
-    })
-    .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
+  .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
 }
 
 export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) => {

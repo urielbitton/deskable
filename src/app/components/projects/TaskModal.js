@@ -7,7 +7,7 @@ import {
   useOrgProjectTask, useOrgProjectTaskComments,
   useOrgProjectTaskFiles
 } from "app/hooks/projectsHooks"
-import { useDocsCount } from "app/hooks/userHooks"
+import useUser, { useDocsCount } from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from "react-router-dom"
@@ -20,6 +20,7 @@ import { errorToast, infoToast } from "app/data/toastsTemplates"
 import {
   createOrgProjectTaskCommentService,
   deleteProjectTaskService,
+  updateSingleTaskItemService,
   uploadOrgProjectTaskFiles
 } from "app/services/projectsServices"
 import DocViewerModal from "./DocViewerModal"
@@ -27,7 +28,7 @@ import LikesStatsModal from "../ui/LikesStatsModal"
 import Avatar from "../ui/Avatar"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import AppButton from "../ui/AppButton"
-import { AppCoverSelect, AppInput } from "../ui/AppInputs"
+import { AppCoverInput, AppCoverSelect, AppInput } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import OrgUsersTagInput from "./OrgUsersTagInput"
@@ -52,15 +53,11 @@ export default function TaskModal(props) {
   const [taskStatus, setTaskStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
   const [taskAddTo, setTaskAddTo] = useState('')
-  const [taskReporter, setTaskReporter] = useState('')
-  const [taskPoints, setTaskPoints] = useState('')
-  const [showStatusInput, setShowStatusInput] = useState(false)
-  const [showPriorityInput, setShowPriorityInput] = useState(false)
-  const [showAddToInput, setShowAddToInput] = useState(false)
-  const [showReporterInput, setShowReporterInput] = useState(false)
-  const [showAssigneesInput, setShowAssigneesInput] = useState(false)
+  const [taskReporter, setTaskReporter] = useState(null)
+  const [taskReporterQuery, setTaskReporterQuery] = useState('')
+  const [taskPoints, setTaskPoints] = useState(0)
+  const [showCoverInput, setShowCoverInput] = useState(null)
   const [assigneesQuery, setAssigneesQuery] = useState('')
-  const [showPointsInput, setShowPointsInput] = useState(false)
   const [showTaskMenu, setShowTaskMenu] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
@@ -78,6 +75,7 @@ export default function TaskModal(props) {
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
   const orgAlgoliaFilters = `activeOrgID:${myOrgID}`
+  const reporterUser = useUser(taskReporter)
 
   const columnsOptions = columns?.map((column) => {
     return {
@@ -135,11 +133,7 @@ export default function TaskModal(props) {
     setLikesUserIDs([])
     setShowCommentEditor(false)
     setCommentText('')
-    setShowStatusInput(false)
-    setShowPriorityInput(false)
-    setShowAddToInput(false)
-    setShowReporterInput(false)
-    setShowPointsInput(false)
+    setShowCoverInput(null)
   }
 
   const handleFileUpload = (e) => {
@@ -201,6 +195,23 @@ export default function TaskModal(props) {
 
   const archiveTask = () => {
 
+  }
+
+  // Update single task details fields functions
+  
+  const updateReporter = (e, user) => {
+    e.preventDefault()
+    updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        reporter: user.userID,
+      },
+      setToasts
+    )
+    .then(() => {
+      setShowCoverInput(null)
+    })
   }
 
   useEffect(() => {
@@ -385,11 +396,12 @@ export default function TaskModal(props) {
             <div className="task-details-flex">
               <AppCoverSelect
                 label="Status"
+                name="status"
                 options={columnsOptions}
                 value={taskStatus}
                 onChange={(e) => setTaskStatus(e.target.value)}
-                showInput={showStatusInput}
-                setShowInput={setShowStatusInput}
+                showInput={showCoverInput}
+                setShowInput={setShowCoverInput}
                 cover={
                   <h5>
                     <i className="far fa-columns" />
@@ -399,11 +411,12 @@ export default function TaskModal(props) {
               />
               <AppCoverSelect
                 label="Priority"
+                name="priority"
                 options={taskPriorityOptions}
                 value={taskPriority}
                 onChange={(e) => setTaskPriority(e.target.value)}
-                showInput={showPriorityInput}
-                setShowInput={setShowPriorityInput}
+                showInput={showCoverInput}
+                setShowInput={setShowCoverInput}
                 cover={
                   <h5>
                     <span className="icons">{taskPriorityIconRender}</span>
@@ -414,53 +427,61 @@ export default function TaskModal(props) {
               <AppCoverSelect
                 label="Task Location"
                 placeholder=""
+                name="addTo"
                 options={addToOptions}
                 value={taskAddTo}
                 onChange={(e) => setTaskAddTo(e.target.value)}
-                showInput={showAddToInput}
-                setShowInput={setShowAddToInput}
+                showInput={showCoverInput}
+                setShowInput={setShowCoverInput}
                 cover={<h5>
                   <i className="far fa-tasks" />
                   {task.inSprint ? 'Current Sprint' : 'Backlog'}
                 </h5>}
               />
-              <AppInput
+              <AppCoverInput
                 label="Task Points"
+                name="points"
                 value={taskPoints}
                 onChange={(e) => setTaskPoints(e.target.value)}
                 type="number"
                 max={10}
                 min={0}
+                showInput={showCoverInput}
+                setShowInput={setShowCoverInput}
+                cover={<h5>
+                  <i className="far fa-gamepad" />
+                  {taskPoints}
+                </h5>}
               />
               <OrgUsersTagInput
                 label="Reporter"
+                name="reporter"
                 placeholder="Unassigned"
-                value={taskReporter}
-                onChange={(e) => setTaskReporter(e.target.value)}
-                query={taskReporter}
+                value={taskReporterQuery}
+                onChange={(e) => setTaskReporterQuery(e.target.value)}
                 setLoading={() => { }}
                 filters={orgAlgoliaFilters}
-                addedUsers={[]}
-                onUserClick={(e, user) => console.log(user)}
-                onFocus={() => setShowReporterInput(true)}
-                showDropdown={showReporterInput}
-                setShowDropdown={setShowReporterInput}
+                selectedUser={reporterUser}
+                onUserClick={(e, user) => updateReporter(e, user)}
+                onFocus={() => setShowCoverInput('reporter')}
+                showDropdown={showCoverInput}
+                setShowDropdown={setShowCoverInput}
                 iconleft={<div className="icon"><i className="far fa-user" /></div>}
               />
               <div className="assignees-flex">
                 <OrgUsersTagInput
                   label="Assignees"
+                  name="assignees"
                   placeholder="Unassigned"
                   value={assigneesQuery}
                   onChange={(e) => setAssigneesQuery(e.target.value)}
-                  query={assigneesQuery}
                   setLoading={() => { }}
                   filters={orgAlgoliaFilters}
                   addedUsers={[]}
-                  onUserClick={(e, user) => console.log(user)}
-                  onFocus={() => setShowAssigneesInput(true)}
-                  showDropdown={showAssigneesInput}
-                  setShowDropdown={setShowAssigneesInput}
+                  onUserClick={(e, user) => e.preventDefault()}
+                  onFocus={() => setShowCoverInput('assignees')}
+                  showDropdown={showCoverInput}
+                  setShowDropdown={setShowCoverInput}
                   iconleft={<div className="icon"><i className="far fa-user" /></div>}
                 />
                 {assigneesList}

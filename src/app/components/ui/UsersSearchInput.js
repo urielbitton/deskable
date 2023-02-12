@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { AppInput } from "./AppInputs"
 import Avatar from "./Avatar"
 import './styles/UsersSearchInput.css'
 
@@ -7,7 +6,8 @@ export default function UsersSearchInput(props) {
 
   const { label, placeholder, value, onChange, users,
     showImgs = true, onUserClick, showDropdown,
-    setShowDropdown, onFocus, onBlur, iconleft } = props
+    setShowDropdown, onFocus, onBlur, iconleft,
+    name, tag, selectedUser } = props
 
   const usersRender = users?.map((user) => {
     return <div
@@ -28,8 +28,8 @@ export default function UsersSearchInput(props) {
   })
 
   useEffect(() => {
-    if (showDropdown) {
-      window.onclick = (e) => setShowDropdown(false)
+    if (showDropdown === name) {
+      window.onclick = (e) => setShowDropdown(null)
     }
     return () => window.onclick = null
   }, [showDropdown])
@@ -37,19 +37,39 @@ export default function UsersSearchInput(props) {
   return (
     <div
       className="users-search-input"
-      onClick={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation()
+        e.preventDefault()
+      }}
     >
-      <AppInput
-        label={label}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        iconleft={iconleft}
-      />
+      <label className="appInput commonInput">
+        {label && <h6>{label}</h6>}
+        {
+          tag && selectedUser ?
+            <div 
+              className="selected-user"
+              onClick={(e) => setShowDropdown(name)}
+            >
+              <Avatar
+                src={selectedUser?.photoURL}
+                dimensions={30}
+              />
+              <h6>{selectedUser?.firstName} {selectedUser?.lastName}</h6>
+            </div> :
+            <div className="input-wrapper">
+              <input
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                onFocus={onFocus}
+                onBlur={onBlur}
+              />
+              {iconleft}
+            </div>
+        }
+      </label>
       <div
-        className={`users-results-list ${showDropdown ? 'show' : 'hide'}`}
+        className={`users-results-list ${showDropdown === name ? 'show' : 'hide'}`}
       >
         {usersRender}
       </div>

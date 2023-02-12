@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import './styles/AppInputs.css'
 
 export function AppInput(props) {
@@ -93,11 +93,14 @@ export function AppSwitch(props) {
 export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
-    title, type, showInput, setShowInput, cover } = props
+    title, type, showInput, setShowInput, cover, max, min,
+    name } = props
+  const inputRef = useRef(null)
 
   useEffect(() => {
-    if (showInput) {
-      window.onclick = () => setShowInput(false)
+    if (showInput === name) {
+      inputRef.current.focus()
+      window.onclick = () => setShowInput(null)
     }
     return () => window.onclick = null
   }, [showInput])
@@ -113,17 +116,20 @@ export const AppCoverInput = (props) => {
         value={value}
         onClick={(e) => e.stopPropagation()}
         type={type}
-        style={{ display: showInput ? "block" : "none" }}
+        max={max}
+        min={min}
+        ref={inputRef}
+        style={{ display: showInput === name ? "block" : "none" }}
       />
       {iconright}
       {iconleft}
       <div
         className="coverInput"
-        style={{ display: showInput ? "none" : "block" }}
+        style={{ display: showInput === name ? "none" : "block" }}
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()
-          setShowInput(true)
+          setShowInput(name)
         }}
       >
         {cover}
@@ -135,7 +141,9 @@ export const AppCoverInput = (props) => {
 export const AppCoverSelect = (props) => {
 
   const { options, label, onChange, value, className,
-    containerStyles, showInput, setShowInput, cover } = props
+    containerStyles, showInput, setShowInput, cover,
+    name } = props
+  const selectRef = useRef(null)
 
   const optionsdata = options?.map((data, i) =>
     <option
@@ -149,8 +157,8 @@ export const AppCoverSelect = (props) => {
   )
 
   useEffect(() => {
-    if (showInput) {
-      window.onclick = () => setShowInput(false)
+    if (showInput === name) {
+      window.onclick = () => setShowInput(null)
     }
     return () => window.onclick = null
   }, [showInput])
@@ -165,16 +173,17 @@ export const AppCoverSelect = (props) => {
         onChange={(e) => onChange(e)}
         value={value}
         onClick={(e) => e.stopPropagation()}
-        style={{ display: showInput ? "block" : "none" }}
+        style={{ display: showInput === name? "block" : "none" }}
+        ref={selectRef}
       >
         {optionsdata}
       </select>
       <div
         className="coverInput"
-        style={{ display: showInput ? "none" : "block" }}
+        style={{ display: showInput === name ? "none" : "block" }}
         onClick={(e) => {
           e.stopPropagation()
-          setShowInput(true)
+          setShowInput(name)
         }}
       >
         {cover}

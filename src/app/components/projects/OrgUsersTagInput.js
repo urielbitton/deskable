@@ -5,20 +5,21 @@ import UsersSearchInput from "../ui/UsersSearchInput"
 export default function OrgUsersTagInput(props) {
 
   const { label, query, setLoading, filters, onChange,
-    value, addedUsers, onUserClick, showDropdown, 
+    value, selectedUser, onUserClick, showDropdown, 
     setShowDropdown, onFocus, onBlur, placeholder,
-    iconleft } = props
+    iconleft, name } = props
   const showAll = true
 
   const orgUsers = useOrgUsersSearch(query, setLoading, filters, showAll)
 
   const filteredOrgUsers = orgUsers.filter((user) => {
-    return !addedUsers.includes(user.userID)
+    return user?.userID !== selectedUser?.userID
   })
 
   return (
     <UsersSearchInput
       label={label}
+      name={name}
       placeholder={placeholder}
       onChange={onChange}
       value={value}
@@ -30,6 +31,8 @@ export default function OrgUsersTagInput(props) {
       onFocus={onFocus}
       onBlur={onBlur}
       iconleft={iconleft}
+      selectedUser={selectedUser}
+      tag
     />
   )
 }

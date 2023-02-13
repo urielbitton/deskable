@@ -132,7 +132,7 @@ iframe {
 hr {
   border: none;
 }
-.capitalize {
+.capitalize, .cap {
   text-transform: capitalize
 }
 .uppercase {

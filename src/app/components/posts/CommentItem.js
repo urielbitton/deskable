@@ -139,7 +139,7 @@ export default function CommentItem(props) {
     <div className="comment-item">
       <div className="left-side">
         <Avatar
-          src={author?.photoURL}
+          src={author.photoURL}
           dimensions={27}
         />
       </div>

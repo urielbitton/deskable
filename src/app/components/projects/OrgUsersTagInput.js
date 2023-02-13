@@ -7,7 +7,8 @@ export default function OrgUsersTagInput(props) {
   const { label, query, setLoading, filters, onChange,
     value, selectedUsers, onUserClick, onUserRemove, 
     showDropdown, setShowDropdown, onFocus, onBlur, 
-    placeholder, iconleft, name, multiple } = props
+    placeholder, iconleft, name, multiple, maxAvatars,
+    onClear } = props
   const showAll = true
 
   const orgUsers = useOrgUsersSearch(query, setLoading, filters, showAll)
@@ -35,6 +36,8 @@ export default function OrgUsersTagInput(props) {
       selectedUsers={selectedUsers}
       tag
       multiple={multiple}
+      maxAvatars={maxAvatars}
+      onClear={onClear}
     />
   )
 }

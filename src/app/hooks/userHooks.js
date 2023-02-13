@@ -10,6 +10,9 @@ export default function useUser(userID) {
     if(userID) {
       getUserByID(userID, setAppUser)
     }
+    else {
+      setAppUser(null)
+    }
   },[userID])
 
   return appUser
@@ -17,7 +20,7 @@ export default function useUser(userID) {
 
 export function useUsers(userIDs) {
 
-  const [appUsers, setAppUsers] = useState(null)
+  const [appUsers, setAppUsers] = useState([])
 
   useEffect(() => {
     if(userIDs?.length) {
@@ -25,6 +28,9 @@ export function useUsers(userIDs) {
       Promise.all(promises).then(users => {
         setAppUsers(users)
       })
+    }
+    else {
+      setAppUsers([])
     }
   },[userIDs])
 

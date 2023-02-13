@@ -201,8 +201,9 @@
 .view-task-content .task-content .events-section .events-list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 10px;
   margin-top: 15px;
+  width: 100%;
 }
 
 
@@ -268,6 +269,9 @@
   color: var(--darkGrayText);
   font-weight: 600;
 }
+.view-task-content .task-details-flex .commonInput input:focus {
+  border-color: var(--primary);
+}
 .view-task-content .task-details-flex .assignees-flex {
   display: flex;
   flex-direction: column;
@@ -295,7 +299,6 @@
   background: var(--lightInputBg);
 }
 .view-task-content .task-details-flex .users-search-input .appInput .icon {
-  z-index: 10;
   position: absolute;
   top: 5px;
   left: 5px;
@@ -328,9 +331,7 @@
 .view-task-content .task-details-flex .coverInput .icons i {
   line-height: 0.4;
 }
-.view-task-content .task-details-flex input:hover {
-  background: var(--lightInputBg);
-}
+
 
 .view-task-content .meta-details-flex {
   display: flex;

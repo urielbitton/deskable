@@ -3,7 +3,13 @@
   align-items: flex-start;
   gap: 15px;
   width: 100%;
+  padding: 10px;
+  border-radius: 5px;
 }
+.task-event-item:hover {
+  background: var(--lightInputBg);
+}
+
 .task-event-item .avatar-container {
   top: 1px;
 }
@@ -11,8 +17,16 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  width: 100%;
 }
 .task-event-item .texts .titles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.task-event-item .texts .titles .left {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -27,6 +41,26 @@
   font-weight: 500;
   font-size: 13px;
 }
+.task-event-item .texts .titles .icon-container {
+  visibility: hidden;
+  opacity: 0;
+}
+.task-event-item:hover .titles .icon-container {
+  visibility: visible;
+  opacity: 1;
+}
+.task-event-item .texts .titles .icon-container:hover {
+  background: var(--inputBg);
+}
+.task-event-item .texts .titles .dropdown-item:hover {
+  background: var(--inputBg);
+}
+.task-event-item .texts .titles .dropdown-item span,
+.task-event-item .texts .titles .dropdown-item i {
+  color: var(--darkGrayText);
+  font-size: 12px;
+}
+
 .task-event-item .texts p {
   font-size: 15px;
   color: #333;

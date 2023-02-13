@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useRef } from 'react'
 import './styles/AppInputs.css'
+import Select from 'react-select'
 
 export function AppInput(props) {
 
@@ -94,7 +95,7 @@ export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
     title, type, showInput, setShowInput, cover, max, min,
-    name, onCheck, onCancel } = props
+    name, onCheck, onCancel, loading } = props
   const inputRef = useRef(null)
 
   const handleCheck = (e) => {
@@ -157,6 +158,12 @@ export const AppCoverInput = (props) => {
           <i className="fal fa-times" />
         </div>
       </div>
+      {
+        loading &&
+        <div className="loading-cover">
+          <i className="fas fa-spinner fa-spin" />
+        </div>
+      }
     </label>
   )
 }
@@ -165,19 +172,40 @@ export const AppCoverSelect = (props) => {
 
   const { options, label, onChange, value, className,
     containerStyles, showInput, setShowInput, cover,
-    name } = props
+    name, loading } = props
   const selectRef = useRef(null)
 
-  const optionsdata = options?.map((data, i) =>
-    <option
-      key={i}
-      selected={data.selected}
-      disabled={data.disabled}
-      value={data.value}
-    >
-      {data.name || data.label}
-    </option>
-  )
+  const openSelect = (e) => {
+    e.stopPropagation()
+    selectRef.current.focus()
+  }
+
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderRadius: '5px',
+      fontSize: '14px',
+      fontWeight: '500',
+      color: 'var(--grayText)',
+      boxShadow: 'none',
+      border: state.isFocused ? '1px solid var(--primary)' : 'none',
+      zIndex: state.isFocused ? '100' : '0',
+      "&:hover": {
+        border: state.isFocused ? '1px solid var(--primary)' : 'none',
+      },
+    }),
+    option: (base, state) => ({
+      ...base,
+      fontSize: '14px',
+      fontWeight: '500',
+      background: state.isSelected ? 'var(--inputBg)' : '#fff',
+      cursor: 'pointer',
+      color: 'var(--darkGrayText)',
+      "&:hover": {
+        background: 'var(--inputBg)'
+      },
+    })
+  }
 
   useEffect(() => {
     if (showInput === name) {
@@ -192,15 +220,24 @@ export const AppCoverSelect = (props) => {
       style={containerStyles}
     >
       <h6>{label}</h6>
-      <select
-        onChange={(e) => onChange(e)}
-        value={value}
-        onClick={(e) => e.stopPropagation()}
+      <div
+        className="select-container"
+        onClick={(e) => openSelect(e)}
         style={{ display: showInput === name ? "block" : "none" }}
-        ref={selectRef}
       >
-        {optionsdata}
-      </select>
+        <Select
+          onChange={(value) => onChange(value)}
+          value={value}
+          defaultValue={value}
+          options={options}
+          openMenuOnFocus
+          styles={selectStyles}
+          hideSelectedOptions
+          menuShouldScrollIntoView
+          components={{ IndicatorSeparator: () => null }}
+          ref={selectRef}
+        />
+      </div>
       <div
         className="coverInput"
         style={{ display: showInput === name ? "none" : "block" }}
@@ -211,6 +248,12 @@ export const AppCoverSelect = (props) => {
       >
         {cover}
       </div>
+      {
+        loading &&
+        <div className="loading-cover">
+          <i className="fas fa-spinner fa-spin" />
+        </div>
+      }
     </label>
   )
 }

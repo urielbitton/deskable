@@ -23,6 +23,32 @@
   cursor: pointer;
   user-select: none;
 }
+.users-search-input .selected-user .clear-text {
+  font-size: 11px;
+  color: var(--grayText);
+  align-self: center;
+  justify-self: center;
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+}
+.users-search-input .selected-user:hover .clear-text,
+.users-search-input .selected-user:hover .icon-container {
+  opacity: 1;
+  visibility: visible;
+}
+.users-search-input .selected-user .clear-text:hover {
+  text-decoration: underline;
+}
+.users-search-input .selected-user .icon-container {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 5px;
+}
 
 .users-search-input .users-results-list {
   display: flex;

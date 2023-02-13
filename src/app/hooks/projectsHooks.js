@@ -41,7 +41,7 @@ export const useOrgProjectTasks = (projectID, limit) => {
   useEffect(() => {
     if (myOrgID && projectID)
       getOrgProjectTasks(myOrgID, projectID, setTasks, limit)
-  }, [myOrgID, projectID])
+  }, [myOrgID, projectID, limit])
 
   return tasks
 }
@@ -131,7 +131,7 @@ export const useOrgProjectTaskFiles = (projectID, taskID, limit) => {
   useEffect(() => {
     if (myOrgID && projectID && taskID)
       getOrgProjectTaskFiles(myOrgID, projectID, taskID, setFiles, limit)
-  }, [myOrgID, projectID, taskID])
+  }, [myOrgID, projectID, taskID, limit])
 
   return files
 }
@@ -144,7 +144,7 @@ export const useOrgProjectTaskComments = (projectID, taskID, limit) => {
     useEffect(() => {
       if (myOrgID && projectID && taskID)
         getOrgProjectTaskComments(myOrgID, projectID, taskID, setComments, limit)
-    }, [myOrgID, projectID, taskID])
+    }, [myOrgID, projectID, taskID, limit])
   
     return comments
   }
@@ -157,7 +157,7 @@ export const useOrgProjectTaskComments = (projectID, taskID, limit) => {
     useEffect(() => {
       if (myOrgID && projectID && taskID)
         getOrgProjectTaskEvents(myOrgID, projectID, taskID, setEvents, limit)
-    }, [myOrgID, projectID, taskID])
+    }, [myOrgID, projectID, taskID, limit])
   
     return events
   }

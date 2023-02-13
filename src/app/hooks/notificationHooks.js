@@ -8,7 +8,7 @@ export const useUnreadNotifications = (userID, limit) => {
 
   useEffect(() => {
     getUnreadNotifications(userID, setUnreadNotifs, limit)
-  }, [userID])
+  }, [userID, limit])
 
   return unreadNotifs
 }

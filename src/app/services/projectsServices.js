@@ -231,7 +231,7 @@ export const updateSingleTaskItemService = (tasksPath, taskID, item, setToasts) 
     ...item,
     dateModified: new Date()
   })
-  .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
+    .catch(err => catchCode(err, 'There was a problem updating the task. Please try again.', setToasts))
 }
 
 export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) => {
@@ -293,7 +293,7 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
   const oldPosition = task.position
   const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
-  runTransaction(db, (transaction) => {
+  return runTransaction(db, (transaction) => {
     return transaction.get(taskRef)
       .then((snapshot) => {
         const path = `organizations/${orgID}/projects/${projectID}/tasks`
@@ -343,7 +343,7 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
     .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
 }
 
-export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID, 
+export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID,
   newColumnID, columns, setLoading, setToasts) => {
   const newColumnTitle = columns.filter(column => column.columnID === newColumnID)[0].title
   const taskID = task.taskID
@@ -351,7 +351,7 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
   const oldPosition = task.position
   const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
-  runTransaction(db, (transaction) => {
+  return runTransaction(db, (transaction) => {
     return transaction.get(taskRef)
       .then((snapshot) => {
         const path = `organizations/${orgID}/projects/${projectID}/tasks`
@@ -436,25 +436,25 @@ export const deleteOrgProjectTaskFilesService = (path, fileID, fileName, setToas
     path,
     [fileName]
   )
-  .then(() => {
-    return deleteDB(path, fileID)
-  })
-  .then(() => {
-    setToasts(successToast('File deleted successfully.'))
-    setLoading(false)
-  })
-  .catch((err) => {
-    setToasts(errorToast('There was an error deleting the file. Please try again.', true))
-    setLoading(false)
-    console.log(err)
-  })
+    .then(() => {
+      return deleteDB(path, fileID)
+    })
+    .then(() => {
+      setToasts(successToast('File deleted successfully.'))
+      setLoading(false)
+    })
+    .catch((err) => {
+      setToasts(errorToast('There was an error deleting the file. Please try again.', true))
+      setLoading(false)
+      console.log(err)
+    })
 }
 
 export const likeOrgProjectTaskCommentService = (userID, userHasLiked, commentsPath, commentID, setToasts) => {
   return updateDB(commentsPath, commentID, {
     likes: !userHasLiked ? firebaseArrayAdd(userID) : firebaseArrayRemove(userID)
   })
-  .catch(err => catchCode(err, `There was a problem ${userHasLiked ? 'unliking' : 'liking'} the comment. Please try again.`, setToasts))
+    .catch(err => catchCode(err, `There was a problem ${userHasLiked ? 'unliking' : 'liking'} the comment. Please try again.`, setToasts))
 }
 
 export const createOrgProjectTaskCommentService = (commentsPath, comment, setToasts, setLoading) => {
@@ -472,10 +472,10 @@ export const createOrgProjectTaskCommentService = (commentsPath, comment, setToa
     projectID,
     taskID,
   })
-  .then(() => {
-    setLoading(false)
-  })
-  .catch(err => catchCode(err, 'There was a problem creating the comment. Please try again.', setToasts, setLoading))
+    .then(() => {
+      setLoading(false)
+    })
+    .catch(err => catchCode(err, 'There was a problem creating the comment. Please try again.', setToasts, setLoading))
 }
 
 export const updateOrgProjectTaskCommentService = (commentsPath, commentID, commentText, setToasts, setLoading) => {
@@ -485,11 +485,11 @@ export const updateOrgProjectTaskCommentService = (commentsPath, commentID, comm
     dateModified: new Date(),
     isEdited: true
   })
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast('Comment updated successfully.'))
-  })
-  .catch(err => catchCode(err, 'There was a problem updating the comment. Please try again.', setToasts, setLoading))
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Comment updated successfully.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem updating the comment. Please try again.', setToasts, setLoading))
 }
 
 export const deleteOrgProjectTaskCommentService = (commentsPath, commentID, setToasts) => {
@@ -513,5 +513,10 @@ export const createOrgProjectTaskEvent = (eventsPath, userID, title, icon, setTo
     ownerID: userID,
     icon
   })
-  .catch(err => catchCode(err, 'There was a problem creating the event. Please try again.', setToasts))
+    .catch(err => catchCode(err, 'There was a problem creating the event. Please try again.', setToasts))
+}
+
+export const deleteProjectTaskEvent = (eventsPath, eventID, setToasts) => {
+  return deleteDB(eventsPath, eventID)
+    .catch(err => catchCode(err, 'There was a problem deleting the event. Please try again.', setToasts))
 }

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import Avatar from "./Avatar"
+import IconContainer from "./IconContainer"
 import MultipleUsersAvatars from "./MultipleUsersAvatars"
 import './styles/UsersSearchInput.css'
 
@@ -8,8 +9,8 @@ export default function UsersSearchInput(props) {
   const { label, placeholder, value, onChange, users,
     showImgs = true, onUserClick, showDropdown,
     setShowDropdown, onFocus, onBlur, iconleft,
-    name, tag, selectedUsers, multiple, 
-    onUserRemove } = props
+    name, tag, selectedUsers, multiple,
+    onUserRemove, maxAvatars, onClear } = props
 
   const usersRender = users?.map((user) => {
     return <div
@@ -29,6 +30,11 @@ export default function UsersSearchInput(props) {
     </div>
   })
 
+  const handleClear = (e) => {
+    e.stopPropagation()
+    onClear()
+  }
+
   useEffect(() => {
     if (showDropdown === name) {
       window.onclick = (e) => setShowDropdown(null)
@@ -47,7 +53,7 @@ export default function UsersSearchInput(props) {
       <label className="appInput commonInput">
         {label && <h6>{label}</h6>}
         {
-          tag && selectedUsers?.length > 0 ?
+          tag && selectedUsers?.filter(user => user).length > 0 ?
             !multiple ?
               <div
                 className="selected-user"
@@ -58,6 +64,17 @@ export default function UsersSearchInput(props) {
                   dimensions={29}
                 />
                 <h6>{selectedUsers[0]?.firstName} {selectedUsers[0]?.lastName}</h6>
+                { 
+                  onClear && 
+                  <IconContainer
+                    icon="far fa-times"
+                    bgColor="var(--inputBg)"
+                    iconColor="var(--grayText)"
+                    dimensions={23}
+                    iconSize={16}
+                    onClick={handleClear}
+                  />
+                }
               </div>
               :
               <div
@@ -66,11 +83,19 @@ export default function UsersSearchInput(props) {
               >
                 <MultipleUsersAvatars
                   userIDs={selectedUsers?.map((user) => user?.userID)}
-                  maxAvatars={3}
+                  maxAvatars={maxAvatars}
                   avatarDimensions={29}
                   enableEditing
                   onClick={(user) => onUserRemove(user)}
                 />
+                {
+                  onClear && <small
+                    className="clear-text"
+                    onClick={handleClear}
+                  >
+                    Clear
+                  </small>
+                }
               </div>
             :
             <div className="input-wrapper">

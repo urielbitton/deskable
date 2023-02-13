@@ -145,3 +145,21 @@
 .appCoverInput .input-actions > div i.fa-times {
   font-size: 19px;
 }
+
+.appCoverInput .loading-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.8);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+.appCoverInput .loading-cover i {
+  font-size: 16px;
+  color: var(--grayText);
+}

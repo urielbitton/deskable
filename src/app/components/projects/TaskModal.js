@@ -19,9 +19,11 @@ import TaskComment from "./TaskComment"
 import TaskAttachment from "./TaskAttachment"
 import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import {
+  changeDiffColumnTaskPositionService,
   createOrgProjectTaskCommentService,
   createOrgProjectTaskEvent,
   deleteProjectTaskService,
+  getLastColumnTaskPosition,
   updateSingleTaskItemService,
   uploadOrgProjectTaskFiles
 } from "app/services/projectsServices"
@@ -64,7 +66,9 @@ export default function TaskModal(props) {
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [assigneesQuery, setAssigneesQuery] = useState('')
   const [showTaskMenu, setShowTaskMenu] = useState(false)
+  const [showEventMenu, setShowEventMenu] = useState(null)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [coverInputLoading, setCoverInputLoading] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
   const taskID = searchParams.get('taskID')
@@ -109,10 +113,6 @@ export default function TaskModal(props) {
       />
     })
 
-  const assigneesList = task?.assigneesIDs?.map((assignee, index) => {
-    return
-  })
-
   const handleFileClick = (file) => {
     setActiveDocFile(file)
     setShowDocViewer(true)
@@ -140,6 +140,10 @@ export default function TaskModal(props) {
     return <TaskEvent
       key={index}
       event={event}
+      task={task}
+      eventsPath={eventsPath}
+      showEventMenu={showEventMenu}
+      setShowEventMenu={setShowEventMenu}
     />
   })
 
@@ -217,86 +221,61 @@ export default function TaskModal(props) {
 
   // Update single task details fields functions
 
-  const updateTaskName = (e) => {
-    updateSingleTaskItemService(
+  const updateSingleTaskItem = (item, eventTitle, icon, name) => {
+    if (Object.values(item)[0] === task[Object.keys(item)[0]]) { // If the value is the same, don't update
+      setShowCoverInput(null)
+      return
+    }
+    setCoverInputLoading(name)
+    return updateSingleTaskItemService(
       tasksPath,
       taskID,
-      {
-        title: taskName,
-      },
+      item,
       setToasts
     )
       .then(() => {
-        const eventTitle = `Changed task name to <b>${taskName}</b>`
-        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-edit', setToasts)
         setShowCoverInput(null)
-      })
-  }
-  
-  const updateTaskDescription = () => {
-    updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        description: taskDescription,
-      },
-      setToasts
-    )
-      .then(() => {
-        const eventTitle = `Changed the task description`
-        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-edit', setToasts)
-        setShowCoverInput(null)
+        setCoverInputLoading(null)
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, icon, setToasts)
       })
   }
 
-  const updateReporter = (e, user) => {
-    e.preventDefault()
-    updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        reporter: user.userID,
-      },
-      setToasts
+  const updateTaskColumn = (status, name) => {
+    setCoverInputLoading(name)
+    const newColumnName = status.value
+    updateSingleTaskItem(
+      { status: status.value },
+      `Changed the task status from <b className="cap">${task.status}</b> to <b className="cap">${newColumnName}</b>`,
+      'fas fa-columns',
+      name
     )
       .then(() => {
-        const eventTitle = `Set <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a> as the reporter for this task.`
-        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-bullhorn', setToasts)
+        const newColumnID = columns?.find((column) => column.title === newColumnName)?.columnID
+        const oldColumnID = task.columnID
         setShowCoverInput(null)
+        getLastColumnTaskPosition(myOrgID, projectID, oldColumnID)
+          .then((position) => {
+            changeDiffColumnTaskPositionService(
+              myOrgID,
+              projectID,
+              task,
+              (position + 1),
+              oldColumnID,
+              newColumnID,
+              columns,
+              () => { },
+              setToasts
+            )
+              .then(() => {
+                setCoverInputLoading(null)
+                setToasts(successToast('Task status updated successfully.'))
+              })
+          })
       })
   }
 
-  const addAssignee = (e, user) => {
-    e.preventDefault()
-    updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        assigneesIDs: [...task?.assigneesIDs, user.userID],
-      },
-      setToasts
-    )
-      .then(() => {
-        setShowCoverInput(null)
-        const eventTitle = `Assigned <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a to this task.`
-        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-user-plus', setToasts)
-      })
-  }
-
-  const removeAssignee = (user) => {
-    updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        assigneesIDs: task?.assigneesIDs?.filter((assignee) => assignee !== user.userID),
-      },
-      setToasts
-    )
-      .then(() => {
-        setToasts(successToast('User unassigned from this task.'))
-        const eventTitle = `Removed <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a> from this task.`
-        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-user-minus', setToasts)
-      })
+  const updateTaskLocation = (location, name) => {
+    setCoverInputLoading(name)
   }
 
   useEffect(() => {
@@ -337,10 +316,15 @@ export default function TaskModal(props) {
         <div className="view-task-content">
           <div className="task-content">
             <AppCoverInput
-              name="task-name"
+              name="taskName"
               value={taskName}
               onChange={(e) => setTaskName(e.target.value)}
-              onCheck={() => updateTaskName()}
+              onCheck={() => updateSingleTaskItem(
+                { title: taskName },
+                `Changed task name to <b>${taskName}</b>`,
+                'fas fa-edit',
+                'taskName'
+              )}
               onCancel={() => setShowCoverInput(null)}
               showInput={showCoverInput}
               setShowInput={setShowCoverInput}
@@ -366,7 +350,12 @@ export default function TaskModal(props) {
                   height="200px"
                   containerStyles={{ display: showCoverInput === 'description' ? 'block' : 'none' }}
                   enableEditing
-                  onSave={() => updateTaskDescription()}
+                  onSave={() => updateSingleTaskItem(
+                    { description: taskDescription },
+                    `Changed task description`,
+                    'fas fa-edit',
+                    'description'
+                  )}
                   onCancel={() => setShowCoverInput(null)}
                 />
                 <div
@@ -402,13 +391,13 @@ export default function TaskModal(props) {
                 className={`tab-header ${activeEventsTab === 'comments' && 'active'}`}
                 onClick={() => setActiveEventsTab('comments')}
               >
-                <span>Comments</span>
+                <span><i className="fas fa-comment" /> Comments</span>
               </div>
               <div
                 className={`tab-header ${activeEventsTab === 'events' && 'active'}`}
                 onClick={() => setActiveEventsTab('events')}
               >
-                <span>Events</span>
+                <span><i className="fas fa-stream" /> Events</span>
               </div>
             </div>
             {
@@ -513,9 +502,10 @@ export default function TaskModal(props) {
                 name="status"
                 options={columnsOptions}
                 value={taskStatus}
-                onChange={(e) => setTaskStatus(e.target.value)}
+                onChange={(status) => updateTaskColumn(status)}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
+                loading={coverInputLoading === 'status'}
                 cover={
                   <h5>
                     <i className="far fa-columns" />
@@ -528,9 +518,15 @@ export default function TaskModal(props) {
                 name="priority"
                 options={taskPriorityOptions}
                 value={taskPriority}
-                onChange={(e) => setTaskPriority(e.target.value)}
+                onChange={(priority) => updateSingleTaskItem(
+                  { priority: priority.value },
+                  `Changed the task priority from <b>${task.priority}</b> to <b>${priority.value}</b>`,
+                  'fas fa-bars',
+                  'priority'
+                )}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
+                loading={coverInputLoading === 'priority'}
                 cover={
                   <h5>
                     <span className="icons">{taskPriorityIconRender}</span>
@@ -544,9 +540,10 @@ export default function TaskModal(props) {
                 name="addTo"
                 options={addToOptions}
                 value={taskAddTo}
-                onChange={(e) => setTaskAddTo(e.target.value)}
+                onChange={(location) => updateTaskLocation(location)}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
+                loading={coverInputLoading === 'addTo'}
                 cover={<h5>
                   <i className="far fa-tasks" />
                   {task.inSprint ? 'Current Sprint' : 'Backlog'}
@@ -562,6 +559,14 @@ export default function TaskModal(props) {
                 min={0}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
+                loading={coverInputLoading === 'points'}
+                onCheck={() => updateSingleTaskItem(
+                  { points: +taskPoints },
+                  `Changed the task points from <b>${task.points}</b> to <b>${taskPoints}</b>`,
+                  'fas fa-gamepad',
+                  'points'
+                )}
+                onCancel={() => setShowCoverInput(null)}
                 cover={<h5>
                   <i className="far fa-gamepad" />
                   {taskPoints}
@@ -576,11 +581,25 @@ export default function TaskModal(props) {
                 setLoading={setSearchLoading}
                 filters={orgAlgoliaFilters}
                 selectedUsers={[reporterUser]}
-                onUserClick={(e, user) => updateReporter(e, user)}
+                onUserClick={(e, user) => {
+                  e.preventDefault()
+                  updateSingleTaskItem(
+                    { reporter: user.userID },
+                    `Set <b>${user.firstName} ${user.lastName}</b> as the reporter for this task`,
+                    'fas fa-bullhorn',
+                    'reporter'
+                  )
+                }}
                 onFocus={() => setShowCoverInput('reporter')}
                 showDropdown={showCoverInput}
                 setShowDropdown={setShowCoverInput}
                 iconleft={<div className="icon"><i className="far fa-user" /></div>}
+                onClear={() => updateSingleTaskItem(
+                  { reporter: null },
+                  `Removed ${reporterUser?.firstName} ${reporterUser?.lastName} as the reporter for this task`,
+                  'fas fa-bullhorn',
+                  'reporter'
+                )}
               />
               <div className="assignees-flex">
                 <OrgUsersTagInput
@@ -591,16 +610,35 @@ export default function TaskModal(props) {
                   onChange={(e) => setAssigneesQuery(e.target.value)}
                   setLoading={setSearchLoading}
                   filters={orgAlgoliaFilters}
-                  onUserClick={(e, user) => addAssignee(e, user)}
-                  onUserRemove={(user) => removeAssignee(user)}
+                  onUserClick={(e, user) => {
+                    e.preventDefault()
+                    updateSingleTaskItem(
+                      { assigneesIDs: [...task?.assigneesIDs, user.userID] },
+                      `Assigned <b>${user.firstName} ${user.lastName}</b> to this task`,
+                      'fas fa-user-plus',
+                      'assignees'
+                    )
+                  }}
+                  onUserRemove={(user) => updateSingleTaskItem(
+                    { assigneesIDs: task?.assigneesIDs?.filter((assignee) => assignee !== user.userID) },
+                    `Removed <b>${user.firstName} ${user.lastName}</b> from this task`,
+                    'fas fa-user-minus',
+                    'assignees'
+                  )}
                   onFocus={() => setShowCoverInput('assignees')}
                   showDropdown={showCoverInput}
                   setShowDropdown={setShowCoverInput}
                   iconleft={<div className="icon"><i className="far fa-user" /></div>}
                   selectedUsers={assigneesUsers}
                   multiple={task.assigneesIDs.length > 1}
+                  maxAvatars={4}
+                  onClear={() => updateSingleTaskItem(
+                    { assigneesIDs: [] },
+                    `Removed all assignees from this task`,
+                    'fas fa-user-minus',
+                    'assignees'
+                  )}
                 />
-                {assigneesList}
               </div>
             </div>
             <div className="meta-details-flex">

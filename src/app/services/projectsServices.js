@@ -110,6 +110,17 @@ export const getOrgProjectTaskComments = (orgID, projectID, taskID, setComments,
   })
 }
 
+export const getOrgProjectTaskEvents = (orgID, projectID, taskID, setEvents, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/events`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setEvents(snapshot.docs.map(doc => doc.data()))
+  })
+}
 
 export const catchCode = (err, errorText, setToasts, setLoading) => {
   console.log(err)
@@ -147,10 +158,9 @@ export const createProjectColumnService = (orgID, projectID, title, setLoading, 
     .catch(err => catchCode(err, 'There was a problem creating the column. Please try again.', setToasts, setLoading))
 }
 
-export const deleteProjectColumnService = (orgID, projectID, columnID, setLoading, setToasts) => {
+export const deleteProjectColumnService = (columnsPath, columnID, setLoading, setToasts) => {
   setLoading(true)
-  const path = `organizations/${orgID}/projects/${projectID}/columns`
-  return deleteDB(path, columnID)
+  return deleteDB(columnsPath, columnID)
     .then(() => {
       setLoading(false)
       setToasts(successToast('Column deleted successfully.'))
@@ -389,7 +399,10 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
     .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
 }
 
-export const uploadOrgProjectTaskFiles = (orgID, projectID, taskID, files, filesStoragePath, setLoading, setToasts) => {
+export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, setLoading, setToasts) => {
+  const orgID = filesPath.split('/')[1]
+  const projectID = filesPath.split('/')[3]
+  const taskID = filesPath.split('/')[5]
   return uploadMultipleFilesToFireStorage(files, filesStoragePath, null, null)
     .then((uploadedFiles) => {
       const batch = writeBatch(db)
@@ -444,9 +457,10 @@ export const likeOrgProjectTaskCommentService = (userID, userHasLiked, commentsP
   .catch(err => catchCode(err, `There was a problem ${userHasLiked ? 'unliking' : 'liking'} the comment. Please try again.`, setToasts))
 }
 
-export const createOrgProjectTaskCommentService = (orgID, projectID, taskID, comment, setToasts, setLoading) => {
+export const createOrgProjectTaskCommentService = (commentsPath, comment, setToasts, setLoading) => {
   setLoading(true)
-  const commentsPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/comments`
+  const projectID = commentsPath.split('/')[3]
+  const taskID = commentsPath.split('/')[5]
   const commentID = getRandomDocID(commentsPath)
   return setDB(commentsPath, commentID, {
     ...comment,
@@ -484,4 +498,20 @@ export const deleteOrgProjectTaskCommentService = (commentsPath, commentID, setT
       setToasts(successToast('Comment deleted successfully.'))
     })
     .catch(err => catchCode(err, 'There was a problem deleting the comment. Please try again.', setToasts))
+}
+
+export const createOrgProjectTaskEvent = (eventsPath, userID, title, icon, setToasts) => {
+  const projectID = eventsPath.split('/')[3]
+  const taskID = eventsPath.split('/')[5]
+  const eventID = getRandomDocID(eventsPath)
+  return setDB(eventsPath, eventID, {
+    dateCreated: new Date(),
+    eventID,
+    title,
+    projectID,
+    taskID,
+    ownerID: userID,
+    icon
+  })
+  .catch(err => catchCode(err, 'There was a problem creating the event. Please try again.', setToasts))
 }

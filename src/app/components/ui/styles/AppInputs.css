@@ -112,3 +112,36 @@
   height: 16px;
   border-radius: 8px;
 }
+
+.appCoverInput .input-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  z-index: 100;
+}
+.appCoverInput .input-actions > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  background: var(--inputBg);
+  border: 1px solid var(--inputBorder);
+  box-shadow: var(--newCardShadow);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.appCoverInput .input-actions > div:hover {
+  background: var(--lightGrayText);
+}
+.appCoverInput .input-actions > div i {
+  font-size: 16px;
+  color: var(--grayText);
+}
+.appCoverInput .input-actions > div i.fa-times {
+  font-size: 19px;
+}

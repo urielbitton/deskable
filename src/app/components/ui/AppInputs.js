@@ -94,8 +94,20 @@ export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
     title, type, showInput, setShowInput, cover, max, min,
-    name } = props
+    name, onCheck, onCancel } = props
   const inputRef = useRef(null)
+
+  const handleCheck = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onCheck && onCheck(e)
+  }
+
+  const handleCancel = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onCancel && onCancel(e)
+  }
 
   useEffect(() => {
     if (showInput === name) {
@@ -133,6 +145,17 @@ export const AppCoverInput = (props) => {
         }}
       >
         {cover}
+      </div>
+      <div
+        className="input-actions"
+        style={{ display: showInput === name ? "flex" : "none" }}
+      >
+        <div onClick={handleCheck}>
+          <i className="far fa-check" />
+        </div>
+        <div onClick={handleCancel}>
+          <i className="fal fa-times" />
+        </div>
       </div>
     </label>
   )
@@ -173,7 +196,7 @@ export const AppCoverSelect = (props) => {
         onChange={(e) => onChange(e)}
         value={value}
         onClick={(e) => e.stopPropagation()}
-        style={{ display: showInput === name? "block" : "none" }}
+        style={{ display: showInput === name ? "block" : "none" }}
         ref={selectRef}
       >
         {optionsdata}

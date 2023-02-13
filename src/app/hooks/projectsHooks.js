@@ -1,4 +1,9 @@
-import { getOrgProjectByID, getOrgProjectColumnByID, getOrgProjectColumns, getOrgProjectTaskByID, getOrgProjectTaskComments, getOrgProjectTaskFiles, getOrgProjectTasks, getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, getProjectsByOrgID } from "app/services/projectsServices"
+import { getOrgProjectByID, getOrgProjectColumnByID, 
+  getOrgProjectColumns, getOrgProjectTaskByID, 
+  getOrgProjectTaskComments, getOrgProjectTaskEvents, getOrgProjectTaskFiles, 
+  getOrgProjectTasks, getOrgProjectTasksByColumnID, 
+  getOrgProjectTasksByColumnsArray, getProjectsByOrgID
+ } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -142,4 +147,17 @@ export const useOrgProjectTaskComments = (projectID, taskID, limit) => {
     }, [myOrgID, projectID, taskID])
   
     return comments
+  }
+
+  export const useOrgProjectTaskEvents = (projectID, taskID, limit) => {
+
+    const { myOrgID } = useContext(StoreContext)
+    const [events, setEvents] = useState([])
+  
+    useEffect(() => {
+      if (myOrgID && projectID && taskID)
+        getOrgProjectTaskEvents(myOrgID, projectID, taskID, setEvents, limit)
+    }, [myOrgID, projectID, taskID])
+  
+    return events
   }

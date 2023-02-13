@@ -5,6 +5,7 @@ import {
 import {
   useOrgProjectColumns,
   useOrgProjectTask, useOrgProjectTaskComments,
+  useOrgProjectTaskEvents,
   useOrgProjectTaskFiles
 } from "app/hooks/projectsHooks"
 import useUser, { useDocsCount, useUsers } from "app/hooks/userHooks"
@@ -19,6 +20,7 @@ import TaskAttachment from "./TaskAttachment"
 import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import {
   createOrgProjectTaskCommentService,
+  createOrgProjectTaskEvent,
   deleteProjectTaskService,
   updateSingleTaskItemService,
   uploadOrgProjectTaskFiles
@@ -28,16 +30,16 @@ import LikesStatsModal from "../ui/LikesStatsModal"
 import Avatar from "../ui/Avatar"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import AppButton from "../ui/AppButton"
-import { AppCoverInput, AppCoverSelect, AppInput } from "../ui/AppInputs"
+import { AppCoverInput, AppCoverSelect } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import OrgUsersTagInput from "./OrgUsersTagInput"
-import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
+import TaskEvent from "./TaskEvent"
 
 export default function TaskModal(props) {
 
-  const { myOrgID, myUserID, myUserImg, setToasts,
-    setPageLoading } = useContext(StoreContext)
+  const { myOrgID, myUserID, myUserImg, myUserName,
+    setToasts, setPageLoading } = useContext(StoreContext)
   const { showModal, setShowModal } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
   const [filesLimit, setFilesLimit] = useState(5)
@@ -51,6 +53,8 @@ export default function TaskModal(props) {
   const [likesUserIDs, setLikesUserIDs] = useState([])
   const [showCommentEditor, setShowCommentEditor] = useState(false)
   const [commentText, setCommentText] = useState('')
+  const [taskName, setTaskName] = useState('')
+  const [taskDescription, setTaskDescription] = useState('')
   const [taskStatus, setTaskStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
   const [taskAddTo, setTaskAddTo] = useState('')
@@ -68,11 +72,14 @@ export default function TaskModal(props) {
   const task = useOrgProjectTask(projectID, taskID)
   const columns = useOrgProjectColumns(projectID)
   const comments = useOrgProjectTaskComments(projectID, taskID, commentsLimit)
+  const events = useOrgProjectTaskEvents(projectID, taskID, eventsLimit)
   const attachments = useOrgProjectTaskFiles(projectID, taskID, filesLimit)
-  const commentsNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/comments`)
-  const eventsNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/events`)
-  const filesNum = useDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`)
-  const filesStoragePath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
+  const filesPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
+  const eventsPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/events`
+  const commentsPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/comments`
+  const commentsNum = useDocsCount(commentsPath)
+  const eventsNum = useDocsCount(eventsPath)
+  const filesNum = useDocsCount(filesPath)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
@@ -89,8 +96,8 @@ export default function TaskModal(props) {
   })
 
   const addToOptions = [
-    { label: 'Add to Sprint', value: 'sprint', disabled: task?.inSprint },
-    { label: 'Add to Backlog', value: 'backlog', disabled: !task?.inSprint },
+    { label: 'Move to Sprint', value: 'sprint', disabled: task?.inSprint },
+    { label: 'Move to Backlog', value: 'backlog', disabled: !task?.inSprint },
   ]
 
   const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(task?.priority)?.loop })
@@ -129,6 +136,13 @@ export default function TaskModal(props) {
     />
   })
 
+  const eventsList = events?.map((event, index) => {
+    return <TaskEvent
+      key={index}
+      event={event}
+    />
+  })
+
   const resetTaskData = () => {
     setSearchParams('')
     setShowDocViewer(false)
@@ -151,14 +165,16 @@ export default function TaskModal(props) {
     })
     setUploadLoading(true)
     uploadOrgProjectTaskFiles(
-      myOrgID,
-      projectID,
-      taskID,
+      filesPath,
       Array.from(files),
-      filesStoragePath,
+      filesPath,
       setUploadLoading,
       setToasts
     )
+      .then(() => {
+        const eventTitle = `Uploaded ${files?.length} file${files?.length > 1 ? 's' : ''}`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-photo-video', setToasts)
+      })
   }
 
   const cancelAddComment = () => {
@@ -169,9 +185,7 @@ export default function TaskModal(props) {
   const handleCreateComment = () => {
     if (!commentText) return setToasts(infoToast('Please enter a comment.'))
     createOrgProjectTaskCommentService(
-      myOrgID,
-      projectID,
-      taskID,
+      commentsPath,
       {
         text: commentText,
         authorID: myUserID,
@@ -203,6 +217,38 @@ export default function TaskModal(props) {
 
   // Update single task details fields functions
 
+  const updateTaskName = (e) => {
+    updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        title: taskName,
+      },
+      setToasts
+    )
+      .then(() => {
+        const eventTitle = `Changed task name to <b>${taskName}</b>`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-edit', setToasts)
+        setShowCoverInput(null)
+      })
+  }
+  
+  const updateTaskDescription = () => {
+    updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        description: taskDescription,
+      },
+      setToasts
+    )
+      .then(() => {
+        const eventTitle = `Changed the task description`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-edit', setToasts)
+        setShowCoverInput(null)
+      })
+  }
+
   const updateReporter = (e, user) => {
     e.preventDefault()
     updateSingleTaskItemService(
@@ -214,6 +260,8 @@ export default function TaskModal(props) {
       setToasts
     )
       .then(() => {
+        const eventTitle = `Set <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a> as the reporter for this task.`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-bullhorn', setToasts)
         setShowCoverInput(null)
       })
   }
@@ -230,6 +278,8 @@ export default function TaskModal(props) {
     )
       .then(() => {
         setShowCoverInput(null)
+        const eventTitle = `Assigned <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a to this task.`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-user-plus', setToasts)
       })
   }
 
@@ -242,9 +292,11 @@ export default function TaskModal(props) {
       },
       setToasts
     )
-    .then(() => {
-      setToasts(successToast('User unassigned from this task.'))
-    })
+      .then(() => {
+        setToasts(successToast('User unassigned from this task.'))
+        const eventTitle = `Removed <a href="/organization/profile/${user?.userID}">${user?.firstName} ${user?.lastName}</a> from this task.`
+        createOrgProjectTaskEvent(eventsPath, myUserID, eventTitle, 'fas fa-user-minus', setToasts)
+      })
   }
 
   useEffect(() => {
@@ -254,6 +306,8 @@ export default function TaskModal(props) {
 
   useEffect(() => {
     if (task) {
+      setTaskName(task?.title)
+      setTaskDescription(task?.description)
       setTaskStatus(task?.status)
       setTaskPriority(task?.priority)
       setTaskReporter(task?.reporter)
@@ -282,7 +336,17 @@ export default function TaskModal(props) {
         task &&
         <div className="view-task-content">
           <div className="task-content">
-            <h3>{task.title}</h3>
+            <AppCoverInput
+              name="task-name"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+              onCheck={() => updateTaskName()}
+              onCancel={() => setShowCoverInput(null)}
+              showInput={showCoverInput}
+              setShowInput={setShowCoverInput}
+              cover={<h3>{taskName}</h3>}
+              className="task-name"
+            />
             <div className="btn-group">
               <FileUploadBtn
                 accept="image/*, video/*, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
@@ -295,7 +359,24 @@ export default function TaskModal(props) {
             </div>
             <div className="description-section">
               <h5>Description</h5>
-              <p>{(task.description)}</p>
+              <div className="appCoverInput description">
+                <WysiwygEditor
+                  html={taskDescription}
+                  setHtml={setTaskDescription}
+                  height="200px"
+                  containerStyles={{ display: showCoverInput === 'description' ? 'block' : 'none' }}
+                  enableEditing
+                  onSave={() => updateTaskDescription()}
+                  onCancel={() => setShowCoverInput(null)}
+                />
+                <div
+                  className="coverInput"
+                  onClick={() => setShowCoverInput('description')}
+                  style={{ display: showCoverInput === 'description' ? 'none' : 'block' }}
+                >
+                  <p dangerouslySetInnerHTML={{ __html: task.description }} />
+                </div>
+              </div>
             </div>
             <div className="attachments-section">
               <h5>Attachments {filesNum > 0 && `(${filesNum})`}</h5>
@@ -391,7 +472,7 @@ export default function TaskModal(props) {
               <div className="event-section events-section">
                 <h5>Events ({eventsNum})</h5>
                 <div className="events-list">
-
+                  {eventsList}
                 </div>
                 {
                   eventsNum > eventsLimit &&

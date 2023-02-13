@@ -39,6 +39,7 @@ export default function ProjectBoard({project}) {
   const [reporter, setReporter] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
+  const columnsPath = `organizations/${myOrgID}/projects/${projectID}/columns`
 
   const allowAddTask = taskTitle?.length > 0
 
@@ -47,8 +48,7 @@ export default function ProjectBoard({project}) {
     if (!confirm) return setToasts(infoToast('Column deletion cancelled.'))
     setPageLoading(true)
     deleteProjectColumnService(
-      myOrgID, 
-      projectID, 
+      columnsPath,
       columnID, 
       setPageLoading, 
       setToasts

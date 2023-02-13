@@ -1,5 +1,6 @@
 import { taskPriorityOptions, taskTypeOptions } from "app/data/projectsData"
-import React, { useState } from 'react'
+import { StoreContext } from "app/store/store"
+import React, { useContext, useEffect, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import { AppInput, AppSelect } from "../ui/AppInputs"
 import AppModal from "../ui/AppModal"
@@ -8,7 +9,8 @@ import WysiwygEditor from "../ui/WysiwygEditor"
 import './styles/NewTaskModal.css'
 
 export default function NewTaskModal(props) {
-
+ 
+  const { myUserID } = useContext(StoreContext)
   const { showModal, setShowModal, label, onCancel, onSubmit,
     columns, taskType, setTaskType, taskTitle, setTaskTitle,
     status, setStatus, addTo, setAddTo, description, setDescription,
@@ -29,6 +31,10 @@ export default function NewTaskModal(props) {
     { label: 'Add to Sprint', value: 'sprint' },
     { label: 'Add to Backlog', value: 'backlog' },
   ]
+
+  useEffect(() => {
+    setReporter(myUserID)
+  },[])
 
   return (
     <AppModal

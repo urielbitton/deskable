@@ -1,0 +1,48 @@
+.task-event-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+}
+.task-event-item .avatar-container {
+  top: 1px;
+}
+.task-event-item .texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.task-event-item .texts .titles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.task-event-item .texts .titles h6 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.task-event-item .texts .titles span {
+  color: #777;
+  font-weight: 500;
+  font-size: 13px;
+}
+.task-event-item .texts p {
+  font-size: 15px;
+  color: #333;
+}
+.task-event-item .texts p a {
+  font-weight: 700;
+}
+.task-event-item .texts p a:hover {
+  text-decoration: underline;
+}
+.task-event-item .texts .content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.task-event-item .texts .content i {
+  color: var(--grayText);
+  font-size: 14px;
+}

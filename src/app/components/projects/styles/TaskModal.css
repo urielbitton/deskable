@@ -42,12 +42,36 @@
   height: 100%;
   overflow-y: auto;
 }
-.view-task-content .task-content > h3 {
-  color: var(--darkGrayText);
+.view-task-content .task-content .appCoverInput {
   margin-bottom: 10px;
+  width: 97%;
+}
+.view-task-content .task-content .appCoverInput input {
+  padding: 5px 10px;
+  font-size: 22px;
+}
+.view-task-content .task-content .appCoverInput h3 {
+  color: var(--darkGrayText);
   font-size: 23px;
   font-weight: 600;
 }
+.view-task-content .task-content .task-name .coverInput {
+  padding: 7px 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.view-task-content .task-content .task-name:hover .coverInput {
+  background: var(--inputBg);
+}
+.view-task-content .task-content .appCoverInput.description .coverInput {
+  padding: 10px 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.view-task-content .task-content .appCoverInput.description .coverInput:hover {
+  background: var(--inputBg);
+}
+
 .view-task-content .task-content .btn-group {
   display: flex;
   align-items: center;
@@ -173,6 +197,12 @@
 }
 .view-task-content .task-content .events-section .comment-console .comment-editor {
   width: 100%;
+}
+.view-task-content .task-content .events-section .events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 15px;
 }
 
 

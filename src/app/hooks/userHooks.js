@@ -43,9 +43,7 @@ export const useDocsCount = (path, updateTrigger) => {
 
   useEffect(() => {
     getDocsCount(path)
-    .then(data => {
-      setCount(data.data().count)
-    })
+    .then(count => setCount(count))
   }, [path, updateTrigger])
 
   return count

@@ -42,6 +42,9 @@ export const firebaseArrayRemove = (value) => {
 export const getDocsCount = (path) => {
   const docRef = collection(db, path)
   return getCountFromServer(docRef)
+  .then((count) => {
+    return count.data().count
+  })
 }
 
 export const clearAuthState = (checked) => {

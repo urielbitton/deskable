@@ -68,8 +68,7 @@
   align-items: center;
 }
 .board-card .content .task-priority i {
-  line-height: 0.4;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .board-card .footer {

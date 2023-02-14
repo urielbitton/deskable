@@ -2,11 +2,13 @@ import { taskTypeOptions } from "app/data/projectsData"
 import { infoToast } from "app/data/toastsTemplates"
 import { useBuildProjectBoard, useOrgProjectColumns } from "app/hooks/projectsHooks"
 import { getDocsCount } from "app/services/CrudDB"
-import { changeSameColumnTaskPositionService, 
+import {
+  changeSameColumnTaskPositionService,
   changeDiffColumnTaskPositionService,
-  createProjectTaskService, deleteProjectColumnService, 
-  getLastColumnTaskPosition, renameBoardColumnService, 
-  deleteProjectTaskService } from "app/services/projectsServices"
+  createProjectTaskService, deleteProjectColumnService,
+  getLastColumnTaskPosition, renameBoardColumnService,
+  deleteProjectTaskService
+} from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from "react-router-dom"
@@ -14,7 +16,7 @@ import KanbanBoard from "./KanbanBoard"
 import NewTaskModal from "./NewTaskModal"
 import TaskModal from "./TaskModal"
 
-export default function ProjectBoard({project}) {
+export default function ProjectBoard({ project }) {
 
   const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
@@ -35,9 +37,10 @@ export default function ProjectBoard({project}) {
   const [files, setFiles] = useState([])
   const [priority, setPriority] = useState('medium')
   const [assigneesIDs, setAssigneesIDs] = useState([])
-  const [points, setPoints] = useState(null)
+  const [points, setPoints] = useState(0)
   const [reporter, setReporter] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [taskNum, setTaskNum] = useState(0)
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const columnsPath = `organizations/${myOrgID}/projects/${projectID}/columns`
 
@@ -49,8 +52,8 @@ export default function ProjectBoard({project}) {
     setPageLoading(true)
     deleteProjectColumnService(
       columnsPath,
-      columnID, 
-      setPageLoading, 
+      columnID,
+      setPageLoading,
       setToasts
     )
   }
@@ -58,26 +61,31 @@ export default function ProjectBoard({project}) {
   const renameColumn = (columnID, title) => {
     renameBoardColumnService(
       myOrgID,
-      projectID, 
-      columnID, 
-      title, 
+      projectID,
+      columnID,
+      title,
       setToasts
     )
-    .then(() => {
-      setEditTitleMode(null)
-    })
+      .then(() => {
+        setEditTitleMode(null)
+      })
   }
 
   const initAddTask = (columnID) => {
-    const taskNum = +getDocsCount(tasksPath) + 1
-    getLastColumnTaskPosition(myOrgID, projectID, columnID)
-    .then((pos) => {
-      setTaskPosition(pos+1)
-      setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${(pos+1) < 10 && '0'}${pos+1}`)
-      setNewColumnID(columnID)
-      setShowNewTaskModal(true)
-      setStatus(columns?.find(column => column.columnID === columnID)?.title)
-    })
+    getDocsCount(tasksPath)
+      .then((num) => {
+        const taskNum = +num + 1
+        setTaskNum(taskNum)
+        return getLastColumnTaskPosition(myOrgID, projectID, columnID)
+          .then((pos) => {
+            setTaskPosition(pos + 1)
+            setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
+            setNewColumnID(columnID)
+            setShowNewTaskModal(true)
+            setStatus(columns?.find(column => column.columnID === columnID)?.title)
+          })
+      })
+      .catch(err => console.log(err))
   }
 
   const resetNewTaskModal = () => {
@@ -87,12 +95,11 @@ export default function ProjectBoard({project}) {
   }
 
   const addTask = () => {
-    if(!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
-    const taskNum = +getDocsCount(tasksPath) + 1
+    if (!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
     createProjectTaskService(
-      myOrgID, 
-      myUserID, 
-      project, 
+      myOrgID,
+      myUserID,
+      project,
       newColumnID,
       {
         assigneesIDs,
@@ -105,20 +112,20 @@ export default function ProjectBoard({project}) {
         taskTitle,
         points,
         reporter
-      }, 
+      },
       taskNum,
       files,
-      setLoading, 
+      setLoading,
       setToasts
     )
-    .then(() => {
-      resetNewTaskModal()
-    })
+      .then(() => {
+        resetNewTaskModal()
+      })
   }
 
   const handleDeleteTask = (taskID) => {
     const confirm = window.confirm('Are you sure you want to delete this task?')
-    if (!confirm) return 
+    if (!confirm) return
     deleteProjectTaskService(tasksPath, taskID, setLoading, setToasts)
   }
 
@@ -128,36 +135,36 @@ export default function ProjectBoard({project}) {
   }
 
   const onCardDragEnd = (task, from, to) => {
-    if(from.fromColumnId === to.toColumnId) {
+    if (from.fromColumnId === to.toColumnId) {
       changeSameColumnTaskPositionService(
-        myOrgID, 
-        projectID, 
-        task, 
-        to.toPosition, 
-        setLoading, 
+        myOrgID,
+        projectID,
+        task,
+        to.toPosition,
+        setLoading,
         setToasts
-      ) 
+      )
     }
     else {
       changeDiffColumnTaskPositionService(
-        myOrgID, 
-        projectID, 
-        task, 
-        to.toPosition, 
-        from.fromColumnId, 
-        to.toColumnId, 
+        myOrgID,
+        projectID,
+        task,
+        to.toPosition,
+        from.fromColumnId,
+        to.toColumnId,
         columns,
-        setLoading, 
+        setLoading,
         setToasts
       )
     }
   }
 
   useEffect(() => {
-    if(searchParams.get('viewModal') === 'true') {
+    if (searchParams.get('viewModal') === 'true') {
       setViewTaskModal(true)
     }
-  },[])
+  }, [])
 
   return (
     <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>

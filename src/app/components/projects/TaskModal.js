@@ -1,6 +1,7 @@
 import {
   switchTaskPriority, switchTaskType,
-  taskPriorityOptions
+  taskPriorityOptions,
+  taskTypeOptions
 } from "app/data/projectsData"
 import {
   useOrgProjectColumns,
@@ -40,8 +41,8 @@ import TaskEvent from "./TaskEvent"
 
 export default function TaskModal(props) {
 
-  const { myOrgID, myUserID, myUserImg, myUserName,
-    setToasts, setPageLoading } = useContext(StoreContext)
+  const { myOrgID, myUserID, myUserImg, setToasts,
+    setPageLoading } = useContext(StoreContext)
   const { showModal, setShowModal } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
   const [filesLimit, setFilesLimit] = useState(5)
@@ -59,6 +60,7 @@ export default function TaskModal(props) {
   const [taskDescription, setTaskDescription] = useState('')
   const [taskStatus, setTaskStatus] = useState('')
   const [taskPriority, setTaskPriority] = useState('')
+  const [taskType, setTaskType] = useState('')
   const [taskAddTo, setTaskAddTo] = useState('')
   const [taskReporter, setTaskReporter] = useState(null)
   const [taskReporterQuery, setTaskReporterQuery] = useState('')
@@ -103,15 +105,6 @@ export default function TaskModal(props) {
     { label: 'Move to Sprint', value: 'sprint', isDisabled: task?.inSprint },
     { label: 'Move to Backlog', value: 'backlog', isDisabled: !task?.inSprint },
   ]
-
-  const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(task?.priority)?.loop })
-    ?.map((_, index) => {
-      return <i
-        key={index}
-        className={switchTaskPriority(task?.priority)?.icon}
-        style={{ color: switchTaskPriority(task?.priority)?.color }}
-      />
-    })
 
   const handleFileClick = (file) => {
     setActiveDocFile(file)
@@ -266,22 +259,21 @@ export default function TaskModal(props) {
 
   const moveToBacklog = () => {
     updateSingleTaskItem(
-      { 
+      {
         inSprint: false,
         sprintID: null,
         columnID: null,
         position: null,
-        status: 'backlog',
       },
       'Moved the task to the backlog',
       'fas fa-tasks',
       'addTo'
     )
-    .then(() => {
-      setCoverInputLoading(null)
-      setToasts(successToast('Task moved to the backlog.'))
-      setShowModal(false)
-    })
+      .then(() => {
+        setCoverInputLoading(null)
+        setToasts(successToast('Task moved to the backlog.'))
+        setShowModal(false)
+      })
   }
 
   const archiveTask = () => {
@@ -291,7 +283,7 @@ export default function TaskModal(props) {
   const updateTaskLocation = (location, name) => {
     setCoverInputLoading(name)
     const newLocationName = location.value
-    if(newLocationName === 'backlog') {
+    if (newLocationName === 'backlog') {
       moveToBacklog()
     }
   }
@@ -307,6 +299,7 @@ export default function TaskModal(props) {
       setTaskDescription(task?.description)
       setTaskStatus(task?.status)
       setTaskPriority(task?.priority)
+      setTaskType(task?.taskType)
       setTaskReporter(task?.reporter)
       setTaskPoints(task?.points)
       setTaskAddTo(task?.inSprint ? 'sprint' : 'backlog')
@@ -547,8 +540,35 @@ export default function TaskModal(props) {
                 loading={coverInputLoading === 'priority'}
                 cover={
                   <h5>
-                    <span className="icons">{taskPriorityIconRender}</span>
+                    <i
+                      className={switchTaskPriority(taskPriority)?.icon}
+                      style={{ color: switchTaskPriority(taskPriority)?.color }}
+                    />
                     {task.priority}
+                  </h5>
+                }
+              />
+              <AppCoverSelect
+                label="Task Type"
+                name="taskType"
+                options={taskTypeOptions}
+                value={taskType}
+                onChange={(type) => updateSingleTaskItem(
+                  { taskType: type.value },
+                  `Changed the task type from <b>${task.taskType}</b> to <b>${type.value}</b>`,
+                  'fas fa-chevron-up',
+                  'priority'
+                )}
+                showInput={showCoverInput}
+                setShowInput={setShowCoverInput}
+                loading={coverInputLoading === 'taskType'}
+                cover={
+                  <h5>
+                    <i
+                      className={switchTaskType(task?.taskType).icon}
+                      style={{ color: switchTaskType(task?.taskType).color }}
+                    />
+                    {task.taskType}
                   </h5>
                 }
               />

@@ -21,20 +21,11 @@ export default function BoardCard(props) {
   const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
   const eventsPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/events`
 
-  const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(priority)?.loop })
-  ?.map((_,index) => {
-    return <i 
-      key={index}
-      className={switchTaskPriority(priority)?.icon}
-      style={{ color: switchTaskPriority(priority)?.color}}
-    />
-  })
-
   const moveToBacklog = () => {
     return updateSingleTaskItemService(
       tasksPath,
       taskID,
-      { 
+      {
         inSprint: false,
         sprintID: null,
         columnID: null,
@@ -56,10 +47,10 @@ export default function BoardCard(props) {
   useEffect(() => {
     setIsDragging(dragging)
     return () => setIsDragging(false)
-  },[dragging])
+  }, [dragging])
 
   return (
-    <div 
+    <div
       className="board-card"
       onClick={() => handleOpenTask(taskID)}
     >
@@ -95,11 +86,14 @@ export default function BoardCard(props) {
             iconSize="10px"
             fontSize="11px"
           />
-          <span 
+          <span
             className="task-priority"
             title={`Priority: ${priority}`}
           >
-            {taskPriorityIconRender}
+            <i
+              className={switchTaskPriority(priority)?.icon}
+              style={{ color: switchTaskPriority(priority)?.color }}
+            />
           </span>
         </div>
       </div>

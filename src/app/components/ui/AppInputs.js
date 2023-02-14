@@ -180,6 +180,19 @@ export const AppCoverSelect = (props) => {
     selectRef.current.focus()
   }
 
+  const formatOptionLabel = ({ label, icon, iconColor }) => (
+    <div className="select-option">
+      { 
+        icon && 
+        <i 
+          className={icon} 
+          style={{color:iconColor, marginRight: '10px'}} 
+        /> 
+      }
+      <span>{label}</span>
+    </div>
+  )
+
   const selectStyles = {
     control: (base, state) => ({
       ...base,
@@ -189,11 +202,12 @@ export const AppCoverSelect = (props) => {
       color: 'var(--grayText)',
       boxShadow: 'none',
       border: state.isFocused ? '1px solid var(--primary)' : '1px solid var(--inputBorder)',
-      zIndex: state.isFocused ? '100' : '0',
+      zIndex: state.isFocused ? '200' : '0',
       "&:hover": {
         border: state.isFocused ? '1px solid var(--primary)' : 'none',
       },
     }),
+    menuPortal: base => ({ ...base, zIndex: 300 }),
     option: (base, state) => ({
       ...base,
       fontSize: '14px',
@@ -231,12 +245,14 @@ export const AppCoverSelect = (props) => {
           value={value}
           defaultValue={value}
           options={options}
+          formatOptionLabel={formatOptionLabel}
           openMenuOnFocus
           styles={selectStyles}
           hideSelectedOptions
           menuShouldScrollIntoView
           components={{ IndicatorSeparator: () => null }}
           ref={selectRef}
+          menuPortalTarget={document.body}
         />
       </div>
       <div

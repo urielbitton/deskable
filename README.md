@@ -19,12 +19,9 @@ User types
 
 To Dos
 - projects:
-  - react-select for task details
-  - events
   - project backlog
   - project all tasks
   - project sprint (figure out a system for sprints if i can)
-  - task assignees input dropdown
   - invite colleagues system
   - search project (results: tasks, comments, events)
   - project dashboard

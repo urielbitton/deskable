@@ -49,7 +49,11 @@ export const getOrgProjectTaskByID = (orgID, projectID, taskID, setTask) => {
 
 export const getOrgProjectColumns = (orgID, projectID, setColumns) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/columns`)
-  onSnapshot(docRef, (snapshot) => {
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'asc')
+  )
+  onSnapshot(q, (snapshot) => {
     setColumns(snapshot.docs.map(doc => doc.data()))
   })
 }

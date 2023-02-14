@@ -188,7 +188,7 @@ export const AppCoverSelect = (props) => {
       fontWeight: '500',
       color: 'var(--grayText)',
       boxShadow: 'none',
-      border: state.isFocused ? '1px solid var(--primary)' : 'none',
+      border: state.isFocused ? '1px solid var(--primary)' : '1px solid var(--inputBorder)',
       zIndex: state.isFocused ? '100' : '0',
       "&:hover": {
         border: state.isFocused ? '1px solid var(--primary)' : 'none',
@@ -200,6 +200,7 @@ export const AppCoverSelect = (props) => {
       fontWeight: '500',
       background: state.isSelected ? 'var(--inputBg)' : '#fff',
       cursor: 'pointer',
+      opacity: state.isDisabled ? '0.4' : '1',
       color: 'var(--darkGrayText)',
       "&:hover": {
         background: 'var(--inputBg)'

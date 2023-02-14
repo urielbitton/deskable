@@ -69,6 +69,7 @@ export default function ProjectBoard({project}) {
   }
 
   const initAddTask = (columnID) => {
+    const taskNum = +getDocsCount(tasksPath) + 1
     getLastColumnTaskPosition(myOrgID, projectID, columnID)
     .then((pos) => {
       setTaskPosition(pos+1)
@@ -87,7 +88,7 @@ export default function ProjectBoard({project}) {
 
   const addTask = () => {
     if(!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
-    const taskNum = +getDocsCount(`organizations/${myOrgID}/projects/${projectID}/tasks`) + 1
+    const taskNum = +getDocsCount(tasksPath) + 1
     createProjectTaskService(
       myOrgID, 
       myUserID, 
@@ -95,6 +96,7 @@ export default function ProjectBoard({project}) {
       newColumnID,
       {
         assigneesIDs,
+        addTo,
         description,
         taskPosition,
         priority,

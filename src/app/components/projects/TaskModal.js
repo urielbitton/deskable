@@ -100,8 +100,8 @@ export default function TaskModal(props) {
   })
 
   const addToOptions = [
-    { label: 'Move to Sprint', value: 'sprint', disabled: task?.inSprint },
-    { label: 'Move to Backlog', value: 'backlog', disabled: !task?.inSprint },
+    { label: 'Move to Sprint', value: 'sprint', isDisabled: task?.inSprint },
+    { label: 'Move to Backlog', value: 'backlog', isDisabled: !task?.inSprint },
   ]
 
   const taskPriorityIconRender = Array.apply(null, { length: switchTaskPriority(task?.priority)?.loop })
@@ -211,16 +211,6 @@ export default function TaskModal(props) {
       })
   }
 
-  const moveToBacklog = () => {
-
-  }
-
-  const archiveTask = () => {
-
-  }
-
-  // Update single task details fields functions
-
   const updateSingleTaskItem = (item, eventTitle, icon, name) => {
     if (Object.values(item)[0] === task[Object.keys(item)[0]]) { // If the value is the same, don't update
       setShowCoverInput(null)
@@ -274,8 +264,36 @@ export default function TaskModal(props) {
       })
   }
 
+  const moveToBacklog = () => {
+    updateSingleTaskItem(
+      { 
+        inSprint: false,
+        sprintID: null,
+        columnID: null,
+        position: null,
+        status: 'backlog',
+      },
+      'Moved the task to the backlog',
+      'fas fa-tasks',
+      'addTo'
+    )
+    .then(() => {
+      setCoverInputLoading(null)
+      setToasts(successToast('Task moved to the backlog.'))
+      setShowModal(false)
+    })
+  }
+
+  const archiveTask = () => {
+
+  }
+
   const updateTaskLocation = (location, name) => {
     setCoverInputLoading(name)
+    const newLocationName = location.value
+    if(newLocationName === 'backlog') {
+      moveToBacklog()
+    }
   }
 
   useEffect(() => {
@@ -492,7 +510,7 @@ export default function TaskModal(props) {
                 items={[
                   { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask() },
                   { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => moveToBacklog() },
-                  { label: 'Move to Archive', icon: 'fas fa-archive', onClick: () => archiveTask() },
+                  { label: 'Archive Task', icon: 'fas fa-archive', onClick: () => archiveTask() },
                 ]}
               />
             </div>

@@ -177,7 +177,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
   const path = `organizations/${orgID}/projects/${project.projectID}/tasks`
   const docID = getRandomDocID(path)
   const storagePath = `organizations/${orgID}/projects/${project.projectID}/tasks/${docID}/files`
-  return uploadMultipleFilesToFireStorage(files, storagePath, null)
+  return uploadMultipleFilesToFireStorage(files, storagePath, null, null)
     .then((uploadedFiles) => {
       return setDB(path, docID, {
         assigneesIDs: task.assigneesIDs,
@@ -187,7 +187,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         dateCreated: new Date(),
         dateModified: new Date(),
         description: task.description,
-        position: task.taskPosition,
+        position: task.position,
         priority: task.priority,
         projectID: project.projectID,
         points: +task.points || 0,
@@ -204,6 +204,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
             return Promise.resolve()
           }
           const batch = writeBatch(db)
+          console.log(uploadedFiles)
           uploadedFiles.forEach(file => {
             const filesPath = `organizations/${orgID}/projects/${project.projectID}/tasks/${docID}/files`
             const filesDocID = getRandomDocID(filesPath)
@@ -410,6 +411,7 @@ export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, se
   return uploadMultipleFilesToFireStorage(files, filesStoragePath, null, null)
     .then((uploadedFiles) => {
       const batch = writeBatch(db)
+      console.log(uploadedFiles)
       uploadedFiles.forEach(file => {
         const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
         const filesDocID = getRandomDocID(filesPath)

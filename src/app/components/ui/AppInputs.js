@@ -94,8 +94,8 @@ export function AppSwitch(props) {
 export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
-    title, type, showInput, setShowInput, cover, max, min,
-    name, onCheck, onCancel, loading } = props
+    title, type, showInput, setShowInput, cover, name, onCheck, 
+    onCancel, loading } = props
   const inputRef = useRef(null)
 
   const handleCheck = (e) => {
@@ -129,8 +129,6 @@ export const AppCoverInput = (props) => {
         value={value}
         onClick={(e) => e.stopPropagation()}
         type={type}
-        max={max}
-        min={min}
         ref={inputRef}
         style={{ display: showInput === name ? "block" : "none" }}
       />
@@ -168,11 +166,42 @@ export const AppCoverInput = (props) => {
   )
 }
 
+const reactSelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    borderRadius: '5px',
+    fontSize: '14px',
+    fontWeight: '500',
+    color: 'var(--grayText)',
+    boxShadow: 'none',
+    border: state.isFocused ? '1px solid var(--primary)' : '1px solid var(--inputBorder)',
+    zIndex: state.isFocused ? '200' : '0',
+    transition: 'all 0.2s ease',
+    "&:hover": {
+      border: state.isFocused ? '1px solid var(--primary)' : '1px solid var(--tableBorder)',
+      background: state.isFocused ? 'none' : 'var(--inputBg)'
+    },
+  }),
+  menuPortal: base => ({ ...base, zIndex: 300 }),
+  option: (base, state) => ({
+    ...base,
+    fontSize: '14px',
+    fontWeight: '500',
+    background: state.isSelected ? 'var(--inputBg)' : '#fff',
+    cursor: 'pointer',
+    opacity: state.isDisabled ? '0.4' : '1',
+    color: 'var(--darkGrayText)',
+    "&:hover": {
+      background: 'var(--inputBg)'
+    },
+  })
+}
+
 export const AppCoverSelect = (props) => {
 
   const { options, label, onChange, value, className,
     containerStyles, showInput, setShowInput, cover,
-    name, loading } = props
+    name, loading, defaultValue } = props
   const selectRef = useRef(null)
 
   const openSelect = (e) => {
@@ -182,45 +211,16 @@ export const AppCoverSelect = (props) => {
 
   const formatOptionLabel = ({ label, icon, iconColor }) => (
     <div className="select-option">
-      { 
-        icon && 
-        <i 
-          className={icon} 
-          style={{color:iconColor, marginRight: '10px'}} 
-        /> 
+      {
+        icon &&
+        <i
+          className={icon}
+          style={{ color: iconColor, marginRight: '10px' }}
+        />
       }
       <span>{label}</span>
     </div>
   )
-
-  const selectStyles = {
-    control: (base, state) => ({
-      ...base,
-      borderRadius: '5px',
-      fontSize: '14px',
-      fontWeight: '500',
-      color: 'var(--grayText)',
-      boxShadow: 'none',
-      border: state.isFocused ? '1px solid var(--primary)' : '1px solid var(--inputBorder)',
-      zIndex: state.isFocused ? '200' : '0',
-      "&:hover": {
-        border: state.isFocused ? '1px solid var(--primary)' : 'none',
-      },
-    }),
-    menuPortal: base => ({ ...base, zIndex: 300 }),
-    option: (base, state) => ({
-      ...base,
-      fontSize: '14px',
-      fontWeight: '500',
-      background: state.isSelected ? 'var(--inputBg)' : '#fff',
-      cursor: 'pointer',
-      opacity: state.isDisabled ? '0.4' : '1',
-      color: 'var(--darkGrayText)',
-      "&:hover": {
-        background: 'var(--inputBg)'
-      },
-    })
-  }
 
   useEffect(() => {
     if (showInput === name) {
@@ -234,7 +234,7 @@ export const AppCoverSelect = (props) => {
       className={`appCoverSelect appCoverInput commonInput ${className ?? ""}`}
       style={containerStyles}
     >
-      <h6>{label}</h6>
+      { label && <h6>{label}</h6> }
       <div
         className="select-container"
         onClick={(e) => openSelect(e)}
@@ -243,11 +243,11 @@ export const AppCoverSelect = (props) => {
         <Select
           onChange={(value) => onChange(value)}
           value={value}
-          defaultValue={value}
+          defaultValue={defaultValue || value}
           options={options}
           formatOptionLabel={formatOptionLabel}
           openMenuOnFocus
-          styles={selectStyles}
+          styles={reactSelectStyles}
           hideSelectedOptions
           menuShouldScrollIntoView
           components={{ IndicatorSeparator: () => null }}
@@ -271,6 +271,51 @@ export const AppCoverSelect = (props) => {
           <i className="fas fa-spinner fa-spin" />
         </div>
       }
+    </label>
+  )
+}
+
+export const AppReactSelect = (props) => {
+
+  const { options, label, onChange, value, className,
+    containerStyles, defaultValue, placeholder, subText } = props
+  const selectRef = useRef(null)
+
+  const formatOptionLabel = ({ label, icon, iconColor }) => (
+    <div className="select-option">
+      {
+        icon &&
+        <i
+          className={icon}
+          style={{ color: iconColor, marginRight: '10px' }}
+        />
+      }
+      <span>{label}</span>
+    </div>
+  )
+
+  return (
+    <label
+      className={`reactSelect commonInput ${className ?? ""}`}
+      style={containerStyles}
+    >
+      { label && <h6>{label}</h6> }
+      <Select
+        onChange={(value) => onChange(value)}
+        value={value}
+        placeholder={placeholder}
+        defaultValue={defaultValue || value}
+        options={options}
+        formatOptionLabel={formatOptionLabel}
+        openMenuOnFocus
+        styles={reactSelectStyles}
+        hideSelectedOptions
+        menuShouldScrollIntoView
+        components={{ IndicatorSeparator: () => null }}
+        ref={selectRef}
+        menuPortalTarget={document.body}
+      />
+      { subText && <small className="sub-text">{subText}</small> }
     </label>
   )
 }

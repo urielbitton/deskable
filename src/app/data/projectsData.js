@@ -72,18 +72,30 @@ export const taskTypeOptions = [
 
 
 export const switchTaskType = (type) => {
-  if(type === 'feature') return { color: '#7cc244', icon: 'fas fa-bolt' }
-  if(type === 'epic') return { color: '#b603fc', icon: 'fas fa-rocket' }
-  if(type === 'bug') return { color: '#fc0349', icon: 'fas fa-bug' }
-  if(type === 'refactor') return { color: '#622eff', icon: 'fas fa-code' }
-  if(type === 'test') return { color: '#ffbf00', icon: 'fas fa-vial' }
+  if (type === 'story') return { color: '#0a9bfc', icon: 'fas fa-bookmark' }
+  if (type === 'feature') return { color: '#7cc244', icon: 'fas fa-bolt' }
+  if (type === 'epic') return { color: '#b603fc', icon: 'fas fa-rocket' }
+  if (type === 'bug') return { color: '#fc0349', icon: 'fas fa-bug' }
+  if (type === 'refactor') return { color: '#622eff', icon: 'fas fa-code' }
+  if (type === 'test') return { color: '#ffbf00', icon: 'fas fa-vial' }
   return { color: '#0a9bfc', icon: 'fas fa-bookmark' }
 }
 
 export const switchTaskPriority = (priority) => {
-  if(priority === 'lowest') return { color: '#1971ff', icon: 'fas fa-chevron-double-down' }
-  if(priority === 'low') return { color: '#17c1ff', icon: 'fas fa-chevron-down' }
-  if(priority === 'medium') return { color: '#ffd30d', icon: 'fas fa-grip-lines' }
-  if(priority === 'high') return { color: '#ff8800', icon: 'fas fa-chevron-up' }
-  if(priority === 'highest') return { color: '#ff2a00', icon: 'fas fa-chevron-double-up' }
+  if (priority === 'lowest') return { color: '#1971ff', icon: 'fas fa-chevron-double-down' }
+  if (priority === 'low') return { color: '#17c1ff', icon: 'fas fa-chevron-down' }
+  if (priority === 'medium') return { color: '#ffd30d', icon: 'fas fa-grip-lines' }
+  if (priority === 'high') return { color: '#ff8800', icon: 'fas fa-chevron-up' }
+  if (priority === 'highest') return { color: '#ff2a00', icon: 'fas fa-chevron-double-up' }
+  return { color: '#ffd30d', icon: 'fas fa-grip-lines' }
+}
+
+export const projectColumnsOptions = (columns) => {
+  return columns?.map((column) => {
+    return {
+      label: column.title,
+      value: column.title,
+      icon: 'fas fa-columns'
+    }
+  })
 }

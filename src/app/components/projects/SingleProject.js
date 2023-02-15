@@ -153,8 +153,8 @@ export default function SingleProject() {
         </div>
       </div>
       <Routes>
-        <Route path="backlog" element={<ProjectBacklog />} />
         <Route path="board" element={<ProjectBoard project={project} />} />
+        <Route path="backlog" element={<ProjectBacklog />} />
         <Route path="tasks" element={<ProjectTasks />} />
       </Routes>
       <AppModal

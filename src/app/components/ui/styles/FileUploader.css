@@ -55,6 +55,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
   width: 100%;
   padding: 10px;
@@ -62,26 +63,33 @@
   transition: all 0.2s;
 }
 .app-file-uploader .uploaded-files-container .file-item:hover {
-  background: var(--extraLightPrimary);
+  background: var(--inputBg);
   cursor: default;
-}
-.app-file-uploader .uploaded-files-container .file-item img {
-  height: 50px;
 }
 .app-file-uploader .uploaded-files-container .file-item .text {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 15px;
+}
+.app-file-uploader .uploaded-files-container .file-item img {
+  height: 50px;
+  border-radius: 5px;
 }
 .app-file-uploader .uploaded-files-container .file-item .text h6 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--darkGrayText);
+  display: flex;
+  flex-direction: column;
+}
+.app-file-uploader .uploaded-files-container .file-item .text h6 small {
+  font-weight: 500;
+  font-size: 11px;
 }
 .app-file-uploader .uploaded-files-container .file-item .remove-icon {
-  font-size: 15px;
+  font-size: 19px;
   color: var(--darkGrayText);
   cursor: pointer;
-  padding: 2px;
+  padding: 3px;
   transition: all 0.2s;
 }

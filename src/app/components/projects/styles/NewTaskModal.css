@@ -36,25 +36,19 @@
 .new-task-modal .content .full-width {
   grid-column: 1/-1;
 }
+.new-task-modal .content .title-input {
+  margin-bottom: 5px;
+}
+.new-task-modal .content .title-input input {
+  font-size: 16px;
+  padding: 10px;
+}
 .new-task-modal .commonInput h6 {
   font-size: 12px;
   font-weight: 600;
   color: var(--grayText);
 }
-.new-task-modal .commonInput select,
-.new-task-modal .commonInput input {
-  background: var(--lightInputBg);
-  border-color: var(--inputBg);
-  cursor: pointer;
-}
-.new-task-modal .commonInput select:hover,
-.new-task-modal .commonInput input:hover {
-  background: var(--inputBg);
-}
-.new-task-modal .commonInput select {
-  text-transform: capitalize;
-}
-.new-task-modal .commonInput .inputSubtext {
+.new-task-modal .commonInput .sub-text {
   color: var(--grayText);
   font-size: 11px;
   font-weight: 600;
@@ -74,4 +68,33 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--grayText);
+}
+
+.new-task-modal .commonInput .task-input-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--grayText);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+.new-task-modal .users-search-input .input-wrapper .icon {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+  background: var(--darkInputBg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.new-task-modal .users-search-input .input-wrapper input {
+  padding-left: 40px;
+}
+
+.new-task-modal .content .selected-user {
+  border: 1px solid var(--inputBorder);
 }

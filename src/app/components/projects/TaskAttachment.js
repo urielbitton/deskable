@@ -17,7 +17,8 @@ export default function TaskAttachment(props) {
   const isVideo = type.includes('video')
   const filesPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/files`
 
-  const handleDeleteFile = () => {
+  const handleDeleteFile = (e) => {
+    e.stopPropagation()
     const confirm = window.confirm(`Are you sure you want to delete this file?`)
     if(!confirm) return 
     deleteOrgProjectTaskFilesService(
@@ -57,7 +58,10 @@ export default function TaskAttachment(props) {
               dimensions={23}
               iconSize={13}
               round={false}
-              onClick={() => downloadUsingFetch(url, name)}
+              onClick={(e) => {
+                e.stopPropagation()
+                downloadUsingFetch(url, name)
+              }}
             />
             <IconContainer
               icon="far fa-times"
@@ -65,7 +69,7 @@ export default function TaskAttachment(props) {
               dimensions={23}
               iconSize={15}
               round={false}
-              onClick={() => handleDeleteFile()}
+              onClick={(e) => handleDeleteFile(e)}
             />
           </div>
         </div>

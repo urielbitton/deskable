@@ -23,6 +23,8 @@ export default function ProjectBoard({ project }) {
   const board = useBuildProjectBoard(projectID)
   const columns = useOrgProjectColumns(projectID)
   const [searchParams, setSearchParams] = useSearchParams()
+  const viewModalMode = searchParams.get('viewModal') === 'true'
+  const newTaskModalMode = searchParams.get('newTask') === 'true'
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
@@ -41,6 +43,7 @@ export default function ProjectBoard({ project }) {
   const [reporter, setReporter] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [taskNum, setTaskNum] = useState(0)
+  const dynamicColumnID = columns?.find(column => column.title === status)?.columnID
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const columnsPath = `organizations/${myOrgID}/projects/${projectID}/columns`
 
@@ -71,56 +74,78 @@ export default function ProjectBoard({ project }) {
       })
   }
 
-  const initAddTask = (columnID) => {
-    getDocsCount(tasksPath)
+  const preAddTask = () => {
+    return getDocsCount(tasksPath)
       .then((num) => {
         const taskNum = +num + 1
         setTaskNum(taskNum)
-        return getLastColumnTaskPosition(myOrgID, projectID, columnID)
+        return getLastColumnTaskPosition(myOrgID, projectID, dynamicColumnID)
           .then((pos) => {
-            setTaskPosition(pos + 1)
+            setTaskPosition(+pos + 1)
             setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
-            setNewColumnID(columnID)
-            setShowNewTaskModal(true)
-            setStatus(columns?.find(column => column.columnID === columnID)?.title)
+            setNewColumnID(dynamicColumnID)
+            setStatus(columns?.find(column => column.columnID === dynamicColumnID)?.title)
+            return (+pos+1)
           })
       })
       .catch(err => console.log(err))
   }
 
+  const initAddTask = () => {
+    setSearchParams({ newTask: 'true' })
+    setShowNewTaskModal(true)
+    preAddTask()
+  }
+
   const resetNewTaskModal = () => {
     setNewColumnID(null)
-    setTaskTitle(null)
+    setTaskTitle('')
+    setTaskType(taskTypeOptions[0].value)
+    setTaskPosition(0)
+    setStatus(columns[0]?.title)
+    setAddTo('sprint')
+    setDescription('')
+    setFiles([])
+    setPriority('medium')
+    setAssigneesIDs([])
+    setPoints(0)
+    setReporter(null)
+    setTaskNum(0)
     setShowNewTaskModal(false)
+    setSearchParams('')
   }
 
   const addTask = () => {
     if (!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
-    createProjectTaskService(
-      myOrgID,
-      myUserID,
-      project,
-      newColumnID,
-      {
-        assigneesIDs,
-        addTo,
-        description,
-        taskPosition,
-        priority,
-        status,
-        taskType,
-        taskTitle,
-        points,
-        reporter
-      },
-      taskNum,
-      files,
-      setLoading,
-      setToasts
-    )
+    preAddTask()
+      .then((position) => {
+        return createProjectTaskService(
+          myOrgID,
+          myUserID,
+          project,
+          dynamicColumnID,
+          {
+            assigneesIDs,
+            addTo,
+            description,
+            position,
+            priority,
+            status,
+            taskType,
+            taskTitle,
+            points,
+            reporter
+          },
+          taskNum,
+          files?.map(file => file.file),
+          setLoading,
+          setToasts
+        )
+      })
       .then(() => {
         resetNewTaskModal()
       })
+      .catch(err => console.log(err))
   }
 
   const handleDeleteTask = (taskID) => {
@@ -161,8 +186,11 @@ export default function ProjectBoard({ project }) {
   }
 
   useEffect(() => {
-    if (searchParams.get('viewModal') === 'true') {
+    if (viewModalMode) {
       setViewTaskModal(true)
+    }
+    if (newTaskModalMode) {
+      setShowNewTaskModal(true)
     }
   }, [])
 
@@ -209,6 +237,8 @@ export default function ProjectBoard({ project }) {
         setPoints={setPoints}
         reporter={reporter}
         setReporter={setReporter}
+        setTaskPosition={setTaskPosition}
+        dynamicColumnID={dynamicColumnID}
         loading={loading}
       />
       <TaskModal

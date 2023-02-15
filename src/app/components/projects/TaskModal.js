@@ -1,4 +1,5 @@
 import {
+  projectColumnsOptions,
   switchTaskPriority, switchTaskType,
   taskPriorityOptions,
   taskTypeOptions
@@ -94,16 +95,9 @@ export default function TaskModal(props) {
   const assigneesUsers = useUsers(task?.assigneesIDs)
   const maxAssignees = 5
 
-  const columnsOptions = columns?.map((column) => {
-    return {
-      label: column.title,
-      value: column.title,
-    }
-  })
-
   const addToOptions = [
-    { label: 'Move to Sprint', value: 'sprint', isDisabled: task?.inSprint },
-    { label: 'Move to Backlog', value: 'backlog', isDisabled: !task?.inSprint },
+    { label: 'Move to Sprint', value: 'sprint', isDisabled: task?.inSprint, icon: 'fas fa-line-columns' },
+    { label: 'Move to Backlog', value: 'backlog', isDisabled: !task?.inSprint, icon: 'fas fa-list' },
   ]
 
   const handleFileClick = (file) => {
@@ -149,6 +143,7 @@ export default function TaskModal(props) {
     setShowCommentEditor(false)
     setCommentText('')
     setShowCoverInput(null)
+    setShowModal(false)
   }
 
   const handleFileUpload = (e) => {
@@ -242,7 +237,7 @@ export default function TaskModal(props) {
               myOrgID,
               projectID,
               task,
-              (position + 1),
+              (+position + 1),
               oldColumnID,
               newColumnID,
               columns,
@@ -511,7 +506,7 @@ export default function TaskModal(props) {
               <AppCoverSelect
                 label="Status"
                 name="status"
-                options={columnsOptions}
+                options={projectColumnsOptions(columns)}
                 value={taskStatus}
                 onChange={(status) => updateTaskColumn(status)}
                 showInput={showCoverInput}
@@ -583,7 +578,7 @@ export default function TaskModal(props) {
                 setShowInput={setShowCoverInput}
                 loading={coverInputLoading === 'addTo'}
                 cover={<h5>
-                  <i className="far fa-tasks" />
+                  <i className={task.inSprint ? 'fas fa-line-columns' : 'fas fa-list'} />
                   {task.inSprint ? 'Current Sprint' : 'Backlog'}
                 </h5>}
               />
@@ -593,8 +588,6 @@ export default function TaskModal(props) {
                 value={taskPoints}
                 onChange={(e) => setTaskPoints(e.target.value)}
                 type="number"
-                max={10}
-                min={0}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
                 loading={coverInputLoading === 'points'}

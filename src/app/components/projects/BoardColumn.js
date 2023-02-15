@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { AppInput } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
+import IconContainer from "../ui/IconContainer"
 
 export default function BoardColumn(props) {
 
@@ -24,6 +25,11 @@ export default function BoardColumn(props) {
     renameColumn(columnID, editTitle)
   }
 
+  const cancelEditTitle = () => {
+    setEditTitleMode(null)
+    setEditTitle('')
+  }
+
   const deleteColumn = () => {
     removeColumn(columnID)
   }
@@ -43,31 +49,47 @@ export default function BoardColumn(props) {
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && saveHeaderTitle()}
-              iconright={
-                <i
-                  className="far fa-check"
-                  onClick={() => saveHeaderTitle()}
-                />
-              }
             />
         }
-        <DropdownIcon
-          icon="far fa-ellipsis-h"
-          iconSize="16px"
-          iconColor="var(--grayText)"
-          dimensions={24}
-          showMenu={showHeaderMenu}
-          setShowMenu={setShowHeaderMenu}
-          onClick={() => setShowHeaderMenu(prev => !prev)}
-          items={[
-            { 
-              label: notColumnEditing ? 'Rename' : 'Cancel Rename',
-              onClick: initRenameColumn, 
-              icon: notColumnEditing ? 'fas fa-pen' : 'far fa-times' 
-            },
-            { label: 'Remove', onClick: () => deleteColumn, icon: 'fas fa-trash' }
-          ]}
-        />
+        <div className="edit-icons">
+          {
+            editTitleMode === columnID &&
+            <>
+              {
+                editTitle?.length > 0 && editTitle !== title &&
+                <IconContainer
+                  icon="far fa-check"
+                  onClick={() => saveHeaderTitle()}
+                  iconColor="var(--grayText)"
+                  dimensions={24}
+                />
+              }
+              <IconContainer
+                icon="far fa-times"
+                onClick={() => cancelEditTitle()}
+                iconColor="var(--grayText)"
+                dimensions={24}
+              />
+            </>
+          }
+          <DropdownIcon
+            icon="far fa-ellipsis-h"
+            iconSize="16px"
+            iconColor="var(--grayText)"
+            dimensions={24}
+            showMenu={showHeaderMenu}
+            setShowMenu={setShowHeaderMenu}
+            onClick={() => setShowHeaderMenu(prev => !prev)}
+            items={[
+              {
+                label: notColumnEditing ? 'Rename' : 'Cancel Rename',
+                onClick: initRenameColumn,
+                icon: notColumnEditing ? 'fas fa-pen' : 'far fa-times'
+              },
+              { label: 'Remove', onClick: () => deleteColumn, icon: 'fas fa-trash' }
+            ]}
+          />
+        </div>
       </div>
       <div
         className="add-card-bar"

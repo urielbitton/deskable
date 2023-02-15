@@ -74,27 +74,27 @@ export default function ProjectBoard({ project }) {
       })
   }
 
-  const preAddTask = () => {
+  const preAddTask = (columnID) => {
     return getDocsCount(tasksPath)
       .then((num) => {
         const taskNum = +num + 1
         setTaskNum(taskNum)
-        return getLastColumnTaskPosition(myOrgID, projectID, dynamicColumnID)
+        return getLastColumnTaskPosition(myOrgID, projectID, columnID)
           .then((pos) => {
             setTaskPosition(+pos + 1)
             setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
-            setNewColumnID(dynamicColumnID)
-            setStatus(columns?.find(column => column.columnID === dynamicColumnID)?.title)
+            setNewColumnID(columnID)
+            setStatus(columns?.find(column => column.columnID === columnID)?.title)
             return (+pos+1)
           })
       })
       .catch(err => console.log(err))
   }
 
-  const initAddTask = () => {
+  const initAddTask = (columnID) => {
     setSearchParams({ newTask: 'true' })
     setShowNewTaskModal(true)
-    preAddTask()
+    preAddTask(columnID)
   }
 
   const resetNewTaskModal = () => {
@@ -117,7 +117,7 @@ export default function ProjectBoard({ project }) {
 
   const addTask = () => {
     if (!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
-    preAddTask()
+    preAddTask(dynamicColumnID)
       .then((position) => {
         return createProjectTaskService(
           myOrgID,

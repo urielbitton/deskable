@@ -30,16 +30,16 @@
   font-weight: 600;
   color: var(--darkGrayText);
 }
-.react-kanban-board .board-column-header .top .appInput i {
-  color: var(--primary);
-  font-size: 15px;
-  top: 3px;
-  right: -28px;
-  padding: 5px;
-  cursor: pointer;
-}
 .react-kanban-board .board-column-header .top input {
   padding: 5px 10px;
+}
+.react-kanban-board .board-column-header .top .edit-icons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.react-kanban-board .board-column-header .top .edit-icons .icon-container:hover {
+  background: var(--lightGrayText);
 }
 .react-kanban-board .board-column-header .add-card-bar {
   margin-top: 10px;

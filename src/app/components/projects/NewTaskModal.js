@@ -22,8 +22,8 @@ export default function NewTaskModal(props) {
     columns, taskType, setTaskType, taskTitle, setTaskTitle,
     status, setStatus, addTo, setAddTo, description, setDescription,
     files, setFiles, priority, setPriority, assigneesIDs,
-    setAssigneesIDs, points, setPoints, reporter, setReporter,
-    setTaskPosition, dynamicColumnID, loading } = props
+    setAssigneesIDs, points, setPoints, reporter, setReporter, 
+    loading } = props
   const [isDragging, setIsDragging] = useState(false)
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [reporterQuery, setTaskReporterQuery] = useState('')
@@ -65,10 +65,6 @@ export default function NewTaskModal(props) {
 
   const initSetStatus = (status) => {
     setStatus(status.value)
-    getLastColumnTaskPosition(myOrgID, projectID, dynamicColumnID)
-      .then((pos) => {
-        setTaskPosition(pos)
-      })
   }
 
   useEffect(() => {

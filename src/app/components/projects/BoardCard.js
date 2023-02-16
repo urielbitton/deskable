@@ -53,6 +53,7 @@ export default function BoardCard(props) {
     <div
       className="board-card"
       onClick={() => handleOpenTask(taskID)}
+      key={taskID}
     >
       <div className="top">
         <div className="header">

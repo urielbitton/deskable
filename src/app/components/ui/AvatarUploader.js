@@ -6,7 +6,7 @@ import { StoreContext } from "app/store/store"
 
 export default function AvatarUploader(props) {
 
-  const { setToasts } = useContext(StoreContext)
+  const { setToasts, photoURLPlaceholder } = useContext(StoreContext)
   const { dimensions=140, className, handleImgClick, handleSave, 
     src, alt, editRights=true, setLoading, uploadedImg, 
     setUploadedImg, directSaving, uploadRef } = props
@@ -23,7 +23,7 @@ export default function AvatarUploader(props) {
       style={{width: dimensions, height: dimensions}}
     >
       <img
-        src={src || 'https://i.imgur.com/D4fLSKa.png'}
+        src={src || photoURLPlaceholder}
         onClick={handleImgClick}
         alt={alt || 'avatar'}
       />

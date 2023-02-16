@@ -5,8 +5,8 @@ import './styles/MultipleUsersAvatars.css'
 
 export default function MultipleUsersAvatars(props) {
 
-  const { userIDs, maxAvatars, avatarDimensions, onClick,
-    enableEditing } = props
+  const { userIDs, maxAvatars, avatarDimensions, onUserClick,
+    enableEditing, avatarClassName, extras } = props
   const avatarUsers = useUsers(userIDs)
 
   const avatarRows = avatarUsers
@@ -17,17 +17,19 @@ export default function MultipleUsersAvatars(props) {
         src={user.photoURL}
         dimensions={avatarDimensions}
         border="2px solid #fff"
-        onClick={() => onClick && onClick(user)}
+        onClick={() => onUserClick && onUserClick(user)}
         alt={user.firstName}
         title={`${user.firstName} ${user.lastName}`}
         enableEditing={enableEditing}
         removeTitle={`Remove ${user.firstName} ${user.lastName}`}
+        className={avatarClassName && avatarClassName(user)}
       />
     })
 
   return (
     <div className="multiple-users-avatars">
       {avatarRows}
+      {extras}
       {
         avatarUsers?.length > maxAvatars &&
         <div

@@ -18,7 +18,7 @@ const StoreContextProvider = ({children}) => {
   const myUserName = `${myUser?.firstName} ${myUser?.lastName}`
   const myMemberType = myUser?.memberType
   const myOrgID = myUser?.activeOrgID
-  const photoURLPlaceholder = 'https://firebasestorage.googleapis.com/v0/b/familia-app-1f5a8.appspot.com/o/admin%2Fprofile-placeholder.png?alt=media'
+  const photoURLPlaceholder = 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fimages%2FphotoURLPlaceholder.png?alt=media&token=e920fe83-3762-4093-ad42-abf85dfc8e2d'
   const percentFormat = new Intl.NumberFormat('en-CA', {style: 'percent'})
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [toasts, setToasts] = useState([])

@@ -69,6 +69,29 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.single-project .project-toolbar .top-side .filter-by-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.single-project .project-toolbar .top-side .filter-by-user .avatar-container {
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+.single-project .project-toolbar .top-side .filter-by-user .avatar-container:hover {
+  transform: scale(1.1);
+  transition: all 0.2s;
+}
+.single-project .project-toolbar .top-side .filter-by-user .avatar-container.active {
+  border: 2px solid var(--primary)!important;
+}
+.single-project .project-toolbar .top-side .filter-by-user h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
 }
 .single-project .project-toolbar .left-side {
   display: flex;

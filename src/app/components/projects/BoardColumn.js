@@ -39,7 +39,10 @@ export default function BoardColumn(props) {
   }
 
   return (
-    <div className="board-column-header">
+    <div 
+      className="board-column-header"
+      key={columnID}
+    >
       <div className="top">
         {
           editTitleMode !== columnID ?

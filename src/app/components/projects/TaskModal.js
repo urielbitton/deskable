@@ -259,6 +259,7 @@ export default function TaskModal(props) {
         sprintID: null,
         columnID: null,
         position: null,
+        status: 'backlog'
       },
       'Moved the task to the backlog',
       'fas fa-tasks',

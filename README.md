@@ -19,6 +19,7 @@ User types
 
 To Dos
 - projects:
+  - delete tasks - need to trigger delete files and comments (node js)
   - project backlog
   - project all tasks
   - project sprint (figure out a system for sprints if i can)

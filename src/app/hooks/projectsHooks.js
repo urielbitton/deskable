@@ -5,6 +5,7 @@ import { getOrgProjectByID, getOrgProjectColumnByID,
   getOrgProjectTasksByColumnsArray, getProjectsByOrgID
  } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
+import { areArraysEqual } from "app/utils/generalUtils"
 import { useContext, useEffect, useState } from "react"
 
 export const useOrgProjects = (limit) => {
@@ -98,7 +99,7 @@ export const useOrgProjectColumnTasks = (projectID, columnID) => {
   return tasks
 }
 
-export const useBuildProjectBoard = (projectID, columnUpdate) => {
+export const useBuildProjectBoard = (projectID, tasksFilter) => {
 
   const { myOrgID } = useContext(StoreContext)
   const columns = useOrgProjectColumns(projectID)
@@ -107,14 +108,13 @@ export const useBuildProjectBoard = (projectID, columnUpdate) => {
   useEffect(() => {
     if (myOrgID && projectID && columns.length)
       getOrgProjectTasksByColumnsArray(myOrgID, projectID, columns, setTasks)
-  }, [myOrgID, projectID, columns, columnUpdate])
+  }, [myOrgID, projectID, columns, tasksFilter])
 
   return {
     columns: columns?.map(column => ({
       ...column,
       id: column?.columnID,
-      cards: tasks
-        ?.filter(task => task?.columnID === column?.columnID)
+      cards: tasksFilter(tasks, column)
         .map(task => ({
           ...task,
           id: task?.taskID,

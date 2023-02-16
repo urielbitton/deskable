@@ -16,11 +16,11 @@ import KanbanBoard from "./KanbanBoard"
 import NewTaskModal from "./NewTaskModal"
 import TaskModal from "./TaskModal"
 
-export default function ProjectBoard({ project }) {
+export default function ProjectBoard({ project, tasksFilter }) {
 
   const { myOrgID, myUserID, setToasts, setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
-  const board = useBuildProjectBoard(projectID)
+  const board = useBuildProjectBoard(projectID, tasksFilter)
   const columns = useOrgProjectColumns(projectID)
   const [searchParams, setSearchParams] = useSearchParams()
   const viewModalMode = searchParams.get('viewModal') === 'true'
@@ -29,10 +29,8 @@ export default function ProjectBoard({ project }) {
   const [loading, setLoading] = useState(false)
   const [showNewTaskModal, setShowNewTaskModal] = useState(false)
   const [viewTaskModal, setViewTaskModal] = useState(false)
-  const [newColumnID, setNewColumnID] = useState(null)
   const [taskType, setTaskType] = useState(taskTypeOptions[0].value)
   const [taskTitle, setTaskTitle] = useState('')
-  const [taskPosition, setTaskPosition] = useState(0)
   const [status, setStatus] = useState(columns[0]?.title)
   const [addTo, setAddTo] = useState('sprint')
   const [description, setDescription] = useState('')
@@ -81,9 +79,7 @@ export default function ProjectBoard({ project }) {
         setTaskNum(taskNum)
         return getLastColumnTaskPosition(myOrgID, projectID, columnID)
           .then((pos) => {
-            setTaskPosition(+pos + 1)
             setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
-            setNewColumnID(columnID)
             setStatus(columns?.find(column => column.columnID === columnID)?.title)
             return (+pos+1)
           })
@@ -98,10 +94,8 @@ export default function ProjectBoard({ project }) {
   }
 
   const resetNewTaskModal = () => {
-    setNewColumnID(null)
     setTaskTitle('')
     setTaskType(taskTypeOptions[0].value)
-    setTaskPosition(0)
     setStatus(columns[0]?.title)
     setAddTo('sprint')
     setDescription('')
@@ -237,8 +231,6 @@ export default function ProjectBoard({ project }) {
         setPoints={setPoints}
         reporter={reporter}
         setReporter={setReporter}
-        setTaskPosition={setTaskPosition}
-        dynamicColumnID={dynamicColumnID}
         loading={loading}
       />
       <TaskModal

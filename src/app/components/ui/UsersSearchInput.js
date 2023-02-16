@@ -86,7 +86,7 @@ export default function UsersSearchInput(props) {
                   maxAvatars={maxAvatars}
                   avatarDimensions={29}
                   enableEditing
-                  onClick={(user) => onUserRemove(user)}
+                  onUserClick={(user) => onUserRemove(user)}
                 />
                 {
                   onClear && <small

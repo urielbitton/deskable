@@ -3,7 +3,8 @@ import { useOrgProject } from "app/hooks/projectsHooks"
 import { createProjectColumnService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
-import React, { useContext, useState } from 'react'
+import { areArraysEqual } from "app/utils/generalUtils"
+import React, { useContext, useEffect, useState } from 'react'
 import { NavLink, Route, Routes, useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
@@ -19,7 +20,7 @@ import './styles/SingleProject.css'
 
 export default function SingleProject() {
 
-  const { myOrgID, myUserID, setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts, photoURLPlaceholder } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
   const [searchString, setSearchString] = useState('')
@@ -27,7 +28,26 @@ export default function SingleProject() {
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
   const [loading, setLoading] = useState(false)
-  const userIsMember = project?.members?.includes(myUserID)
+  const [filterUserIDs, setFilterUserIDs] = useState([])
+  const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
+  const allMembers = project?.members
+  const userIsMember = allMembers?.includes(myUserID)
+
+  const tasksFilter = (tasks, column) => {
+    return tasks?.filter(task => {
+      return task?.columnID === column?.columnID
+      && filterUserIDs.length > 0 ? (
+         ((
+          task.assigneesIDs.some(id => filterUserIDs.includes(id))
+          || (areArraysEqual(allMembers, filterUserIDs) && filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0)
+        )
+          || (
+            filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0
+          )
+        )
+      ) : task?.columnID === column?.columnID
+    })
+  }
 
   const resetColumnModal = () => {
     setShowColumnModal(false)
@@ -43,9 +63,9 @@ export default function SingleProject() {
       setLoading,
       setToasts
     )
-    .then(() => {
-      resetColumnModal()
-    })
+      .then(() => {
+        resetColumnModal()
+      })
   }
 
   const addTask = () => {
@@ -67,6 +87,37 @@ export default function SingleProject() {
   const archiveProject = () => {
 
   }
+
+  const resetAllFilters = () => {
+    resetUserFilters()
+  }
+
+  const onUserFilterClick = (user) => {
+    const newSelectedFilterUsers = selectedFilterUsers.includes(user.userID)
+      ? selectedFilterUsers.filter(id => id !== user.userID)
+      : [...selectedFilterUsers, user.userID]
+    setSelectedFilterUsers(newSelectedFilterUsers)
+    setFilterUserIDs(newSelectedFilterUsers)
+  }
+
+  const unassignedFilterClick = () => {
+    const newSelectedFilterUsers = selectedFilterUsers.includes('unassigned')
+      ? selectedFilterUsers.filter(id => id !== 'unassigned')
+      : [...selectedFilterUsers, 'unassigned']
+    setSelectedFilterUsers(newSelectedFilterUsers)
+    setFilterUserIDs(newSelectedFilterUsers)
+  }
+
+  const resetUserFilters = () => {
+    setSelectedFilterUsers([])
+    setFilterUserIDs([...allMembers, 'unassigned'])
+  }
+
+  useEffect(() => {
+    if (project) {
+      setFilterUserIDs([...allMembers, 'unassigned'])
+    }
+  }, [project])
 
   return project && userIsMember ? (
     <div className="single-project">
@@ -92,7 +143,7 @@ export default function SingleProject() {
             <small>
               Team:
               <MultipleUsersAvatars
-                userIDs={project.members}
+                userIDs={allMembers}
                 maxAvatars={4}
                 avatarDimensions={24}
               />
@@ -113,6 +164,25 @@ export default function SingleProject() {
             <p>Drag and drop cards to edit them</p>
           </div>
           <div className="btn-group">
+            <div className="filter-by-user">
+              <h6>Filter By Users</h6>
+              <MultipleUsersAvatars
+                userIDs={allMembers}
+                maxAvatars={4}
+                avatarDimensions={30}
+                onUserClick={user => onUserFilterClick(user)}
+                avatarClassName={user => selectedFilterUsers.includes(user.userID) ? 'active' : ''}
+                extras={
+                  <Avatar
+                    src={photoURLPlaceholder}
+                    dimensions={30}
+                    title="Unassigned"
+                    onClick={() => unassignedFilterClick()}
+                    className={selectedFilterUsers.includes('unassigned') ? 'active' : ''}
+                  />
+                }
+              />
+            </div>
             <AppButton
               label="Invite"
               buttonType="tabBtn"
@@ -137,6 +207,7 @@ export default function SingleProject() {
                 { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
                 { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
                 { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
+                { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters()}
               ]}
             />
           </div>
@@ -153,7 +224,10 @@ export default function SingleProject() {
         </div>
       </div>
       <Routes>
-        <Route path="board" element={<ProjectBoard project={project} />} />
+        <Route path="board" element={
+          <ProjectBoard project={project} tasksFilter={tasksFilter} />
+        }
+        />
         <Route path="backlog" element={<ProjectBacklog />} />
         <Route path="tasks" element={<ProjectTasks />} />
       </Routes>
@@ -186,14 +260,14 @@ export default function SingleProject() {
         />
       </AppModal>
     </div>
-  ) : 
-  project && !userIsMember ? (
-    <div>
-      <h4>You are not a member of this project.</h4>
-      <p>You can ask your organization admin for access here.</p>
-    </div>
   ) :
-  <div style={{width: '100%', height: '100%', minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-    <i className="fal fa-spinner fa-spin" style={{fontSize: 20}}  />
-  </div>
+    project && !userIsMember ? (
+      <div>
+        <h4>You are not a member of this project.</h4>
+        <p>You can ask your organization admin for access here.</p>
+      </div>
+    ) :
+      <div style={{ width: '100%', height: '100%', minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <i className="fal fa-spinner fa-spin" style={{ fontSize: 20 }} />
+      </div>
 }

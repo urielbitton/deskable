@@ -242,7 +242,6 @@ export default function TaskModal(props) {
               oldColumnID,
               newColumnID,
               columns,
-              () => { },
               setToasts
             )
               .then(() => {

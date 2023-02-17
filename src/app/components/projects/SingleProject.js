@@ -36,8 +36,8 @@ export default function SingleProject() {
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
       return task?.columnID === column?.columnID
-      && filterUserIDs.length > 0 ? (
-         ((
+        && filterUserIDs.length > 0 ? (
+        ((
           task.assigneesIDs.some(id => filterUserIDs.includes(id))
           || (areArraysEqual(allMembers, filterUserIDs) && filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0)
         )
@@ -161,7 +161,7 @@ export default function SingleProject() {
         <div className="top-side">
           <div className="left-side">
             <h5>Overview</h5>
-            <p>Drag and drop cards to edit them</p>
+            <p>Drag and drop cards to move them</p>
           </div>
           <div className="btn-group">
             <div className="filter-by-user">
@@ -207,7 +207,7 @@ export default function SingleProject() {
                 { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
                 { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
                 { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
-                { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters()}
+                { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() }
               ]}
             />
           </div>
@@ -217,20 +217,22 @@ export default function SingleProject() {
             noSpread
             spacedOut={10}
           >
-            <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
             <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
+            <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
             <NavLink to={`/projects/${projectID}/tasks`}>Tasks</NavLink>
           </AppTabsBar>
         </div>
       </div>
-      <Routes>
-        <Route path="board" element={
-          <ProjectBoard project={project} tasksFilter={tasksFilter} />
-        }
-        />
-        <Route path="backlog" element={<ProjectBacklog project={project} />} />
-        <Route path="tasks" element={<ProjectTasks project={project} />} />
-      </Routes>
+      <div className="tasks-routes-container">
+        <Routes>
+          <Route path="board" element={
+            <ProjectBoard project={project} tasksFilter={tasksFilter} />
+          }
+          />
+          <Route path="backlog" element={<ProjectBacklog project={project} />} />
+          <Route path="tasks" element={<ProjectTasks project={project} />} />
+        </Routes>
+      </div>
       <AppModal
         showModal={showColumnModal}
         setShowModal={setShowColumnModal}

@@ -140,7 +140,7 @@
   font-weight: 600;
 }
 
-.single-project .kanban-board-container {
+.single-project .tasks-routes-container {
   width: 100%;
   height: calc(100vh - 330px);
   overflow: auto;

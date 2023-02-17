@@ -161,7 +161,6 @@ export default function ProjectBoard({ project, tasksFilter }) {
         projectID,
         task,
         to.toPosition,
-        setLoading,
         setToasts
       )
     }
@@ -174,7 +173,6 @@ export default function ProjectBoard({ project, tasksFilter }) {
         from.fromColumnId,
         to.toColumnId,
         columns,
-        setLoading,
         setToasts
       )
     }

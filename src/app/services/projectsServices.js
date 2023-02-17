@@ -130,7 +130,7 @@ export const getOrgProjectTasksBySprintID = (orgID, projectID, sprintID, setTask
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('dateCreated', 'desc'),
+    orderBy('backlogPosition', 'desc'),
     where('sprintID', '==', sprintID),
     where('inSprint', '==', true)
   )
@@ -143,7 +143,7 @@ export const getOrgProjectTasksInBacklog = (orgID, projectID, setTasks) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('dateCreated', 'desc'),
+    orderBy('backlogPosition', 'desc'),
     where('inSprint', '==', false),
     where('status', '==', 'backlog')
   )
@@ -318,7 +318,7 @@ export const getLastColumnTaskPosition = (orgID, projectID, columnID) => {
     .catch(err => console.log(err))
 }
 
-export const changeSameColumnTaskPositionService = (orgID, projectID, task, newPosition, setLoading, setToasts) => {
+export const changeSameColumnTaskPositionService = (orgID, projectID, task, newPosition, setToasts) => {
   const taskID = task.taskID
   const columnID = task.columnID
   const oldPosition = task.position
@@ -366,16 +366,13 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
   })
     .then(() => {
       return batch.commit()
-        .then(() => {
-          setLoading(false)
-        })
-        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
+        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts))
     })
-    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
+    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts))
 }
 
 export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newPosition, oldColumnID,
-  newColumnID, columns, setLoading, setToasts) => {
+  newColumnID, columns, setToasts) => {
   const newColumnTitle = columns.filter(column => column.columnID === newColumnID)[0].title
   const taskID = task.taskID
   const columnID = task.columnID
@@ -423,11 +420,10 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
           httpsCallable(functions, 'onProjectTaskChange')({
             orgID, projectID, oldColumnID, newColumnID
           })
-          setLoading(false)
         })
-        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
+        .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts))
     })
-    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts, setLoading))
+    .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts))
 }
 
 export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, setLoading, setToasts) => {
@@ -551,4 +547,8 @@ export const createOrgProjectTaskEvent = (eventsPath, userID, title, icon, setTo
 export const deleteProjectTaskEvent = (eventsPath, eventID, setToasts) => {
   return deleteDB(eventsPath, eventID)
     .catch(err => catchCode(err, 'There was a problem deleting the event. Please try again.', setToasts))
+}
+
+export const moveBacklogTaskService = (path, taskID, position, setToasts) => {
+  
 }

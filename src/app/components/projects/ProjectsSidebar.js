@@ -18,7 +18,7 @@ export default function ProjectsSidebar() {
   const projectsList = projects?.map((project, index) => {
     return <NavLink
       key={index}
-      to={`/projects/${project?.projectID}/board`}
+      to={project.activeSprintID ? `/projects/${project?.projectID}/board` : `/projects/${project?.projectID}/backlog`}
       title={!showProjectsSidebar && project?.name}
     >
       <span>

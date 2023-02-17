@@ -8,6 +8,13 @@
   border-bottom: 1px solid var(--inputBorder);
   user-select: none;
   background: #fff;
+  cursor: pointer;
+}
+.backlog-task-item.grab-cursor {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
 }
 .backlog-task-item:hover {
   background: var(--inputBg);

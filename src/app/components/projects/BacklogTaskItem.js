@@ -7,9 +7,10 @@ export default function BacklogTaskItem(props) {
 
   const { title, taskType, assigneesIDs, taskNum,
     priority, points } = props.task
+  const { grabCursor } = props
 
   return (
-    <div className="backlog-task-item">
+    <div className={`backlog-task-item ${grabCursor ? 'grab-cursor' : ''}`}>
       <div className="left-titles">
         <i
           className={switchTaskType(taskType).icon}

@@ -10,7 +10,7 @@ import DropdownIcon from "../ui/DropDownIcon"
 import BacklogTaskItem from "./BacklogTaskItem"
 import './styles/ProjectBacklog.css'
 import DragNDropper from "../ui/DragNDropper"
-import { Draggable } from "react-beautiful-dnd"
+import DraggableItem from "../ui/DraggableItem"
 
 export default function ProjectBacklog({ project }) {
 
@@ -23,37 +23,36 @@ export default function ProjectBacklog({ project }) {
   const sprintTasks = useOrgProjectSprintTasks(projectID, project?.activeSprintID)
   const backlogTasks = useOrgProjectBacklogTasks(projectID)
   const sprintTasksNum = sprintTasks?.length
+  const backlogTasksNum = backlogTasks?.length
   const noSprintTasks = sprintTasks?.length === 0
   const sprintIsActive = project?.activeSprintID !== null
 
   const sprintTasksList = sprintTasks?.map((task, index) => {
-    return <BacklogTaskItem
+    return <DraggableItem
       key={index}
-      task={task}
-    />
-  })
-
-  const backlogTasksList = backlogTasks?.map((task, index) => {
-    return <Draggable
       draggableId={task.taskID}
       index={task.backlogPosition}
     >
-      {
-        (provided, snapshot) => (
-          <div
-            ref={provided?.innerRef}
-            {...provided?.draggableProps}
-            {...provided?.dragHandleProps}
-          >
-            <BacklogTaskItem
-              key={index}
-              task={task}
-            />
-          </div>
-        )
-      }
-    </Draggable>
+      <BacklogTaskItem
+        key={index}
+        task={task}
+      />
+    </DraggableItem>
   })
+
+  const backlogTasksList = backlogTasks?.map((task, index) => {
+    return <DraggableItem
+      key={index}
+      draggableId={task.taskID}
+      index={task.backlogPosition}
+    >
+      <BacklogTaskItem
+        key={index}
+        task={task}
+      />
+    </DraggableItem>
+  })
+  
 
   const onDragStart = (result) => {
     setIsDragging(true)
@@ -61,6 +60,15 @@ export default function ProjectBacklog({ project }) {
 
   const onDragEnd = (result) => {
     setIsDragging(false)
+    console.log(result)
+    // when sprint is already active
+    if(sprintIsActive) {
+
+    }
+    //when planning a sprint - not same behaviour as when sprint is active
+    else {
+
+    }
   }
 
   const handleCancelNewTask = () => {
@@ -157,7 +165,7 @@ export default function ProjectBacklog({ project }) {
             <div className="title-bar">
               <div className="titles">
                 <h5>Backlog</h5>
-                <span>0 tasks</span>
+                <span>{backlogTasksNum} task{backlogTasksNum !== 1 ? 's' : ''}</span>
               </div>
               <DropdownIcon
                 icon="far fa-ellipsis-h"

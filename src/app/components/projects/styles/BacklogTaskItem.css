@@ -1,0 +1,57 @@
+.backlog-task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 7px 10px;
+  cursor: all-scroll;
+  transition: all 0.2s;
+  border-bottom: 1px solid var(--inputBorder);
+  user-select: none;
+}
+.backlog-task-item:hover {
+  background: var(--inputBg);
+}
+.backlog-task-item .left-titles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-basis: 45%;
+}
+.backlog-task-item .left-titles h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+
+.backlog-task-item .right-details {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-basis: 50%;
+}
+.backlog-task-item .right-details .multiple-users-avatars {
+  width: 100px;
+}
+.backlog-task-item .right-details .task-num {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.backlog-task-item .right-details i.priority-icon {
+  width: 20px;
+}
+.backlog-task-item .right-details .points {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.backlog-task-item .right-details .points {
+  color: var(--grayText);
+  font-size: 14px;
+}
+.backlog-task-item .right-details .points i {
+  color: var(--grayText);
+  font-size: 13px;
+}

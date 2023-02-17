@@ -2,8 +2,7 @@
   width: 100%;
   height: calc(100vh - var(--navbarHeight));
   overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 25px;
+  padding: 10px 20px;
 }
 .routes-container.compact {
   height: calc(100vh - var(--navbarHeightCompact));

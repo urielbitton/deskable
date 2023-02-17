@@ -9,7 +9,7 @@ const StoreContextProvider = ({children}) => {
  
   const user = auth.currentUser
   const [myUser, setMyUser] = useState(null) 
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === "true" ? true : false)
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === "true")
   const [contentScrollBottom, setContentScrollBottom] = useState(false)
   const [windowIsFocused, setWindowIsFocused] = useState(false)
   const [pageLoading, setPageLoading] = useState(false) 
@@ -24,7 +24,7 @@ const StoreContextProvider = ({children}) => {
   const [toasts, setToasts] = useState([])
   const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
   const [hideRightBar, setHideRightBar] = useState(false)
-  const [showProjectsSidebar, setShowProjectsSidebar] = useState(true)
+  const [showProjectsSidebar, setShowProjectsSidebar] = useState(localStorage.getItem('showProjectsSidebar') === "true")
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {

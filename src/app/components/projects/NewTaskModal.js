@@ -5,6 +5,7 @@ import {
 import useUser, { useUsers } from "app/hooks/userHooks"
 import { getLastColumnTaskPosition } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
+import { areArraysEqual } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'
 import { useSearchParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
@@ -17,7 +18,7 @@ import './styles/NewTaskModal.css'
 
 export default function NewTaskModal(props) {
 
-  const { myOrgID } = useContext(StoreContext)
+  const { myOrgID, myUserID } = useContext(StoreContext)
   const { showModal, setShowModal, label, onCancel, onSubmit,
     columns, taskType, setTaskType, taskTitle, setTaskTitle,
     status, setStatus, addTo, setAddTo, description, setDescription,
@@ -225,6 +226,10 @@ export default function NewTaskModal(props) {
               maxAvatars={4}
               onClear={() => clearAssignees()}
             />
+            {
+              !areArraysEqual(assigneesIDs, [myUserID]) &&
+              <small onClick={() => setAssigneesIDs([myUserID])}>Assign to Me</small>
+            }
           </div>
         </div>
       </div>

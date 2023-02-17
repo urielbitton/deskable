@@ -1,11 +1,12 @@
 import { getOrgProjectByID, getOrgProjectColumnByID, 
   getOrgProjectColumns, getOrgProjectTaskByID, 
-  getOrgProjectTaskComments, getOrgProjectTaskEvents, getOrgProjectTaskFiles, 
-  getOrgProjectTasks, getOrgProjectTasksByColumnID, 
-  getOrgProjectTasksByColumnsArray, getProjectsByOrgID
- } from "app/services/projectsServices"
+  getOrgProjectTaskComments, getOrgProjectTaskEvents, 
+  getOrgProjectTaskFiles, getOrgProjectTasks, 
+  getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, 
+  getOrgProjectTasksBySprintID, 
+  getOrgProjectTasksInBacklog, 
+  getProjectsByOrgID } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
-import { areArraysEqual } from "app/utils/generalUtils"
 import { useContext, useEffect, useState } from "react"
 
 export const useOrgProjects = (limit) => {
@@ -121,6 +122,32 @@ export const useBuildProjectBoard = (projectID, tasksFilter) => {
         }))
     }))
   }
+}
+
+export const useOrgProjectSprintTasks = (projectID, sprintID) => {
+  
+    const { myOrgID } = useContext(StoreContext)
+    const [tasks, setTasks] = useState([])
+  
+    useEffect(() => {
+      if (myOrgID && projectID && sprintID)
+        getOrgProjectTasksBySprintID(myOrgID, projectID, sprintID, setTasks)
+    }, [myOrgID, projectID, sprintID])
+  
+    return tasks  
+}
+
+export const useOrgProjectBacklogTasks = (projectID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID)
+      getOrgProjectTasksInBacklog(myOrgID, projectID, setTasks)
+  }, [myOrgID, projectID])
+
+  return tasks
 }
 
 export const useOrgProjectTaskFiles = (projectID, taskID, limit) => {

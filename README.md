@@ -32,4 +32,4 @@ To Dos
 Other Todos
 - start by creating an org (invitation only)
 - Link preview feature for posts & chats (use your own server for cors bypass)
-
+- app shortcuts - let users add a page (e.g. project page board page, specific chat conversation, resource item page, etc) to their shortcuts on home screen and they can see those in a section on the homepage (or on rightbar under calendar)

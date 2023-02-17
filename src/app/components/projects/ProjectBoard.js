@@ -88,6 +88,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   }
 
   const initAddTask = (columnID) => {
+    setReporter(myUserID)
     setSearchParams({ newTask: 'true' })
     setShowNewTaskModal(true)
     preAddTask(columnID)
@@ -122,7 +123,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
             assigneesIDs,
             addTo,
             description,
-            position,
+            position: status === 'backlog' ? 0 : position,
             priority,
             status,
             taskType,

@@ -141,10 +141,10 @@
 }
 
 .single-project .kanban-board-container {
-  min-width: 800px;
   width: 100%;
+  height: calc(100vh - 330px);
   overflow: auto;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .add-column-modal .appInput {

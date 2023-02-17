@@ -228,8 +228,8 @@ export default function SingleProject() {
           <ProjectBoard project={project} tasksFilter={tasksFilter} />
         }
         />
-        <Route path="backlog" element={<ProjectBacklog />} />
-        <Route path="tasks" element={<ProjectTasks />} />
+        <Route path="backlog" element={<ProjectBacklog project={project} />} />
+        <Route path="tasks" element={<ProjectTasks project={project} />} />
       </Routes>
       <AppModal
         showModal={showColumnModal}

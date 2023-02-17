@@ -39,6 +39,7 @@ import DropdownIcon from "../ui/DropDownIcon"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import OrgUsersTagInput from "./OrgUsersTagInput"
 import TaskEvent from "./TaskEvent"
+import { areArraysEqual } from "app/utils/generalUtils"
 
 export default function TaskModal(props) {
 
@@ -670,6 +671,21 @@ export default function TaskModal(props) {
                     'fas fa-user-minus',
                     'assignees'
                   )}
+                  inputSubtitle={
+                    !areArraysEqual(task.assigneesIDs, [myUserID]) &&
+                    <small
+                      className="assign-to-me" 
+                      onClick={() => {
+                      updateSingleTaskItem(
+                        { assigneesIDs: [myUserID] },
+                        `Assigned themselves to this task`,
+                        'fas fa-user-plus',
+                        'assignees'
+                      )
+                    }}>
+                      Assign to Me
+                    </small>
+                  }
                 />
               </div>
             </div>

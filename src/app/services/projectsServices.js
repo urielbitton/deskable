@@ -126,6 +126,32 @@ export const getOrgProjectTaskEvents = (orgID, projectID, taskID, setEvents, lim
   })
 }
 
+export const getOrgProjectTasksBySprintID = (orgID, projectID, sprintID, setTasks) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    where('sprintID', '==', sprintID),
+    where('inSprint', '==', true)
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getOrgProjectTasksInBacklog = (orgID, projectID, setTasks) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    where('inSprint', '==', false),
+    where('status', '==', 'backlog')
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
 export const catchCode = (err, errorText, setToasts, setLoading) => {
   console.log(err)
   setLoading && setLoading(false)
@@ -192,8 +218,8 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         projectID: project.projectID,
         points: +task.points || 0,
         reporterID: task.reporter,
-        sprintID: null,
-        status: task.status,
+        sprintID: project?.activeSprintID || null,
+        status: task.addTo === 'backlog' ? 'backlog' : task.status,
         taskID: docID,
         taskNum: `${project?.name?.slice(0, 3)?.toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum || ''}`,
         taskType: task.taskType,
@@ -226,7 +252,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
     })
     .then(() => {
       setLoading(false)
-      setToasts(successToast(`Task created successfully. ${task.addTo === 'sprint' && 'Adding to sprint...'}`))
+      setToasts(successToast(`Task created successfully. ${task.addTo === 'sprint' ? 'Adding to sprint...' : ''}`))
     })
     .catch(err => catchCode(err, 'There was a problem creating the task. Please try again.', setToasts, setLoading))
 }

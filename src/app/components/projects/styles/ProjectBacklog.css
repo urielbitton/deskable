@@ -1,0 +1,103 @@
+.project-backlog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  display: grid;
+  grid-template-columns: calc(70% -15px) calc(30% - 15px);
+  gap: 30px;
+  padding-top: 5px;
+}
+.project-backlog.full {
+  grid-template-columns: 100%;
+}
+.project-backlog .backlog-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.project-backlog .backlog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project-backlog .backlog-section .title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.project-backlog .backlog-section .title-bar .titles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-backlog .backlog-section .title-bar .titles h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 700;
+}
+.project-backlog .backlog-section .title-bar .titles span {
+  font-size: 14px;
+  color: #999;
+  font-weight: 500;
+}
+.project-backlog .backlog-section .title-bar .icon-container:hover {
+  background: var(--darkInputBg)!important;
+}
+.project-backlog .backlog-section .title-bar .dropdown-icon .dropdown-item:hover {
+  background: var(--inputBg);
+}
+.project-backlog .backlog-section .title-bar .dropdown-icon .dropdown-item:hover span,
+.project-backlog .backlog-section .title-bar .dropdown-icon .dropdown-item:hover i {
+  color: var(--darkGrayText);
+}
+.project-backlog .backlog-section .title-bar .actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.project-backlog .backlog-section .list-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-backlog .backlog-section .sprint-list.no-tasks {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--lightGrayText);
+  border-radius: 5px;
+}
+.project-backlog .backlog-section .sprint-list.no-tasks h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  text-align: center;
+}
+.project-backlog .backlog-section .sprint-list.no-tasks h5 span {
+  color: var(--grayText);
+  font-weight: 500;
+}
+
+.project-backlog .task-adder .coverInput {
+  width: 100%;
+  transition: all 0.2s;
+  cursor: pointer;
+  padding: 10px;
+}
+.project-backlog .task-adder .coverInput:hover {
+  background: var(--inputBg);
+}
+.project-backlog .task-adder .coverInput h5 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--grayText);
+  opacity: 0.6;
+}

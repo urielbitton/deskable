@@ -281,6 +281,14 @@
   color: var(--darkGrayText);
   font-weight: 600;
 }
+.view-task-content .task-details-flex .assignees-flex small.assign-to-me {
+  font-size: 12px;
+  color: var(--darkGrayText);
+  cursor: pointer;
+}
+.view-task-content .task-details-flex .assignees-flex small.assign-to-me:hover {
+  text-decoration: underline;
+}
 .view-task-content .task-details-flex .coverInput h5 {
   text-transform: capitalize;
   display: flex;

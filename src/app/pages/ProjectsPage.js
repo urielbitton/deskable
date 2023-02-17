@@ -14,6 +14,10 @@ export default function ProjectsPage() {
     return () => setHideRightBar(false)
   },[])
 
+  useEffect(() => {
+    localStorage.setItem('showProjectsSidebar', !showProjectsSidebar ? "false" : "true")  
+  },[showProjectsSidebar]) 
+
   return (
     <AppCard 
       className={`projects-page ${!showProjectsSidebar ? 'minimized' : ''}`}

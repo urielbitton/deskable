@@ -10,7 +10,7 @@ export default function UsersSearchInput(props) {
     showImgs = true, onUserClick, showDropdown,
     setShowDropdown, onFocus, onBlur, iconleft,
     name, tag, selectedUsers, multiple,
-    onUserRemove, maxAvatars, onClear } = props
+    onUserRemove, maxAvatars, onClear, inputSubtitle } = props
 
   const usersRender = users?.map((user) => {
     return <div
@@ -107,6 +107,7 @@ export default function UsersSearchInput(props) {
                 onBlur={onBlur}
               />
               {iconleft}
+              {inputSubtitle}
             </div>
         }
       </label>

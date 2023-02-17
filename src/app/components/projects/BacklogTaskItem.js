@@ -1,6 +1,5 @@
 import { switchTaskPriority, switchTaskType } from "app/data/projectsData"
 import React from 'react'
-import Avatar from "../ui/Avatar"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import './styles/BacklogTaskItem.css'
 

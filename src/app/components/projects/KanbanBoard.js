@@ -1,6 +1,6 @@
 import React from 'react'
-import Board from '@asseinfo/react-kanban'
-import '@asseinfo/react-kanban/dist/styles.css'
+import Board from 'atomics-react-kanban'
+import 'atomics-react-kanban/dist/styles.css'
 import './styles/KanbanBoard.css'
 import BoardColumn from "./BoardColumn"
 import BoardCard from "./BoardCard"

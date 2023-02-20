@@ -1,5 +1,5 @@
 import { getOrgProjectByID, getOrgProjectColumnByID, 
-  getOrgProjectColumns, getOrgProjectTaskByID, 
+  getOrgProjectColumns, getOrgProjectFirstColumn, getOrgProjectTaskByID, 
   getOrgProjectTaskComments, getOrgProjectTaskEvents, 
   getOrgProjectTaskFiles, getOrgProjectTasks, 
   getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, 
@@ -83,6 +83,20 @@ export const useOrgProjectColumn = (projectID, columnID) => {
     if (myOrgID && projectID && columnID)
       getOrgProjectColumnByID(myOrgID, projectID, columnID, setColumn)
   }, [myOrgID, projectID, columnID])
+
+  return column
+}
+
+export const useOrgProjectFirstColumn = (projectID) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [column, setColumn] = useState(null)
+
+  useEffect(() => {
+    if (myOrgID && projectID)
+      getOrgProjectFirstColumn(myOrgID, projectID)
+      .then((column) => setColumn(column))
+  }, [myOrgID, projectID])
 
   return column
 }

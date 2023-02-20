@@ -1,19 +1,24 @@
 import {
   useOrgProjectBacklogTasks,
+  useOrgProjectFirstColumn,
   useOrgProjectSprintTasks
 } from "app/hooks/projectsHooks"
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppCoverInput } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import BacklogTaskItem from "./BacklogTaskItem"
 import './styles/ProjectBacklog.css'
-import DragNDropper from "../ui/DragNDropper"
 import DraggableItem from "../ui/DraggableItem"
+import { DragDropContext } from "react-beautiful-dnd"
+import DndDropper from "../ui/DndDropper"
+import { moveBacklogTaskService } from "app/services/projectsServices"
+import { StoreContext } from "app/store/store"
 
 export default function ProjectBacklog({ project }) {
 
+  const { myOrgID, setToasts } = useContext(StoreContext)
   const projectID = useParams().projectID
   const [showTaskDetails, setShowTaskDetails] = useState(false)
   const [showTitlesMenu, setShowTitlesMenu] = useState(null)
@@ -22,14 +27,16 @@ export default function ProjectBacklog({ project }) {
   const [isDragging, setIsDragging] = useState(false)
   const sprintTasks = useOrgProjectSprintTasks(projectID, project?.activeSprintID)
   const backlogTasks = useOrgProjectBacklogTasks(projectID)
+  const firstColumn = useOrgProjectFirstColumn(projectID)
   const sprintTasksNum = sprintTasks?.length
   const backlogTasksNum = backlogTasks?.length
   const noSprintTasks = sprintTasks?.length === 0
   const sprintIsActive = project?.activeSprintID !== null
+  const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
 
   const sprintTasksList = sprintTasks?.map((task, index) => {
     return <DraggableItem
-      key={index}
+      key={task.taskID} //key cannot be index, must be unique id
       draggableId={task.taskID}
       index={task.backlogPosition}
     >
@@ -42,7 +49,7 @@ export default function ProjectBacklog({ project }) {
 
   const backlogTasksList = backlogTasks?.map((task, index) => {
     return <DraggableItem
-      key={index}
+      key={task.taskID} 
       draggableId={task.taskID}
       index={task.backlogPosition}
     >
@@ -52,18 +59,23 @@ export default function ProjectBacklog({ project }) {
       />
     </DraggableItem>
   })
-  
 
   const onDragStart = (result) => {
     setIsDragging(true)
   }
 
-  const onDragEnd = (result) => {
+  const handleMoveTask = (result) => {
+    if(!result.destination) {
+      setIsDragging(false)
+      return console.log('non droppable zone')
+    }
     setIsDragging(false)
-    console.log(result)
-    // when sprint is already active
-    if(sprintIsActive) {
-
+    const taskID = result.draggableId
+    const source = result.source
+    const destination = result.destination
+    if (sprintIsActive) {
+      moveBacklogTaskService(tasksPath, taskID, source, destination, firstColumn, setToasts)
+      // console.log(result.source.index, result.destination.index)
     }
     //when planning a sprint - not same behaviour as when sprint is active
     else {
@@ -72,7 +84,8 @@ export default function ProjectBacklog({ project }) {
   }
 
   const handleCancelNewTask = () => {
-
+    setShowCoverInput(null)
+    setNewTaskTitle('')
   }
 
   const addNewBacklogTask = () => {
@@ -101,10 +114,9 @@ export default function ProjectBacklog({ project }) {
 
   return (
     <div className={`project-backlog ${!showTaskDetails ? 'full' : ''}`}>
-      <DragNDropper
-        onDragEnd={onDragEnd}
+      <DragDropContext
+        onDragEnd={handleMoveTask}
         onDragStart={onDragStart}
-        droppableId="backlog"
       >
         <div className="backlog-flex">
           <div className="sprint-container backlog-section">
@@ -145,21 +157,26 @@ export default function ProjectBacklog({ project }) {
               {
                 noSprintTasks ?
                   <h5>There are no tasks in this sprint. <br /><span>You can add tasks by dropping them here.</span></h5> :
-                  sprintTasksList
+                  <DndDropper droppableId="sprint">
+                    {sprintTasksList}
+                  </DndDropper>
               }
             </div>
-            <div className="task-adder">
-              <AppCoverInput
-                name="sprint-adder"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onCheck={() => addNewSprintTask()}
-                onCancel={() => handleCancelNewTask()}
-                showInput={showCoverInput}
-                setShowInput={setShowCoverInput}
-                cover={<h5><i className="fal fa-plus" />Add a task...</h5>}
-              />
-            </div>
+            {
+              !sprintIsActive &&
+              <div className="task-adder">
+                <AppCoverInput
+                  name="sprint-adder"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  onCheck={() => addNewSprintTask()}
+                  onCancel={() => handleCancelNewTask()}
+                  showInput={showCoverInput}
+                  setShowInput={setShowCoverInput}
+                  cover={<h5><i className="fal fa-plus" />Add a task...</h5>}
+                />
+              </div>
+            }
           </div>
           <div className="backlog-container backlog-section">
             <div className="title-bar">
@@ -180,8 +197,10 @@ export default function ProjectBacklog({ project }) {
                 items={[]}
               />
             </div>
-            <div className="backlog-list list-section">
-              {backlogTasksList}
+            <div className={`backlog-list list-section ${isDragging ? 'dragging' : ''}`}>
+              <DndDropper droppableId="backlog">
+                {backlogTasksList}
+              </DndDropper>
             </div>
             <div className="task-adder">
               <AppCoverInput
@@ -197,7 +216,7 @@ export default function ProjectBacklog({ project }) {
             </div>
           </div>
         </div>
-      </DragNDropper>
+      </DragDropContext>
       <div className="task-details">
 
       </div>

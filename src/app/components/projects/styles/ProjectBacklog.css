@@ -42,7 +42,7 @@
 .project-backlog .backlog-section .title-bar .titles span {
   font-size: 14px;
   color: #999;
-  font-weight: 500;
+  font-weight: 300;
 }
 .project-backlog .backlog-section .title-bar .icon-container:hover {
   background: var(--darkInputBg)!important;
@@ -58,15 +58,15 @@
   display: flex;
   align-items: center;
   gap: 20px;
-}
+} 
 
-.project-backlog .backlog-section .list-section {
+.project-backlog .list-section {
   display: flex;
   flex-direction: column;
   border: 1px dashed transparent;
   transition: all 0.2s;
 }
-.project-backlog .backlog-section .list-section.dragging {
+.project-backlog .list-section.dragging {
   border: 1px dashed var(--grayText);
 }
 
@@ -106,4 +106,7 @@
   font-weight: 500;
   color: var(--grayText);
   opacity: 0.6;
+}
+.project-backlog .backlog-section .task-adder {
+  margin-bottom: 50px;
 }

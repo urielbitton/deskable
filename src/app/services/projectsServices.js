@@ -65,6 +65,19 @@ export const getOrgProjectColumnByID = (orgID, projectID, columnID, setColumn) =
   })
 }
 
+export const getOrgProjectFirstColumn = (orgID, projectID) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/columns`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'asc'),
+    limit(1)
+  )
+  return getDocs(q)
+    .then((snapshot) => {
+      return snapshot.docs.map(doc => doc.data())[0]
+    })
+}
+
 export const getOrgProjectTasksByColumnID = (orgID, projectID, columnID, setTasks) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
@@ -130,7 +143,7 @@ export const getOrgProjectTasksBySprintID = (orgID, projectID, sprintID, setTask
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('backlogPosition', 'desc'),
+    orderBy('backlogPosition', 'asc'),
     where('sprintID', '==', sprintID),
     where('inSprint', '==', true)
   )
@@ -143,7 +156,7 @@ export const getOrgProjectTasksInBacklog = (orgID, projectID, setTasks) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
     docRef,
-    orderBy('backlogPosition', 'desc'),
+    orderBy('backlogPosition', 'asc'),
     where('inSprint', '==', false),
     where('status', '==', 'backlog')
   )
@@ -338,27 +351,26 @@ export const changeSameColumnTaskPositionService = (orgID, projectID, task, newP
           snapshot.forEach((snap) => {
             const data = snap.data()
             const docID = snap.id
+            const notItself = data.taskID !== taskID
             if (data.columnID === columnID) {
-              if (data.position < newPosition && data.taskID !== taskID) {
+              if (data.position < newPosition && notItself) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(-1)
                 })
               }
-              if (data.position > newPosition && data.taskID !== taskID) {
+              if (data.position > newPosition && notItself) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(1)
                 })
               }
-              if (data.position === newPosition && data.taskID !== taskID) {
+              if (data.position === newPosition && notItself) {
                 batch.update(doc(db, path, docID), {
                   position: firebaseIncrement(data.position < oldPosition ? 1 : -1)
                 })
               }
-              if (data.taskID === taskID) {
-                batch.update(doc(db, path, docID), {
-                  position: newPosition
-                })
-              }
+              batch.update(doc(db, path, taskID), {
+                position: newPosition
+              })
             }
           })
         })
@@ -549,6 +561,77 @@ export const deleteProjectTaskEvent = (eventsPath, eventID, setToasts) => {
     .catch(err => catchCode(err, 'There was a problem deleting the event. Please try again.', setToasts))
 }
 
-export const moveBacklogTaskService = (path, taskID, position, setToasts) => {
-  
+export const moveBacklogTaskService = (path, taskID, source, destination, firstColumn, setToasts) => {
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  const fromBacklog = source.droppableId === 'backlog'
+  const fromSprint = source.droppableId === 'sprint'
+  const toBacklog = destination.droppableId === 'backlog'
+  const toSprint = destination.droppableId === 'sprint'
+  const backlogToSprint = fromBacklog && toSprint
+  const sprintToBacklog = fromSprint && toBacklog
+  const oldPosition = source.index
+  const newPosition = !backlogToSprint ? destination.index : destination.index - 1
+  const sameDestination = source.droppableId === destination.droppableId
+  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const batch = writeBatch(db)
+  return runTransaction(db, (transaction) => {
+    return transaction.get(taskRef)
+      .then((snapshot) => {
+        const path = `organizations/${orgID}/projects/${projectID}/tasks`
+        const colRef = collection(db, path)
+        const q = query(
+          colRef,
+          where('backlogPosition', '>=', Math.min(oldPosition, newPosition)),
+          where('backlogPosition', '<=', Math.max(oldPosition, newPosition))
+        )
+        onSnapshot(q, (snapshot) => {
+          snapshot.forEach((snap) => {
+            const data = snap.data()
+            const docID = snap.id
+            const notItself = data.taskID !== taskID
+            if (data.backlogPosition < newPosition && notItself) {
+              batch.update(doc(db, path, docID), {
+                backlogPosition: firebaseIncrement(-1),
+              })
+            }
+            if(data.backlogPosition > newPosition && notItself) {
+              batch.update(doc(db, path, docID), {
+                backlogPosition: firebaseIncrement(1),
+              })
+            }
+            if(data.backlogPosition === newPosition && notItself) {
+              batch.update(doc(db, path, docID), {
+                backlogPosition: firebaseIncrement(data.backlogPosition < oldPosition ? 1 : -1),
+              })
+            }
+            if (backlogToSprint) {
+              batch.update(doc(db, path, taskID), {
+                backlogPosition: newPosition,
+                inSprint: true,
+                status: firstColumn.title,
+                columnID: firstColumn.columnID
+              })
+            }
+            else if (sprintToBacklog) {
+              batch.update(doc(db, path, taskID), {
+                backlogPosition: newPosition,
+                inSprint: false,
+                status: 'backlog',
+                columnID: null
+              })
+            }
+            else if (sameDestination) {
+              batch.update(doc(db, path, taskID), {
+                backlogPosition: newPosition,
+              })
+            }
+          })
+        })
+      })
+  })
+    .then(() => {
+      return batch.commit()
+    })
+    .catch(err => catchCode(err, 'There was a problem moving the task. Please try again.', setToasts))
 }

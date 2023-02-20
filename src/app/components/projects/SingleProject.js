@@ -145,7 +145,7 @@ export default function SingleProject() {
               <MultipleUsersAvatars
                 userIDs={allMembers}
                 maxAvatars={4}
-                avatarDimensions={24}
+                avatarDimensions={27}
               />
             </small>
           </div>

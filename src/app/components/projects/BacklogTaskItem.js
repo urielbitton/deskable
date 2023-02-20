@@ -14,6 +14,7 @@ export default function BacklogTaskItem(props) {
       <div className="left-titles">
         <i
           className={switchTaskType(taskType).icon}
+          title={taskType.charAt(0).toUpperCase() + taskType.slice(1)}
           style={{ color: switchTaskType(taskType).color }}
         />
         <h6>{title}</h6>

@@ -95,7 +95,7 @@ export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
     title, type, showInput, setShowInput, cover, name, onCheck, 
-    onCancel, loading } = props
+    onPressEnter, onCancel, loading } = props
   const inputRef = useRef(null)
 
   const handleCheck = (e) => {
@@ -128,6 +128,7 @@ export const AppCoverInput = (props) => {
         onChange={(e) => onChange(e)}
         value={value}
         onClick={(e) => e.stopPropagation()}
+        onKeyUp={(e) => e.key === "Enter" && onPressEnter && onPressEnter(e)}
         type={type}
         ref={inputRef}
         style={{ display: showInput === name ? "block" : "none" }}

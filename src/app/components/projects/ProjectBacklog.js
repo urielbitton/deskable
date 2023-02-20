@@ -75,7 +75,6 @@ export default function ProjectBacklog({ project }) {
     const destination = result.destination
     if (sprintIsActive) {
       moveBacklogTaskService(tasksPath, taskID, source, destination, firstColumn, setToasts)
-      // console.log(result.source.index, result.destination.index)
     }
     //when planning a sprint - not same behaviour as when sprint is active
     else {
@@ -208,6 +207,7 @@ export default function ProjectBacklog({ project }) {
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onCheck={() => addNewBacklogTask()}
+                onPressEnter={() => addNewBacklogTask()}
                 onCancel={() => handleCancelNewTask()}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}

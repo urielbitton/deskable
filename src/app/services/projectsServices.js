@@ -561,18 +561,11 @@ export const deleteProjectTaskEvent = (eventsPath, eventID, setToasts) => {
     .catch(err => catchCode(err, 'There was a problem deleting the event. Please try again.', setToasts))
 }
 
-export const moveBacklogTaskService = (path, taskID, source, destination, firstColumn, setToasts) => {
+export const sameColumnMoveBacklogTaskService = (path, taskID, source, destination, setToasts) => {
   const orgID = path.split('/')[1]
   const projectID = path.split('/')[3]
-  const fromBacklog = source.droppableId === 'backlog'
-  const fromSprint = source.droppableId === 'sprint'
-  const toBacklog = destination.droppableId === 'backlog'
-  const toSprint = destination.droppableId === 'sprint'
-  const backlogToSprint = fromBacklog && toSprint
-  const sprintToBacklog = fromSprint && toBacklog
   const oldPosition = source.index
-  const newPosition = !backlogToSprint ? destination.index : destination.index - 1
-  const sameDestination = source.droppableId === destination.droppableId
+  const newPosition = destination.index
   const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
   const batch = writeBatch(db)
   return runTransaction(db, (transaction) => {
@@ -582,6 +575,7 @@ export const moveBacklogTaskService = (path, taskID, source, destination, firstC
         const colRef = collection(db, path)
         const q = query(
           colRef,
+          where('inSprint', '==', source.droppableId === 'sprint'),
           where('backlogPosition', '>=', Math.min(oldPosition, newPosition)),
           where('backlogPosition', '<=', Math.max(oldPosition, newPosition))
         )
@@ -595,14 +589,62 @@ export const moveBacklogTaskService = (path, taskID, source, destination, firstC
                 backlogPosition: firebaseIncrement(-1),
               })
             }
-            if(data.backlogPosition > newPosition && notItself) {
+            if (data.backlogPosition > newPosition && notItself) {
               batch.update(doc(db, path, docID), {
                 backlogPosition: firebaseIncrement(1),
               })
             }
-            if(data.backlogPosition === newPosition && notItself) {
+            if (data.backlogPosition === newPosition && notItself) {
               batch.update(doc(db, path, docID), {
                 backlogPosition: firebaseIncrement(data.backlogPosition < oldPosition ? 1 : -1),
+              })
+            }
+            batch.update(doc(db, path, taskID), {
+              backlogPosition: newPosition
+            })
+          })
+        })
+      })
+  })
+    .then(() => {
+      return batch.commit()
+    })
+    .catch(err => catchCode(err, 'There was a problem moving the task. Please try again.', setToasts))
+}
+
+export const diffColumnMoveBacklogTaskService = (path, taskID, source, destination, firstColumn, setToasts) => {
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  const fromBacklog = source.droppableId === 'backlog'
+  const fromSprint = source.droppableId === 'sprint'
+  const toBacklog = destination.droppableId === 'backlog'
+  const toSprint = destination.droppableId === 'sprint'
+  const backlogToSprint = fromBacklog && toSprint
+  const sprintToBacklog = fromSprint && toBacklog
+  const oldPosition = source.index
+  const newPosition = destination.index
+  const taskRef = doc(db, `organizations/${orgID}/projects/${projectID}/tasks`, taskID)
+  const batch = writeBatch(db)
+  return runTransaction(db, (transaction) => {
+    return transaction.get(taskRef)
+      .then((snapshot) => {
+        const path = `organizations/${orgID}/projects/${projectID}/tasks`
+        const colRef = collection(db, path)
+        const q = query(colRef)
+        onSnapshot(q, (snapshot) => {
+          snapshot.forEach((snap) => {
+            const data = snap.data()
+            const docID = snap.id
+            const sameColumnTasks = fromBacklog ? !data.inSprint : data.inSprint
+            const notItself = data.taskID !== taskID
+            if(data.backlogPosition > oldPosition && sameColumnTasks && notItself) {
+              batch.update(doc(db, path, docID), {
+                backlogPosition: firebaseIncrement(-1),
+              })
+            }
+            if(data.backlogPosition >= newPosition && !sameColumnTasks && notItself) {
+              batch.update(doc(db, path, docID), {
+                backlogPosition: firebaseIncrement(1),
               })
             }
             if (backlogToSprint) {
@@ -619,11 +661,6 @@ export const moveBacklogTaskService = (path, taskID, source, destination, firstC
                 inSprint: false,
                 status: 'backlog',
                 columnID: null
-              })
-            }
-            else if (sameDestination) {
-              batch.update(doc(db, path, taskID), {
-                backlogPosition: newPosition,
               })
             }
           })

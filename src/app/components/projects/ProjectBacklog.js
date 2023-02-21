@@ -13,7 +13,8 @@ import './styles/ProjectBacklog.css'
 import DraggableItem from "../ui/DraggableItem"
 import { DragDropContext } from "react-beautiful-dnd"
 import DndDropper from "../ui/DndDropper"
-import { moveBacklogTaskService } from "app/services/projectsServices"
+import { sameColumnMoveBacklogTaskService,
+  diffColumnMoveBacklogTaskService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 
 export default function ProjectBacklog({ project }) {
@@ -74,7 +75,10 @@ export default function ProjectBacklog({ project }) {
     const source = result.source
     const destination = result.destination
     if (sprintIsActive) {
-      moveBacklogTaskService(tasksPath, taskID, source, destination, firstColumn, setToasts)
+      if(source.droppableId === destination.droppableId) 
+        sameColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, setToasts)
+      else
+        diffColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, firstColumn, setToasts)
     }
     //when planning a sprint - not same behaviour as when sprint is active
     else {

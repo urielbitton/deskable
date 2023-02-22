@@ -70,6 +70,16 @@
 .board-card .content .task-priority i {
   font-size: 14px;
 }
+.board-card .content .task-points {
+  font-size: 11px;
+  color: var(--grayText);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.board-card .content .task-points small {
+  font-weight: 600;
+}
 
 .board-card .footer {
   display: flex;

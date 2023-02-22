@@ -2,11 +2,11 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   display: grid;
-  grid-template-columns: calc(70% -15px) calc(30% - 15px);
-  gap: 30px;
+  grid-template-columns: calc(70% - 10px) calc(30% - 10px);
+  gap: 20px;
   padding-top: 5px;
-  padding: 0 10px 0 0;
 }
 .project-backlog.full {
   grid-template-columns: 100%;
@@ -14,7 +14,10 @@
 .project-backlog .backlog-flex {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
   gap: 50px;
+  padding: 0 10px 0 0;
 }
 
 .project-backlog .backlog-section {
@@ -89,8 +92,16 @@
   font-weight: 500;
 }
 
-.project-backlog .task-adder .coverInput {
+.project-backlog .task-adder {
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
   width: 100%;
+}
+.project-backlog .task-adder .appCoverInput {
+  width: 100%;
+}
+.project-backlog .task-adder .coverInput {
   transition: all 0.2s;
   cursor: pointer;
   padding: 10px;
@@ -109,4 +120,15 @@
 }
 .project-backlog .backlog-section .task-adder {
   margin-bottom: 50px;
+}
+.project-backlog .task-adder .appCoverInput .loading-cover {
+  justify-content: flex-start;
+  padding-left: 8px;
+  border: 1px solid #eee;
+}
+
+.project-backlog .task-adder .reactSelect {
+  width: 40px;
+  height: 30px;
+  padding: 0;
 }

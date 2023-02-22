@@ -1,5 +1,14 @@
+.kanban-board-container {
+  height: 100%;
+  overflow-y: auto;
+}
+.kanban-board-container.is-dragging .react-kanban-column {
+  border: 2px dashed #aaa;
+}
+
 .react-kanban-board {
   padding: 0;
+  overflow-y: auto;
 }
 .react-kanban-column {
   background: var(--inputBg);
@@ -60,8 +69,4 @@
 .react-kanban-board .board-column-header .add-card-bar i {
   font-size: 17px;
   color: var(--grayText);
-}
-
-.kanban-board-container.is-dragging .react-kanban-column {
-  border: 2px dashed #aaa;
 }

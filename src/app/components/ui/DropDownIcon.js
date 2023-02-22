@@ -7,7 +7,7 @@ export default function DropdownIcon(props) {
 
   const { items, showMenu, setShowMenu, icon="far fa-ellipsis-v", 
     iconColor, iconSize="19px", dimensions=32, tooltip, bgColor, 
-    dropdownPosition="place-right-bottom", onClick } = props
+    dropdownPosition="place-right-bottom", onClick, round } = props
 
   const itemsList = items
     ?.filter(item => item && !item.private)
@@ -55,6 +55,7 @@ export default function DropdownIcon(props) {
         bgColor={bgColor}
         dimensions={dimensions}
         tooltip={tooltip}
+        round={round}
       />
       <div className={`dropdown-menu ${showMenu ? 'show' : ''} ${dropdownPosition}`}>
         {itemsList}

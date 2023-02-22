@@ -6,11 +6,14 @@ import './styles/BacklogTaskItem.css'
 export default function BacklogTaskItem(props) {
 
   const { title, taskType, assigneesIDs, taskNum,
-    priority, points } = props.task
-  const { grabCursor } = props
+    priority, points, taskID } = props.task
+  const { onClick, activeTask } = props
 
   return (
-    <div className={`backlog-task-item ${grabCursor ? 'grab-cursor' : ''}`}>
+    <div 
+      className={`backlog-task-item ${activeTask?.taskID === taskID ? 'active' : ''}`}
+      onClick={(e) => onClick && onClick(e)}
+    >
       <div className="left-titles">
         <i
           className={switchTaskType(taskType).icon}

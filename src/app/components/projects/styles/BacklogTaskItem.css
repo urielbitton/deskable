@@ -10,13 +10,8 @@
   background: #fff;
   cursor: pointer;
 }
-.backlog-task-item.grab-cursor {
-  cursor: move;
-  cursor: grab;
-  cursor: -moz-grab;
-  cursor: -webkit-grab;
-}
-.backlog-task-item:hover {
+.backlog-task-item:hover,
+.backlog-task-item.active {
   background: var(--inputBg);
 }
 .backlog-task-item .left-titles {
@@ -29,6 +24,10 @@
   font-size: 13px;
   color: var(--darkGrayText);
   font-weight: 600;
+}
+.backlog-task-item .left-titles i {
+  width: 17px;
+  font-size: 15px;
 }
 
 .backlog-task-item .right-details {

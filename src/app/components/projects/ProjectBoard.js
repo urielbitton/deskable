@@ -7,7 +7,8 @@ import {
   changeDiffColumnTaskPositionService,
   createProjectTaskService, deleteProjectColumnService,
   getLastColumnTaskPosition, renameBoardColumnService,
-  deleteProjectTaskService
+  deleteProjectTaskService,
+  getLastBacklogTaskPosition
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
@@ -79,9 +80,12 @@ export default function ProjectBoard({ project, tasksFilter }) {
         setTaskNum(taskNum)
         return getLastColumnTaskPosition(myOrgID, projectID, columnID)
           .then((pos) => {
-            setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
-            setStatus(columns?.find(column => column.columnID === columnID)?.title)
-            return (+pos+1)
+            return getLastBacklogTaskPosition(myOrgID, projectID)
+              .then((backlogPos) => {
+                setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
+                setStatus(columns?.find(column => column.columnID === columnID)?.title)
+                return {position: (+pos + 1), backlogPosition: (+backlogPos + 1)}
+              })
           })
       })
       .catch(err => console.log(err))
@@ -113,7 +117,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   const addTask = () => {
     if (!allowAddTask) return setToasts(infoToast('Please fill in all required fields.'))
     preAddTask(dynamicColumnID)
-      .then((position) => {
+      .then((data) => {
         return createProjectTaskService(
           myOrgID,
           myUserID,
@@ -123,7 +127,10 @@ export default function ProjectBoard({ project, tasksFilter }) {
             assigneesIDs,
             addTo,
             description,
-            position: status === 'backlog' ? 0 : position,
+            // @ts-ignore
+            position: status === 'backlog' ? null : data.position,
+            // @ts-ignore
+            backlogPosition: data.backlogPosition,
             priority,
             status,
             taskType,
@@ -185,7 +192,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
     if (newTaskModalMode) {
       setShowNewTaskModal(true)
     }
-  }, [])
+  }, [viewModalMode, newTaskModalMode])
 
   return (
     <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>

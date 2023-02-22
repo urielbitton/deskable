@@ -142,9 +142,8 @@
 
 .single-project .tasks-routes-container {
   width: 100%;
-  height: calc(100vh - 330px);
-  overflow: auto;
-  margin-top: 5px;
+  height: calc(100vh - 315px);
+  overflow: hidden;
 }
 
 .add-column-modal .appInput {

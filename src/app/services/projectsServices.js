@@ -5,7 +5,7 @@ import {
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
-import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getDocsCount, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
 export const getProjectsByOrgID = (orgID, setProjects, lim) => {
@@ -171,6 +171,18 @@ export const catchCode = (err, errorText, setToasts, setLoading) => {
   setToasts && setToasts(errorToast(errorText, true))
 }
 
+export const createOrgProjectService = () => {
+
+}
+
+export const updateOrgProjectService = (orgID, projectID, project, setToasts, setLoading) => {
+  const path = `organizations/${orgID}/projects`
+  return updateDB(path, projectID, {
+    ...project,
+  }) 
+  .catch(err => catchCode(err, 'There was an error updating the project. Please try again', setToasts, setLoading))
+}
+
 export const renameBoardColumnService = (orgID, projectID, columnID, title, setToasts) => {
   const path = `organizations/${orgID}/projects/${projectID}/columns`
   return updateDB(path, columnID, {
@@ -220,12 +232,13 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
     .then((uploadedFiles) => {
       return setDB(path, docID, {
         assigneesIDs: task.assigneesIDs,
+        backlogPosition: null,
         columnID,
-        inSprint: task.addTo === 'sprint',
         creatorID: userID,
         dateCreated: new Date(),
         dateModified: new Date(),
         description: task.description,
+        inSprint: task.addTo === 'sprint',
         position: task.position,
         priority: task.priority,
         projectID: project.projectID,
@@ -327,6 +340,21 @@ export const getLastColumnTaskPosition = (orgID, projectID, columnID) => {
   return getDocs(q)
     .then((snapshot) => {
       return snapshot.docs.map(doc => doc.data().position)[0] || 0
+    })
+    .catch(err => console.log(err))
+}
+
+export const getLastBacklogTaskPosition = (orgID, projectID) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    where('status', '==', 'backlog'),
+    orderBy('backlogPosition', 'desc'),
+    limit(1)
+  )
+  return getDocs(q)
+    .then((snapshot) => {
+      return snapshot.docs.map(doc => doc.data().backlogPosition)[0] || 0
     })
     .catch(err => console.log(err))
 }
@@ -599,9 +627,9 @@ export const sameColumnMoveBacklogTaskService = (path, taskID, source, destinati
                 backlogPosition: firebaseIncrement(data.backlogPosition < oldPosition ? 1 : -1),
               })
             }
-            batch.update(doc(db, path, taskID), {
-              backlogPosition: newPosition
-            })
+          })
+          batch.update(doc(db, path, taskID), {
+            backlogPosition: newPosition
           })
         })
       })
@@ -612,7 +640,7 @@ export const sameColumnMoveBacklogTaskService = (path, taskID, source, destinati
     .catch(err => catchCode(err, 'There was a problem moving the task. Please try again.', setToasts))
 }
 
-export const diffColumnMoveBacklogTaskService = (path, taskID, source, destination, firstColumn, setToasts) => {
+export const diffColumnMoveBacklogTaskService = (path, taskID, positions, source, destination, firstColumn, setToasts) => {
   const orgID = path.split('/')[1]
   const projectID = path.split('/')[3]
   const fromBacklog = source.droppableId === 'backlog'
@@ -637,38 +665,79 @@ export const diffColumnMoveBacklogTaskService = (path, taskID, source, destinati
             const docID = snap.id
             const sameColumnTasks = fromBacklog ? !data.inSprint : data.inSprint
             const notItself = data.taskID !== taskID
-            if(data.backlogPosition > oldPosition && sameColumnTasks && notItself) {
+            if (data.backlogPosition > oldPosition && sameColumnTasks && notItself) {
               batch.update(doc(db, path, docID), {
                 backlogPosition: firebaseIncrement(-1),
               })
             }
-            if(data.backlogPosition >= newPosition && !sameColumnTasks && notItself) {
+            if (data.backlogPosition >= newPosition && !sameColumnTasks && notItself) {
               batch.update(doc(db, path, docID), {
                 backlogPosition: firebaseIncrement(1),
               })
             }
-            if (backlogToSprint) {
-              batch.update(doc(db, path, taskID), {
-                backlogPosition: newPosition,
-                inSprint: true,
-                status: firstColumn.title,
-                columnID: firstColumn.columnID
-              })
-            }
-            else if (sprintToBacklog) {
-              batch.update(doc(db, path, taskID), {
-                backlogPosition: newPosition,
-                inSprint: false,
-                status: 'backlog',
-                columnID: null
-              })
-            }
           })
         })
+        if (backlogToSprint) {
+          batch.update(doc(db, path, taskID), {
+            backlogPosition: newPosition,
+            position: positions.sprintPosition,
+            inSprint: true,
+            sprintID: positions.sprintID,
+            status: firstColumn.title,
+            columnID: firstColumn.columnID
+          })
+        }
+        else if (sprintToBacklog) {
+          batch.update(doc(db, path, taskID), {
+            backlogPosition: newPosition,
+            position: null,
+            inSprint: false,
+            status: 'backlog',
+            columnID: null
+          })
+        }
       })
   })
     .then(() => {
       return batch.commit()
     })
     .catch(err => catchCode(err, 'There was a problem moving the task. Please try again.', setToasts))
+}
+
+export const addNewBacklogTaskService = (path, myUserID, projectName, task, setToasts, setLoading) => {
+  setLoading(true)
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  return getDocsCount(path)
+    .then(tasksCount => {
+      return getLastBacklogTaskPosition(orgID, projectID)
+        .then((lastBacklogPosition) => {
+          const docID = getRandomDocID(path)
+          return setDB(path, docID, {
+            assigneesIDs: [],
+            backlogPosition: lastBacklogPosition + 1,
+            columnID: null,
+            creatorID: myUserID,
+            dateCreated: new Date(),
+            dateModified: new Date(),
+            description: '',
+            inSprint: false,
+            points: 0,
+            position: null,
+            priority: 'medium',
+            projectID,
+            reporterID: myUserID,
+            sprintID: null,
+            status: 'backlog',
+            taskID: docID,
+            taskNum: `${projectName.slice(0, 3).toUpperCase()}-${(tasksCount + 1) < 10 ? '0' : ''}${tasksCount + 1}`,
+            taskType: task.newTaskType,
+            title: task.newTaskTitle,
+          })
+        })
+    })
+    .then(() => {
+      setLoading(false)
+    })
+    .catch(err => catchCode(err, 'There was a problem adding the task. Please try again.', setToasts, setLoading))
 }

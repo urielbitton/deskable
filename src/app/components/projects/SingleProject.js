@@ -1,6 +1,6 @@
-import { infoToast } from "app/data/toastsTemplates"
+import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
-import { createProjectColumnService } from "app/services/projectsServices"
+import { createProjectColumnService, updateOrgProjectService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import { areArraysEqual } from "app/utils/generalUtils"
@@ -20,14 +20,15 @@ import './styles/SingleProject.css'
 
 export default function SingleProject() {
 
-  const { myOrgID, myUserID, setToasts, photoURLPlaceholder } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts, photoURLPlaceholder,
+    setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
   const [searchString, setSearchString] = useState('')
   const [showOptions, setShowOptions] = useState(false)
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [columnLoading, setColumnLoading] = useState(false)
   const [filterUserIDs, setFilterUserIDs] = useState([])
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
   const allMembers = project?.members
@@ -60,7 +61,7 @@ export default function SingleProject() {
       myOrgID,
       projectID,
       columnTitle,
-      setLoading,
+      setColumnLoading,
       setToasts
     )
       .then(() => {
@@ -68,12 +69,19 @@ export default function SingleProject() {
       })
   }
 
-  const addTask = () => {
-
-  }
-
   const starProject = () => {
-
+    updateOrgProjectService(
+      myOrgID,
+      projectID, 
+      {
+        isStarred: !project.isStarred
+      }, 
+      setToasts, 
+      setPageLoading
+    )
+    .then(() => {
+      setToasts(successToast(`Project ${project.isStarred ? 'unstarred' : 'starred'}`))
+    })
   }
 
   const initEditProject = () => {
@@ -202,8 +210,7 @@ export default function SingleProject() {
               className="dropdown-btn"
               items={[
                 { label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) },
-                { label: 'Add Task', icon: 'fas fa-tasks', onClick: () => addTask() },
-                { label: 'Star Project', icon: 'fas fa-star', onClick: () => starProject() },
+                { label: !project.isStarred ? 'Star Project' : 'Unstar Project', icon: 'fas fa-star', onClick: () => starProject() },
                 { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
                 { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
                 { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
@@ -244,7 +251,7 @@ export default function SingleProject() {
               label="Add Column"
               buttonType="primaryBtn"
               onClick={() => addColumn()}
-              rightIcon={loading ? "fas fa-spinner fa-spin" : null}
+              rightIcon={columnLoading ? "fas fa-spinner fa-spin" : null}
             />
             <AppButton
               label="Cancel"

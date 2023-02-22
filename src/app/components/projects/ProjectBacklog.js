@@ -1,31 +1,45 @@
 import {
   useOrgProjectBacklogTasks,
   useOrgProjectFirstColumn,
-  useOrgProjectSprintTasks
+  useOrgProjectSprintTasks,
+  useOrgProjectTask
 } from "app/hooks/projectsHooks"
-import React, { useContext, useState } from 'react'
-import { useParams } from "react-router-dom"
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams, useSearchParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
-import { AppCoverInput } from "../ui/AppInputs"
+import { AppCoverInput, AppReactSelect } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
 import BacklogTaskItem from "./BacklogTaskItem"
 import './styles/ProjectBacklog.css'
 import DraggableItem from "../ui/DraggableItem"
 import { DragDropContext } from "react-beautiful-dnd"
 import DndDropper from "../ui/DndDropper"
-import { sameColumnMoveBacklogTaskService,
-  diffColumnMoveBacklogTaskService } from "app/services/projectsServices"
+import {
+  sameColumnMoveBacklogTaskService,
+  diffColumnMoveBacklogTaskService,
+  addNewBacklogTaskService,
+  getLastBacklogTaskPosition,
+  getLastColumnTaskPosition,
+  createOrgProjectTaskEvent
+} from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
+import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
+import BacklogTaskDetails from "./BacklogTaskDetails"
 
 export default function ProjectBacklog({ project }) {
 
-  const { myOrgID, setToasts } = useContext(StoreContext)
+  const { myOrgID, setToasts, myUserID } = useContext(StoreContext)
   const projectID = useParams().projectID
-  const [showTaskDetails, setShowTaskDetails] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const taskDetailsOpen = searchParams.get('taskID') !== null 
+  const [showTaskDetails, setShowTaskDetails] = useState(null)
   const [showTitlesMenu, setShowTitlesMenu] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [newTaskLoading, setNewTaskLoading] = useState(false)
+  const [newTaskType, setNewTaskType] = useState(taskTypeOptions[0].value)
+  const activeTask = useOrgProjectTask(projectID, searchParams.get('taskID'))
   const sprintTasks = useOrgProjectSprintTasks(projectID, project?.activeSprintID)
   const backlogTasks = useOrgProjectBacklogTasks(projectID)
   const firstColumn = useOrgProjectFirstColumn(projectID)
@@ -44,29 +58,43 @@ export default function ProjectBacklog({ project }) {
       <BacklogTaskItem
         key={index}
         task={task}
+        onClick={(e) => handleTaskClick(e, task.taskID)}
+        activeTask={activeTask}
       />
     </DraggableItem>
   })
 
   const backlogTasksList = backlogTasks?.map((task, index) => {
     return <DraggableItem
-      key={task.taskID} 
+      key={task.taskID}
       draggableId={task.taskID}
       index={task.backlogPosition}
     >
       <BacklogTaskItem
         key={index}
         task={task}
+        onClick={(e) => handleTaskClick(e, task.taskID)}
+        activeTask={activeTask}
       />
     </DraggableItem>
   })
+
+  const diffColumnMoveTaskEvent = (source, destination) => {
+    createOrgProjectTaskEvent(
+      `${tasksPath}/${activeTask?.taskID}/events`, 
+      myUserID, 
+      `moved the task from the <b>${source}</b> to the <b>${destination}</b>`, 
+      'far fa-expand-arrows', 
+      setToasts
+    )
+  }
 
   const onDragStart = (result) => {
     setIsDragging(true)
   }
 
   const handleMoveTask = (result) => {
-    if(!result.destination) {
+    if (!result.destination) {
       setIsDragging(false)
       return console.log('non droppable zone')
     }
@@ -74,11 +102,29 @@ export default function ProjectBacklog({ project }) {
     const taskID = result.draggableId
     const source = result.source
     const destination = result.destination
+    const sameColumnMove = source.droppableId === destination.droppableId
+    const toBacklog = destination.droppableId === 'backlog'
+    const toSprint = destination.droppableId === 'sprint'
     if (sprintIsActive) {
-      if(source.droppableId === destination.droppableId) 
+      if (sameColumnMove) {
         sameColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, setToasts)
-      else
-        diffColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, firstColumn, setToasts)
+      }
+      else if (toBacklog) {
+        getLastBacklogTaskPosition(myOrgID, projectID)
+        .then((lastPosition) => {
+          const positions = { backlogPosition: lastPosition, sprintPosition: null}
+          diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
+          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+        })
+      }
+      else if (toSprint) {
+        getLastColumnTaskPosition(myOrgID, projectID, firstColumn.columnID)
+        .then((lastPosition) => {
+          const positions = { backlogPosition: null, sprintPosition: lastPosition, sprintID: project.activeSprintID }
+          diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
+          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+        })
+      }
     }
     //when planning a sprint - not same behaviour as when sprint is active
     else {
@@ -92,7 +138,28 @@ export default function ProjectBacklog({ project }) {
   }
 
   const addNewBacklogTask = () => {
-
+    if (!newTaskTitle) return
+    addNewBacklogTaskService(
+      tasksPath,
+      myUserID,
+      project.name,
+      {
+        newTaskTitle,
+        newTaskType,
+      },
+      setToasts,
+      setNewTaskLoading
+    )
+      .then(() => {
+        handleCancelNewTask()
+        createOrgProjectTaskEvent(
+          `${tasksPath}/${activeTask?.taskID}/events`, 
+          myUserID, 
+          `added new task ${newTaskTitle} to the project backlog`, 
+          'far fa-tasks', 
+          setToasts
+        )
+      })
   }
 
   const addNewSprintTask = () => {
@@ -115,8 +182,27 @@ export default function ProjectBacklog({ project }) {
 
   }
 
+  const handleTaskClick = (e, taskID) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setSearchParams({ taskID, projectID })
+    setShowTaskDetails(taskID)
+  }
+
+  useEffect(() => {
+    if(!showTaskDetails) {
+      window.onclick = () => setShowTaskDetails(null)
+    }
+  },[showTaskDetails])
+
+  useEffect(() => {
+    if (taskDetailsOpen) {
+      setShowTaskDetails(searchParams.get('taskID'))
+    }
+  },[])
+
   return (
-    <div className={`project-backlog ${!showTaskDetails ? 'full' : ''}`}>
+    <div className={`project-backlog ${showTaskDetails === null ? 'full' : ''}`}>
       <DragDropContext
         onDragEnd={handleMoveTask}
         onDragStart={onDragStart}
@@ -187,18 +273,6 @@ export default function ProjectBacklog({ project }) {
                 <h5>Backlog</h5>
                 <span>{backlogTasksNum} task{backlogTasksNum !== 1 ? 's' : ''}</span>
               </div>
-              <DropdownIcon
-                icon="far fa-ellipsis-h"
-                iconSize={16}
-                iconColor="var(--grayText)"
-                tooltip="Actions"
-                dimensions={27}
-                bgColor="var(--inputBg)"
-                showMenu={showTitlesMenu === 'backlog'}
-                setShowMenu={setShowTitlesMenu}
-                onClick={(e) => setShowTitlesMenu(showTitlesMenu === 'backlog' ? null : 'backlog')}
-                items={[]}
-              />
             </div>
             <div className={`backlog-list list-section ${isDragging ? 'dragging' : ''}`}>
               <DndDropper droppableId="backlog">
@@ -206,6 +280,19 @@ export default function ProjectBacklog({ project }) {
               </DndDropper>
             </div>
             <div className="task-adder">
+              <AppReactSelect
+                placeholder={
+                  <i
+                    className={switchTaskType(newTaskType).icon}
+                    style={{ color: switchTaskType(newTaskType).color }}
+                  />
+                }
+                options={taskTypeOptions.map((option) => ({ value: option.value, icon: option.icon, iconColor: option.iconColor }))}
+                value={newTaskType}
+                onChange={(type) => setNewTaskType(type.value)}
+                hideDropdownArrow
+                centerOptions
+              />
               <AppCoverInput
                 name="backlog-adder"
                 value={newTaskTitle}
@@ -213,17 +300,19 @@ export default function ProjectBacklog({ project }) {
                 onCheck={() => addNewBacklogTask()}
                 onPressEnter={() => addNewBacklogTask()}
                 onCancel={() => handleCancelNewTask()}
+                loading={newTaskLoading}
                 showInput={showCoverInput}
                 setShowInput={setShowCoverInput}
-                cover={<h5><i className="fal fa-plus" />Add a task...</h5>}
+                cover={<h5>Add a task title...</h5>}
               />
             </div>
           </div>
         </div>
       </DragDropContext>
-      <div className="task-details">
-
-      </div>
+      <BacklogTaskDetails
+        activeTask={activeTask}
+        setShowTaskDetails={setShowTaskDetails}
+      />
     </div>
   )
 }

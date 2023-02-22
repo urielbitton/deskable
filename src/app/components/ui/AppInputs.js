@@ -95,13 +95,20 @@ export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
     title, type, showInput, setShowInput, cover, name, onCheck, 
-    onPressEnter, onCancel, loading } = props
+    onPressEnter, onCancel, loading, linkEnterPressToOnCheck } = props
   const inputRef = useRef(null)
 
   const handleCheck = (e) => {
     e.preventDefault()
     e.stopPropagation()
     onCheck && onCheck(e)
+  }
+
+  const handleOnKeUp = (e) => {
+    if(e.key === "Enter") {
+      onPressEnter && onPressEnter(e)
+      linkEnterPressToOnCheck && handleCheck(e)
+    }
   }
 
   const handleCancel = (e) => {
@@ -128,7 +135,7 @@ export const AppCoverInput = (props) => {
         onChange={(e) => onChange(e)}
         value={value}
         onClick={(e) => e.stopPropagation()}
-        onKeyUp={(e) => e.key === "Enter" && onPressEnter && onPressEnter(e)}
+        onKeyUp={(e) => handleOnKeUp(e)}
         type={type}
         ref={inputRef}
         style={{ display: showInput === name ? "block" : "none" }}
@@ -216,10 +223,10 @@ export const AppCoverSelect = (props) => {
         icon &&
         <i
           className={icon}
-          style={{ color: iconColor, marginRight: '10px' }}
+          style={{ color: iconColor, marginRight: label ? '10px' : '0' }}
         />
       }
-      <span>{label}</span>
+      { label && <span>{label}</span> }
     </div>
   )
 
@@ -279,19 +286,23 @@ export const AppCoverSelect = (props) => {
 export const AppReactSelect = (props) => {
 
   const { options, label, onChange, value, className,
-    containerStyles, defaultValue, placeholder, subText } = props
+    containerStyles, defaultValue, placeholder, subText,
+    menuPlacement="auto", hideDropdownArrow, centerOptions } = props
   const selectRef = useRef(null)
 
   const formatOptionLabel = ({ label, icon, iconColor }) => (
-    <div className="select-option">
+    <div 
+      className="select-option"
+      style={centerOptions ? {display: 'flex', alignItems: 'center', justifyContent: 'center'} : null}
+    >
       {
         icon &&
         <i
           className={icon}
-          style={{ color: iconColor, marginRight: '10px' }}
+          style={{ color: iconColor, marginRight: label ? '10px' : '0' }}
         />
       }
-      <span>{label}</span>
+      { label && <span>{label}</span>}
     </div>
   )
 
@@ -309,12 +320,14 @@ export const AppReactSelect = (props) => {
         options={options}
         formatOptionLabel={formatOptionLabel}
         openMenuOnFocus
+        menuPlacement={menuPlacement}
         styles={reactSelectStyles}
         hideSelectedOptions
         menuShouldScrollIntoView
-        components={{ IndicatorSeparator: () => null }}
+        components={{ IndicatorSeparator: () => null, DropdownIndicator: () => hideDropdownArrow ? null : <i className="far fa-chevron-down" /> }}
         ref={selectRef}
         menuPortalTarget={document.body}
+        className="react-select"
       />
       { subText && <small className="sub-text">{subText}</small> }
     </label>

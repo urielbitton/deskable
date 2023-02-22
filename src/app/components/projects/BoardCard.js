@@ -13,7 +13,7 @@ export default function BoardCard(props) {
 
   const { setToasts, myOrgID, myUserID } = useContext(StoreContext)
   const { taskID, title, taskNum, taskType, assigneesIDs,
-    priority, projectID } = props.task
+    priority, projectID, points } = props.task
   const { tasksPath, handleDeleteTask, dragging, setIsDragging,
     handleOpenTask } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
@@ -96,6 +96,16 @@ export default function BoardCard(props) {
               style={{ color: switchTaskPriority(priority)?.color }}
             />
           </span>
+          {
+            points > 0 &&
+            <span 
+              className="task-points"
+              title={`Task points: ${points}`}
+            >
+              <i className="fas fa-gamepad" />
+              <small>{points}</small>
+            </span>
+          }
         </div>
       </div>
       <div className="footer">
@@ -106,10 +116,10 @@ export default function BoardCard(props) {
         />
         <div className="stats">
           <span>
-            {filesNum} <i className="fas fa-comment" />
+            {commentsNum} <i className="fas fa-comment" />
           </span>
           <span>
-            {commentsNum} <i className="fas fa-paperclip" />
+            {filesNum} <i className="fas fa-paperclip" />
           </span>
         </div>
       </div>

@@ -1,0 +1,93 @@
+.task-details-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow-y: auto;
+  padding-right: 5px;
+} 
+.task-details-container > .header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.task-details-container > .header .task-num {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.task-details-container > .header .task-num .icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.task-details-container > .header .task-num .icon i {
+  color: #fff;
+  font-size: 10px;
+}
+.task-details-container > .header .task-num h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.task-details-container > .header .actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.task-details-container > .header .icon-container.close-icon {
+  background: var(--inputBg);
+}
+.task-details-container > .header .icon-container:hover {
+  background: var(--lightGrayText);
+}
+
+.task-details-container .titles {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+.task-details-container .titles h3 {
+  font-size: 21px;
+  color: var(--darkGrayText);
+}
+.task-details-container .titles .task-name .coverInput {
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.task-details-container .titles .task-name .coverInput:hover {
+  background: var(--inputBg);
+}
+.task-details-container .titles .task-name input {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--darkGrayText);
+}
+
+.task-details-container .view-task-content {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: auto;
+  height: auto;
+  overflow: unset;
+  margin-top: 10px;
+}
+.task-details-container .view-task-content .task-content,
+.task-details-container .view-task-content .task-details {
+  overflow: unset;
+}
+.task-details-container .view-task-content .task-details .titles {
+  flex-direction: row;
+  margin-top: 0;
+}
+
+.project-backlog.full .task-details-container {
+  display: none;
+}

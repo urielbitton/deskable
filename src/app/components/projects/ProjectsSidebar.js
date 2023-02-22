@@ -1,8 +1,8 @@
 import { useOrgProjects } from "app/hooks/projectsHooks"
 import { StoreContext } from "app/store/store"
 import { truncateText } from "app/utils/generalUtils"
-import React, { useContext, useState } from 'react'
-import { NavLink, useNavigate } from "react-router-dom"
+import React, { useContext } from 'react'
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import './styles/ProjectsSidebar.css'
@@ -11,6 +11,7 @@ export default function ProjectsSidebar() {
 
   const { myUserImg, myUserName, myUser, showProjectsSidebar,
     setShowProjectsSidebar } = useContext(StoreContext)
+  const location = useLocation()
   const navigate = useNavigate()
   const projectsLimit = 5
   const projects = useOrgProjects(projectsLimit)
@@ -23,7 +24,7 @@ export default function ProjectsSidebar() {
     >
       <span>
         <i className="fas fa-hashtag" />
-        <h6>{showProjectsSidebar ? truncateText(project?.name, 20) : `${project?.name?.slice(0,2)}`}</h6>
+        <h6>{showProjectsSidebar ? truncateText(project?.name, 20) : `${project?.name?.slice(0, 2)}`}</h6>
       </span>
       <i className="fas fa-arrow-right" />
     </NavLink>
@@ -52,7 +53,10 @@ export default function ProjectsSidebar() {
         </div>
       </div>
       <div className="menu">
-        <NavLink to="/projects">
+        <NavLink 
+          to="/projects"
+          className={location.pathname === '/projects' ? 'active' : 'not-active'}
+        >
           <i className="fas fa-browser" />
           <span>Dashboard</span>
         </NavLink>
@@ -64,6 +68,12 @@ export default function ProjectsSidebar() {
           <i className="fas fa-sliders-v" />
           <span>Settings</span>
         </NavLink>
+        {
+          !showProjectsSidebar &&
+          <NavLink to="/projects/new">
+            <i className="fas fa-plus" />
+          </NavLink>
+        }
       </div>
       <div className="section section-projects">
         {

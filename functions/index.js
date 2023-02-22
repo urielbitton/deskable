@@ -13,6 +13,7 @@ const API_KEY = functions.config().algolia.key
 const client = algoliasearch(APP_ID, API_KEY)
 const employeesIndex = client.initIndex('employees_index')
 const usersIndex = client.initIndex('users_index')
+const tasksIndex = client.initIndex('tasks_index')
 
 
 exports.addToIndexUsers = functions
@@ -66,6 +67,25 @@ exports.deleteFromIndexEmployees = functions
       })
   })
 
+exports.addToIndexProjectTasks = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onCreate((snapshot, context) => {
+    const data = snapshot.data()
+    return tasksIndex.saveObject({ ...data, objectID: snapshot.id })
+  })
+
+exports.updateIndexProjectTasks = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onUpdate((change) => {
+    const newData = change.after.data()
+    return tasksIndex.saveObject({ ...newData, objectID: change.after.id })
+  })
+
+exports.deleteFromIndexProjectTasks = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onDelete((snapshot, context) => {
+    return tasksIndex.deleteObject(snapshot.id)
+  })
 
 exports.onCreateProjectTask = functions
   .region('northamerica-northeast1')

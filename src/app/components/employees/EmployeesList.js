@@ -9,14 +9,12 @@ import EmployeeRow from "./EmployeeRow"
 export default function EmployeesList(props) {
 
   const { setPageLoading } = useContext(StoreContext)
-  const { query, searchResults, setSearchResults, filters, setNumOfHits,
+  const { query, filters, setNumOfHits,
     setNumOfPages, pageNum, setPageNum, numOfPages, hitsPerPage, showAll,
     dbEmployees } = props
 
   const employees = useInstantSearch(
     query,
-    searchResults,
-    setSearchResults,
     employeesIndex,
     filters,
     setNumOfHits,

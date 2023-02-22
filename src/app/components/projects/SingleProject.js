@@ -1,7 +1,11 @@
+import { tasksIndex } from "app/algolia"
 import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
-import { createProjectColumnService, deleteOrgProjectService, 
-  updateOrgProjectService } from "app/services/projectsServices"
+import { useInstantSearch } from "app/hooks/searchHooks"
+import {
+  createProjectColumnService, deleteOrgProjectService,
+  updateOrgProjectService
+} from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import { areArraysEqual } from "app/utils/generalUtils"
@@ -13,6 +17,7 @@ import AppModal from "../ui/AppModal"
 import AppTabsBar from "../ui/AppTabsBar"
 import Avatar from "../ui/Avatar"
 import DropdownButton from "../ui/DropdownButton"
+import DropdownSearch from "../ui/DropdownSearch"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
@@ -25,16 +30,24 @@ export default function SingleProject() {
     setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
-  const [searchString, setSearchString] = useState('')
   const [showOptions, setShowOptions] = useState(false)
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
   const [columnLoading, setColumnLoading] = useState(false)
   const [filterUserIDs, setFilterUserIDs] = useState([])
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
+  const [searchString, setSearchString] = useState('')
+  const [query, setQuery] = useState('')
+  const [numOfHits, setNumOfHits] = useState(0)
+  const [numOfPages, setNumOfPages] = useState(0)
+  const [pageNum, setPageNum] = useState(0)
+  const [hitsPerPage, setHitsPerPage] = useState(10)
+  const [searchLoading, setSearchLoading] = useState(false)
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
   const navigate = useNavigate()
+  const searchFilters = `projectID: ${projectID}`
+  const showAll = false
 
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
@@ -51,6 +64,29 @@ export default function SingleProject() {
       ) : task?.columnID === column?.columnID
     })
   }
+
+  const searchTasks = useInstantSearch(
+    query,
+    tasksIndex,
+    searchFilters,
+    setNumOfHits,
+    setNumOfPages,
+    pageNum,
+    hitsPerPage,
+    setSearchLoading,
+    showAll
+  )
+
+  const searchTasksList = searchTasks?.map((task, index) => {
+    return <div
+      key={index}
+      className="search-result-row"
+    >
+      <div className="left">
+        {task.title}
+      </div>
+    </div>
+  })
 
   const resetColumnModal = () => {
     setShowColumnModal(false)
@@ -74,16 +110,16 @@ export default function SingleProject() {
   const starProject = () => {
     updateOrgProjectService(
       myOrgID,
-      projectID, 
+      projectID,
       {
         isStarred: !project.isStarred
-      }, 
-      setToasts, 
+      },
+      setToasts,
       setPageLoading
     )
-    .then(() => {
-      setToasts(successToast(`Project ${project.isStarred ? 'unstarred' : 'starred'}`))
-    })
+      .then(() => {
+        setToasts(successToast(`Project ${project.isStarred ? 'unstarred' : 'starred'}`))
+      })
   }
 
   const initEditProject = () => {
@@ -91,23 +127,24 @@ export default function SingleProject() {
   }
 
   const deleteProject = () => {
-    const confirm = window.confirm('Are you sure you want to delete this project? You will lose all sprints info, project tasks and associated files. This action cannot be undone.')
+    const confirm = window.confirm('Are you sure you want to delete this project? You will +'
+    +'lose all sprints info, project tasks and associated files. This action cannot be undone.')
     if (!confirm) return
     setPageLoading(true)
     deleteOrgProjectService(
-      myOrgID, 
-      projectID, 
-      project?.name, 
-      setToasts, 
+      myOrgID,
+      projectID,
+      project?.name,
+      setToasts,
       setPageLoading
     )
-    .then(() => {
-      navigate('/projects')
-    })
+      .then(() => {
+        navigate('/projects')
+      })
   }
 
   const archiveProject = () => {
-    
+
   }
 
   const resetAllFilters = () => {
@@ -142,7 +179,7 @@ export default function SingleProject() {
   }, [project])
 
   return project && userIsMember ? (
-    <div 
+    <div
       className="single-project"
       key={projectID}
     >
@@ -174,11 +211,18 @@ export default function SingleProject() {
               />
             </small>
           </div>
-          <AppInput
+          <DropdownSearch
             placeholder="Search this project..."
             value={searchString}
-            onChange={e => setSearchString(e.target.value)}
-            iconright={<i className="fal fa-search" />}
+            onChange={(e) => setSearchString(e.target.value)}
+            onEnterPress={() => setQuery(searchString)}
+            searchResults={searchTasksList}
+            showDropdown={query.length > 0}
+            dropdownTitle={
+              numOfHits > 0 ?
+              <h6>{`Tasks (${numOfHits})`}</h6> :
+              <h6><i className="fas fa-file-search"/>No Results Found</h6>
+            }
           />
         </div>
       </div>

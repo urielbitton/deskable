@@ -79,6 +79,7 @@
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
+  gap: 3px;
   border-bottom: 1px solid var(--lightGrayText);
 }
 .projects-sidebar .menu a {
@@ -88,8 +89,12 @@
   padding: 5px 10px;
   border-radius: 5px;
 }
-.projects-sidebar .menu a:hover {
+.projects-sidebar .menu a:hover,
+.projects-sidebar .menu a.active {
   background: var(--lightGrayText);
+}
+.projects-sidebar .menu a.not-active {
+  background: inherit;
 }
 .projects-sidebar .menu a i {
   width: 20px;
@@ -157,7 +162,7 @@
   display: none;
 }
 .projects-sidebar.minimized .menu a {
-  padding: 10px;
+  padding: 7px 10px;
 }
 .projects-sidebar.minimized .menu i {
   width: auto;

@@ -1,8 +1,10 @@
 import { algoliaSearchClient, usersIndex } from "app/algolia"
 import React, { useEffect, useState } from 'react'
 
-export function useInstantSearch(query, searchResults, setSearchResults, indexName, filters,
+export function useInstantSearch(query, indexName, filters,
   setNumOfHits, setNumOfPages, page, hitsPerPage, setLoading, showAll) {
+
+  const [searchResults, setSearchResults] = useState([])
 
   useEffect(() => {
     if (query?.length || showAll) {

@@ -48,29 +48,6 @@
   background: var(--lightGrayText);
 }
 
-.task-details-container .titles {
-  display: flex;
-  flex-direction: column;
-  margin-top: 15px;
-}
-.task-details-container .titles h3 {
-  font-size: 21px;
-  color: var(--darkGrayText);
-}
-.task-details-container .titles .task-name .coverInput {
-  padding: 5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-.task-details-container .titles .task-name .coverInput:hover {
-  background: var(--inputBg);
-}
-.task-details-container .titles .task-name input {
-  font-size: 21px;
-  font-weight: 700;
-  color: var(--darkGrayText);
-}
-
 .task-details-container .view-task-content {
   display: flex;
   flex-direction: column;

@@ -84,8 +84,8 @@ export default function CommentItem(props) {
     }
   }
 
-  const saveComment = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const saveComment = (e, click) => {
+    if (click || (e.key === 'Enter' && !e.shiftKey)) {
       e.preventDefault()
       updateOrgPostCommentService(
         commentsPath,
@@ -169,7 +169,7 @@ export default function CommentItem(props) {
                     inputRef={editCommentInputRef}
                   />
                   <div className="btn-group">
-                    <small onClick={() => saveComment()}>Save</small>
+                    <small onClick={(e) => saveComment(e, 'click')}>Save</small>
                     <small onClick={() => resetEdit()}>Cancel</small>
                   </div>
                 </div>

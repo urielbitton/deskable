@@ -31,7 +31,8 @@ export default function ProjectBacklog({ project }) {
   const { myOrgID, setToasts, myUserID } = useContext(StoreContext)
   const projectID = useParams().projectID
   const [searchParams, setSearchParams] = useSearchParams()
-  const taskDetailsOpen = searchParams.get('taskID') !== null 
+  const paramTaskID = searchParams.get('taskID')
+  const taskDetailsOpen = paramTaskID !== null 
   const [showTaskDetails, setShowTaskDetails] = useState(null)
   const [showTitlesMenu, setShowTitlesMenu] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
@@ -39,7 +40,7 @@ export default function ProjectBacklog({ project }) {
   const [isDragging, setIsDragging] = useState(false)
   const [newTaskLoading, setNewTaskLoading] = useState(false)
   const [newTaskType, setNewTaskType] = useState(taskTypeOptions[0].value)
-  const activeTask = useOrgProjectTask(projectID, searchParams.get('taskID'))
+  const activeTask = useOrgProjectTask(projectID, paramTaskID)
   const sprintTasks = useOrgProjectSprintTasks(projectID, project?.activeSprintID)
   const backlogTasks = useOrgProjectBacklogTasks(projectID)
   const firstColumn = useOrgProjectFirstColumn(projectID)
@@ -59,7 +60,7 @@ export default function ProjectBacklog({ project }) {
         key={index}
         task={task}
         onClick={(e) => handleTaskClick(e, task.taskID)}
-        activeTask={activeTask}
+        isActive={task.taskID === paramTaskID}
       />
     </DraggableItem>
   })
@@ -74,7 +75,7 @@ export default function ProjectBacklog({ project }) {
         key={index}
         task={task}
         onClick={(e) => handleTaskClick(e, task.taskID)}
-        activeTask={activeTask}
+        isActive={task.taskID === paramTaskID}
       />
     </DraggableItem>
   })
@@ -190,14 +191,8 @@ export default function ProjectBacklog({ project }) {
   }
 
   useEffect(() => {
-    if(!showTaskDetails) {
-      window.onclick = () => setShowTaskDetails(null)
-    }
-  },[showTaskDetails])
-
-  useEffect(() => {
     if (taskDetailsOpen) {
-      setShowTaskDetails(searchParams.get('taskID'))
+      setShowTaskDetails(paramTaskID)
     }
   },[])
 

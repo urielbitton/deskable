@@ -2,6 +2,7 @@ import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { removeNullOrUndefined } from "app/utils/generalUtils"
 import { collection, doc, limit, onSnapshot, orderBy, query } from "firebase/firestore"
+import { getFunctions, httpsCallable } from "firebase/functions"
 import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 
@@ -104,14 +105,11 @@ export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs
     })
 }
 
-export const deleteOrgPostService = (orgID, postID, fileNames, setLoading, setToasts) => {
+export const deleteOrgPostService = (orgID, postID, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
-  return deleteMultipleStorageFiles(postStoragePath, fileNames)
-    .then(() => {
-      const postsPath = `organizations/${orgID}/posts`
-      return deleteDB(postsPath, postID)
-    })
+  return httpsCallable(getFunctions(), 'onOrgPostDelete')({ 
+    orgID, postID 
+  })
     .then(() => {
       setLoading(false)
       setToasts(successToast("Post deleted successfully!"))
@@ -336,9 +334,9 @@ export const updatePostFileDescriptionService = (path, docID, files, updateFile,
   return updateDB(path, docID, {
     files
   })
-  .then(() => {
-    setToasts(successToast("File description updated successfully."))
-  })
+    .then(() => {
+      setToasts(successToast("File description updated successfully."))
+    })
     .catch(err => {
       console.log(err)
       setToasts(errorToast("Error updating file description. Please try again later."))

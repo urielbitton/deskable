@@ -158,7 +158,6 @@ export default function PostCard(props) {
     deleteOrgPostService(
       orgID,
       postID,
-      files.map(file => file.name),
       setLoading,
       setToasts
     )

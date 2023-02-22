@@ -1,11 +1,12 @@
 import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
-import { createProjectColumnService, updateOrgProjectService } from "app/services/projectsServices"
+import { createProjectColumnService, deleteOrgProjectService, 
+  updateOrgProjectService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import { areArraysEqual } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'
-import { NavLink, Route, Routes, useParams } from "react-router-dom"
+import { NavLink, Route, Routes, useNavigate, useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
 import AppModal from "../ui/AppModal"
@@ -33,6 +34,7 @@ export default function SingleProject() {
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
+  const navigate = useNavigate()
 
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
@@ -89,11 +91,23 @@ export default function SingleProject() {
   }
 
   const deleteProject = () => {
-
+    const confirm = window.confirm('Are you sure you want to delete this project? You will lose all sprints info, project tasks and associated files. This action cannot be undone.')
+    if (!confirm) return
+    setPageLoading(true)
+    deleteOrgProjectService(
+      myOrgID, 
+      projectID, 
+      project?.name, 
+      setToasts, 
+      setPageLoading
+    )
+    .then(() => {
+      navigate('/projects')
+    })
   }
 
   const archiveProject = () => {
-
+    
   }
 
   const resetAllFilters = () => {
@@ -128,7 +142,10 @@ export default function SingleProject() {
   }, [project])
 
   return project && userIsMember ? (
-    <div className="single-project">
+    <div 
+      className="single-project"
+      key={projectID}
+    >
       <div className="project-header">
         <div className="titles">
           <Avatar

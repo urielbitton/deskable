@@ -1,14 +1,19 @@
-import { projectColumnsOptions, switchTaskPriority, 
-  switchTaskType, taskPriorityOptions, taskTypeOptions } from "app/data/projectsData"
+import {
+  projectColumnsOptions, switchTaskPriority,
+  switchTaskType, taskPriorityOptions, taskTypeOptions
+} from "app/data/projectsData"
 import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
-import { useOrgProjectColumns, useOrgProjectTaskComments, 
-  useOrgProjectTaskEvents, useOrgProjectTaskFiles } from "app/hooks/projectsHooks"
+import {
+  useOrgProjectColumns, useOrgProjectTaskComments,
+  useOrgProjectTaskEvents, useOrgProjectTaskFiles
+} from "app/hooks/projectsHooks"
 import useUser, { useDocsCount, useUsers } from "app/hooks/userHooks"
-import { changeDiffColumnTaskPositionService, 
-  createOrgProjectTaskCommentService, createOrgProjectTaskEvent, 
+import {
+  changeDiffColumnTaskPositionService,
+  createOrgProjectTaskCommentService, createOrgProjectTaskEvent,
   deleteProjectTaskService, getLastColumnTaskPosition,
-   updateSingleTaskItemService, uploadOrgProjectTaskFiles 
-  } from "app/services/projectsServices"
+  updateSingleTaskItemService, uploadOrgProjectTaskFiles
+} from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDateAndTime } from "app/utils/dateUtils"
 import { areArraysEqual } from "app/utils/generalUtils"
@@ -33,10 +38,11 @@ export default function TaskContentDetails(props) {
   const { myOrgID, myUserID, myUserImg, setToasts,
     setPageLoading } = useContext(StoreContext)
   const { task, setShowModal, showDocViewer, setShowDocViewer,
-    activeDocFile, setActiveDocFile, showLikesModal, 
+    activeDocFile, setActiveDocFile, showLikesModal,
     setShowLikesModal, likesUserIDs, setLikesUserIDs,
-    showCommentEditor, setShowCommentEditor, commentText, 
-    setCommentText, showCoverInput, setShowCoverInput } = props
+    showCommentEditor, setShowCommentEditor, commentText,
+    setCommentText, showCoverInput, setShowCoverInput,
+    showDetailsOptions, modalMode } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
   const [filesLimit, setFilesLimit] = useState(5)
   const [eventsLimit, setEventsLimit] = useState(10)
@@ -78,7 +84,6 @@ export default function TaskContentDetails(props) {
   const reporterUser = useUser(taskReporter)
   const assigneesUsers = useUsers(task?.assigneesIDs)
   const maxAssignees = 5
-  console.log(comments)
 
   const addToOptions = [
     { label: 'Move to Sprint', value: 'sprint', isDisabled: task?.inSprint, icon: 'fas fa-line-columns' },
@@ -118,6 +123,99 @@ export default function TaskContentDetails(props) {
       setShowEventMenu={setShowEventMenu}
     />
   })
+
+  const commentsEventsContainer = (
+    <div className="comments-events-container">
+      <div className="events-tab-header">
+        <div
+          className={`tab-header ${activeEventsTab === 'comments' && 'active'}`}
+          onClick={() => setActiveEventsTab('comments')}
+        >
+          <span><i className="fas fa-comment" /> Comments</span>
+        </div>
+        <div
+          className={`tab-header ${activeEventsTab === 'events' && 'active'}`}
+          onClick={() => setActiveEventsTab('events')}
+        >
+          <span><i className="fas fa-stream" /> Events</span>
+        </div>
+      </div>
+      {
+        activeEventsTab === 'comments' &&
+        <div className="comments-section events-section">
+          <h5>Comments ({commentsNum})</h5>
+          <div className="comments-list">
+            <div className="comment-console">
+              <Avatar
+                src={myUserImg}
+                dimensions={32}
+              />
+              {
+                !showCommentEditor ?
+                  <div
+                    className="fake-input"
+                    placeholder="Write a comment..."
+                    onClick={() => setShowCommentEditor(true)}
+                  >
+                    <span>Write a comment...</span>
+                  </div> :
+                  <div className="editor-container">
+                    <WysiwygEditor
+                      placeholder="Write a comment..."
+                      html={commentText}
+                      setHtml={setCommentText}
+                      className="comment-editor"
+                      ref={commentEditorRef}
+                      height="100px"
+                    />
+                    <div className="btn-group">
+                      <AppButton
+                        label="Save"
+                        onClick={() => handleCreateComment()}
+                        rightIcon={addCommentLoading && "fas fa-spinner fa-spin"}
+                      />
+                      <AppButton
+                        label="Cancel"
+                        onClick={() => cancelAddComment()}
+                        buttonType="invertedBtn"
+                      />
+                    </div>
+                  </div>
+              }
+            </div>
+            {commentsList}
+          </div>
+          {
+            commentsNum > commentsLimit &&
+            <small
+              className="load-more"
+              onClick={() => setCommentsLimit(commentsLimit + 10)}
+            >
+              Load more
+            </small>
+          }
+        </div>
+      }
+      {
+        activeEventsTab === 'events' &&
+        <div className="event-section events-section">
+          <h5>Events ({eventsNum})</h5>
+          <div className="events-list">
+            {eventsList}
+          </div>
+          {
+            eventsNum > eventsLimit &&
+            <small
+              className="load-more"
+              onClick={() => setEventsLimit(eventsLimit + 10)}
+            >
+              Load more
+            </small>
+          }
+        </div>
+      }
+    </div>
+  )
 
   const resetTaskData = () => {
     setSearchParams('')
@@ -361,115 +459,31 @@ export default function TaskContentDetails(props) {
             </small>
           }
         </div>
-        <div className="events-tab-header">
-          <div
-            className={`tab-header ${activeEventsTab === 'comments' && 'active'}`}
-            onClick={() => setActiveEventsTab('comments')}
-          >
-            <span><i className="fas fa-comment" /> Comments</span>
-          </div>
-          <div
-            className={`tab-header ${activeEventsTab === 'events' && 'active'}`}
-            onClick={() => setActiveEventsTab('events')}
-          >
-            <span><i className="fas fa-stream" /> Events</span>
-          </div>
-        </div>
-        {
-          activeEventsTab === 'comments' &&
-          <div className="comments-section events-section">
-            <h5>Comments ({commentsNum})</h5>
-            <div className="comments-list">
-              <div className="comment-console">
-                <Avatar
-                  src={myUserImg}
-                  dimensions={32}
-                />
-                {
-                  !showCommentEditor ?
-                    <div
-                      className="fake-input"
-                      placeholder="Write a comment..."
-                      onClick={() => setShowCommentEditor(true)}
-                    >
-                      <span>Write a comment...</span>
-                    </div> :
-                    <div className="editor-container">
-                      <WysiwygEditor
-                        placeholder="Write a comment..."
-                        html={commentText}
-                        setHtml={setCommentText}
-                        className="comment-editor"
-                        ref={commentEditorRef}
-                        height="100px"
-                      />
-                      <div className="btn-group">
-                        <AppButton
-                          label="Save"
-                          onClick={() => handleCreateComment()}
-                          rightIcon={addCommentLoading && "fas fa-spinner fa-spin"}
-                        />
-                        <AppButton
-                          label="Cancel"
-                          onClick={() => cancelAddComment()}
-                          buttonType="invertedBtn"
-                        />
-                      </div>
-                    </div>
-                }
-              </div>
-              {commentsList}
-            </div>
-            {
-              commentsNum > commentsLimit &&
-              <small
-                className="load-more"
-                onClick={() => setCommentsLimit(commentsLimit + 10)}
-              >
-                Load more
-              </small>
-            }
-          </div>
-        }
-        {
-          activeEventsTab === 'events' &&
-          <div className="event-section events-section">
-            <h5>Events ({eventsNum})</h5>
-            <div className="events-list">
-              {eventsList}
-            </div>
-            {
-              eventsNum > eventsLimit &&
-              <small
-                className="load-more"
-                onClick={() => setEventsLimit(eventsLimit + 10)}
-              >
-                Load more
-              </small>
-            }
-          </div>
-        }
+        { modalMode && commentsEventsContainer }
       </div>
       <div className="task-details">
         <div className="titles">
           <h5>Task Details</h5>
-          <DropdownIcon
-            icon="far fa-ellipsis-h"
-            iconColor="var(--grayText)"
-            iconSize={16}
-            dimensions={28}
-            showMenu={showTaskMenu}
-            setShowMenu={setShowTaskMenu}
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowTaskMenu(prev => !prev)
-            }}
-            items={[
-              { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask() },
-              { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => moveToBacklog() },
-              { label: 'Archive Task', icon: 'fas fa-archive', onClick: () => archiveTask() },
-            ]}
-          />
+          {
+            showDetailsOptions &&
+            <DropdownIcon
+              icon="far fa-ellipsis-h"
+              iconColor="var(--grayText)"
+              iconSize={16}
+              dimensions={28}
+              showMenu={showTaskMenu}
+              setShowMenu={setShowTaskMenu}
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowTaskMenu(prev => !prev)
+              }}
+              items={[
+                { label: 'Delete Task', icon: 'fas fa-trash', onClick: () => handleDeleteTask() },
+                { label: 'Move to Backlog', icon: 'fas fa-clipboard-list', onClick: () => moveToBacklog() },
+                { label: 'Archive Task', icon: 'fas fa-archive', onClick: () => archiveTask() },
+              ]}
+            />
+          }
         </div>
         <div className="task-details-flex">
           <AppCoverSelect
@@ -672,6 +686,7 @@ export default function TaskContentDetails(props) {
           </div>
         </div>
       </div>
+      { !modalMode && commentsEventsContainer }
       <DocViewerModal
         showModal={showDocViewer}
         setShowModal={setShowDocViewer}

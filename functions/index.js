@@ -29,9 +29,9 @@ exports.updateIndexUsers = functions
     return usersIndex.saveObject({ ...newData, objectID: change.after.id })
   })
 
-exports.deleteFromIndexUsers = functions  
+exports.deleteFromIndexUsers = functions
   .region('northamerica-northeast1')
-  .firestore.document('users/{userID}').onDelete((snapshot, context) => { 
+  .firestore.document('users/{userID}').onDelete((snapshot, context) => {
     return usersIndex.deleteObject(snapshot.id)
   })
 
@@ -99,9 +99,44 @@ exports.onProjectTaskChange = functions
       })
   })
 
+exports.onOrgProjectDelete = functions
+  .https.onCall((data, context) => {
+    const orgID = data.orgID
+    const projectID = data.projectID
+    const path = `organizations/${orgID}/projects`
+    return recursivelyDeleteDocument(path, projectID)
+    .then(() => {
+      deleteStorageFolder(`organizations/${orgID}/projects/${projectID}`)
+    })
+    .catch((error) => console.log(error))
+  })
+
+exports.onOrgPostDelete = functions
+  .https.onCall((data, context) => {
+    const orgID = data.orgID
+    const postID = data.postID
+    const path = `organizations/${orgID}/posts`
+    return recursivelyDeleteDocument(path, postID)
+    .then(() => {
+      deleteStorageFolder(`organizations/${orgID}/posts/${postID}`)
+    })
+    .catch((error) => console.log(error))
+  })
 
 
 //utility functions
+
+function recursivelyDeleteDocument(path, docID) {
+  return firebase.firestore().recursiveDelete(firebase.firestore().doc(`${path}/${docID}`))
+}
+
+function deleteStorageFolder(path) {
+  const bucket = firebase.storage().bucket()
+  return bucket.deleteFiles({
+    prefix: path
+  })
+}
+
 function createNotification(userID, title, text, icon, url) {
   const notifPath = `users/${userID}/notifications`
   const docID = getRandomDocID(notifPath)

@@ -7,11 +7,11 @@ export default function BacklogTaskItem(props) {
 
   const { title, taskType, assigneesIDs, taskNum,
     priority, points, taskID } = props.task
-  const { onClick, activeTask } = props
+  const { onClick, isActive } = props
 
   return (
     <div 
-      className={`backlog-task-item ${activeTask?.taskID === taskID ? 'active' : ''}`}
+      className={`backlog-task-item ${isActive ? 'active' : ''}`}
       onClick={(e) => onClick && onClick(e)}
     >
       <div className="left-titles">

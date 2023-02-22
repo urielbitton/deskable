@@ -104,7 +104,10 @@ export default function EmojiTextarea(props) {
           }
           <IconContainer
             icon="far fa-smile"
-            onClick={() => setShowPicker(prev => !prev)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowPicker(prev => !prev)
+            }}
             tooltip="Add emojis"
             dimensions={30}
           />

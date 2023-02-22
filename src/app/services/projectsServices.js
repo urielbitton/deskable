@@ -1,12 +1,19 @@
-import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
+import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
 import {
   collection, doc, getDocs, limit,
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
-import { httpsCallable } from "firebase/functions"
-import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getDocsCount, getRandomDocID, setDB, updateDB } from "./CrudDB"
-import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
+import { getFunctions, httpsCallable } from "firebase/functions"
+import {
+  deleteDB, firebaseArrayAdd, firebaseArrayRemove,
+  firebaseIncrement, getDocsCount, getRandomDocID,
+  setDB, updateDB
+} from "./CrudDB"
+import {
+  deleteMultipleStorageFiles,
+  uploadMultipleFilesToFireStorage
+} from "./storageServices"
 
 export const getProjectsByOrgID = (orgID, setProjects, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects`)
@@ -179,8 +186,23 @@ export const updateOrgProjectService = (orgID, projectID, project, setToasts, se
   const path = `organizations/${orgID}/projects`
   return updateDB(path, projectID, {
     ...project,
-  }) 
-  .catch(err => catchCode(err, 'There was an error updating the project. Please try again', setToasts, setLoading))
+  })
+    .catch(err => catchCode(err, 'There was an error updating the project. Please try again', setToasts, setLoading))
+}
+
+export const deleteOrgProjectService = (orgID, projectID, projectName, setToasts, setLoading) => {
+  return httpsCallable(getFunctions(), 'onOrgProjectDelete')({
+    orgID, projectID
+  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast(`Project ${projectName} was successfully deleted.`))
+    })
+    .catch(err => {
+      console.log(err)
+      setToasts(errorToast('There was a problem while trying to delete the project. Please try again.'))
+      setLoading(false)
+    })
 }
 
 export const renameBoardColumnService = (orgID, projectID, columnID, title, setToasts) => {
@@ -486,7 +508,8 @@ export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, se
           size: file.file.size,
           taskID,
           type: file.file.type,
-          url: file.downloadURL
+          url: file.downloadURL,
+          fileStoragePath: filesStoragePath
         })
       })
       return batch.commit()
@@ -741,3 +764,4 @@ export const addNewBacklogTaskService = (path, myUserID, projectName, task, setT
     })
     .catch(err => catchCode(err, 'There was a problem adding the task. Please try again.', setToasts, setLoading))
 }
+

@@ -31,14 +31,18 @@
   font-size: 11px;
 }
 .task-comment-item .comment-header .dropdown-icon {
-  opacity: 0;
   transition: all 0.2s;
-}
-.task-comment-item:hover .comment-header .dropdown-icon {
-  opacity: 1;
 }
 .task-comment-item:hover .comment-header .dropdown-icon .icon-container:hover {
   background: var(--lightGrayText);
+}
+.task-comment-item .comment-header .dropdown-item:hover {
+  background: var(--inputBg);
+}
+.task-comment-item .comment-header .dropdown-item span,
+.task-comment-item .comment-header .dropdown-item i {
+  color: var(--darkGrayText);
+  font-size: 12px;
 }
 
 .task-comment-item .comment-body {

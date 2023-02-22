@@ -41,14 +41,6 @@
   font-weight: 500;
   font-size: 13px;
 }
-.task-event-item .texts .titles .icon-container {
-  visibility: hidden;
-  opacity: 0;
-}
-.task-event-item:hover .titles .icon-container {
-  visibility: visible;
-  opacity: 1;
-}
 .task-event-item .texts .titles .icon-container:hover {
   background: var(--inputBg);
 }

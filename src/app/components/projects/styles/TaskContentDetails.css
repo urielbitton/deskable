@@ -16,6 +16,12 @@
   margin-bottom: 10px;
   width: 97%;
 }
+.view-task-content .task-content .appCoverInput.description .coverInput {
+  min-height: 60px;
+}
+.view-task-content .task-content .appCoverInput.description .wysiwyg-container {
+  margin-bottom: 20px;
+}
 .view-task-content .task-content .appCoverInput input {
   padding: 5px 10px;
   font-size: 22px;
@@ -63,7 +69,6 @@
   white-space: pre-wrap;
 }
 .view-task-content .task-content .attachments-section {
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -84,14 +89,18 @@
   margin-top: 10px;
 }
 
-.view-task-content .task-content .events-tab-header {
+.comments-events-container {
+  display: flex;
+  flex-direction: column;
+}
+.comments-events-container .events-tab-header {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
   margin-top: 30px;
 }
-.view-task-content .task-content .events-tab-header .tab-header {
+.comments-events-container .events-tab-header .tab-header {
   font-size: 13px;
   color: var(--darkGrayText);
   padding: 5px 10px;
@@ -102,30 +111,29 @@
   transition: all 0.2s;
   user-select: none;
 }
-.view-task-content .task-content .events-tab-header .tab-header:hover {
+.comments-events-container .events-tab-header .tab-header:hover {
   background: var(--lightGrayText);
 }
-.view-task-content .task-content .events-tab-header .tab-header.active {
+.comments-events-container .events-tab-header .tab-header.active {
   background: var(--grayText);
   color: #fff;
 }
-
-.view-task-content .task-content .events-section {
-  margin-top: 15px;
+.comments-events-container .events-section {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   width: 97%;
   margin-bottom: 20px;
+  margin-top: 25px;
 }
-.view-task-content .task-content .events-section .comments-list {
+.comments-events-container .comments-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
 }
-.view-task-content .task-content .events-section .comment-console {
+.comments-events-container .events-section .comment-console {
   display: flex;
   align-items: flex-start;
   gap: 15px;
@@ -133,11 +141,11 @@
   margin-bottom: 10px;
   width: 100%;
 }
-.view-task-content .task-content .events-section .comment-console .avatar-container {
+.comments-events-container .comment-console .avatar-container {
   top: 1px;
   min-width: 32px;
 }
-.view-task-content .task-content .events-section .comment-console .fake-input {
+.comments-events-container .comment-console .fake-input {
   padding: 10px;
   transition: all 0.2s;
   border: 1px solid var(--inputBorder);
@@ -145,19 +153,19 @@
   width: 100%;
   cursor: pointer;
 }
-.view-task-content .task-content .events-section .comment-console .fake-input span {
+.comments-events-container .comment-console .fake-input span {
   font-size: 14px;
   opacity: 0.5;
 }
-.view-task-content .task-content .events-section .comment-console .fake-input:hover {
+.comments-events-container .comment-console .fake-input:hover {
   background: var(--inputBg);
 }
-.view-task-content .task-content .events-section .comment-console .btn-group {
+.comments-events-container .comment-console .btn-group {
   display: flex;
   align-items: center;
   gap: 5px;
 }
-.view-task-content .task-content .events-section .comment-console .editor-container {
+.comments-events-container .comment-console .editor-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -165,10 +173,10 @@
   width: 100%;
   width: calc(100% - 50px);
 }
-.view-task-content .task-content .events-section .comment-console .comment-editor {
+.comments-events-container .comment-console .comment-editor {
   width: 100%;
 }
-.view-task-content .task-content .events-section .events-list {
+.comments-events-container .events-list {
   display: flex;
   flex-direction: column;
   gap: 10px;

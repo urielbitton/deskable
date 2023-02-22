@@ -66,6 +66,8 @@ export default function TaskModal(props) {
         setCommentText={setCommentText}
         showCoverInput={showCoverInput}
         setShowCoverInput={setShowCoverInput}
+        showDetailsOptions
+        modalMode
       />
     </AppModal >
   )

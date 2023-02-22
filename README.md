@@ -5,7 +5,7 @@ Main
 - projects management 
 - calendar system (react calendar npm)
 - Team chats (firebase RTDB)
-- video meetings (twilio video API)
+- video meetings (twilio video API or firestore extension)
 - feed (teams can post & comment in social media style)
 - events (company events) 
 - work tools (resources list - for web devs, for finance, for business, etc)
@@ -19,7 +19,7 @@ User types
 
 To Dos
 - projects:
-  - delete tasks - need to trigger delete files and comments (node js)
+  - delete tasks - need to trigger delete files and comments use extensions: recursiveDelete
   - project backlog
   - project all tasks
   - project sprint (figure out a system for sprints if i can)

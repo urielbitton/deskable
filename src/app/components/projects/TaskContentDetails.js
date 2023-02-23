@@ -385,7 +385,10 @@ export default function TaskContentDetails(props) {
   }, [task])
 
   return task && (
-    <div className="view-task-content">
+    <div 
+      className="view-task-content"
+      key={taskID}
+    >
       <div className="task-content">
         <AppCoverInput
           name="taskName"

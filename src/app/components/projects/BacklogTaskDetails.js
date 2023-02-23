@@ -1,6 +1,5 @@
 import { switchTaskType } from "app/data/projectsData"
-import { StoreContext } from "app/store/store"
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useSearchParams } from "react-router-dom"
 import DropdownIcon from "../ui/DropDownIcon"
 import IconContainer from "../ui/IconContainer"
@@ -9,8 +8,7 @@ import TaskContentDetails from "./TaskContentDetails"
 
 export default function BacklogTaskDetails(props) {
 
-  const { myOrgID, setToasts, myUserID } = useContext(StoreContext)
-  const { activeTask, setShowTaskDetails } = props
+  const { activeTask } = props
   const [searchParams, setSearchParams] = useSearchParams()
   const [showTaskMenu, setShowTaskMenu] = useState(null)
   const [showDocViewer, setShowDocViewer] = useState(false)
@@ -20,7 +18,6 @@ export default function BacklogTaskDetails(props) {
   const [showCommentEditor, setShowCommentEditor] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [showCoverInput, setShowCoverInput] = useState(null)
-  const tasksPath = `organizations/${myOrgID}/projects/${activeTask?.projectID}/tasks`
 
   const deleteTask = () => {
 
@@ -28,12 +25,14 @@ export default function BacklogTaskDetails(props) {
 
   const handleClose = () => {
     setShowTaskMenu(null)
-    setShowTaskDetails(null)
     setSearchParams('')
   }
 
   return activeTask ? (
-    <div className="task-details-container">
+    <div 
+      className="task-details-container"
+      key={activeTask.taskID}
+    >
       <div className="header">
         <div className="task-num">
           <span

@@ -1,4 +1,5 @@
 import { tasksIndex } from "app/algolia"
+import { switchTaskType } from "app/data/projectsData"
 import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
 import { useInstantSearch } from "app/hooks/searchHooks"
@@ -8,9 +9,12 @@ import {
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
-import { areArraysEqual } from "app/utils/generalUtils"
+import { areArraysEqual, truncateText } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'
-import { NavLink, Route, Routes, useNavigate, useParams } from "react-router-dom"
+import {
+  NavLink, Route, Routes, useNavigate,
+  useParams, useSearchParams
+} from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
 import AppModal from "../ui/AppModal"
@@ -30,6 +34,7 @@ export default function SingleProject() {
     setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showOptions, setShowOptions] = useState(false)
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
@@ -38,6 +43,7 @@ export default function SingleProject() {
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
   const [searchString, setSearchString] = useState('')
   const [query, setQuery] = useState('')
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false)
   const [numOfHits, setNumOfHits] = useState(0)
   const [numOfPages, setNumOfPages] = useState(0)
   const [pageNum, setPageNum] = useState(0)
@@ -46,7 +52,7 @@ export default function SingleProject() {
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
   const navigate = useNavigate()
-  const searchFilters = `projectID: ${projectID}`
+  const searchFilters = `orgID: ${myOrgID}`
   const showAll = false
 
   const tasksFilter = (tasks, column) => {
@@ -81,12 +87,30 @@ export default function SingleProject() {
     return <div
       key={index}
       className="search-result-row"
+      onClick={() => {
+        setSearchParams({ taskID: task.taskID, projectID: task.projectID })
+        setShowSearchDropdown(false)
+      }}
     >
       <div className="left">
-        {task.title}
+        <span
+          className="icon"
+          style={{ background: switchTaskType(task.taskType).color }}
+        >
+          <i className={switchTaskType(task?.taskType).icon} />
+        </span>
+        <h6>{truncateText(task.title, 60)}</h6>
+      </div>
+      <div className="right">
+        <small>{task.taskNum}</small>
       </div>
     </div>
   })
+
+  const handleClearSearch = () => {
+    setSearchString('')
+    setQuery('')
+  }
 
   const resetColumnModal = () => {
     setShowColumnModal(false)
@@ -128,7 +152,7 @@ export default function SingleProject() {
 
   const deleteProject = () => {
     const confirm = window.confirm('Are you sure you want to delete this project? You will +'
-    +'lose all sprints info, project tasks and associated files. This action cannot be undone.')
+      + 'lose all sprints info, project tasks and associated files. This action cannot be undone.')
     if (!confirm) return
     setPageLoading(true)
     deleteOrgProjectService(
@@ -215,13 +239,19 @@ export default function SingleProject() {
             placeholder="Search this project..."
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
-            onEnterPress={() => setQuery(searchString)}
+            onEnterPress={() => {
+              setQuery(searchString)
+              setShowSearchDropdown(true)
+            }}
             searchResults={searchTasksList}
-            showDropdown={query.length > 0}
+            showSearchDropdown={showSearchDropdown}
+            setShowSearchDropdown={setShowSearchDropdown}
+            searchLoading={searchLoading}
+            clearSearch={() => handleClearSearch()}
             dropdownTitle={
               numOfHits > 0 ?
-              <h6>{`Tasks (${numOfHits})`}</h6> :
-              <h6><i className="fas fa-file-search"/>No Results Found</h6>
+                <h6>{`Tasks (${numOfHits})`}</h6> :
+                <h6><i className="fas fa-file-search" />No Results Found</h6>
             }
           />
         </div>

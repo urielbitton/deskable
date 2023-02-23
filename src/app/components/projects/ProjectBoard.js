@@ -24,7 +24,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   const board = useBuildProjectBoard(projectID, tasksFilter)
   const columns = useOrgProjectColumns(projectID)
   const [searchParams, setSearchParams] = useSearchParams()
-  const viewModalMode = searchParams.get('viewModal') === 'true'
+  const viewModalMode = searchParams.get('taskID') !== null && searchParams.get('projectID') !== null
   const newTaskModalMode = searchParams.get('newTask') === 'true'
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -157,7 +157,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   }
 
   const handleOpenTask = (taskID) => {
-    setSearchParams(`?projectID=${projectID}&taskID=${taskID}&viewModal=true`)
+    setSearchParams(`?projectID=${projectID}&taskID=${taskID}`)
     setViewTaskModal(true)
   }
 

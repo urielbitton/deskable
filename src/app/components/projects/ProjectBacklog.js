@@ -32,8 +32,8 @@ export default function ProjectBacklog({ project }) {
   const projectID = useParams().projectID
   const [searchParams, setSearchParams] = useSearchParams()
   const paramTaskID = searchParams.get('taskID')
-  const taskDetailsOpen = paramTaskID !== null 
-  const [showTaskDetails, setShowTaskDetails] = useState(null)
+  const paramProjectID = searchParams.get('projectID')
+  const taskDetailsOpen = paramTaskID !== null && paramProjectID !== null
   const [showTitlesMenu, setShowTitlesMenu] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [showCoverInput, setShowCoverInput] = useState(null)
@@ -186,18 +186,11 @@ export default function ProjectBacklog({ project }) {
   const handleTaskClick = (e, taskID) => {
     e.stopPropagation()
     e.preventDefault()
-    setSearchParams({ taskID, projectID })
-    setShowTaskDetails(taskID)
+    setSearchParams({ projectID, taskID })
   }
 
-  useEffect(() => {
-    if (taskDetailsOpen) {
-      setShowTaskDetails(paramTaskID)
-    }
-  },[])
-
   return (
-    <div className={`project-backlog ${showTaskDetails === null ? 'full' : ''}`}>
+    <div className={`project-backlog ${!taskDetailsOpen ? 'full' : ''}`}>
       <DragDropContext
         onDragEnd={handleMoveTask}
         onDragStart={onDragStart}
@@ -306,7 +299,7 @@ export default function ProjectBacklog({ project }) {
       </DragDropContext>
       <BacklogTaskDetails
         activeTask={activeTask}
-        setShowTaskDetails={setShowTaskDetails}
+        taskDetailsOpen={taskDetailsOpen}
       />
     </div>
   )

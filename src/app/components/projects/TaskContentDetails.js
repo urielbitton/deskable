@@ -32,6 +32,7 @@ import TaskAttachment from "./TaskAttachment"
 import TaskComment from "./TaskComment"
 import TaskEvent from "./TaskEvent"
 import './styles/TaskContentDetails.css'
+import AppScrollSlider from "../ui/AppScrollSlider"
 
 export default function TaskContentDetails(props) {
 
@@ -83,6 +84,7 @@ export default function TaskContentDetails(props) {
   const orgAlgoliaFilters = `activeOrgID:${myOrgID}`
   const reporterUser = useUser(taskReporter)
   const assigneesUsers = useUsers(task?.assigneesIDs)
+  const attachmentsSliderRef = useRef(null)
   const maxAssignees = 5
 
   const addToOptions = [
@@ -385,7 +387,7 @@ export default function TaskContentDetails(props) {
   }, [task])
 
   return task && (
-    <div 
+    <div
       className="view-task-content"
       key={taskID}
     >
@@ -445,9 +447,12 @@ export default function TaskContentDetails(props) {
         </div>
         <div className="attachments-section">
           <h5>Attachments {filesNum > 0 && `(${filesNum})`}</h5>
-          <div className="attachments-grid">
+          <AppScrollSlider
+            scrollAmount={200}
+            innerRef={attachmentsSliderRef}
+          >
             {attachmentsList}
-          </div>
+          </AppScrollSlider>
           {
             uploadLoading &&
             <i className="fas fa-spinner fa-spin" />
@@ -462,7 +467,7 @@ export default function TaskContentDetails(props) {
             </small>
           }
         </div>
-        { modalMode && commentsEventsContainer }
+        {modalMode && commentsEventsContainer}
       </div>
       <div className="task-details">
         <div className="titles">
@@ -689,7 +694,7 @@ export default function TaskContentDetails(props) {
           </div>
         </div>
       </div>
-      { !modalMode && commentsEventsContainer }
+      {!modalMode && commentsEventsContainer}
       <DocViewerModal
         showModal={showDocViewer}
         setShowModal={setShowDocViewer}

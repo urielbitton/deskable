@@ -71,19 +71,11 @@
 .view-task-content .task-content .attachments-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  gap: 10px
 }
 .view-task-content .task-content .attachments-section h5 {
   font-size: 13px;
   color: var(--darkGrayText);
-}
-.view-task-content .task-content .attachments-section .attachments-grid {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: 100%;
 }
 .view-task-content .task-content .attachments-section .fa-spin {
   margin-top: 10px;
@@ -239,7 +231,6 @@
   grid-template-columns: calc(40% - 10px) calc(60% - 10px);
   align-items: center;
   gap: 10px;
-  grid-column: 1/-1;
 }
 .view-task-content .task-details-flex .commonInput h6 {
   font-size: 13px;

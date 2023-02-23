@@ -4,7 +4,6 @@
   flex-direction: column;
   background: #fff;
   overflow-y: auto;
-  padding-right: 5px;
 } 
 .task-details-container > .header {
   width: 100%;
@@ -53,16 +52,23 @@
   flex-direction: column;
   grid-template-columns: auto;
   height: auto;
-  overflow: unset;
-  margin-top: 10px;
+  overflow-y: visible;
+  margin-top: 5px;
+  padding-right: 5px;
 }
-.task-details-container .view-task-content .task-content,
-.task-details-container .view-task-content .task-details {
+.task-details-container .view-task-content .task-content {
   overflow: unset;
+}
+.task-details-container .view-task-content .task-details {
+  overflow: visible;
+  height: auto;
 }
 .task-details-container .view-task-content .task-details .titles {
   flex-direction: row;
   margin-top: 0;
+}
+.task-details-container .view-task-content .events-tab-header {
+  margin-top: 15px;
 }
 
 .project-backlog.full .task-details-container {

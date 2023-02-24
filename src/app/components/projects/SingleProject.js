@@ -218,7 +218,7 @@ export default function SingleProject() {
         </div>
         <div className="details">
           <div className="info">
-            <small>
+            <small className="cap">
               Category:
               <span>{project.category}</span>
             </small>

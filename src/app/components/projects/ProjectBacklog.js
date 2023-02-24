@@ -25,6 +25,7 @@ import {
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
 import BacklogTaskDetails from "./BacklogTaskDetails"
+import { updateDB } from "app/services/CrudDB"
 
 export default function ProjectBacklog({ project }) {
 
@@ -48,6 +49,7 @@ export default function ProjectBacklog({ project }) {
   const backlogTasksNum = backlogTasks?.length
   const noSprintTasks = sprintTasks?.length === 0
   const sprintIsActive = project?.activeSprintID !== null
+  const projectPath = `organizations/${myOrgID}/projects`
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
 
   const sprintTasksList = sprintTasks?.map((task, index) => {
@@ -81,11 +83,11 @@ export default function ProjectBacklog({ project }) {
   })
 
   const diffColumnMoveTaskEvent = (source, destination) => {
-    createOrgProjectTaskEvent(
-      `${tasksPath}/${activeTask?.taskID}/events`, 
-      myUserID, 
-      `moved the task from the <b>${source}</b> to the <b>${destination}</b>`, 
-      'far fa-expand-arrows', 
+    return createOrgProjectTaskEvent(
+      `${tasksPath}/${activeTask?.taskID}/events`,
+      myUserID,
+      `moved the task from the <b>${source}</b> to the <b>${destination}</b>`,
+      'far fa-expand-arrows',
       setToasts
     )
   }
@@ -94,8 +96,17 @@ export default function ProjectBacklog({ project }) {
     setIsDragging(true)
   }
 
+  const toSprintMove = (source, destination, taskID) => {
+    return getLastColumnTaskPosition(myOrgID, projectID, firstColumn.columnID)
+      .then((lastPosition) => {
+        const positions = { backlogPosition: null, sprintPosition: lastPosition, sprintID: project.activeSprintID }
+        diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
+          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+      })
+  }
+
   const handleMoveTask = (result) => {
-    if (!result.destination) {
+    if (!result.destination || result.source.index === result.destination.index) {
       setIsDragging(false)
       return console.log('non droppable zone')
     }
@@ -106,30 +117,25 @@ export default function ProjectBacklog({ project }) {
     const sameColumnMove = source.droppableId === destination.droppableId
     const toBacklog = destination.droppableId === 'backlog'
     const toSprint = destination.droppableId === 'sprint'
-    if (sprintIsActive) {
-      if (sameColumnMove) {
-        sameColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, setToasts)
-      }
-      else if (toBacklog) {
-        getLastBacklogTaskPosition(myOrgID, projectID)
-        .then((lastPosition) => {
-          const positions = { backlogPosition: lastPosition, sprintPosition: null}
-          diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
-          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
-        })
-      }
-      else if (toSprint) {
-        getLastColumnTaskPosition(myOrgID, projectID, firstColumn.columnID)
-        .then((lastPosition) => {
-          const positions = { backlogPosition: null, sprintPosition: lastPosition, sprintID: project.activeSprintID }
-          diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
-          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
-        })
-      }
+    if (sameColumnMove) {
+      sameColumnMoveBacklogTaskService(tasksPath, taskID, source, destination, setToasts)
     }
-    //when planning a sprint - not same behaviour as when sprint is active
-    else {
-
+    else if (toBacklog) {
+      getLastBacklogTaskPosition(myOrgID, projectID)
+        .then((lastPosition) => {
+          const positions = { backlogPosition: lastPosition, sprintPosition: null }
+          diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
+            .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+        })
+    }
+    else if (toSprint) {
+      if (noSprintTasks) {
+        return updateDB(projectPath, projectID, { activeSprintID: 'pre-sprint' })
+          .then(() => {
+            return toSprintMove(source, destination, taskID)
+          })
+      }
+      return toSprintMove(source, destination, taskID)
     }
   }
 
@@ -154,10 +160,10 @@ export default function ProjectBacklog({ project }) {
       .then(() => {
         handleCancelNewTask()
         createOrgProjectTaskEvent(
-          `${tasksPath}/${activeTask?.taskID}/events`, 
-          myUserID, 
-          `added new task ${newTaskTitle} to the project backlog`, 
-          'far fa-tasks', 
+          `${tasksPath}/${activeTask?.taskID}/events`,
+          myUserID,
+          `added new task ${newTaskTitle} to the project backlog`,
+          'far fa-tasks',
           setToasts
         )
       })
@@ -231,13 +237,13 @@ export default function ProjectBacklog({ project }) {
               </div>
             </div>
             <div className={`sprint-list list-section ${noSprintTasks ? 'no-tasks' : ''} ${isDragging ? 'dragging' : ''}`}>
-              {
-                noSprintTasks ?
-                  <h5>There are no tasks in this sprint. <br /><span>You can add tasks by dropping them here.</span></h5> :
-                  <DndDropper droppableId="sprint">
-                    {sprintTasksList}
-                  </DndDropper>
-              }
+              <DndDropper droppableId="sprint">
+                {
+                  noSprintTasks ?
+                    <h5>There are no tasks in this sprint. <br /><span>You can add tasks by dropping them here.</span></h5> :
+                    sprintTasksList
+                }
+              </DndDropper>
             </div>
             {
               !sprintIsActive &&
@@ -267,7 +273,7 @@ export default function ProjectBacklog({ project }) {
                 {backlogTasksList}
               </DndDropper>
             </div>
-            <div className="task-adder">
+            <div className="task-adder last">
               <AppReactSelect
                 placeholder={
                   <i

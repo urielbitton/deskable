@@ -19,10 +19,12 @@ User types
 
 To Dos
 - projects:
+  - starting sprint logic
+  - when creating project generate random avatar from list of avatars for project photoURL
   - delete tasks - need to trigger delete files and comments use extensions: recursiveDelete
-  - project backlog
+  - let users upload project avatar in project settings, let them edit all info as well
   - project all tasks
-  - project sprint (figure out a system for sprints if i can)
+  - add project templates when creating projects (software, marketing, design, etc) - templates are principally just a different selection of column titles (software: todo, in progress, in review, done. design: to do, concept, design, launch, testing, etc. )
   - invite colleagues system
   - search project (results: tasks, comments, events)
   - project dashboard

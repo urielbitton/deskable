@@ -195,6 +195,18 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
     projectID: docID,
     projectKey: project.name.slice(0, 3).toUpperCase(),
   })
+  .then(() => {
+    const columnsPath = `organizations/${orgID}/projects/${docID}/columns`
+    const columnID = getRandomDocID(path)
+    return setDB(columnsPath, columnID, {
+      columnID,
+      dateCreated: new Date(),
+      isActive: true,
+      projectID: docID,
+      tasksNum: 0,
+      title: 'To Do' 
+    })
+  })
     .then(() => {
       setLoading(false)
       setToasts(successToast('Project was successfully created.'))

@@ -91,6 +91,12 @@
   color: var(--grayText);
   font-weight: 500;
 }
+.project-backlog .backlog-section .sprint-list.no-tasks.dragging {
+  border-color: var(--grayText);
+}
+.project-backlog .backlog-section .sprint-list.no-tasks.dragging:hover {
+  border-color: var(--primary);
+}
 
 .project-backlog .task-adder {
   display: flex;
@@ -118,7 +124,7 @@
   color: var(--grayText);
   opacity: 0.6;
 }
-.project-backlog .backlog-section .task-adder {
+.project-backlog .backlog-section .task-adder.last {
   margin-bottom: 50px;
 }
 .project-backlog .task-adder .appCoverInput .loading-cover {

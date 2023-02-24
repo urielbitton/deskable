@@ -1,0 +1,34 @@
+.kanban-board-container {
+  height: 100%;
+  overflow-y: auto;
+}
+.kanban-board-container.is-dragging .react-kanban-column {
+  border: 2px dashed #aaa;
+}
+
+
+.start-sprint-container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.start-sprint-container img {
+  width: 300px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+.start-sprint-container h5 {
+  font-size: 17px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.start-sprint-container p {
+  font-size: 14px;
+  color: var(--grayText);
+  font-weight: 500;
+  margin-bottom: 30px;
+}

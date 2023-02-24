@@ -1,11 +1,3 @@
-.kanban-board-container {
-  height: 100%;
-  overflow-y: auto;
-}
-.kanban-board-container.is-dragging .react-kanban-column {
-  border: 2px dashed #aaa;
-}
-
 .react-kanban-board {
   padding: 0;
   overflow-y: auto;

@@ -73,7 +73,7 @@
   border: 1px dashed var(--grayText);
 }
 
-.project-backlog .backlog-section .sprint-list.no-tasks {
+.project-backlog .backlog-section .list-section.no-tasks {
   height: 200px;
   display: flex;
   align-items: center;
@@ -81,20 +81,20 @@
   border: 2px dashed var(--lightGrayText);
   border-radius: 5px;
 }
-.project-backlog .backlog-section .sprint-list.no-tasks h5 {
+.project-backlog .backlog-section .list-section.no-tasks h5 {
   font-size: 14px;
   color: var(--darkGrayText);
   font-weight: 600;
   text-align: center;
 }
-.project-backlog .backlog-section .sprint-list.no-tasks h5 span {
+.project-backlog .backlog-section .list-section.no-tasks h5 span {
   color: var(--grayText);
   font-weight: 500;
 }
-.project-backlog .backlog-section .sprint-list.no-tasks.dragging {
+.project-backlog .backlog-section .list-section.no-tasks.dragging {
   border-color: var(--grayText);
 }
-.project-backlog .backlog-section .sprint-list.no-tasks.dragging:hover {
+.project-backlog .backlog-section .list-section.no-tasks.dragging:hover {
   border-color: var(--primary);
 }
 

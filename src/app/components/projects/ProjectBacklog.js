@@ -17,10 +17,11 @@ import DndDropper from "../ui/DndDropper"
 import {
   sameColumnMoveBacklogTaskService,
   diffColumnMoveBacklogTaskService,
-  addNewBacklogTaskService,
   getLastBacklogTaskPosition,
   getLastColumnTaskPosition,
-  createOrgProjectTaskEvent
+  createOrgProjectTaskEvent,
+  addNewSprintTaskService,
+  addNewBacklogTaskService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
@@ -48,7 +49,8 @@ export default function ProjectBacklog({ project }) {
   const sprintTasksNum = sprintTasks?.length
   const backlogTasksNum = backlogTasks?.length
   const noSprintTasks = sprintTasks?.length === 0
-  const sprintIsActive = project?.activeSprintID !== null
+  const noBacklogTasks = backlogTasks?.length === 0
+  const isSprintActive = project?.isSprintActive
   const projectPath = `organizations/${myOrgID}/projects`
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
 
@@ -99,7 +101,7 @@ export default function ProjectBacklog({ project }) {
   const toSprintMove = (source, destination, taskID) => {
     return getLastColumnTaskPosition(myOrgID, projectID, firstColumn.columnID)
       .then((lastPosition) => {
-        const positions = { backlogPosition: null, sprintPosition: lastPosition, sprintID: project.activeSprintID }
+        const positions = { backlogPosition: null, sprintPosition: isSprintActive ? lastPosition : null, sprintID: project.activeSprintID }
         diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
           .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
       })
@@ -162,7 +164,7 @@ export default function ProjectBacklog({ project }) {
         createOrgProjectTaskEvent(
           `${tasksPath}/${activeTask?.taskID}/events`,
           myUserID,
-          `added new task ${newTaskTitle} to the project backlog`,
+          `added new task ${newTaskTitle} to the project sprint plan`,
           'far fa-tasks',
           setToasts
         )
@@ -170,7 +172,30 @@ export default function ProjectBacklog({ project }) {
   }
 
   const addNewSprintTask = () => {
-
+    if (!newTaskTitle) return
+    addNewSprintTaskService(
+      tasksPath,
+      myUserID,
+      project.activeSprintID,
+      firstColumn,
+      project.name,
+      {
+        newTaskTitle,
+        newTaskType,
+      },
+      setToasts,
+      setNewTaskLoading
+    )
+      .then(() => {
+        handleCancelNewTask()
+        createOrgProjectTaskEvent(
+          `${tasksPath}/${activeTask?.taskID}/events`,
+          myUserID,
+          `added new task ${newTaskTitle} to the sprint backlog`,
+          'far fa-tasks',
+          setToasts
+        )
+      })
   }
 
   const editSprint = () => {
@@ -205,12 +230,12 @@ export default function ProjectBacklog({ project }) {
           <div className="sprint-container backlog-section">
             <div className="title-bar">
               <div className="titles">
-                <h5>Test Sprint 1</h5>
+                <h5>{project?.sprintName}</h5>
                 <span>{sprintTasksNum} task{sprintTasksNum !== 1 ? 's' : ''}</span>
               </div>
               <div className="actions">
                 {
-                  !sprintIsActive &&
+                  !isSprintActive &&
                   <AppButton
                     label="Start Sprint"
                     buttonType="outlineBtn small"
@@ -246,7 +271,7 @@ export default function ProjectBacklog({ project }) {
               </DndDropper>
             </div>
             {
-              !sprintIsActive &&
+              !isSprintActive &&
               <div className="task-adder">
                 <AppCoverInput
                   name="sprint-adder"
@@ -268,9 +293,13 @@ export default function ProjectBacklog({ project }) {
                 <span>{backlogTasksNum} task{backlogTasksNum !== 1 ? 's' : ''}</span>
               </div>
             </div>
-            <div className={`backlog-list list-section ${isDragging ? 'dragging' : ''}`}>
+            <div className={`backlog-list list-section ${noBacklogTasks ? 'no-tasks' : ''} ${isDragging ? 'dragging' : ''}`}>
               <DndDropper droppableId="backlog">
-                {backlogTasksList}
+                {
+                  noBacklogTasks ?
+                    <h5>There are no tasks in the backlog. <br /><span>Add a new task below or dropn existing tasks here to get started.</span></h5> :
+                  backlogTasksList
+                }
               </DndDropper>
             </div>
             <div className="task-adder last">

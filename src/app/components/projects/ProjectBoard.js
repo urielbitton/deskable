@@ -13,9 +13,12 @@ import {
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams, useSearchParams } from "react-router-dom"
+import AppButton from "../ui/AppButton"
 import KanbanBoard from "./KanbanBoard"
 import NewTaskModal from "./NewTaskModal"
 import TaskModal from "./TaskModal"
+import './styles/ProjectBoard.css'
+import noActiveSprintImg from 'app/assets/images/no-active-sprint.png'
 
 export default function ProjectBoard({ project, tasksFilter }) {
 
@@ -45,6 +48,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   const dynamicColumnID = columns?.find(column => column.title === status)?.columnID
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const columnsPath = `organizations/${myOrgID}/projects/${projectID}/columns`
+  const isSprintActive = project?.isSprintActive
 
   const allowAddTask = taskTitle?.length > 0
 
@@ -84,7 +88,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
               .then((backlogPos) => {
                 setTaskTitle(`${project.name.slice(0, 3).toUpperCase()}-${taskNum < 10 ? '0' : ''}${taskNum}`)
                 setStatus(columns?.find(column => column.columnID === columnID)?.title)
-                return {position: (+pos + 1), backlogPosition: (+backlogPos + 1)}
+                return { position: (+pos + 1), backlogPosition: (+backlogPos + 1) }
               })
           })
       })
@@ -196,20 +200,32 @@ export default function ProjectBoard({ project, tasksFilter }) {
 
   return (
     <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>
-      <KanbanBoard
-        board={board}
-        removeColumn={removeColumn}
-        renameColumn={renameColumn}
-        initAddTask={initAddTask}
-        handleDeleteTask={handleDeleteTask}
-        handleOpenTask={handleOpenTask}
-        onCardDragEnd={onCardDragEnd}
-        editTitleMode={editTitleMode}
-        setEditTitleMode={setEditTitleMode}
-        tasksPath={tasksPath}
-        isDragging={isDragging}
-        setIsDragging={setIsDragging}
-      />
+      {
+        isSprintActive ?
+          <KanbanBoard
+            board={board}
+            removeColumn={removeColumn}
+            renameColumn={renameColumn}
+            initAddTask={initAddTask}
+            handleDeleteTask={handleDeleteTask}
+            handleOpenTask={handleOpenTask}
+            onCardDragEnd={onCardDragEnd}
+            editTitleMode={editTitleMode}
+            setEditTitleMode={setEditTitleMode}
+            tasksPath={tasksPath}
+            isDragging={isDragging}
+            setIsDragging={setIsDragging}
+          /> :
+          <div className="start-sprint-container">
+            <img src={noActiveSprintImg} alt="No Active Sprint" />
+            <h5>There are no active sprints.</h5>
+            <p>Start a sprint to begin working on your project.</p>
+            <AppButton
+              label="Start Sprint"
+              url={`/projects/${project.projectID}/backlog`}
+            />
+          </div>
+      }
       <NewTaskModal
         showModal={showNewTaskModal}
         setShowModal={setShowNewTaskModal}

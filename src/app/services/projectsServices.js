@@ -189,11 +189,13 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
     description: '',
     isActive: true,
     isStarred: false,
+    isSprintActive: false,
     lastActive: new Date(),
     orgID,
     ownerID: userID,
     projectID: docID,
     projectKey: project.name.slice(0, 3).toUpperCase(),
+    sprintName: 'Sprint Planning'
   })
   .then(() => {
     const columnsPath = `organizations/${orgID}/projects/${docID}/columns`
@@ -405,6 +407,21 @@ export const getLastBacklogTaskPosition = (orgID, projectID) => {
   const q = query(
     docRef,
     where('status', '==', 'backlog'),
+    orderBy('backlogPosition', 'desc'),
+    limit(1)
+  )
+  return getDocs(q)
+    .then((snapshot) => {
+      return snapshot.docs.map(doc => doc.data().backlogPosition)[0] || 0
+    })
+    .catch(err => console.log(err))
+}
+
+export const getLastSprintTaskPosition = (orgID, projectID, sprintID) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    where('sprintID', '==', sprintID),
     orderBy('backlogPosition', 'desc'),
     limit(1)
   )
@@ -800,3 +817,41 @@ export const addNewBacklogTaskService = (path, myUserID, projectName, task, setT
     .catch(err => catchCode(err, 'There was a problem adding the task. Please try again.', setToasts, setLoading))
 }
 
+export const addNewSprintTaskService = (path, myUserID, sprintID, firstColumn, projectName, task, setToasts, setLoading) => {
+  setLoading(true)
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  return getDocsCount(path)
+    .then(tasksCount => {
+      return getLastSprintTaskPosition(orgID, projectID, sprintID)
+        .then((lastBacklogPosition) => {
+          const docID = getRandomDocID(path)
+          return setDB(path, docID, {
+            assigneesIDs: [],
+            backlogPosition: lastBacklogPosition + 1,
+            columnID: null,
+            creatorID: myUserID,
+            dateCreated: new Date(),
+            dateModified: new Date(),
+            description: '',
+            inSprint: true,
+            orgID,
+            points: 0,
+            position: null,
+            priority: 'medium',
+            projectID,
+            reporterID: myUserID,
+            sprintID,
+            status: firstColumn.title,
+            taskID: docID,
+            taskNum: `${projectName.slice(0, 3).toUpperCase()}-${(tasksCount + 1) < 10 ? '0' : ''}${tasksCount + 1}`,
+            taskType: task.newTaskType,
+            title: task.newTaskTitle,
+          })
+        })
+    })
+    .then(() => {
+      setLoading(false)
+    })
+    .catch(err => catchCode(err, 'There was a problem adding the task. Please try again.', setToasts, setLoading))
+}

@@ -99,3 +99,129 @@ export const projectColumnsOptions = (columns) => {
     }
   })
 }
+
+export const projectTypeOptions = [
+  {
+    label: 'Administrator Based',
+    value: 'admin',
+    icon: 'fas fa-user-shield',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Team Based',
+    value: 'team',
+    icon: 'fas fa-users',
+    iconColor: 'var(--grayText)'
+  }
+]
+
+export const switchProjectType = (type) => {
+  if (type === 'admin') return { icon: 'fas fa-user-shield' }
+  if (type === 'team') return { icon: 'fas fa-users' }
+  return { icon: 'fas fa-user-shield' }
+}
+
+export const projectAccessOptions = [
+  {
+    label: 'Open',
+    value: 'open',
+    icon: 'fas fa-unlock',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Invite Only',
+    value: 'invite',
+    icon: 'fas fa-lock',
+    iconColor: 'var(--grayText)'
+  }
+]
+
+export const switchProjectAccess = (access) => {
+  if (access === 'open') return { icon: 'fas fa-unlock' }
+  if (access === 'invite') return { icon: 'fas fa-lock' }
+  return { icon: 'fas fa-unlock' }
+}
+
+export const projectCategoriesOptions = [
+  {
+    label: 'Software',
+    value: 'software',
+    icon: 'fas fa-code',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Marketing',
+    value: 'marketing',
+    icon: 'fas fa-bullhorn',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Multimedia',
+    value: 'multimedia',
+    icon: 'fas fa-photo-video',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Design',
+    value: 'design',
+    icon: 'fas fa-palette',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Sales',
+    value: 'sales',
+    icon: 'fas fa-chart-line',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Finance',
+    value: 'finance',
+    icon: 'fas fa-chart-pie',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Human Resources',
+    value: 'human resources',
+    icon: 'fas fa-user-tie',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Legal',
+    value: 'legal',
+    icon: 'fas fa-gavel',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'analytics',
+    value: 'analytics',
+    icon: 'fas fa-chart-bar',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'IT',
+    value: 'it',
+    icon: 'fas fa-server',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: 'Other',
+    value: 'other',
+    icon: 'far fa-circle',
+    iconColor: 'var(--grayText)'
+  }
+]
+
+export const switchProjectCategory = (category) => {
+  if (category === 'software') return { icon: 'fas fa-code' }
+  if (category === 'marketing') return { icon: 'fas fa-bullhorn' }
+  if (category === 'multimedia') return { icon: 'fas fa-photo-video' }
+  if (category === 'design') return { icon: 'fas fa-palette' }
+  if (category === 'sales') return { icon: 'fas fa-chart-line' }
+  if (category === 'finance') return { icon: 'fas fa-chart-pie' }
+  if (category === 'human resources') return { icon: 'fas fa-user-tie' }
+  if (category === 'legal') return { icon: 'fas fa-gavel' }
+  if (category === 'analytics') return { icon: 'fas fa-chart-bar' }
+  if (category === 'it') return { icon: 'fas fa-server' }
+  if (category === 'other') return { icon: 'fas fa-ellipsis-h' }
+  return { icon: 'far fa-circle' }
+}

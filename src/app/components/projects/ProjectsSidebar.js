@@ -76,13 +76,10 @@ export default function ProjectsSidebar() {
         }
       </div>
       <div className="section section-projects">
-        {
-          !showProjectsSidebar &&
-          <i className="fas fa-project-diagram" />
-        }
         <h5>
           <span>Projects</span>
           <small onClick={() => navigate('/projects/new')}>
+            New
             <i className="far fa-plus" />
           </small>
         </h5>

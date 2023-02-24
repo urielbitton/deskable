@@ -105,3 +105,23 @@
   color: var(--darkGrayText);
 }
 
+.users-search-input .appInput .icon {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  background: var(--inputBg);
+  border: 1px solid var(--inputBorder);
+}
+.users-search-input .appInput .icon i {
+  color: var(--grayText);
+  font-size: 16px;
+}
+.users-search-input .appInput input {
+  padding-left: 40px;
+}

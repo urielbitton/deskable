@@ -287,7 +287,8 @@ export const AppReactSelect = (props) => {
 
   const { options, label, onChange, value, className,
     containerStyles, defaultValue, placeholder, subText,
-    menuPlacement="auto", hideDropdownArrow, centerOptions } = props
+    menuPlacement="auto", hideDropdownArrow, centerOptions,
+    searchable } = props
   const selectRef = useRef(null)
 
   const formatOptionLabel = ({ label, icon, iconColor }) => (
@@ -320,11 +321,13 @@ export const AppReactSelect = (props) => {
         options={options}
         formatOptionLabel={formatOptionLabel}
         openMenuOnFocus
+        isSearchable={searchable}
+        tabSelectsValue
         menuPlacement={menuPlacement}
         styles={reactSelectStyles}
         hideSelectedOptions
         menuShouldScrollIntoView
-        components={{ IndicatorSeparator: () => null, DropdownIndicator: () => hideDropdownArrow ? null : <i className="far fa-chevron-down" /> }}
+        components={{ IndicatorSeparator: () => null, ...hideDropdownArrow && { DropdownIndicator: () => null } }}
         ref={selectRef}
         menuPortalTarget={document.body}
         className="react-select"

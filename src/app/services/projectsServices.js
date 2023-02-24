@@ -178,8 +178,29 @@ export const catchCode = (err, errorText, setToasts, setLoading) => {
   setToasts && setToasts(errorToast(errorText, true))
 }
 
-export const createOrgProjectService = () => {
-
+export const createOrgProjectService = (orgID, userID, project, setToasts, setLoading) => {
+  setLoading(true)
+  const path = `organizations/${orgID}/projects`
+  const docID = getRandomDocID(path)
+  return setDB(path, docID, {
+    ...project,
+    activeSprintID: null,
+    dateCreated: new Date(),
+    description: '',
+    isActive: true,
+    isStarred: false,
+    lastActive: new Date(),
+    orgID,
+    ownerID: userID,
+    projectID: docID,
+    projectKey: project.name.slice(0, 3).toUpperCase(),
+  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Project was successfully created.'))
+      return docID
+    })
+    .catch(err => catchCode(err, 'There was an error creating the project. Please try again', setToasts, setLoading))
 }
 
 export const updateOrgProjectService = (orgID, projectID, project, setToasts, setLoading) => {

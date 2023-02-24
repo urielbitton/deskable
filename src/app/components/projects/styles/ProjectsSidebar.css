@@ -63,15 +63,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 3px;
+  text-transform: capitalize;
   border: 1px solid var(--inputBorder);
-  width: 17px;
   height: 17px;
+  padding: 0 5px;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s;
 }
 .projects-sidebar .section > h5 small:hover {
-  background: #fafafa;
+  background: var(--primary);
+  color: #fff;
 }
 
 

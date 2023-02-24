@@ -274,26 +274,6 @@
 .view-task-content .task-details-flex .users-search-input input:hover {
   background: var(--lightInputBg);
 }
-.view-task-content .task-details-flex .users-search-input .appInput .icon {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 25px;
-  height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  background: var(--inputBg);
-  border: 1px solid var(--inputBorder);
-}
-.view-task-content .task-details-flex .users-search-input .appInput .icon i {
-  color: var(--grayText);
-  font-size: 16px;
-}
-.view-task-content .task-details-flex .users-search-input .appInput input {
-  padding-left: 40px;
-}
 .view-task-content .task-details-flex .coverInput h5:hover {
   background: var(--inputBg);
 }

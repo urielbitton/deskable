@@ -4,8 +4,8 @@ import {
   useOrgProjectSprintTasks,
   useOrgProjectTask
 } from "app/hooks/projectsHooks"
-import React, { useContext, useEffect, useState } from 'react'
-import { useParams, useSearchParams } from "react-router-dom"
+import React, { useContext, useState } from 'react'
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppCoverInput, AppReactSelect } from "../ui/AppInputs"
 import DropdownIcon from "../ui/DropDownIcon"
@@ -21,16 +21,18 @@ import {
   getLastColumnTaskPosition,
   createOrgProjectTaskEvent,
   addNewSprintTaskService,
-  addNewBacklogTaskService
+  addNewBacklogTaskService,
+  startProjectSprintService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
 import BacklogTaskDetails from "./BacklogTaskDetails"
 import { updateDB } from "app/services/CrudDB"
+import { infoToast } from "app/data/toastsTemplates"
 
 export default function ProjectBacklog({ project }) {
 
-  const { myOrgID, setToasts, myUserID } = useContext(StoreContext)
+  const { myOrgID, setToasts, myUserID, setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
   const [searchParams, setSearchParams] = useSearchParams()
   const paramTaskID = searchParams.get('taskID')
@@ -53,6 +55,7 @@ export default function ProjectBacklog({ project }) {
   const isSprintActive = project?.isSprintActive
   const projectPath = `organizations/${myOrgID}/projects`
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
+  const navigate = useNavigate()
 
   const sprintTasksList = sprintTasks?.map((task, index) => {
     return <DraggableItem
@@ -84,9 +87,9 @@ export default function ProjectBacklog({ project }) {
     </DraggableItem>
   })
 
-  const diffColumnMoveTaskEvent = (source, destination) => {
+  const diffColumnMoveTaskEvent = (taskID, source, destination) => {
     return createOrgProjectTaskEvent(
-      `${tasksPath}/${activeTask?.taskID}/events`,
+      `${tasksPath}/${taskID}/events`,
       myUserID,
       `moved the task from the <b>${source}</b> to the <b>${destination}</b>`,
       'far fa-expand-arrows',
@@ -94,16 +97,16 @@ export default function ProjectBacklog({ project }) {
     )
   }
 
-  const onDragStart = (result) => {
+  const onDragStart = () => {
     setIsDragging(true)
   }
 
   const toSprintMove = (source, destination, taskID) => {
-    return getLastColumnTaskPosition(myOrgID, projectID, firstColumn.columnID)
+    return getLastColumnTaskPosition(myOrgID, projectID, firstColumn?.columnID)
       .then((lastPosition) => {
         const positions = { backlogPosition: null, sprintPosition: isSprintActive ? lastPosition : null, sprintID: project.activeSprintID }
         diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
-          .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+          .then(() => diffColumnMoveTaskEvent(taskID, source.droppableId, destination.droppableId))
       })
   }
 
@@ -127,7 +130,7 @@ export default function ProjectBacklog({ project }) {
         .then((lastPosition) => {
           const positions = { backlogPosition: lastPosition, sprintPosition: null }
           diffColumnMoveBacklogTaskService(tasksPath, taskID, positions, source, destination, firstColumn, setToasts)
-            .then(() => diffColumnMoveTaskEvent(source.droppableId, destination.droppableId))
+            .then(() => diffColumnMoveTaskEvent(taskID, source.droppableId, destination.droppableId))
         })
     }
     else if (toSprint) {
@@ -157,14 +160,14 @@ export default function ProjectBacklog({ project }) {
         newTaskType,
       },
       setToasts,
-      setNewTaskLoading
+      setNewTaskLoading 
     )
-      .then(() => {
-        handleCancelNewTask()
+      .then((taskID) => {
+        setNewTaskTitle('')
         createOrgProjectTaskEvent(
-          `${tasksPath}/${activeTask?.taskID}/events`,
+          `${tasksPath}/${taskID}/events`,
           myUserID,
-          `added new task ${newTaskTitle} to the project sprint plan`,
+          `added task <b>${newTaskTitle}</b> to the project sprint plan`,
           'far fa-tasks',
           setToasts
         )
@@ -186,12 +189,12 @@ export default function ProjectBacklog({ project }) {
       setToasts,
       setNewTaskLoading
     )
-      .then(() => {
-        handleCancelNewTask()
+      .then((taskID) => {
+        setNewTaskTitle('')
         createOrgProjectTaskEvent(
-          `${tasksPath}/${activeTask?.taskID}/events`,
+          `${tasksPath}/${taskID}/events`,
           myUserID,
-          `added new task ${newTaskTitle} to the sprint backlog`,
+          `added task <b>${newTaskTitle}</b> to the sprint backlog`,
           'far fa-tasks',
           setToasts
         )
@@ -211,7 +214,19 @@ export default function ProjectBacklog({ project }) {
   }
 
   const handleStartSprint = () => {
-
+    if (noSprintTasks) return setToasts(infoToast('You must add at least one task to the active sprint before starting the sprint'))
+    const confirm = window.confirm('Are you sure you want to start the sprint?')
+    if (!confirm) return
+    startProjectSprintService(
+      projectPath,
+      project,
+      firstColumn,
+      setToasts,
+      setPageLoading
+    )
+      .then(() => {
+        navigate(`/projects/${projectID}/board`)
+      })
   }
 
   const handleTaskClick = (e, taskID) => {
@@ -273,15 +288,29 @@ export default function ProjectBacklog({ project }) {
             {
               !isSprintActive &&
               <div className="task-adder">
+                <AppReactSelect
+                  placeholder={
+                    <i
+                      className={switchTaskType(newTaskType).icon}
+                      style={{ color: switchTaskType(newTaskType).color }}
+                    />
+                  }
+                  options={taskTypeOptions.map((option) => ({ value: option.value, icon: option.icon, iconColor: option.iconColor }))}
+                  value={newTaskType}
+                  onChange={(type) => setNewTaskType(type.value)}
+                  hideDropdownArrow
+                  centerOptions
+                />
                 <AppCoverInput
                   name="sprint-adder"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   onCheck={() => addNewSprintTask()}
                   onCancel={() => handleCancelNewTask()}
+                  onPressEnter={() => addNewSprintTask()}
                   showInput={showCoverInput}
                   setShowInput={setShowCoverInput}
-                  cover={<h5><i className="fal fa-plus" />Add a task...</h5>}
+                  cover={<h5>Add a task...</h5>}
                 />
               </div>
             }
@@ -298,7 +327,7 @@ export default function ProjectBacklog({ project }) {
                 {
                   noBacklogTasks ?
                     <h5>There are no tasks in the backlog. <br /><span>Add a new task below or dropn existing tasks here to get started.</span></h5> :
-                  backlogTasksList
+                    backlogTasksList
                 }
               </DndDropper>
             </div>

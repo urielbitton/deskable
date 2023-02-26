@@ -1,0 +1,49 @@
+.project-task-page {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.project-task-page .task-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+.project-task-page .task-header .task-num {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-task-page .task-header .task-num .icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.project-task-page .task-header .task-num .icon i {
+  color: #fff;
+  font-size: 10px;
+}
+.project-task-page .task-header .task-num h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.project-task-page .task-header .actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-task-page .task-header .icon-container.close-icon {
+  background: var(--inputBg);
+}
+.project-task-page .task-header .icon-container:hover {
+  background: var(--lightGrayText);
+}

@@ -1,0 +1,76 @@
+.project-tasks {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.project-tasks .toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 5px;
+}
+.project-tasks .toolbar .search-info,
+.project-tasks .toolbar .sortings {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.project-tasks .toolbar .search-info > h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.project-tasks .toolbar .search-info > h5 > span {
+  font-weight: 700;
+}
+.project-tasks .toolbar .appInput {
+  width: 300px;
+}
+.project-tasks .toolbar .appInput i {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+  color: var(--grayText);
+  opacity: 0.5;
+}
+.project-tasks .toolbar .appSelect {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-tasks .toolbar select {
+  height: 35px;
+  padding-left: 5px;
+}
+.project-tasks .toolbar .appSelect h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.project-tasks .tasks-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 10px;
+  padding-bottom: 30px;
+}
+
+.project-tasks .tasks-pagination {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  height: 50px;
+}

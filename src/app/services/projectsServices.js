@@ -1,11 +1,10 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
-import { set } from "date-fns"
 import {
-  collection, doc, getDoc, getDocs, limit,
+  collection, doc, getDocs, limit,
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
-import { getFunctions, httpsCallable } from "firebase/functions"
+import { httpsCallable } from "firebase/functions"
 import {
   deleteDB, firebaseArrayAdd, firebaseArrayRemove,
   firebaseIncrement, getDocsCount, getRandomDocID,
@@ -193,6 +192,7 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
     isStarred: false,
     isSprintActive: false,
     isCompleted: false,
+    invitations: [],
     lastActive: new Date(),
     orgID,
     ownerID: userID,
@@ -230,7 +230,7 @@ export const updateOrgProjectService = (orgID, projectID, project, setToasts, se
 }
 
 export const deleteOrgProjectService = (orgID, projectID, projectName, setToasts, setLoading) => {
-  return httpsCallable(getFunctions(), 'onOrgProjectDelete')({
+  return httpsCallable(functions, 'onOrgProjectDelete')({
     orgID, projectID
   })
     .then(() => {
@@ -354,12 +354,14 @@ export const updateSingleTaskItemService = (tasksPath, taskID, item, setToasts) 
 
 export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) => {
   setLoading(true)
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  const storagePath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
   const taskRef = doc(db, path, taskID)
   const batch = writeBatch(db)
   return runTransaction(db, (transaction) => {
     return transaction.get(taskRef)
       .then((snapshot) => {
-        batch.delete(taskRef)
         const columnID = snapshot.data().columnID
         const position = snapshot.data().position
         const colRef = collection(db, path)
@@ -379,6 +381,11 @@ export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) =>
           })
       })
   })
+    .then(() => {
+      return httpsCallable(functions, 'onOrgProjectTaskDelete')({
+        orgID, projectID, taskID
+      })
+    })
     .then(() => {
       return batch.commit()
     })
@@ -908,6 +915,10 @@ export const startProjectSprintService = (path, project, firstColumn, setToasts,
     .catch(err => catchCode(err, 'There was a problem starting the sprint. Please try again.', setToasts, setLoading))
 }
 
+export const completeProjectSprintService = (path, project, setToasts, setLoading) => {
+
+}
+
 export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUserID, inviterName, setToasts, setLoading) => {
   setLoading(true)
   const batch = writeBatch(db)
@@ -917,11 +928,11 @@ export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUse
   })
     .then(() => {
       for (const inviteeID of inviteesIDs) {
-        const userProjectsInvitePath = `users/${inviteeID}/projectsInvitations`
+        const userProjectsInvitePath = `users/${inviteeID}/projectInvitations`
         const usersNotifsPath = `users/${inviteeID}/notifications`
         const inviteID = getRandomDocID(userProjectsInvitePath)
         const notifID = getRandomDocID(usersNotifsPath)
-        batch.set(doc(db, userProjectsInvitePath, 'projects'), {
+        batch.set(doc(db, userProjectsInvitePath, inviteID), {
           invitationID: inviteID,
           orgID,
           projectID: project.projectID,
@@ -933,7 +944,7 @@ export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUse
           notificationID: notifID,
           dateCreated: new Date(),
           isRead: false,
-          title: `${inviterName} has invited you to join their project: ${project.name}. You can `+
+          title: `${inviterName} has invited you to join their project: ${project.name}. You can ` +
             `accept or decline the invitation in your profile page under the invitations tab.`,
           text: 'New Project Invitation',
           icon: 'fas fa-project-diagram',
@@ -945,10 +956,10 @@ export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUse
     })
     .then(() => {
       return createNotification(
-        myUserID, 
-        'Project invitations sent', 
+        myUserID,
+        'Project invitations sent',
         `Your invitations to join ${project.name} have been sent.`,
-        'fas fa-project-diagram', 
+        'fas fa-project-diagram',
         `/projects/${project.projectID}`
       )
     })
@@ -959,18 +970,19 @@ export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUse
     .catch(err => catchCode(err, 'There was a problem sending the invitations. Please try again.', setToasts, setLoading))
 }
 
-export const cancelOrgProjectInvitationService = (orgID, projectID, userID, setToasts, setLoading) => {
+export const cancelOrgProjectInvitationService = (orgID, project, userID, setToasts, setLoading) => {
+  const confirm = window.confirm('Are you sure you want to cancel this invitation?')
+  if (!confirm) return
   setLoading(true)
-  const batch = writeBatch(db)
   const projectPath = `organizations/${orgID}/projects`
-  return updateDB(projectPath, projectID, {
+  return updateDB(projectPath, project.projectID, {
     invitations: firebaseArrayRemove(userID)
   })
     .then(() => {
-      const userProjectsInvitePath = `users/${userID}/projectsInvitations`
+      const userProjectsInvitePath = `users/${userID}/projectInvitations`
       const q = query(
         collection(db, userProjectsInvitePath),
-        where('projectID', '==', projectID)
+        where('projectID', '==', project.projectID)
       )
       return getDocs(q)
         .then((snapshot) => {
@@ -978,11 +990,18 @@ export const cancelOrgProjectInvitationService = (orgID, projectID, userID, setT
         })
     })
     .then(() => {
-      return batch.commit()
+      return createNotification(
+        userID,
+        'Project invitation cancelled',
+        `Your invitation to project: ${project.name} has been cancelled. You can ` +
+        `inquire about the cancellation with your organization admin.`,
+        'fas fa-project-diagram',
+        `/my-org`
+      )
     })
     .then(() => {
       setLoading(false)
-      setToasts(successToast(`The project nvitation has been cancelled.`))
+      setToasts(successToast(`The project invitation has been cancelled.`))
     })
     .catch(err => catchCode(err, 'There was a problem cancelling the invitation. Please try again.', setToasts, setLoading))
 }

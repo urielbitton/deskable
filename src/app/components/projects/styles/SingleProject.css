@@ -184,6 +184,9 @@
   height: calc(100vh - 315px);
   overflow: hidden;
 }
+.single-project.tasks-page .tasks-routes-container {
+  height: calc(100vh - 270px);
+}
 
 .add-column-modal .appInput {
   display: flex;
@@ -218,9 +221,6 @@
   top: auto;
   left: auto;
   margin: 10px 0;
-}
-.invite-members-modal .invite-members-container .appButton {
-  margin-top: 20px;
 }
 
 .invite-members-modal .invite-members-container .invited-users-flex {

@@ -19,6 +19,7 @@ import TasksPage from "app/pages/TasksPage"
 import PostPhotosModalPage from "app/pages/PostPhotosModalPage"
 import PostPage from "app/pages/PostPage"
 import MyProfilePage from "app/pages/MyProfilePage"
+import MyOrgPage from "app/pages/MyOrgPage"
 
 export default function RoutesContainer() {
 
@@ -41,6 +42,7 @@ export default function RoutesContainer() {
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="my-profile" element={<MyProfilePage />} />
+        <Route path="my-org" element={<MyOrgPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         {

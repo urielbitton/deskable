@@ -23,7 +23,7 @@ import {
   addNewSprintTaskService,
   addNewBacklogTaskService,
   startProjectSprintService,
-  updateOrgProjectService
+  completeProjectSprintService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
@@ -210,17 +210,10 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
   }
 
   const markCompleted = () => {
-    const confirm = window.confirm('Are you sure you want to mark this sprint as completed?')
+    const confirm = window.confirm('Are you sure you want to mark this sprint as completed? Incomplete tasks will be moved to the backlog.')
     if (!confirm) return
-    updateOrgProjectService(
-      myOrgID,
-      projectID,
-      { 
-        isComplete: true,
-        isSprintActive: false,
-      },
-      setToasts,
-      setPageLoading
+    completeProjectSprintService(
+
     )
     .then(() => {
       setToasts(successToast('Sprint marked as completed'))
@@ -284,7 +277,7 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
                   onClick={(e) => setShowTitlesMenu(showTitlesMenu === 'sprint' ? null : 'sprint')}
                   items={[
                     { label: "Edit Sprint", icon: "fas fa-pen", onClick: () => editSprint() },
-                    { label: "Mark As Completed", icon: "fas fa-check-square", onClick: () => markCompleted() },
+                    { label: "Complete Sprint", icon: "fas fa-check-square", onClick: () => markCompleted() },
                   ]}
                 />
               </div>

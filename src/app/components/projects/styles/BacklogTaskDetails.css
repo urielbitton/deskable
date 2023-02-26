@@ -41,7 +41,7 @@
   gap: 5px;
 }
 .task-details-container > .header .icon-container.close-icon {
-  background: var(--inputBg);
+  background: var(--lightInputBg);
 }
 .task-details-container > .header .icon-container:hover {
   background: var(--lightGrayText);

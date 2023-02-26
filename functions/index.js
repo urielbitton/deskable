@@ -131,6 +131,19 @@ exports.onOrgProjectDelete = functions
     .catch((error) => console.log(error))
   })
 
+exports.onOrgProjectTaskDelete = functions
+  .https.onCall((data, context) => {
+    const orgID = data.orgID
+    const projectID = data.projectID
+    const taskID = data.taskID
+    const path = `organizations/${orgID}/projects/${projectID}/tasks`
+    return recursivelyDeleteDocument(path, taskID)
+    .then(() => {
+      deleteStorageFolder(`organizations/${orgID}/projects/${projectID}/tasks/${taskID}`)
+    })
+    .catch((error) => console.log(error))
+  })
+
 exports.onOrgPostDelete = functions
   .https.onCall((data, context) => {
     const orgID = data.orgID

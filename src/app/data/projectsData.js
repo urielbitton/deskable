@@ -225,3 +225,30 @@ export const switchProjectCategory = (category) => {
   if (category === 'other') return { icon: 'fas fa-ellipsis-h' }
   return { icon: 'far fa-circle' }
 }
+
+export const projectTasksSortByOptions = [
+  {
+    label: 'Date Created',
+    value: 'dateCreated',
+  },
+  {
+    label: 'Date Updated',
+    value: 'dateUpdated',
+  },
+  {
+    label: 'Task Type',
+    value: 'type',
+  },
+  {
+    label: 'Task Priority',
+    value: 'priority',
+  },
+  {
+    label: 'Task Status',
+    value: 'status',
+  },
+  {
+    label: 'Task Title',
+    value: 'title',
+  },
+]

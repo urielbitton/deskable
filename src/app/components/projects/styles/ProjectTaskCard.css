@@ -1,0 +1,92 @@
+.project-task-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 5px;
+  background: #fff;
+  border: 1px solid var(--inputBorder);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.project-task-card:hover {
+  background: var(--lightInputBg);
+}
+
+.project-task-card .titles {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.project-task-card .titles .texts {
+  display: flex;
+  flex-direction: column;
+}
+.project-task-card .titles .assignees {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-task-card .titles .assignees span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+
+.project-task-card .titles h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+}
+.project-task-card .titles small {
+  font-size: 12px;
+  color: var(--grayText);
+}
+
+.project-task-card .details {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.project-task-card .details .info,
+.project-task-card .details .stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-task-card .details .info {
+  gap: 20px;
+}
+.project-task-card .details .info span {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-task-card .details .info span > span {
+  display: inline;
+  font-weight: 600;
+}
+.project-task-card .details .reporter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-task-card .details .reporter i {
+  font-size: 13px;
+  color: var(--darkGrayText);
+}
+
+.project-task-card .details .stats span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grayText);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}

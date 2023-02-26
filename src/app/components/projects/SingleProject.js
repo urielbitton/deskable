@@ -1,4 +1,4 @@
-import { tasksIndex, usersIndex } from "app/algolia"
+import { tasksIndex } from "app/algolia"
 import { switchTaskType } from "app/data/projectsData"
 import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
@@ -6,6 +6,7 @@ import { useInstantSearch } from "app/hooks/searchHooks"
 import { useUsers } from "app/hooks/userHooks"
 import {
   cancelOrgProjectInvitationService,
+  completeProjectSprintService,
   createProjectColumnService, deleteOrgProjectService,
   inviteMembersToProjectService,
   updateOrgProjectService
@@ -15,7 +16,7 @@ import { convertClassicDate } from "app/utils/dateUtils"
 import { areArraysEqual, truncateText } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'
 import {
-  NavLink, Route, Routes, useNavigate,
+  NavLink, Route, Routes, useLocation, useNavigate,
   useParams, useSearchParams
 } from "react-router-dom"
 import AppButton from "../ui/AppButton"
@@ -30,6 +31,7 @@ import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import OrgUsersTagInput from "./OrgUsersTagInput"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
+import ProjectTaskPage from "./ProjectTaskPage"
 import ProjectTasks from "./ProjectTasks"
 import './styles/SingleProject.css'
 
@@ -47,8 +49,8 @@ export default function SingleProject() {
   const [filterUserIDs, setFilterUserIDs] = useState([])
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
   const [searchString, setSearchString] = useState('')
-  const [query, setQuery] = useState('')
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
+  const [query, setQuery] = useState('')
   const [numOfHits, setNumOfHits] = useState(0)
   const [numOfPages, setNumOfPages] = useState(0)
   const [pageNum, setPageNum] = useState(0)
@@ -65,10 +67,13 @@ export default function SingleProject() {
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
   const navigate = useNavigate()
+  const location = useLocation()
   const invitedUsers = useUsers(inviteesIDs)
   const projectInvitedUsers = useUsers(projectInvitees)
-  const searchFilters = `orgID: ${myOrgID}`
+  const searchFilters = `orgID: ${myOrgID} AND projectID: ${projectID}`
   const showAll = false
+  const isBoardPage = location.pathname.split('/')[3] === 'board'
+  const isTasksPage = location.pathname.split('/')[3] === 'tasks'
 
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
@@ -118,7 +123,7 @@ export default function SingleProject() {
       key={index}
       className="search-result-row"
       onClick={() => {
-        setSearchParams({ taskID: task.taskID, projectID: task.projectID })
+        navigate(`backlog?taskID=${task.taskID}&projectID=${projectID}`)
         setShowSearchDropdown(false)
       }}
     >
@@ -173,7 +178,7 @@ export default function SingleProject() {
       </div>
       <AppButton
         label="Cancel Invitation"
-        buttonTpe="tabBtn small"
+        buttonType="invertedBtn small"
         onClick={() => cancelInvitation(user)}
       />
     </div>
@@ -221,15 +226,8 @@ export default function SingleProject() {
   const completeSprint = () => {
     const confirm = window.confirm('Are you sure you want to mark this sprint as completed?')
     if (!confirm) return
-    updateOrgProjectService(
-      myOrgID,
-      projectID,
-      {
-        isComplete: true,
-        isSprintActive: false,
-      },
-      setToasts,
-      setPageLoading
+    completeProjectSprintService(
+
     )
       .then(() => {
         setToasts(successToast('Sprint marked as completed'))
@@ -241,8 +239,8 @@ export default function SingleProject() {
   }
 
   const deleteProject = () => {
-    const confirm = window.confirm('Are you sure you want to delete this project? You will +'
-      + 'lose all sprints info, project tasks and associated files. This action cannot be undone.')
+    const confirm = window.confirm('Are you sure you want to delete this project? You will ' +
+      +'lose all sprints info, project tasks and associated files. This action cannot be undone.')
     if (!confirm) return
     setPageLoading(true)
     deleteOrgProjectService(
@@ -309,21 +307,16 @@ export default function SingleProject() {
   }
 
   const cancelInvitation = (user) => {
-    const confirm = window.confirm(`Are you sure you want to cancel the invitation to ${user.firstName} ${user.lastName}?`)
-    if (!confirm) return
     cancelOrgProjectInvitationService(
       myOrgID,
-      projectID,
+      project,
       user.userID,
       setToasts,
       setPageLoading
     )
-  }
-
-  const cancelInviteModal = () => {
-    setShowInviteModal(false)
-    setInviteesIDs([])
-    setInvitesQuery('')
+      .then(() => {
+        closeInviteModal()
+      })
   }
 
   useEffect(() => {
@@ -335,7 +328,7 @@ export default function SingleProject() {
 
   return project && userIsMember ? (
     <div
-      className="single-project"
+      className={`single-project ${isTasksPage ? 'tasks-page' : ''}`}
       key={projectID}
     >
       <div className="project-header">
@@ -388,61 +381,67 @@ export default function SingleProject() {
         </div>
       </div>
       <div className="project-toolbar">
-        <div className="top-side">
-          <div className="left-side">
-            <h5>Overview</h5>
-            <p>Drag and drop cards to move them</p>
-          </div>
-          <div className="btn-group">
-            <div className="filter-by-user">
-              <h6>Filter By Users</h6>
-              <MultipleUsersAvatars
-                userIDs={allMembers}
-                maxAvatars={10}
-                avatarDimensions={30}
-                onUserClick={user => onUserFilterClick(user)}
-                avatarClassName={user => selectedFilterUsers.includes(user.userID) ? 'active' : ''}
-                extras={
-                  <Avatar
-                    src={photoURLPlaceholder}
-                    dimensions={30}
-                    title="Unassigned"
-                    onClick={() => unassignedFilterClick()}
-                    className={selectedFilterUsers.includes('unassigned') ? 'active' : ''}
-                  />
-                }
+        {
+          !isTasksPage &&
+          <div className="top-side">
+            <div className="left-side">
+              <h5>Overview</h5>
+              <p>Drag and drop cards to move them</p>
+            </div>
+            <div className="btn-group">
+              <div className="filter-by-user">
+                <h6>Filter By Users</h6>
+                <MultipleUsersAvatars
+                  userIDs={allMembers}
+                  maxAvatars={10}
+                  avatarDimensions={30}
+                  onUserClick={user => onUserFilterClick(user)}
+                  avatarClassName={user => selectedFilterUsers.includes(user.userID) ? 'active' : ''}
+                  extras={
+                    <Avatar
+                      src={photoURLPlaceholder}
+                      dimensions={30}
+                      title="Unassigned"
+                      onClick={() => unassignedFilterClick()}
+                      className={selectedFilterUsers.includes('unassigned') ? 'active' : ''}
+                    />
+                  }
+                />
+              </div>
+              <AppButton
+                label="Invite"
+                buttonType="tabBtn"
+                leftIcon="fas fa-user-plus"
+                onClick={() => setShowInviteModal(true)}
+              />
+              {
+                !isTasksPage &&
+                <AppButton
+                  label="Filter"
+                  buttonType="tabBtn"
+                  leftIcon="fas fa-filter"
+                />
+              }
+              <DropdownButton
+                label="Actions"
+                buttonType="outlineGrayBtn"
+                rightIcon="far fa-angle-down"
+                showMenu={showOptions}
+                setShowMenu={setShowOptions}
+                className="dropdown-btn"
+                items={[
+                  ...isBoardPage ? [{ label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) }] : [],
+                  { label: !project?.isStarred ? 'Star Project' : 'Unstar Project', icon: 'fas fa-star', onClick: () => starProject() },
+                  ...project?.isSprintActive ? [{ label: 'Complete Sprint', icon: 'fas fa-check-square', onClick: () => completeSprint() }] : [],
+                  { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
+                  { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
+                  { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
+                  { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() }
+                ]}
               />
             </div>
-            <AppButton
-              label="Invite"
-              buttonType="tabBtn"
-              leftIcon="fas fa-user-plus"
-              onClick={() => setShowInviteModal(true)}
-            />
-            <AppButton
-              label="Filter"
-              buttonType="tabBtn"
-              leftIcon="fas fa-filter"
-            />
-            <DropdownButton
-              label="Actions"
-              buttonType="outlineGrayBtn"
-              rightIcon="far fa-angle-down"
-              showMenu={showOptions}
-              setShowMenu={setShowOptions}
-              className="dropdown-btn"
-              items={[
-                { label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) },
-                { label: !project?.isStarred ? 'Star Project' : 'Unstar Project', icon: 'fas fa-star', onClick: () => starProject() },
-                ...project?.isSprintActive ? [{ label: 'Complete Sprint', icon: 'fas fa-check-square', onClick: () => completeSprint() }] : [],
-                { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
-                { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
-                { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
-                { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() }
-              ]}
-            />
           </div>
-        </div>
+        }
         <div className="bottom-side">
           <AppTabsBar
             noSpread
@@ -469,6 +468,7 @@ export default function SingleProject() {
             }
           />
           <Route path="tasks" element={<ProjectTasks project={project} />} />
+          <Route path="tasks/:taskID" element={<ProjectTaskPage />} />
         </Routes>
       </div>
       <AppModal
@@ -504,7 +504,7 @@ export default function SingleProject() {
         setShowModal={setShowInviteModal}
         label="Invite Members"
         portalClassName="invite-members-modal"
-        onClose={() => cancelInviteModal()}
+        onClose={() => closeInviteModal()}
         actions={<>
           <AppButton
             label={`Invite ${inviteesIDs.length > 0 ? inviteesIDs.length : ''} Member${inviteesIDs.length !== 1 ? 's' : ''}`}
@@ -515,7 +515,7 @@ export default function SingleProject() {
           <AppButton
             label="Cancel"
             buttonType="outlineBtn"
-            onClick={() => cancelInviteModal()}
+            onClick={() => closeInviteModal()}
           />
         </>}
       >

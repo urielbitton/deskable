@@ -161,8 +161,9 @@ export default function NewProject() {
               iconleft={<div className="icon"><i className="far fa-user" /></div>}
               selectedUsers={inviteesUsers}
               multiple={inviteesIDs?.length > 1}
-              maxAvatars={4}
+              maxAvatars={10}
               onClear={() => clearInvites()}
+              showAll={false}
             />
             {
               inviteesUsers?.length > 0 &&

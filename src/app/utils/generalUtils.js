@@ -3,6 +3,10 @@ export const addLeadingZeros = (number) => {
   return number < 10 ? "0" + number : number
 }
 
+export const noWhiteSpaceChars = (text) => {
+  return text?.replace(/\s/g, '').length
+}
+
 export const truncateText = (text, charsNum) => {
   return text?.length > charsNum ? (text?.slice(0, charsNum) + "...") : text
 }

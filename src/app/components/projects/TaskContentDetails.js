@@ -56,7 +56,7 @@ export default function TaskContentDetails(props) {
   const [taskPriority, setTaskPriority] = useState('')
   const [taskType, setTaskType] = useState('')
   const [taskAddTo, setTaskAddTo] = useState('')
-  const [taskReporter, setTaskReporter] = useState(null)
+  const [taskReporterID, setTaskReporterID] = useState(null)
   const [taskReporterQuery, setTaskReporterQuery] = useState('')
   const [taskPoints, setTaskPoints] = useState(0)
   const [assigneesQuery, setAssigneesQuery] = useState('')
@@ -82,7 +82,7 @@ export default function TaskContentDetails(props) {
   const maxFileSize = 1024 * 1024 * 5
   const maxFilesNum = 5
   const orgAlgoliaFilters = `activeOrgID:${myOrgID}`
-  const reporterUser = useUser(taskReporter)
+  const reporterUser = useUser(taskReporterID)
   const assigneesUsers = useUsers(task?.assigneesIDs)
   const attachmentsSliderRef = useRef(null)
   const maxAssignees = 5
@@ -380,7 +380,7 @@ export default function TaskContentDetails(props) {
       setTaskStatus(task?.status)
       setTaskPriority(task?.priority)
       setTaskType(task?.taskType)
-      setTaskReporter(task?.reporter)
+      setTaskReporterID(task?.reporterID)
       setTaskPoints(task?.points)
       setTaskAddTo(task?.inSprint ? 'sprint' : 'backlog')
     }
@@ -635,12 +635,14 @@ export default function TaskContentDetails(props) {
               filters={orgAlgoliaFilters}
               onUserClick={(e, user) => {
                 e.preventDefault()
+                maxAssignees > task?.assigneesIDs?.length ?
                 updateSingleTaskItem(
                   { assigneesIDs: [...task?.assigneesIDs, user.userID] },
                   `Assigned <b>${user.firstName} ${user.lastName}</b> to this task`,
                   'fas fa-user-plus',
                   'assignees'
-                )
+                ) :
+                setToasts(errorToast('You have reached the maximum number of assignees for this task'))
               }}
               onUserRemove={(user) => updateSingleTaskItem(
                 { assigneesIDs: task?.assigneesIDs?.filter((assignee) => assignee !== user.userID) },

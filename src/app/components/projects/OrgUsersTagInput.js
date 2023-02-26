@@ -1,4 +1,4 @@
-import { useOrgUsersSearch } from "app/hooks/searchHooks"
+import { useUsersSearch } from "app/hooks/searchHooks"
 import React from 'react'
 import UsersSearchInput from "../ui/UsersSearchInput"
 
@@ -8,10 +8,9 @@ export default function OrgUsersTagInput(props) {
     value, selectedUsers, onUserClick, onUserRemove, 
     showDropdown, setShowDropdown, onFocus, onBlur, 
     placeholder, iconleft, name, multiple, maxAvatars,
-    onClear, inputSubtitle } = props
-  const showAll = true
+    onClear, inputSubtitle, showAll=true, typeSearch } = props
 
-  const orgUsers = useOrgUsersSearch(query, setLoading, filters, showAll)
+  const orgUsers = useUsersSearch(query, setLoading, filters, showAll)
 
   const filteredOrgUsers = orgUsers.filter((user) => {
     return !selectedUsers?.find((selectedUser) => selectedUser?.userID === user?.userID)
@@ -39,6 +38,8 @@ export default function OrgUsersTagInput(props) {
       maxAvatars={maxAvatars}
       onClear={onClear}
       inputSubtitle={inputSubtitle}
+      showAll={showAll}
+      typeSearch={typeSearch}
     />
   )
 }

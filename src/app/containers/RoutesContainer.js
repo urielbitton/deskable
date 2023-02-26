@@ -18,6 +18,7 @@ import NewEmployeePage from "app/pages/NewEmployeePage"
 import TasksPage from "app/pages/TasksPage"
 import PostPhotosModalPage from "app/pages/PostPhotosModalPage"
 import PostPage from "app/pages/PostPage"
+import MyProfilePage from "app/pages/MyProfilePage"
 
 export default function RoutesContainer() {
 
@@ -39,6 +40,7 @@ export default function RoutesContainer() {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="tasks" element={<TasksPage />} />
+        <Route path="my-profile" element={<MyProfilePage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         {

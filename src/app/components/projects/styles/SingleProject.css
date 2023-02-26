@@ -195,3 +195,73 @@
   font-size: 12px;
   color: var(--darkGrayText);
 }
+
+.invite-members-modal .invite-members-container {
+ padding: 20px 0;
+}
+.invite-members-modal .invite-members-container .appInput {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.invite-members-modal .invite-members-container .appInput > h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.invite-members-modal .invite-members-container .appInput input {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.invite-members-modal .invite-members-container .users-results-list {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin: 10px 0;
+}
+.invite-members-modal .invite-members-container .appButton {
+  margin-top: 20px;
+}
+
+.invite-members-modal .invite-members-container .invited-users-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+}
+.invite-members-modal .invite-members-container .invited-users-flex > h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.invite-members-modal .invite-members-container .invited-users-list {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid var(--inputBorder);
+}
+.invite-members-modal .invite-members-container .invited-users-list .invited-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.invite-members-modal .invite-members-container .invited-users-list .invited-user .texts {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.invite-members-modal .invite-members-container .invited-users-list .invited-user:last-child {
+  border-bottom: none;
+}
+.invite-members-modal .invite-members-container .invited-users-list .invited-user h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.invite-members-modal .invite-members-container .invited-users-list .invited-user .icon-container:hover {
+  background: var(--inputBg);
+}

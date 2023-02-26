@@ -21,6 +21,7 @@ export default function ProjectsSidebar() {
       key={index}
       to={project.activeSprintID ? `/projects/${project?.projectID}/board` : `/projects/${project?.projectID}/backlog`}
       title={!showProjectsSidebar && project?.name}
+      className={location.pathname.includes(project?.projectID) ? 'active' : 'not-active'}
     >
       <span>
         <i className="fas fa-hashtag" />

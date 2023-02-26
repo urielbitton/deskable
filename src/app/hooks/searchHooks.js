@@ -56,7 +56,7 @@ export const useMultipleQueries = (query, setTotalResults, queries, limit, setLo
 }
 
 
-export function useOrgUsersSearch(query, setLoading, filters, showAll) {
+export function useUsersSearch(query, setLoading, filters, showAll) {
 
   const [results, setResults] = useState([])
 

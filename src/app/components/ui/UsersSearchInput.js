@@ -1,3 +1,4 @@
+import { noWhiteSpaceChars } from "app/utils/generalUtils"
 import React, { useEffect } from 'react'
 import Avatar from "./Avatar"
 import IconContainer from "./IconContainer"
@@ -10,7 +11,8 @@ export default function UsersSearchInput(props) {
     showImgs = true, onUserClick, showDropdown,
     setShowDropdown, onFocus, onBlur, iconleft,
     name, tag, selectedUsers, multiple,
-    onUserRemove, maxAvatars, onClear, inputSubtitle } = props
+    onUserRemove, maxAvatars, onClear, inputSubtitle,
+    showAll, typeSearch } = props
 
   const usersRender = users?.map((user) => {
     return <div
@@ -29,6 +31,20 @@ export default function UsersSearchInput(props) {
       <h6>{user.firstName} {user.lastName}</h6>
     </div>
   })
+
+  const inputWrapper = (
+    <div className="input-wrapper">
+      <input
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+      {iconleft}
+      {inputSubtitle}
+    </div>
+  )
 
   const handleClear = (e) => {
     e.stopPropagation()
@@ -53,66 +69,58 @@ export default function UsersSearchInput(props) {
       <label className="appInput commonInput">
         {label && <h6>{label}</h6>}
         {
-          tag && selectedUsers?.filter(user => user).length > 0 ?
-            !multiple ?
-              <div
-                className="selected-user"
-                onClick={() => setShowDropdown(prev => prev === name ? null : name)}
-              >
-                <Avatar
-                  src={selectedUsers[0]?.photoURL}
-                  dimensions={29}
-                />
-                <h6>{selectedUsers[0]?.firstName} {selectedUsers[0]?.lastName}</h6>
-                { 
-                  onClear && 
-                  <IconContainer
-                    icon="far fa-times"
-                    bgColor="var(--inputBg)"
-                    iconColor="var(--grayText)"
-                    dimensions={23}
-                    iconSize={16}
-                    onClick={handleClear}
+          !typeSearch ?
+            tag && selectedUsers?.filter(user => user).length > 0 ?
+              !multiple ?
+                <div
+                  className="selected-user"
+                  onClick={() => setShowDropdown(prev => prev === name ? null : name)}
+                >
+                  <Avatar
+                    src={selectedUsers[0]?.photoURL}
+                    dimensions={29}
                   />
-                }
-              </div>
+                  <h6>{selectedUsers[0]?.firstName} {selectedUsers[0]?.lastName}</h6>
+                  {
+                    onClear &&
+                    <IconContainer
+                      icon="far fa-times"
+                      bgColor="var(--inputBg)"
+                      iconColor="var(--grayText)"
+                      dimensions={23}
+                      iconSize={16}
+                      onClick={handleClear}
+                    />
+                  }
+                </div>
+                :
+                <div
+                  className="selected-user"
+                  onClick={() => setShowDropdown(name)}
+                >
+                  <MultipleUsersAvatars
+                    userIDs={selectedUsers?.map((user) => user?.userID)}
+                    maxAvatars={maxAvatars}
+                    avatarDimensions={29}
+                    enableEditing
+                    onUserClick={(user) => onUserRemove(user)}
+                  />
+                  {
+                    onClear && <small
+                      className="clear-text"
+                      onClick={handleClear}
+                    >
+                      Clear
+                    </small>
+                  }
+                </div>
               :
-              <div
-                className="selected-user"
-                onClick={() => setShowDropdown(name)}
-              >
-                <MultipleUsersAvatars
-                  userIDs={selectedUsers?.map((user) => user?.userID)}
-                  maxAvatars={maxAvatars}
-                  avatarDimensions={29}
-                  enableEditing
-                  onUserClick={(user) => onUserRemove(user)}
-                />
-                {
-                  onClear && <small
-                    className="clear-text"
-                    onClick={handleClear}
-                  >
-                    Clear
-                  </small>
-                }
-              </div>
-            :
-            <div className="input-wrapper">
-              <input
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                onFocus={onFocus}
-                onBlur={onBlur}
-              />
-              {iconleft}
-              {inputSubtitle}
-            </div>
+              inputWrapper :
+            inputWrapper
         }
       </label>
       <div
-        className={`users-results-list ${showDropdown === name ? 'show' : 'hide'}`}
+        className={`users-results-list ${showDropdown === name ? 'show' : 'hide'} ${!showAll && !noWhiteSpaceChars(value) ? 'hide' : ''}`}
       >
         <small className="dropdown-title">
           <i className="fas fa-user-plus" />
@@ -123,7 +131,7 @@ export default function UsersSearchInput(props) {
           users?.length === 0 &&
           <small className="no-more-users">
             <i className="fas fa-exclamation-circle" />
-            No more users found.
+            No users found.
           </small>
         }
       </div>

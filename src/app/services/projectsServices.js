@@ -1,5 +1,6 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
+import { set } from "date-fns"
 import {
   collection, doc, getDoc, getDocs, limit,
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
@@ -10,6 +11,7 @@ import {
   firebaseIncrement, getDocsCount, getRandomDocID,
   setDB, updateDB
 } from "./CrudDB"
+import { createNotification } from "./notifServices"
 import {
   deleteMultipleStorageFiles,
   uploadMultipleFilesToFireStorage
@@ -190,6 +192,7 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
     isActive: true,
     isStarred: false,
     isSprintActive: false,
+    isCompleted: false,
     lastActive: new Date(),
     orgID,
     ownerID: userID,
@@ -903,4 +906,83 @@ export const startProjectSprintService = (path, project, firstColumn, setToasts,
       setToasts(successToast('Sprint started.'))
     })
     .catch(err => catchCode(err, 'There was a problem starting the sprint. Please try again.', setToasts, setLoading))
+}
+
+export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUserID, inviterName, setToasts, setLoading) => {
+  setLoading(true)
+  const batch = writeBatch(db)
+  const projectPath = `organizations/${orgID}/projects`
+  return updateDB(projectPath, project.projectID, {
+    invitations: inviteesIDs
+  })
+    .then(() => {
+      for (const inviteeID of inviteesIDs) {
+        const userProjectsInvitePath = `users/${inviteeID}/projectsInvitations`
+        const usersNotifsPath = `users/${inviteeID}/notifications`
+        const inviteID = getRandomDocID(userProjectsInvitePath)
+        const notifID = getRandomDocID(usersNotifsPath)
+        batch.set(doc(db, userProjectsInvitePath, 'projects'), {
+          invitationID: inviteID,
+          orgID,
+          projectID: project.projectID,
+          projectName: project.name,
+          dateCreated: new Date(),
+          message: `${inviterName} has invited you to join their project: ${project.name}.`,
+        })
+        batch.set(doc(db, usersNotifsPath, notifID), {
+          notificationID: notifID,
+          dateCreated: new Date(),
+          isRead: false,
+          title: `${inviterName} has invited you to join their project: ${project.name}. You can `+
+            `accept or decline the invitation in your profile page under the invitations tab.`,
+          text: 'New Project Invitation',
+          icon: 'fas fa-project-diagram',
+          url: '/my-profile/projects-invitations'
+        })
+      }
+      //send also invitations by email
+      return batch.commit()
+    })
+    .then(() => {
+      return createNotification(
+        myUserID, 
+        'Project invitations sent', 
+        `Your invitations to join ${project.name} have been sent.`,
+        'fas fa-project-diagram', 
+        `/projects/${project.projectID}`
+      )
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Project invitations have been sent.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem sending the invitations. Please try again.', setToasts, setLoading))
+}
+
+export const cancelOrgProjectInvitationService = (orgID, projectID, userID, setToasts, setLoading) => {
+  setLoading(true)
+  const batch = writeBatch(db)
+  const projectPath = `organizations/${orgID}/projects`
+  return updateDB(projectPath, projectID, {
+    invitations: firebaseArrayRemove(userID)
+  })
+    .then(() => {
+      const userProjectsInvitePath = `users/${userID}/projectsInvitations`
+      const q = query(
+        collection(db, userProjectsInvitePath),
+        where('projectID', '==', projectID)
+      )
+      return getDocs(q)
+        .then((snapshot) => {
+          return deleteDB(userProjectsInvitePath, snapshot.docs[0].id)
+        })
+    })
+    .then(() => {
+      return batch.commit()
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast(`The project nvitation has been cancelled.`))
+    })
+    .catch(err => catchCode(err, 'There was a problem cancelling the invitation. Please try again.', setToasts, setLoading))
 }

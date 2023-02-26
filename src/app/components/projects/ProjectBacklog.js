@@ -22,15 +22,17 @@ import {
   createOrgProjectTaskEvent,
   addNewSprintTaskService,
   addNewBacklogTaskService,
-  startProjectSprintService
+  startProjectSprintService,
+  updateOrgProjectService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
 import BacklogTaskDetails from "./BacklogTaskDetails"
 import { updateDB } from "app/services/CrudDB"
-import { infoToast } from "app/data/toastsTemplates"
+import { infoToast, successToast } from "app/data/toastsTemplates"
+import { noWhiteSpaceChars } from 'app/utils/generalUtils'
 
-export default function ProjectBacklog({ project }) {
+export default function ProjectBacklog({ project, backlogTasksFilter }) {
 
   const { myOrgID, setToasts, myUserID, setPageLoading } = useContext(StoreContext)
   const projectID = useParams().projectID
@@ -57,35 +59,37 @@ export default function ProjectBacklog({ project }) {
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const navigate = useNavigate()
 
-  const sprintTasksList = sprintTasks?.map((task, index) => {
-    return <DraggableItem
-      key={task.taskID} //key cannot be index, must be unique id
-      draggableId={task.taskID}
-      index={task.backlogPosition}
-    >
-      <BacklogTaskItem
-        key={index}
-        task={task}
-        onClick={(e) => handleTaskClick(e, task.taskID)}
-        isActive={task.taskID === paramTaskID}
-      />
-    </DraggableItem>
-  })
+  const sprintTasksList = backlogTasksFilter(sprintTasks)
+    ?.map((task, index) => {
+      return <DraggableItem
+        key={task.taskID} //key cannot be index, must be unique id
+        draggableId={task.taskID}
+        index={task.backlogPosition}
+      >
+        <BacklogTaskItem
+          key={index}
+          task={task}
+          onClick={(e) => handleTaskClick(e, task.taskID)}
+          isActive={task.taskID === paramTaskID}
+        />
+      </DraggableItem>
+    })
 
-  const backlogTasksList = backlogTasks?.map((task, index) => {
-    return <DraggableItem
-      key={task.taskID}
-      draggableId={task.taskID}
-      index={task.backlogPosition}
-    >
-      <BacklogTaskItem
-        key={index}
-        task={task}
-        onClick={(e) => handleTaskClick(e, task.taskID)}
-        isActive={task.taskID === paramTaskID}
-      />
-    </DraggableItem>
-  })
+  const backlogTasksList = backlogTasksFilter(backlogTasks)
+    ?.map((task, index) => {
+      return <DraggableItem
+        key={task.taskID}
+        draggableId={task.taskID}
+        index={task.backlogPosition}
+      >
+        <BacklogTaskItem
+          key={index}
+          task={task}
+          onClick={(e) => handleTaskClick(e, task.taskID)}
+          isActive={task.taskID === paramTaskID}
+        />
+      </DraggableItem>
+    })
 
   const diffColumnMoveTaskEvent = (taskID, source, destination) => {
     return createOrgProjectTaskEvent(
@@ -150,7 +154,7 @@ export default function ProjectBacklog({ project }) {
   }
 
   const addNewBacklogTask = () => {
-    if (!newTaskTitle) return
+    if (!noWhiteSpaceChars(newTaskTitle)) return setToasts(infoToast('Please enter a task title'))
     addNewBacklogTaskService(
       tasksPath,
       myUserID,
@@ -160,7 +164,7 @@ export default function ProjectBacklog({ project }) {
         newTaskType,
       },
       setToasts,
-      setNewTaskLoading 
+      setNewTaskLoading
     )
       .then((taskID) => {
         setNewTaskTitle('')
@@ -175,7 +179,7 @@ export default function ProjectBacklog({ project }) {
   }
 
   const addNewSprintTask = () => {
-    if (!newTaskTitle) return
+    if (!noWhiteSpaceChars(newTaskTitle)) return setToasts(infoToast('Please enter a task title'))
     addNewSprintTaskService(
       tasksPath,
       myUserID,
@@ -205,12 +209,22 @@ export default function ProjectBacklog({ project }) {
 
   }
 
-  const deleteSprint = () => {
-
-  }
-
   const markCompleted = () => {
-
+    const confirm = window.confirm('Are you sure you want to mark this sprint as completed?')
+    if (!confirm) return
+    updateOrgProjectService(
+      myOrgID,
+      projectID,
+      { 
+        isComplete: true,
+        isSprintActive: false,
+      },
+      setToasts,
+      setPageLoading
+    )
+    .then(() => {
+      setToasts(successToast('Sprint marked as completed'))
+    })
   }
 
   const handleStartSprint = () => {
@@ -270,7 +284,6 @@ export default function ProjectBacklog({ project }) {
                   onClick={(e) => setShowTitlesMenu(showTitlesMenu === 'sprint' ? null : 'sprint')}
                   items={[
                     { label: "Edit Sprint", icon: "fas fa-pen", onClick: () => editSprint() },
-                    { label: "Delete Sprint", icon: "fas fa-trash", onClick: () => deleteSprint() },
                     { label: "Mark As Completed", icon: "fas fa-check-square", onClick: () => markCompleted() },
                   ]}
                 />

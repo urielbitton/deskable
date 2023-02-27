@@ -417,7 +417,7 @@ export default function SingleProject() {
               {
                 !isTasksPage &&
                 <AppButton
-                  label="Filter"
+                  label="Filters"
                   buttonType="tabBtn"
                   leftIcon="fas fa-filter"
                 />

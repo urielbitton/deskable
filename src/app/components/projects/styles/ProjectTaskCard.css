@@ -68,6 +68,9 @@
   align-items: center;
   gap: 5px;
 }
+.project-task-card .details .info span i {
+  color: var(--darkGrayText);
+}
 .project-task-card .details .info span > span {
   display: inline;
   font-weight: 600;

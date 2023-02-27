@@ -17,13 +17,14 @@ export default function ProjectTaskCard(props) {
   const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
   const commentsNum = useDocsCount(commentsPath)
   const filesNum = useDocsCount(filesPath)
-  const taskLocation = inSprint ? 'Active Sprint' : status === 'backlog' ? 'Backlog' : 'Completed Task'
+  const taskLocation = inSprint ? 'Active Sprint' : status === 'backlog' ? 'Backlog' : 'Completed'
   const reporter = useUser(reporterID)
 
   return (
     <Link
       className="project-task-card"
       to={`/projects/${projectID}/tasks/${taskID}`}
+      key={taskID}
     >
       <div className="titles">
         <div className="texts">

@@ -1,0 +1,67 @@
+.task-filters-popup {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
+  padding: 10px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.task-filters-popup.show {
+  visibility: visible;
+  opacity: 1;
+  top: calc(100% + 5px);
+}
+
+.task-filters-popup .popup-header {
+  padding-bottom: 10px;
+  padding-top: 5px;
+  border-bottom: 1px solid var(--inputBorder);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.task-filters-popup .popup-header h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.task-filters-popup .popup-header .icon-container:hover {
+  background: var(--inputBg);
+}
+
+.task-filters-popup .popup-content {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 0;
+}
+.task-filters-popup .popup-content .commonInput {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 5px;
+}
+.task-filters-popup .popup-content .commonInput select {
+  height: 30px;
+}
+
+.task-filters-popup .popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--inputBorder);
+}

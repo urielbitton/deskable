@@ -14,6 +14,7 @@
   gap: 20px;
   flex-wrap: wrap;
   padding: 5px;
+  z-index: 1000;
 }
 .project-tasks .toolbar .search-info,
 .project-tasks .toolbar .sortings {
@@ -56,6 +57,9 @@
   align-items: center;
   gap: 10px;
 }
+.project-tasks .toolbar .appSelect select:hover {
+  background: var(--inputBg);
+}
 .project-tasks .toolbar .appSelect .placeholder {
   font-size: 13px;
   color: var(--grayText);
@@ -63,12 +67,30 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 140px;
 }
 .project-tasks .toolbar .appSelect h6 {
   font-size: 13px;
   color: var(--darkGrayText);
   font-weight: 600;
   white-space: nowrap;
+}
+.project-tasks .toolbar .sortings .filter-btn {
+  border: 1px solid var(--inputBorder);
+  height: 35px;
+  font-size: 13px;
+  color: var(--grayText);
+}
+.project-tasks .toolbar .sortings .filter-btn:hover,
+.project-tasks .toolbar .sortings .filter-btn.active {
+  background: var(--inputBg);
+}
+.project-tasks .toolbar .sortings .filter-btn.active-filters {
+  background: var(--primary);
+  color: #fff;
+}
+.project-tasks .toolbar .task-filters .task-filters-popup {
+  min-width: 320px;
 }
 
 .project-tasks .tasks-content {

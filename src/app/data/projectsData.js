@@ -38,49 +38,49 @@ export const taskTypeOptions = [
     label: 'Story',
     value: 'story',
     icon: 'fas fa-bookmark',
-    iconColor: '#0a9bfc',
+    iconColor: 'var(--storyBlue)',
   },
   {
     label: 'Feature',
     value: 'feature',
     icon: 'fas fa-bolt',
-    iconColor: '#7cc244',
+    iconColor: 'var(--featureGreen)'
   },
   {
     label: 'Epic',
     value: 'epic',
     icon: 'fas fa-rocket',
-    iconColor: '#b603fc',
+    iconColor: 'var(--epicPurple)'
   },
   {
     label: 'Bug',
     value: 'bug',
     icon: 'fas fa-bug',
-    iconColor: '#fc0349',
+    iconColor: 'var(--bugRed)',
   },
   {
     label: 'Refactor',
     value: 'refactor',
     icon: 'fas fa-code',
-    iconColor: '#622eff',
+    iconColor: 'var(--refactorViolet)',
   },
   {
     label: 'Test',
     value: 'test',
     icon: 'fas fa-vial',
-    iconColor: '#ffbf00',
+    iconColor: 'var(--testOrange)',
   },
 ]
 
 
 export const switchTaskType = (type) => {
-  if (type === 'story') return { color: '#0a9bfc', icon: 'fas fa-bookmark' }
-  if (type === 'feature') return { color: '#7cc244', icon: 'fas fa-bolt' }
-  if (type === 'epic') return { color: '#b603fc', icon: 'fas fa-rocket' }
-  if (type === 'bug') return { color: '#fc0349', icon: 'fas fa-bug' }
-  if (type === 'refactor') return { color: '#622eff', icon: 'fas fa-code' }
-  if (type === 'test') return { color: '#ffbf00', icon: 'fas fa-vial' }
-  return { color: '#0a9bfc', icon: 'fas fa-bookmark' }
+  if (type === 'story') return { color: 'var(--storyBlue)', icon: 'fas fa-bookmark' }
+  if (type === 'feature') return { color: 'var(--featureGreen)', icon: 'fas fa-bolt' }
+  if (type === 'epic') return { color: 'var(--epicPurple)', icon: 'fas fa-rocket' }
+  if (type === 'bug') return { color: 'var(--bugRed)', icon: 'fas fa-bug' }
+  if (type === 'refactor') return { color: 'var(--refactorViolet)', icon: 'fas fa-code' }
+  if (type === 'test') return { color: 'var(--testOrange)', icon: 'fas fa-vial' }
+  return { color: 'var(--storyBlue)', icon: 'fas fa-bookmark' }
 }
 
 export const switchTaskPriority = (priority) => {
@@ -294,3 +294,42 @@ export const projectTasksSortBySwitch = (sortBy) => {
   if (sortBy === 'title-asc') return {index: tasksTitleAscIndex, name: 'Title (Asc.)', icon: 'fas fa-sort-alpha-up'}
   return {index: tasksIndex, name: 'Date Created (Desc.)', icon: 'fas fa-calendar-alt'}
 }
+
+export const taskPointsOptions = [
+  {
+    label: '0',
+    value: 0,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: '1',
+    value: 1,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: '2',
+    value: 2,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: '3',
+    value: 3,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: '4',
+    value: 4,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  },
+  {
+    label: '5',
+    value: 5,
+    icon: 'fas fa-gamepad',
+    iconColor: 'var(--grayText)'
+  }
+]

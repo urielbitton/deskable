@@ -6,9 +6,13 @@ import ProjectTaskCard from "./ProjectTaskCard"
 import './styles/ProjectTasks.css'
 import AppPagination from "../ui/AppPagination"
 import { showXResultsOptions } from "app/data/general"
+import AppButton from "../ui/AppButton"
+import TaskFiltersPopup from "./TaskFiltersPopup"
+import { useOrgProjectColumns } from "app/hooks/projectsHooks"
 
 export default function ProjectTasks({ project }) {
 
+  const projectColumns = useOrgProjectColumns(project.projectID)
   const [searchString, setSearchString] = useState('')
   const [query, setQuery] = useState('')
   const [numOfHits, setNumOfHits] = useState(0)
@@ -17,13 +21,40 @@ export default function ProjectTasks({ project }) {
   const [hitsPerPage, setHitsPerPage] = useState(10)
   const [searchLoading, setSearchLoading] = useState(false)
   const [sortByIndex, setSortByIndex] = useState(projectTasksSortByOptions[0].value)
+  const [showFilters, setShowFilters] = useState(false)
+  const [taskTypeFilter, setTaskTypeFilter] = useState('all')
+  const [pointsFilter, setPointsFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [applyFilters, setApplyFilters] = useState({
+    taskType: 'all',
+    points: 'all',
+    priority: 'all',
+    status: 'all',
+  })
   const showAll = true
-  const tasksFilters = `orgID:${project.orgID} AND projectID:${project.projectID}`
+
+  const activeFilters = applyFilters.taskType !== 'all' ||
+    applyFilters.points !== 'all' ||
+    applyFilters.priority !== 'all' ||
+    applyFilters.status !== 'all'
+
+  const disableApplyFilters = taskTypeFilter === applyFilters.taskType &&
+    pointsFilter === applyFilters.points &&
+    priorityFilter === applyFilters.priority &&
+    statusFilter === applyFilters.status
+
+  const searchFilters = `orgID:${project.orgID} AND projectID:${project.projectID} `+
+  `${applyFilters.taskType !== 'all' ? ` AND taskType:${applyFilters.taskType} ` : ''}`+
+  `${applyFilters.points !== 'all' ? ` AND points:${applyFilters.points} ` : ''}`+
+  `${applyFilters.priority !== 'all' ? ` AND priority:${applyFilters.priority} ` : ''}`+
+  `${applyFilters.status !== 'all' ? ` AND status: "${applyFilters.status}" ` : ''}`
+
 
   const allTasks = useInstantSearch(
     query,
     projectTasksSortBySwitch(sortByIndex).index,
-    tasksFilters,
+    searchFilters,
     setNumOfHits,
     setNumOfPages,
     pageNum,
@@ -38,6 +69,30 @@ export default function ProjectTasks({ project }) {
       task={task}
     />
   })
+
+  const handleSaveFilters = () => {
+    setApplyFilters({
+      taskType: taskTypeFilter,
+      points: pointsFilter,
+      priority: priorityFilter,
+      status: statusFilter,
+    })
+    setShowFilters(false)
+  }
+
+  const handleClearFilters = () => {
+    setTaskTypeFilter('all')
+    setPointsFilter('all')
+    setPriorityFilter('all')
+    setStatusFilter('all')
+    setApplyFilters({
+      taskType: 'all',
+      points: 'all',
+      priority: 'all',
+      status: 'all',
+    })
+    setShowFilters(false)
+  }
 
   const clearSearch = () => {
     setSearchString('')
@@ -56,13 +111,13 @@ export default function ProjectTasks({ project }) {
             onKeyUp={(e) => e.key === 'Enter' && setQuery(searchString)}
             iconright={
               searchLoading ?
-              <i className="fas fa-spinner fa-spin" /> :
-              searchString.length > 0 ?
-              <i 
-                className="fal fa-times" 
-                onClick={() => clearSearch()} 
-              /> :
-              <i className="far fa-search" />
+                <i className="fas fa-spinner fa-spin" /> :
+                searchString.length > 0 ?
+                  <i
+                    className="fal fa-times"
+                    onClick={() => clearSearch()}
+                  /> :
+                  <i className="far fa-search" />
             }
           />
           <AppSelect
@@ -73,6 +128,32 @@ export default function ProjectTasks({ project }) {
           />
         </div>
         <div className="sortings">
+          <div className="task-filters">
+            <AppButton
+              label={activeFilters ? "Active Filters" : "Filters"}
+              buttonType="invertedBtn"
+              leftIcon="fas fa-filter"
+              onClick={() => setShowFilters(prev => !prev)}
+              className={`filter-btn ${showFilters ? 'active' : ''} ${activeFilters ? 'active-filters' : ''}`}
+            />
+            <TaskFiltersPopup
+              showPopup={showFilters}
+              setShowPopup={setShowFilters}
+              onClose={() => setShowFilters(false)}
+              taskTypeFilter={taskTypeFilter}
+              setTaskTypeFilter={setTaskTypeFilter}
+              pointsFilter={pointsFilter}
+              setPointsFilter={setPointsFilter}
+              priorityFilter={priorityFilter}
+              setPriorityFilter={setPriorityFilter}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              taskStatusOptions={projectColumns?.map(column => ({value: column.title, label: column.title}))}
+              disableApply={disableApplyFilters}
+              saveFilters={handleSaveFilters}
+              clearFilters={() => handleClearFilters()}
+            />
+          </div>
           <AppReactSelect
             label="Sort By"
             placeholder={
@@ -86,7 +167,6 @@ export default function ProjectTasks({ project }) {
             value={sortByIndex}
             searchable={false}
           />
-          <h6>Filters</h6>
         </div>
       </div>
       <div className="tasks-content">
@@ -98,7 +178,7 @@ export default function ProjectTasks({ project }) {
           setPageNum={setPageNum}
           numOfPages={numOfPages}
           dimensions="30px"
-        /> 
+        />
       </div>
     </div>
   )

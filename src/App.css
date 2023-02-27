@@ -40,6 +40,12 @@ html, body {
   --maxPageWidth: 1080px;
   --dark1: #1B2430;
   --dark2: #151b23;
+  --storyBlue: #0a9bfc;
+  --featureGreen: #7cc244;
+  --epicPurple: #b603fc;
+  --bugRed: #fc0349;
+  --refactorViolet: #622eff;
+  --testOrange: #ffbf00;
 }  
 
 * {

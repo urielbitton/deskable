@@ -43,7 +43,7 @@ export default function TaskContentDetails(props) {
     setShowLikesModal, likesUserIDs, setLikesUserIDs,
     showCommentEditor, setShowCommentEditor, commentText,
     setCommentText, showCoverInput, setShowCoverInput,
-    showDetailsOptions, modalMode } = props
+    showDetailsOptions, modalMode, isTaskPage } = props
   const [commentsLimit, setCommentsLimit] = useState(10)
   const [filesLimit, setFilesLimit] = useState(5)
   const [eventsLimit, setEventsLimit] = useState(10)
@@ -66,8 +66,8 @@ export default function TaskContentDetails(props) {
   const [coverInputLoading, setCoverInputLoading] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const commentEditorRef = useRef(null)
-  const taskID = searchParams.get('taskID')
-  const projectID = searchParams.get('projectID')
+  const taskID = searchParams.get('taskID') || task?.taskID
+  const projectID = searchParams.get('projectID') || task?.projectID
   const columns = useOrgProjectColumns(projectID)
   const comments = useOrgProjectTaskComments(projectID, taskID, commentsLimit)
   const events = useOrgProjectTaskEvents(projectID, taskID, eventsLimit)
@@ -467,7 +467,7 @@ export default function TaskContentDetails(props) {
             </small>
           }
         </div>
-        {modalMode && commentsEventsContainer}
+        {(modalMode || isTaskPage) && commentsEventsContainer}
       </div>
       <div className="task-details">
         <div className="titles">
@@ -696,7 +696,7 @@ export default function TaskContentDetails(props) {
           </div>
         </div>
       </div>
-      {!modalMode && commentsEventsContainer}
+      { !modalMode && !isTaskPage && commentsEventsContainer }
       <DocViewerModal
         showModal={showDocViewer}
         setShowModal={setShowDocViewer}

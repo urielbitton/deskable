@@ -309,7 +309,7 @@ export const AppReactSelect = (props) => {
 
   return (
     <label
-      className={`reactSelect commonInput ${className ?? ""}`}
+      className={`reactSelect appSelect commonInput ${className ?? ""}`}
       style={containerStyles}
     >
       { label && <h6>{label}</h6> }

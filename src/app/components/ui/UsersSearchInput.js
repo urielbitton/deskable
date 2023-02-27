@@ -34,14 +34,16 @@ export default function UsersSearchInput(props) {
 
   const inputWrapper = (
     <div className="input-wrapper">
-      <input
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
-      />
-      {iconleft}
+      <div className="input-row">
+        <input
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+        {iconleft}
+      </div>
       {inputSubtitle}
     </div>
   )

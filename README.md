@@ -19,7 +19,8 @@ User types
 
 To Dos
 - projects:
-  - compelte sprint logic - move all incomplete tasks to backlog (all completed tasks will not be found in backlog nor board and can be found in all tasks page)
+  - all tasks filters & sort by
+  - complete sprint logic - ask where to move incomplete tasks (all completed tasks will not be found in backlog nor board and can be found in all tasks page)
   - when creating project generate random avatar from list of avatars for project photoURL
   - let users upload project avatar in project settings, let them edit all info as well
   - when mark sprint complete, add a new sprint with the same tasks except the completed ones

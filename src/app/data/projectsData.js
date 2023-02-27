@@ -1,3 +1,5 @@
+import { tasksAscIndex, tasksIndex, tasksPointsAscIndex, tasksPointsDescIndex, tasksPriorityAscIndex, tasksPriorityDescIndex, tasksStatusDescIndex, tasksTitleAscIndex, tasksTitleDescIndex, tasksTypeDescIndex } from "app/algolia"
+
 export const taskPriorityOptions = [
   {
     label: 'Lowest',
@@ -228,27 +230,67 @@ export const switchProjectCategory = (category) => {
 
 export const projectTasksSortByOptions = [
   {
-    label: 'Date Created',
+    label: 'Date Created (Desc.)',
     value: 'dateCreated',
+    icon: 'fas fa-calendar-alt',
   },
   {
-    label: 'Date Updated',
-    value: 'dateUpdated',
+    label: 'Date Created (Asc.)',
+    value: 'dateCreated-asc',
+    icon: 'fas fa-calendar-alt',
   },
   {
-    label: 'Task Type',
-    value: 'type',
+    label: 'Points (Desc.)',
+    value: 'points-desc',
+    icon: 'fas fa-gamepad',
   },
   {
-    label: 'Task Priority',
-    value: 'priority',
+    label: 'Points (Asc.)',
+    value: 'points-asc',
+    icon: 'fas fa-gamepad',
   },
   {
-    label: 'Task Status',
-    value: 'status',
+    label: 'Task Type (Desc.)',
+    value: 'type-desc',
+    icon: 'fas fa-bolt',
   },
   {
-    label: 'Task Title',
+    label: 'Priority (Desc.)',
+    value: 'priority-desc',
+    icon: 'fas fa-chevron-double-down',
+  },
+  {
+    label: 'Priority (Asc.)',
+    value: 'priority-asc',
+    icon: 'fas fa-chevron-double-up',
+  },
+  {
+    label: 'Status (Desc.)',
+    value: 'status-desc',
+    icon: 'fas fa-columns',
+  },
+  {
+    label: 'Title (Desc.)',
     value: 'title',
+    icon: 'fas fa-sort-alpha-down',
   },
+  {
+    label: 'Title (Asc.)',
+    value: 'title-asc',
+    icon: 'fas fa-sort-alpha-up',
+  }
 ]
+
+export const projectTasksSortBySwitch = (sortBy) => {
+  if (sortBy === 'dateCreated') return {index: tasksIndex, name: 'Date Created (Desc.)', icon: 'fas fa-calendar-alt'}
+  if (sortBy === 'dateCreated-asc') return {index: tasksAscIndex, name: 'Date Created (Asc.)', icon: 'fas fa-calendar-alt'}
+  if (sortBy === 'points-desc') return {index: tasksPointsDescIndex, name: 'Points (Desc.)', icon: 'fas fa-gamepad'}
+  if (sortBy === 'points-asc') return {index: tasksPointsAscIndex, name: 'Points (Asc.)', icon: 'fas fa-gamepad'}
+  if (sortBy === 'type-desc') return {index: tasksTypeDescIndex, name: 'Task Type (Desc.)', icon: 'fas fa-bolt'}
+  if (sortBy === 'priority-desc') return {index: tasksPriorityDescIndex, name: 'Priority (Desc.)', icon: 'fas fa-chevron-double-down'}
+  if (sortBy === 'priority-asc') return {index: tasksPriorityAscIndex, name: 'Priority (Asc.)', icon: 'fas fa-chevron-double-up'}
+  if (sortBy === 'status-desc') return {index: tasksStatusDescIndex, name: 'Status (Desc.)', icon: 'fas fa-columns'}
+  if (sortBy === 'title-desc') return {index: tasksTitleDescIndex, name: 'Title (Desc.)', icon: 'fas fa-sort-alpha-down'}
+  if (sortBy === 'title-asc') return {index: tasksTitleAscIndex, name: 'Title (Asc.)', icon: 'fas fa-sort-alpha-up'}
+  return {index: tasksIndex, name: 'Date Created (Desc.)', icon: 'fas fa-calendar-alt'}
+}

@@ -33,22 +33,36 @@
 .project-tasks .toolbar .appInput {
   width: 300px;
 }
+.project-tasks .toolbar .appInput input:focus {
+  border: 1px solid var(--primary);
+}
 .project-tasks .toolbar .appInput i {
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 14px;
   color: var(--grayText);
+}
+.project-tasks .toolbar .appInput i.fa-search {
   opacity: 0.5;
+}
+.project-tasks .toolbar .appInput i.fa-times {
+  font-size: 16px;
+  opacity: 1;
+  cursor: pointer;
 }
 .project-tasks .toolbar .appSelect {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.project-tasks .toolbar select {
-  height: 35px;
-  padding-left: 5px;
+.project-tasks .toolbar .appSelect .placeholder {
+  font-size: 13px;
+  color: var(--grayText);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .project-tasks .toolbar .appSelect h6 {
   font-size: 13px;

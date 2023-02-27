@@ -960,7 +960,7 @@ export const inviteMembersToProjectService = (orgID, project, inviteesIDs, myUse
         'Project invitations sent',
         `Your invitations to join ${project.name} have been sent.`,
         'fas fa-project-diagram',
-        `/projects/${project.projectID}`
+        `/projects/${project.projectID}/backlog`
       )
     })
     .then(() => {

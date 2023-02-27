@@ -1,8 +1,7 @@
-import { tasksIndex } from "app/algolia"
-import { projectTasksSortByOptions } from "app/data/projectsData"
+import { projectTasksSortByOptions, projectTasksSortBySwitch } from "app/data/projectsData"
 import { useInstantSearch } from "app/hooks/searchHooks"
 import React, { useState } from 'react'
-import { AppInput, AppSelect } from "../ui/AppInputs"
+import { AppInput, AppReactSelect, AppSelect } from "../ui/AppInputs"
 import ProjectTaskCard from "./ProjectTaskCard"
 import './styles/ProjectTasks.css'
 import AppPagination from "../ui/AppPagination"
@@ -17,12 +16,13 @@ export default function ProjectTasks({ project }) {
   const [pageNum, setPageNum] = useState(0)
   const [hitsPerPage, setHitsPerPage] = useState(10)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [sortByIndex, setSortByIndex] = useState(projectTasksSortByOptions[0].value)
   const showAll = true
   const tasksFilters = `orgID:${project.orgID} AND projectID:${project.projectID}`
 
   const allTasks = useInstantSearch(
     query,
-    tasksIndex,
+    projectTasksSortBySwitch(sortByIndex).index,
     tasksFilters,
     setNumOfHits,
     setNumOfPages,
@@ -39,6 +39,11 @@ export default function ProjectTasks({ project }) {
     />
   })
 
+  const clearSearch = () => {
+    setSearchString('')
+    setQuery('')
+  }
+
   return (
     <div className="project-tasks">
       <div className="toolbar">
@@ -49,7 +54,16 @@ export default function ProjectTasks({ project }) {
             value={searchString}
             onChange={e => setSearchString(e.target.value)}
             onKeyUp={(e) => e.key === 'Enter' && setQuery(searchString)}
-            iconright={<i className="far fa-search" />}
+            iconright={
+              searchLoading ?
+              <i className="fas fa-spinner fa-spin" /> :
+              searchString.length > 0 ?
+              <i 
+                className="fal fa-times" 
+                onClick={() => clearSearch()} 
+              /> :
+              <i className="far fa-search" />
+            }
           />
           <AppSelect
             label="Show"
@@ -59,9 +73,18 @@ export default function ProjectTasks({ project }) {
           />
         </div>
         <div className="sortings">
-          <AppSelect
+          <AppReactSelect
             label="Sort By"
+            placeholder={
+              <h5 className="placeholder">
+                <i className={projectTasksSortBySwitch(sortByIndex).icon} />
+                {projectTasksSortBySwitch(sortByIndex).name}
+              </h5>
+            }
             options={projectTasksSortByOptions}
+            onChange={(sortBy) => setSortByIndex(sortBy.value)}
+            value={sortByIndex}
+            searchable={false}
           />
           <h6>Filters</h6>
         </div>

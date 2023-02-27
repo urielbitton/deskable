@@ -1,7 +1,7 @@
 import { algoliaSearchClient, usersIndex } from "app/algolia"
 import React, { useEffect, useState } from 'react'
 
-export function useInstantSearch(query, indexName, filters,
+export function useInstantSearch(query, searchIndex, filters,
   setNumOfHits, setNumOfPages, page, hitsPerPage, setLoading, showAll) {
 
   const [searchResults, setSearchResults] = useState([])
@@ -9,7 +9,7 @@ export function useInstantSearch(query, indexName, filters,
   useEffect(() => {
     if (query?.length || showAll) {
       setLoading(true)
-      indexName.search(query, {
+      searchIndex.search(query, {
         filters,
         page,
         hitsPerPage
@@ -25,7 +25,7 @@ export function useInstantSearch(query, indexName, filters,
           setLoading(false)
         })
     }
-  }, [query, filters, page, hitsPerPage])
+  }, [query, filters, page, hitsPerPage, searchIndex])
 
   return searchResults
 }

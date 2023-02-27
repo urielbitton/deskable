@@ -68,6 +68,7 @@ export default function ProjectTaskPage() {
         setCommentText={setCommentText}
         showCoverInput={showCoverInput}
         setShowCoverInput={setShowCoverInput}
+        isTaskPage
       />
     </div>
   ) :

@@ -3,7 +3,6 @@ import {
   taskPriorityOptions, taskTypeOptions
 } from "app/data/projectsData"
 import useUser, { useUsers } from "app/hooks/userHooks"
-import { getLastColumnTaskPosition } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { areArraysEqual } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'

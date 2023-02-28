@@ -1,11 +1,14 @@
-import { getOrgProjectByID, getOrgProjectColumnByID, 
-  getOrgProjectColumns, getOrgProjectFirstColumn, getOrgProjectTaskByID, 
-  getOrgProjectTaskComments, getOrgProjectTaskEvents, 
-  getOrgProjectTaskFiles, getOrgProjectTasks, 
-  getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray, 
-  getOrgProjectTasksBySprintID, 
-  getOrgProjectTasksInBacklog, 
-  getProjectsByOrgID } from "app/services/projectsServices"
+import {
+  getAllOrgOpenProjectTasks,
+  getOrgProjectByID, getOrgProjectClosedTasks, getOrgProjectColumnByID,
+  getOrgProjectColumns, getOrgProjectFirstColumn, getOrgProjectOpenTasks, getOrgProjectTaskByID,
+  getOrgProjectTaskComments, getOrgProjectTaskEvents,
+  getOrgProjectTaskFiles, getOrgProjectTasks,
+  getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray,
+  getOrgProjectTasksBySprintID,
+  getOrgProjectTasksInBacklog,
+  getProjectsByOrgID
+} from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -95,7 +98,7 @@ export const useOrgProjectFirstColumn = (projectID) => {
   useEffect(() => {
     if (myOrgID && projectID)
       getOrgProjectFirstColumn(myOrgID, projectID)
-      .then((column) => setColumn(column))
+        .then((column) => setColumn(column))
   }, [myOrgID, projectID])
 
   return column
@@ -139,16 +142,16 @@ export const useBuildProjectBoard = (projectID, tasksFilter) => {
 }
 
 export const useOrgProjectSprintTasks = (projectID, sprintID) => {
-  
-    const { myOrgID } = useContext(StoreContext)
-    const [tasks, setTasks] = useState([])
-  
-    useEffect(() => {
-      if (myOrgID && projectID && sprintID)
-        getOrgProjectTasksBySprintID(myOrgID, projectID, sprintID, setTasks)
-    }, [myOrgID, projectID, sprintID])
-  
-    return tasks  
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID && sprintID)
+      getOrgProjectTasksBySprintID(myOrgID, projectID, sprintID, setTasks)
+  }, [myOrgID, projectID, sprintID])
+
+  return tasks
 }
 
 export const useOrgProjectBacklogTasks = (projectID) => {
@@ -178,27 +181,66 @@ export const useOrgProjectTaskFiles = (projectID, taskID, limit) => {
 }
 
 export const useOrgProjectTaskComments = (projectID, taskID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [comments, setComments] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID && taskID)
+      getOrgProjectTaskComments(myOrgID, projectID, taskID, setComments, limit)
+  }, [myOrgID, projectID, taskID, limit])
+
+  return comments
+}
+
+export const useOrgProjectTaskEvents = (projectID, taskID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID && taskID)
+      getOrgProjectTaskEvents(myOrgID, projectID, taskID, setEvents, limit)
+  }, [myOrgID, projectID, taskID, limit])
+
+  return events
+}
+
+export const useOpenProjectTasks = (projectID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID)
+      getOrgProjectOpenTasks(myOrgID, projectID, setTasks, limit)
+  }, [myOrgID, projectID, limit])
+
+  return tasks
+}
+
+export const useClosedProjectTasks = (projectID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID)
+      getOrgProjectClosedTasks(myOrgID, projectID, setTasks, limit)
+  }, [myOrgID, projectID, limit])
+
+  return tasks
+}
+
+export const useAllOrgOpenProjectTasks = (limit) => {
   
     const { myOrgID } = useContext(StoreContext)
-    const [comments, setComments] = useState([])
+    const [tasks, setTasks] = useState([])
   
     useEffect(() => {
-      if (myOrgID && projectID && taskID)
-        getOrgProjectTaskComments(myOrgID, projectID, taskID, setComments, limit)
-    }, [myOrgID, projectID, taskID, limit])
+      if (myOrgID)
+        getAllOrgOpenProjectTasks(myOrgID, setTasks, limit)
+    }, [myOrgID, limit])
   
-    return comments
-  }
-
-  export const useOrgProjectTaskEvents = (projectID, taskID, limit) => {
-
-    const { myOrgID } = useContext(StoreContext)
-    const [events, setEvents] = useState([])
-  
-    useEffect(() => {
-      if (myOrgID && projectID && taskID)
-        getOrgProjectTaskEvents(myOrgID, projectID, taskID, setEvents, limit)
-    }, [myOrgID, projectID, taskID, limit])
-  
-    return events
+    return tasks
   }

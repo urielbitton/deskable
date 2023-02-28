@@ -1,3 +1,4 @@
+import { useOpenProjectTasks, useClosedProjectTasks } from "app/hooks/projectsHooks"
 import { useDocsCount } from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
@@ -14,8 +15,9 @@ export default function ProjectCard(props) {
     lastActive, projectID } = props.project
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const tasksNum = useDocsCount(tasksPath)
-  const openTasksNum = 0
-  const closedTasksNum = 0
+  const tasksLimit = 50
+  const openTasksNum = useOpenProjectTasks(projectID, tasksLimit)?.length
+  const closedTasksNum = useClosedProjectTasks(projectID, tasksLimit)?.length
 
   return (
     <Link
@@ -46,11 +48,11 @@ export default function ProjectCard(props) {
         </div>
         <div>
           <h6>Open Tasks</h6>
-          <span>{openTasksNum}</span>
+          <span>{openTasksNum}{openTasksNum > tasksLimit ? '+' : ''}</span>
         </div>
         <div>
           <h6>Completed Tasks</h6>
-          <span>{closedTasksNum}</span>
+          <span>{closedTasksNum}{closedTasksNum > tasksLimit ? '+' : ''}</span>
         </div>
       </div>
       <div className="footer-info">

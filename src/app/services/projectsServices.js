@@ -1,7 +1,7 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
 import {
-  collection, doc, getDocs, limit,
+  collection, collectionGroup, doc, getDocs, limit,
   onSnapshot, orderBy, query, runTransaction, where, writeBatch
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
@@ -144,6 +144,44 @@ export const getOrgProjectTaskEvents = (orgID, projectID, taskID, setEvents, lim
   )
   onSnapshot(q, (snapshot) => {
     setEvents(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getOrgProjectOpenTasks = (orgID, projectID, setTasks, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    where('isDone', '==', false),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getOrgProjectClosedTasks = (orgID, projectID, setTasks, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
+  const q = query(
+    docRef,
+    where('isDone', '==', true),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getAllOrgOpenProjectTasks = (orgID, setTasks, lim) => {
+  const docRef = collectionGroup(db, 'tasks')
+  const q = query(
+    docRef,
+    where('isDone', '==', false),
+    where('orgID', '==', orgID),
+    orderBy('dateModified', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setTasks(snapshot.docs.map(doc => doc.data()))
   })
 }
 
@@ -300,6 +338,7 @@ export const createProjectTaskService = (orgID, userID, project, columnID, task,
         dateModified: new Date(),
         description: task.description,
         inSprint: task.addTo === 'sprint',
+        inDone: false,
         orgID,
         position: task.position,
         priority: task.priority,
@@ -531,7 +570,8 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
                 batch.update(doc(db, path, docID), {
                   position: newPosition,
                   columnID: newColumnID,
-                  status: newColumnTitle
+                  status: newColumnTitle,
+                  isDone: newColumnID === columns[columns.length - 1].columnID && newColumnID !== columns[0].columnID
                 })
               }
             })
@@ -555,26 +595,27 @@ export const moveTaskToBacklogService = (tasksPath, myUserID, taskID, setToasts)
   const projectID = tasksPath.split('/')[3]
   const eventsPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/events`
   return getLastBacklogTaskPosition(orgID, projectID)
-  .then((position) => {
-    return updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        inSprint: false,
-        sprintID: null,
-        columnID: null,
-        position: null,
-        backlogPosition: position + 1,
-        status: 'backlog',
-      },
-      setToasts
-    )
-      .then(() => {
-        setToasts(successToast('Task moved to backlog.'))
-        createOrgProjectTaskEvent(eventsPath, myUserID, `Task moved to backlog`, 'fas fa-task', setToasts)
-      })
-  })
-  .catch(err => catchCode(err, 'There was a problem moving the task to the backlog. Please try again.', setToasts))
+    .then((position) => {
+      return updateSingleTaskItemService(
+        tasksPath,
+        taskID,
+        {
+          inSprint: false,
+          sprintID: null,
+          columnID: null,
+          position: null,
+          backlogPosition: position + 1,
+          status: 'backlog',
+          isDone: false
+        },
+        setToasts
+      )
+        .then(() => {
+          setToasts(successToast('Task moved to backlog.'))
+          createOrgProjectTaskEvent(eventsPath, myUserID, `Task moved to backlog`, 'fas fa-task', setToasts)
+        })
+    })
+    .catch(err => catchCode(err, 'There was a problem moving the task to the backlog. Please try again.', setToasts))
 }
 
 export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, setLoading, setToasts) => {
@@ -807,6 +848,7 @@ export const diffColumnMoveBacklogTaskService = (path, taskID, positions, source
                 position: null,
                 inSprint: false,
                 status: 'backlog',
+                isDone: false,
                 columnID: null
               })
             }

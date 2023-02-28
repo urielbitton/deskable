@@ -13,7 +13,7 @@ export default function AppSwitcher() {
   return (
     <>
       {
-        user && myUser?.userID ?
+        user ?
           user?.emailVerified ?
             <AppContainer /> :
           <VerifySwitcher /> :

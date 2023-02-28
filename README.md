@@ -20,12 +20,14 @@ User types
 To Dos
 - projects:
   - project dashboard
-  - projects updates
   - projects settings
+  - projects updates
+  - pages (pages is a new feature which is like confluence pages - use froala or summernote as editor. Pages are simply docs for projects or tasks)
   - complete sprint logic - ask where to move incomplete tasks (all completed tasks will not be found in backlog nor board and can be found in all tasks page) (when mark sprint complete, add a new sprint with the same tasks except the completed ones)
   - let users upload project avatar in project settings, let them edit all info as well
   - let users accept/reject project invitations
   - add project templates when creating projects (software, marketing, design, etc) - templates are principally just a different selection of column titles (software: todo, in progress, in review, done. design: to do, concept, design, launch, testing, etc. or choose blank template)
+  - change wysiwg editor with froala or summernote: (https://www.npmjs.com/package/react-froala-wysiwyg, https://www.npmjs.com/package/react-summernote)
 
 Other Todos
 - start by creating an org (invitation only)

@@ -31,6 +31,8 @@ import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import OrgUsersTagInput from "./OrgUsersTagInput"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
+import ProjectPages from "./ProjectPages"
+import ProjectSettings from "./ProjectSettings"
 import ProjectTaskPage from "./ProjectTaskPage"
 import ProjectTasks from "./ProjectTasks"
 import './styles/SingleProject.css'
@@ -73,6 +75,7 @@ export default function SingleProject() {
   const searchFilters = `orgID: ${myOrgID} AND projectID: ${projectID}`
   const showAll = false
   const isBoardPage = location.pathname.split('/')[3] === 'board'
+  const isBacklogPage = location.pathname.split('/')[3] === 'backlog'
   const isTasksPage = location.pathname.split('/')[3] === 'tasks'
 
   const tasksFilter = (tasks, column) => {
@@ -234,27 +237,6 @@ export default function SingleProject() {
       })
   }
 
-  const initEditProject = () => {
-
-  }
-
-  const deleteProject = () => {
-    const confirm = window.confirm('Are you sure you want to delete this project? You will ' +
-      +'lose all sprints info, project tasks and associated files. This action cannot be undone.')
-    if (!confirm) return
-    setPageLoading(true)
-    deleteOrgProjectService(
-      myOrgID,
-      projectID,
-      project?.name,
-      setToasts,
-      setPageLoading
-    )
-      .then(() => {
-        navigate('/projects')
-      })
-  }
-
   const archiveProject = () => {
 
   }
@@ -382,7 +364,7 @@ export default function SingleProject() {
       </div>
       <div className="project-toolbar">
         {
-          !isTasksPage &&
+          (isBacklogPage || isBoardPage) &&
           <div className="top-side">
             <div className="left-side">
               <h5>Overview</h5>
@@ -433,10 +415,9 @@ export default function SingleProject() {
                   ...isBoardPage ? [{ label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) }] : [],
                   { label: !project?.isStarred ? 'Star Project' : 'Unstar Project', icon: 'fas fa-star', onClick: () => starProject() },
                   ...project?.isSprintActive ? [{ label: 'Complete Sprint', icon: 'fas fa-check-square', onClick: () => completeSprint() }] : [],
-                  { label: 'Edit Project', icon: 'fas fa-pen', onClick: () => initEditProject() },
-                  { label: 'Delete Project', icon: 'fas fa-trash', onClick: () => deleteProject() },
                   { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
-                  { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() }
+                  { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() },
+                  { label: 'Project Settings', icon: 'fas fa-cog', onClick: () => navigate('settings') },
                 ]}
               />
             </div>
@@ -450,6 +431,8 @@ export default function SingleProject() {
             <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
             <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
             <NavLink to={`/projects/${projectID}/tasks`}>Tasks</NavLink>
+            <NavLink to={`/projects/${projectID}/pages`}>Pages</NavLink>
+            <NavLink to={`/projects/${projectID}/settings`}>Settings</NavLink>
           </AppTabsBar>
         </div>
       </div>
@@ -469,6 +452,8 @@ export default function SingleProject() {
           />
           <Route path="tasks" element={<ProjectTasks project={project} />} />
           <Route path="tasks/:taskID" element={<ProjectTaskPage />} />
+          <Route path="pages" element={<ProjectPages project={project} />} />
+          <Route path="settings" element={<ProjectSettings project={project} />} />
         </Routes>
       </div>
       <AppModal

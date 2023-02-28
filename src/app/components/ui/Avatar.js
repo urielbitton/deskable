@@ -4,11 +4,12 @@ import './styles/Avatar.css'
 export default function Avatar(props) {
 
   const { src, dimensions="50px", alt='avatar', title, 
-    border, onClick, enableEditing, removeTitle, className='' } = props
+    border, onClick, enableEditing, removeTitle, 
+    className='', round=true } = props
 
   return (
     <div 
-      className={`avatar-container ${className}`}
+      className={`avatar-container ${className} ${round ? 'round' : ''}`}
       style={{width: dimensions, height: dimensions, minWidth: dimensions, border}}
       title={title}
       onClick={() => onClick && onClick()}

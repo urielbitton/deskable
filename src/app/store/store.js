@@ -19,7 +19,6 @@ const StoreContextProvider = ({children}) => {
   const myMemberType = myUser?.memberType
   const myOrgID = myUser?.activeOrgID
   const photoURLPlaceholder = 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fimages%2FphotoURLPlaceholder.png?alt=media&token=e920fe83-3762-4093-ad42-abf85dfc8e2d'
-  const projectAvatarImg = 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fimages%2Fproject-avatar-1.png?alt=media&token=58f72fba-49f4-491d-a1e4-207d5d8531dd'
   const percentFormat = new Intl.NumberFormat('en-CA', {style: 'percent'})
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [toasts, setToasts] = useState([])
@@ -60,7 +59,7 @@ const StoreContextProvider = ({children}) => {
     darkMode, setDarkMode,
     percentFormat,
     contentScrollBottom, setContentScrollBottom, 
-    photoURLPlaceholder, projectAvatarImg,
+    photoURLPlaceholder,
     windowIsFocused,
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,

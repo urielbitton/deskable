@@ -333,3 +333,74 @@ export const taskPointsOptions = [
     iconColor: 'var(--grayText)'
   }
 ]
+
+export const projectAvatarsList = [
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-1.png?alt=media&token=01fb1ae4-2d21-4f72-9ffd-d46c13868ac7',
+    alt: 'Project Avatar 1'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-2.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 2'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-3.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 3'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-4.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 4'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-5.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 5'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-6.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 6'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-7.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 7'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-8.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 8'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-9.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 9'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-10.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 10'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-11.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 11'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-12.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 12'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-13.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 13'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-14.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 14'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-15.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 15'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-16.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 16'
+  },
+  {
+    src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-17.png?alt=media&token=4b8b0b8f-8f9f-4f9f-9f9f-8f9f4f9f9f9f',
+    alt: 'Project Avatar 17'
+  }
+]

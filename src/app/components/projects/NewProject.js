@@ -5,7 +5,7 @@ import newProjectBlob from 'app/assets/images/new-project-blob.svg'
 import { StoreContext } from "app/store/store"
 import { AppInput, AppReactSelect } from "../ui/AppInputs"
 import {
-  projectAccessOptions, projectCategoriesOptions, projectTypeOptions,
+  projectAccessOptions, projectAvatarsList, projectCategoriesOptions, projectTypeOptions,
   switchProjectAccess, switchProjectCategory, switchProjectType
 } from "app/data/projectsData"
 import OrgUsersTagInput from "./OrgUsersTagInput"
@@ -15,11 +15,12 @@ import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import { createOrgProjectService } from "app/services/projectsServices"
 import { useNavigate } from "react-router-dom"
+import AvatarPicker from "../ui/AvatarPicker"
 
 export default function NewProject() {
 
   const { myOrgID, setShowProjectsSidebar, myUserID,
-    setToasts, projectAvatarImg  } = useContext(StoreContext)
+    setToasts } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [projectType, setProjectType] = useState(projectTypeOptions[0].value)
   const [accessType, setAccessType] = useState(projectAccessOptions[0].value)
@@ -29,6 +30,7 @@ export default function NewProject() {
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [inviteesIDs, setInviteesIDs] = useState([])
   const [createLoading, setCreateLoading] = useState(false)
+  const [selectedAvatar, setSelectedAvatar] = useState(projectAvatarsList[0])
   const orgAlgoliaFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID}`
   const inviteesUsers = useUsers(inviteesIDs)
   const navigate = useNavigate()
@@ -70,24 +72,24 @@ export default function NewProject() {
   }
 
   const createProject = () => {
-    if(!nameIsNotEmpty) return
+    if (!nameIsNotEmpty) return
     createOrgProjectService(
-      myOrgID, 
-      myUserID, 
+      myOrgID,
+      myUserID,
       {
         accessType,
         category,
         members: [...inviteesIDs, myUserID],
         name,
         projectType,
-        photoURL: projectAvatarImg
-      }, 
-      setToasts, 
+        photoURL: selectedAvatar?.src
+      },
+      setToasts,
       setCreateLoading
     )
-    .then((projectID) => {
-      navigate(`/projects/${projectID}/backlog`)
-    })
+      .then((projectID) => {
+        navigate(`/projects/${projectID}/backlog`)
+      })
   }
 
   useEffect(() => {
@@ -101,6 +103,18 @@ export default function NewProject() {
           <h3>Create Project</h3>
           <h6>You can edit these details later in your project settings.</h6>
           <div className="form">
+            <AvatarPicker
+              label="Project Avatar"
+              name="avatar-picker"
+              showModal={showCoverInput === 'avatar-picker'}
+              setShowModal={setShowCoverInput}
+              avatarsList={projectAvatarsList}
+              activeAvatar={projectAvatarsList[0]}
+              pickerDimensions={40}
+              avatarsDimensions={48}
+              showUploader
+              onAvatarClick={(avatar) => setSelectedAvatar(avatar)}
+            />
             <AppInput
               label="Project Name"
               value={name}

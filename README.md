@@ -19,15 +19,13 @@ User types
 
 To Dos
 - projects:
-  - complete sprint logic - ask where to move incomplete tasks (all completed tasks will not be found in backlog nor board and can be found in all tasks page)
-  - when creating project generate random avatar from list of avatars for project photoURL
-  - let users upload project avatar in project settings, let them edit all info as well
-  - when mark sprint complete, add a new sprint with the same tasks except the completed ones
-  - add project templates when creating projects (software, marketing, design, etc) - templates are principally just a different selection of column titles (software: todo, in progress, in review, done. design: to do, concept, design, launch, testing, etc. or choose blank template)
   - project dashboard
   - projects updates
   - projects settings
+  - complete sprint logic - ask where to move incomplete tasks (all completed tasks will not be found in backlog nor board and can be found in all tasks page) (when mark sprint complete, add a new sprint with the same tasks except the completed ones)
+  - let users upload project avatar in project settings, let them edit all info as well
   - let users accept/reject project invitations
+  - add project templates when creating projects (software, marketing, design, etc) - templates are principally just a different selection of column titles (software: todo, in progress, in review, done. design: to do, concept, design, launch, testing, etc. or choose blank template)
 
 Other Todos
 - start by creating an org (invitation only)

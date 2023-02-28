@@ -1,7 +1,7 @@
 import { switchTaskType } from "app/data/projectsData"
 import { useOrgProjectTask } from "app/hooks/projectsHooks"
 import React, { useState } from 'react'
-import { useSearchParams } from "react-router-dom"
+import { useParams, useSearchParams } from "react-router-dom"
 import AppModal from "../ui/AppModal"
 import './styles/TaskModal.css'
 import TaskContentDetails from "./TaskContentDetails"
@@ -18,7 +18,7 @@ export default function TaskModal(props) {
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const taskID = searchParams.get('taskID')
-  const projectID = searchParams.get('projectID')
+  const projectID = useParams().projectID
   const task = useOrgProjectTask(projectID, taskID)
 
   const resetTaskData = () => {

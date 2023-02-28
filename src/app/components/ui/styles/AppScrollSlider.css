@@ -3,17 +3,44 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-  overflow-x: auto;
+  overflow-x: overlay;
   transition: all 0.5s;
+  padding-bottom: 10px;
 }
-.scroll-slider-container::-webkit-scrollbar {
-  display: none;
+.scroll-slider-container::-webkit-scrollbar,
+.scroll-slider-container.hide-scrollbar::-webkit-scrollbar-track,
+.scroll-slider-container.hide-scrollbar:hover::-webkit-scrollbar-track {
+  height: 0;
 }
+.scroll-slider-container:hover::-webkit-scrollbar {
+  height: 4px;
+}
+.scroll-slider-container::-webkit-scrollbar-track {
+  background: var(--lightGrayText);
+  border-radius: 5px;
+}
+.scroll-slider-container::-webkit-scrollbar-thumb {
+  background: var(--grayText);
+  border-radius: 5px;
+}
+
 .scroll-slider-container .scroll-flex .children {
   display: flex;
   align-items: center;
   gap: 7px;
   z-index: 10;
+}
+.scroll-slider-parent .faders {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 100%
+  );
+  z-index: 15;
 }
 .scroll-slider-parent .scroll-arrows {
   position: absolute;
@@ -26,6 +53,9 @@
   justify-content: space-between;
   padding: 7px;
   transition: all 0.2s;
+}
+.scroll-slider-parent .scroll-arrows.hide-arrows {
+  display: none;
 }
 .scroll-slider-parent .scroll-arrows .icon-container {
   box-shadow: var(--shadow);

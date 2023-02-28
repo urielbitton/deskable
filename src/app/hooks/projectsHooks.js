@@ -232,15 +232,15 @@ export const useClosedProjectTasks = (projectID, limit) => {
   return tasks
 }
 
-export const useAllOrgOpenProjectTasks = (limit) => {
-  
-    const { myOrgID } = useContext(StoreContext)
-    const [tasks, setTasks] = useState([])
-  
-    useEffect(() => {
-      if (myOrgID)
-        getAllOrgOpenProjectTasks(myOrgID, setTasks, limit)
-    }, [myOrgID, limit])
-  
-    return tasks
-  }
+export const useAllOrgOpenProjectTasks = (limit, sortBy) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    if (myOrgID)
+      getAllOrgOpenProjectTasks(myOrgID, setTasks, sortBy, limit)
+  }, [myOrgID, sortBy, limit])
+
+  return tasks
+}

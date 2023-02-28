@@ -20,40 +20,49 @@ import PostPhotosModalPage from "app/pages/PostPhotosModalPage"
 import PostPage from "app/pages/PostPage"
 import MyProfilePage from "app/pages/MyProfilePage"
 import MyOrgPage from "app/pages/MyOrgPage"
+import UserManagement from "app/pages/UserManagement"
+import CreateOrgPage from "app/pages/CreateOrgPage"
 
 export default function RoutesContainer() {
 
-  const { myMemberType } = useContext(StoreContext)
+  const { myMemberType, myOrgID } = useContext(StoreContext)
   const isClassA = myMemberType === "classa"
 
   return (
     <div className={`routes-container`}>
       <Routes>
         <Route index element={<HomePage />} />
-        <Route path="posts" element={<PostsPage />} />
-        <Route path="posts/:postID" element={<PostPage />} />
-        <Route path="posts/:postID/photos" element={<PostPhotosModalPage />} />
-        <Route path="projects/*" element={<ProjectsPage />} />
-        <Route path="messages" element={<MessagesPage />} />
-        <Route path="meetings" element={<MeetingsPage />} />
-        <Route path="events" element={<EventsPage />} />
-        <Route path="resources" element={<ResourcesPage />} />
+        {
+          myOrgID &&
+          <>
+            <Route path="posts" element={<PostsPage />} />
+            <Route path="posts/:postID" element={<PostPage />} />
+            <Route path="posts/:postID/photos" element={<PostPhotosModalPage />} />
+            <Route path="projects/*" element={<ProjectsPage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="meetings" element={<MeetingsPage />} />
+            <Route path="events" element={<EventsPage />} />
+            <Route path="resources" element={<ResourcesPage />} />
+            <Route path="my-organization" element={<MyOrgPage />} />
+          </>
+        }
+        <Route path="create-organization" element={<CreateOrgPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="my-profile" element={<MyProfilePage />} />
-        <Route path="my-org" element={<MyOrgPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         {
-          isClassA &&
+          isClassA && myOrgID &&
           <>
-          <Route path="employees" element={<EmployeesPage />} />
-          <Route path="employees/new" element={<NewEmployeePage />} />
-          <Route path="employees/:employeeID" element={<EmployeePage />} />
+            <Route path="employees" element={<EmployeesPage />} />
+            <Route path="employees/new" element={<NewEmployeePage />} />
+            <Route path="employees/:employeeID" element={<EmployeePage />} />
           </>
         }
         <Route path="*" element={<ErrorPage />} />
+        <Route path="user-management/*" element={<UserManagement />} />
       </Routes>
     </div>
   )

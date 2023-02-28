@@ -147,6 +147,13 @@
   background: var(--lightGrayText);
 }
 
+.projects-sidebar .section-projects h5 a {
+  font-size: 9px;
+}
+.projects-sidebar .section-projects h5 a:hover {
+  text-decoration: underline;
+}
+
 /* Minimized sidebar */
 .projects-sidebar.minimized {
   padding: 10px 5px;
@@ -180,11 +187,6 @@
 .projects-sidebar.minimized .section-projects h5,
 .projects-sidebar.minimized .section-tasks h5 {
   display: none;
-}
-.projects-sidebar.minimized .section-projects > i {
-  font-size: 13px;
-  color: var(--grayText);
-  margin-bottom: 5px;
 }
 .projects-sidebar.minimized .section-projects .all-projects-list a {
   padding: 5px;

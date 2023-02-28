@@ -1,17 +1,19 @@
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
+import AppButton from "../ui/AppButton"
 import DropdownButton from "../ui/DropdownButton"
 import IconContainer from "../ui/IconContainer"
 import NavDropdown from "./NavDropdown"
 import NavSearch from "./NavSearch"
 import NotificationElement from "./NotificationElement"
+import ProfileDropdown from "./ProfileDropdown"
 import './styles/Navbar.css'
 
 export default function Navbar() {
 
   const { myUserID, setShowMobileSidebar, myMemberType,
-    hideRightBar, setHideRightBar } = useContext(StoreContext)
+    hideRightBar, setHideRightBar, myOrgID } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const unreadNotifications = useUnreadNotifications(myUserID, 50)
   const notifications = useAllNotifications(myUserID, 5)
@@ -45,23 +47,31 @@ export default function Navbar() {
           </div>
         </div>
         <div className="right">
-          <DropdownButton
-            label="Create New"
-            iconRight="fal fa-plus"
-            showMenu={showMenu === 'show'}
-            setShowMenu={setShowMenu}
-            className="create-new-btn"
-            buttonType="outlineWhiteBtn"
-            rightIcon="fal fa-chevron-down"
-            items={[
-              { label: "New Post", icon: "fas fa-newspaper", url: "/posts/new" },
-              isClassA && { label: "New Employee", icon: "fas fa-user-plus", url: "/employees/new" },
-              { label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" },
-              { label: "New Message", icon: "fas fa-comment", url: "/messages/new" },
-              { label: "New Meeting", icon: "fas fa-video", url: "/meetings/new" },
-              { label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" },
-            ]}
-          />
+          {
+            myOrgID ?
+            <DropdownButton
+              label="Create New"
+              iconRight="fal fa-plus"
+              showMenu={showMenu === 'show'}
+              setShowMenu={setShowMenu}
+              className="create-new-btn"
+              buttonType="outlineWhiteBtn"
+              rightIcon="fal fa-chevron-down"
+              items={[
+                { label: "New Post", icon: "fas fa-newspaper", url: "/posts/new" },
+                isClassA && { label: "New Employee", icon: "fas fa-user-plus", url: "/employees/new" },
+                { label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" },
+                { label: "New Message", icon: "fas fa-comment", url: "/messages/new" },
+                { label: "New Meeting", icon: "fas fa-video", url: "/meetings/new" },
+                { label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" },
+              ]}
+            /> :
+            <AppButton
+              label="Join Organization"
+              buttonType="outlineWhiteBtn small"
+              style={{borderColor: 'rgba(255,255,255,0.4)'}}
+            />
+          }
           <IconContainer
             icon="fas fa-bell"
             inverted
@@ -77,20 +87,23 @@ export default function Navbar() {
             badgeBgColor="#fff"
             badgeTextColor="var(--darkGrayText)"
           />
-          <IconContainer
-            icon="fas fa-comment"
-            inverted
-            iconColor="#fff"
-            iconSize="16px"
-            dimensions="30px"
-            tooltip="Messages"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowMenu(showMenu === 'messages' ? null : 'messages')
-            }}
-            badgeBgColor="#fff"
-            badgeTextColor="var(--darkGrayText)"
-          />
+          {
+            myOrgID &&
+            <IconContainer
+              icon="fas fa-comment"
+              inverted
+              iconColor="#fff"
+              iconSize="16px"
+              dimensions="30px"
+              tooltip="Messages"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowMenu(showMenu === 'messages' ? null : 'messages')
+              }}
+              badgeBgColor="#fff"
+              badgeTextColor="var(--darkGrayText)"
+            />
+          }
           <NavDropdown
             label="Notifications"
             viewAllURL="/notifications"
@@ -98,6 +111,11 @@ export default function Navbar() {
             showDropdown={showMenu}
             setShowDropdown={setShowMenu}
             itemsRender={notificationsList}
+          />
+          <ProfileDropdown
+            showMenu={showMenu}
+            setShowMenu={setShowMenu}
+            avatarDimensions="27px"
           />
           <div className="rightbar-btn">
             <i className="fal fa-bars" />

@@ -5,7 +5,8 @@ import './styles/AppScrollSlider.css'
 export default function AppScrollSlider(props) {
 
   const { children, onPrevClick, onNextClick, innerRef,
-    arrowsDimensions = 27, arrowsSize = 14, scrollAmount } = props
+    arrowsDimensions = 27, arrowsSize = 14, scrollAmount,
+    fadeEnd, hideScrollbar, hideArrows } = props
   const [showPrevArrow, setShowPrevArrow] = useState(false)
   const [showNextArrow, setShowNextArrow] = useState(false)
 
@@ -15,7 +16,7 @@ export default function AppScrollSlider(props) {
   }
 
   const arrowStyles = (showArrow) => {
-    return { 
+    return {
       visibility: showArrow ? 'visible' : 'hidden',
       opacity: showArrow ? 1 : 0,
     }
@@ -24,7 +25,7 @@ export default function AppScrollSlider(props) {
   return (
     <div className="scroll-slider-parent">
       <div
-        className="scroll-slider-container"
+        className={`scroll-slider-container ${hideScrollbar ? 'hide-scrollbar' : ''}`}
         ref={innerRef}
         onScroll={handleScroll}
       >
@@ -33,8 +34,8 @@ export default function AppScrollSlider(props) {
             {children}
           </div>
         </div>
-      </div> 
-      <div className="scroll-arrows">
+      </div>
+      <div className={`scroll-arrows ${hideArrows ? 'hide-arrows' : ''}`}>
         <IconContainer
           icon="fas fa-arrow-left"
           iconSize={arrowsSize}
@@ -62,6 +63,7 @@ export default function AppScrollSlider(props) {
           className="right-arrow"
         />
       </div>
+      {fadeEnd && showNextArrow && <div className="faders" style={{ width: fadeEnd }} />}
     </div>
   )
 }

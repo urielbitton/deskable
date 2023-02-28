@@ -6,7 +6,7 @@ import './styles/BacklogTaskItem.css'
 export default function BacklogTaskItem(props) {
 
   const { title, taskType, assigneesIDs, taskNum,
-    priority, points, taskID } = props.task
+    priority, points } = props.task
   const { onClick, isActive } = props
 
   return (

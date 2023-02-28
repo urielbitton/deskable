@@ -51,15 +51,12 @@ export const clearAuthState = (checked) => {
   return setPersistence(auth, browserSessionPersistence)
 }
 
-export const signOut = (setLoading) => {
-  setLoading(true)
+export const signOut = () => {
   auth.signOut()
   .then(() => {
-    setLoading(false)
     window.location.reload()
   })
   .catch(err => {
     console.log(err)
-    setLoading(false)
   })
 }

@@ -38,8 +38,7 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
   const projectID = useParams().projectID
   const [searchParams, setSearchParams] = useSearchParams()
   const paramTaskID = searchParams.get('taskID')
-  const paramProjectID = searchParams.get('projectID')
-  const taskDetailsOpen = paramTaskID !== null && paramProjectID !== null
+  const taskDetailsOpen = paramTaskID !== null
   const [showTitlesMenu, setShowTitlesMenu] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [showCoverInput, setShowCoverInput] = useState(null)
@@ -239,7 +238,7 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
   const handleTaskClick = (e, taskID) => {
     e.stopPropagation()
     e.preventDefault()
-    setSearchParams({ projectID, taskID })
+    setSearchParams({ taskID })
   }
 
   return (

@@ -8,8 +8,10 @@ export default function AppTabsBar(props) {
   return (
     <div 
       className={`app-tabs-bar ${sticky ? 'sticky' : ''} `+
-      `${noSpread ? 'no-spread' : ''} ${spacedOut ? 'spaced-out' : ''} `+
-      `${noBorder ? 'no-border' : ''} ${className ?? ''}`} 
+      `${noSpread ? 'no-spread' : ''} `+
+      `${spacedOut ? 'spaced-out' : ''} `+
+      `${noBorder ? 'no-border' : ''} `+
+      `${className ?? ''}`} 
       style={{gap: spacedOut}}
     >
       {children}

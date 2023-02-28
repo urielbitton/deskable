@@ -27,7 +27,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   const board = useBuildProjectBoard(projectID, tasksFilter)
   const columns = useOrgProjectColumns(projectID)
   const [searchParams, setSearchParams] = useSearchParams()
-  const viewModalMode = searchParams.get('taskID') !== null && searchParams.get('projectID') !== null
+  const viewModalMode = searchParams.get('taskID') !== null
   const newTaskModalMode = searchParams.get('newTask') === 'true'
   const [editTitleMode, setEditTitleMode] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -161,7 +161,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
   }
 
   const handleOpenTask = (taskID) => {
-    setSearchParams(`?projectID=${projectID}&taskID=${taskID}`)
+    setSearchParams(`?taskID=${taskID}`)
     setViewTaskModal(true)
   }
 
@@ -225,7 +225,7 @@ export default function ProjectBoard({ project, tasksFilter }) {
             <p>Start a sprint to begin working on your project.</p>
             <AppButton
               label="Start Sprint"
-              url={`/projects/${project.projectID}/backlog`}
+              url={`/projects/${projectID}/backlog`}
             />
           </div>
       }

@@ -3,17 +3,16 @@ import './styles/Sidebar.css'
 import logo from 'app/assets/images/logo.png'
 import { menuLinks } from "app/data/menuLinks"
 import { NavLink, useLocation } from "react-router-dom"
-import AppButton from "../ui/AppButton"
 import { StoreContext } from "app/store/store"
-import { AppInput } from "../ui/AppInputs"
 
 export default function Sidebar() {
 
-  const { myMemberType, showMobileSidebar, setShowMobileSidebar } = useContext(StoreContext)
+  const { myMemberType, showMobileSidebar, setShowMobileSidebar,
+    myOrgID } = useContext(StoreContext)
   const location = useLocation()
 
   const navLinksList = menuLinks
-  ?.filter(link => link.require === 'any' || link.require === myMemberType)
+  ?.filter(link => (link.require === 'any' || link.require === myMemberType) && (link.requiresOrg ? myOrgID !== null : true))
   .map((link, index) => {
     return <NavLink
       key={index}

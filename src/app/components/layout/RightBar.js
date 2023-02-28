@@ -11,16 +11,15 @@ import AppButton from "../ui/AppButton"
 import AppCalendar from "../ui/AppCalendar"
 import { AppInput, AppSwitch } from "../ui/AppInputs"
 import AppTabsBar from "../ui/AppTabsBar"
+import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import NewEventModal from "./NewEventModal"
-import ProfileDropdown from "./ProfileDropdown"
 import './styles/RightBar.css'
 
 export default function RightBar() {
 
   const { myUser, myUserID, myUserName, setToasts,
     hideRightBar, setHideRightBar } = useContext(StoreContext)
-  const [showMenu, setShowMenu] = useState(null)
   const [tabsBarIndex, setTabsBarIndex] = useState(0)
   const [calendarRangeStartDate, setCalendarRangeStartDate] = useState(new Date())
   const [calendarRangeEndDate, setCalendarRangeEndDate] = useState(new Date())
@@ -90,10 +89,10 @@ export default function RightBar() {
       }
       <div className="header">
         <div className="row">
-          <ProfileDropdown
-            showMenu={showMenu}
-            setShowMenu={setShowMenu}
-            avatarDimensions="67px"
+          <Avatar
+            src={myUser?.photoURL}
+            dimensions="67px"
+            border="2px solid var(--lightGrayText)"
           />
         </div>
         <h4>{myUserName}</h4>

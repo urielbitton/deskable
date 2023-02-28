@@ -25,12 +25,12 @@
 
 .app-tabs-bar > a,
 .app-tabs-bar > .tab-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  width: 100%;
   padding: 10px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 14px;
   color: var(--darkGrayText);

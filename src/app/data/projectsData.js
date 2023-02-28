@@ -334,6 +334,31 @@ export const taskPointsOptions = [
   }
 ]
 
+export const recentTasksSortByOptions = [
+  {
+    label: 'Date Modified',
+    value: 'dateModified',
+    icon: 'fas fa-calendar-alt',
+  },
+  {
+    label: 'Priority',
+    value: 'priority',
+    icon: 'fas fa-chevron-double-up',
+  },
+  {
+    label: 'Points',
+    value: 'points',
+    icon: 'fas fa-gamepad',
+  }
+] 
+
+export const recentTasksSortBySwitch = (sortBy) => {
+  if (sortBy === 'dateModified') return {name: 'Date Modified', icon: 'fas fa-calendar-alt'}
+  if (sortBy === 'priority') return {name: 'Priority', icon: 'fas fa-chevron-double-up'}
+  if (sortBy === 'points') return {name: 'Points', icon: 'fas fa-gamepad'}
+  return {name: 'Date Modified', icon: 'fas fa-calendar-alt'}
+}
+
 export const projectAvatarsList = [
   {
     src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-1.png?alt=media&token=01fb1ae4-2d21-4f72-9ffd-d46c13868ac7',

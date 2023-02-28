@@ -43,7 +43,6 @@ export default function SingleProject() {
     setPageLoading, myUserName } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
-  const [searchParams, setSearchParams] = useSearchParams()
   const [showOptions, setShowOptions] = useState(false)
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
@@ -126,7 +125,7 @@ export default function SingleProject() {
       key={index}
       className="search-result-row"
       onClick={() => {
-        navigate(`backlog?taskID=${task.taskID}&projectID=${projectID}`)
+        navigate(`backlog?taskID=${task.taskID}`)
         setShowSearchDropdown(false)
       }}
     >

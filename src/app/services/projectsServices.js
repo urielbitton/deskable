@@ -171,13 +171,13 @@ export const getOrgProjectClosedTasks = (orgID, projectID, setTasks, lim) => {
   })
 }
 
-export const getAllOrgOpenProjectTasks = (orgID, setTasks, lim) => {
+export const getAllOrgOpenProjectTasks = (orgID, setTasks, sortBy, lim) => {
   const docRef = collectionGroup(db, 'tasks')
   const q = query(
     docRef,
     where('isDone', '==', false),
     where('orgID', '==', orgID),
-    orderBy('dateModified', 'desc'),
+    orderBy(sortBy, 'desc'),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -1065,7 +1065,7 @@ export const cancelOrgProjectInvitationService = (orgID, project, userID, setToa
         `Your invitation to project: ${project.name} has been cancelled. You can ` +
         `inquire about the cancellation with your organization admin.`,
         'fas fa-project-diagram',
-        `/my-org`
+        `/my-organization`
       )
     })
     .then(() => {

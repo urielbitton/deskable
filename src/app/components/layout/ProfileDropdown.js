@@ -6,7 +6,7 @@ import Avatar from "../ui/Avatar"
 
 export default function ProfileDropdown(props) {
 
-  const { setPageLoading, myUserImg, myMemberType } = useContext(StoreContext)
+  const { myUserImg, myMemberType, myOrgID } = useContext(StoreContext)
   const { showMenu, setShowMenu, avatarDimensions } = props
 
   return (
@@ -21,15 +21,23 @@ export default function ProfileDropdown(props) {
         <Avatar
           src={myUserImg}
           dimensions={avatarDimensions}
-          border="2px solid var(--primary)"
+          border="1px solid #fff"
           alt="profile"
         />
+        <i className="fal fa-angle-down" />
       </div>
       <div className={`profile-dropdown ${showMenu === 'profile' ? 'show' : ''}`}>
         <Link to="/my-account">
           <i className="fas fa-user-circle" />
           <span>My Account</span>
         </Link>
+        {
+          myOrgID &&
+          <Link to="/my-organization">
+            <i className="fas fa-users" />
+            <span>My Organization</span>
+          </Link>
+        }
         <Link to="help-and-support">
           <i className="fas fa-question-circle" />
           <span>Help & Support</span>
@@ -38,7 +46,7 @@ export default function ProfileDropdown(props) {
           <i className="fas fa-cog" />
           <span>Settings</span>
         </Link>
-        <h6 onClick={() => signOut(setPageLoading)}>
+        <h6 onClick={() => signOut()}>
           <i className="fas fa-sign-out" />
           <span>Sign Out</span>
         </h6>

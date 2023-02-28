@@ -2,7 +2,7 @@ import { useOrgProjects } from "app/hooks/projectsHooks"
 import { StoreContext } from "app/store/store"
 import { truncateText } from "app/utils/generalUtils"
 import React, { useContext } from 'react'
-import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import './styles/ProjectsSidebar.css'
@@ -54,7 +54,7 @@ export default function ProjectsSidebar() {
         </div>
       </div>
       <div className="menu">
-        <NavLink 
+        <NavLink
           to="/projects"
           className={location.pathname === '/projects' ? 'active' : 'not-active'}
         >
@@ -69,20 +69,17 @@ export default function ProjectsSidebar() {
           <i className="fas fa-sliders-v" />
           <span>Settings</span>
         </NavLink>
-        {
-          !showProjectsSidebar &&
-          <NavLink to="/projects/new">
-            <i className="fas fa-plus" />
-          </NavLink>
-        }
+        <NavLink to="/projects/new">
+          <i className="fas fa-plus" />
+          <span>New Project</span>
+        </NavLink>
       </div>
       <div className="section section-projects">
         <h5>
           <span>Projects</span>
-          <small onClick={() => navigate('/projects/new')}>
-            New
-            <i className="far fa-plus" />
-          </small>
+          <Link to="/projects/all-projects">
+            View All
+          </Link>
         </h5>
         <div className="all-projects-list">
           {projectsList}
@@ -90,7 +87,6 @@ export default function ProjectsSidebar() {
       </div>
       <div className="section section-tasks">
         <h5>Project Tasks</h5>
-        {/* display tasks that are due this week from all projects (limit to 3 most recent projects) */}
       </div>
     </div>
   )

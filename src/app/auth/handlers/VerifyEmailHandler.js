@@ -16,7 +16,7 @@ export default function VerifyEmailHandler({ oobCode, continueUrl }) {
   const userID = continueUrl.split('userID=')[1]
 
   const handleVerifyEmail = (auth, oobCode) => {
-    if (!oobCode) return setToasts(errorToast('Invalid action code. Please make sure your email link is valid.'))
+    if (!oobCode) return setToasts(errorToast('Invalid action code. Please make sure your email link is valid.'), true)
     setLoading(true)
     applyActionCode(auth, oobCode)
       .then(() => {
@@ -36,18 +36,18 @@ export default function VerifyEmailHandler({ oobCode, continueUrl }) {
             .catch((error) => {
               console.log(error)
               setLoading(false)
-              setToasts(errorToast('Error creating user document. Please try again.'))
+              setToasts(errorToast('Error creating user document. Please try again.'), true)
             })
         }
         else {
-          setToasts(successToast('Your email has been verified. You can now log in to your account.'))
+          setToasts(successToast('Your email has been verified. You can now log in to your account.'), true)
           navigate(`/login?createAccount=true&userID=${userID}`)
           setLoading(false)
         }
       })
       .catch((error) => {
         console.log(error)
-        setToasts(errorToast('The link is invalid or has expired. Please verify your email again.'))
+        setToasts(errorToast('The link is invalid or has expired. Please verify your email again.'), true)
       })
   }
 
@@ -59,14 +59,19 @@ export default function VerifyEmailHandler({ oobCode, continueUrl }) {
   }, [])
 
   return (
-    <AuthHandlerPage
-      contentImg={verifyAccountImg}
-      title="Account Verified!"
-      description="Congratulations! Your account has been verified. You will be redirected to the homepage right away.
+    !user ? (
+      <AuthHandlerPage
+        contentImg={verifyAccountImg}
+        title="Account Verified!"
+        description="Congratulations! Your account has been verified. You will be redirected to the homepage right away.
        Click the button below if you are not redirected automatically."
-      btnLabel="Home"
-      onClick={() => navigate('/')}
-      loading={loading}
-    />
+        btnLabel="Home"
+        onClick={() => navigate('/')}
+        loading={loading}
+      />)
+      :
+      <div>
+        <h5>Please log out of this account and into your new account to verify your email</h5>
+      </div>
   )
 }

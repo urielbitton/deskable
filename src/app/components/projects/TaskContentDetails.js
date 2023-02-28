@@ -440,6 +440,8 @@ export default function TaskContentDetails(props) {
           <AppScrollSlider
             scrollAmount={200}
             innerRef={attachmentsSliderRef}
+            hideScrollbar
+            fadeEnd="50px"
           >
             {attachmentsList}
           </AppScrollSlider>

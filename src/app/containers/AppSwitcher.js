@@ -14,7 +14,7 @@ export default function AppSwitcher() {
     <>
       {
         user ?
-          user?.emailVerified ?
+          (user?.emailVerified && myUser?.userID)?
             <AppContainer /> :
           <VerifySwitcher /> :
           myUser === null ?

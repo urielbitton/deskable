@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Routes } from "react-router-dom"
 import AllProjects from "./AllProjects"
 import NewProject from "./NewProject"
@@ -9,10 +9,13 @@ import SingleProject from "./SingleProject"
 import './styles/ProjectsWindow.css'
 
 export default function ProjectsWindow() {
+
+  const [showScroll, setShowScroll] = useState(false)
+
   return (
-    <div className="projects-window">
+    <div className={`projects-window ${showScroll ? 'show-scroll' : ''}`}>
       <Routes>
-        <Route index element={<ProjectsHome />} />
+        <Route index element={<ProjectsHome setShowScroll={setShowScroll} />} />
         <Route path=":projectID/*" element={<SingleProject />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />

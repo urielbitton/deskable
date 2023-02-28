@@ -272,6 +272,98 @@
   color: #fff;
 }
 
+.navbar .profile-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 2px 5px;
+  border-radius: 40px;
+  user-select: none;
+}
+.navbar .profile-container:hover {
+  background: rgba(255,255,255,0.15);
+}
+.navbar .profile-container .clickable-profile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.navbar .profile-container .clickable-profile i {
+  color: #fff
+}
+.navbar .profile-dropdown {
+  min-width: 220px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: var(--shadow);
+  z-index: 100;
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  padding: 5px;
+  transition: all 0.2s;
+}
+.navbar .profile-dropdown.show {
+  visibility: visible;
+  opacity: 1;
+  top: 40px;
+}
+.navbar .profile-dropdown a,
+.navbar .profile-dropdown h6 {
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--grayText);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.navbar .profile-dropdown a i,
+.navbar .profile-dropdown h6 i {
+  color: var(--grayText);
+}
+.navbar .profile-dropdown a:hover,
+.navbar .profile-dropdown h6:hover {
+  background: var(--primary);
+  color: #fff;
+}
+.navbar .profile-dropdown a:hover i,
+.navbar .profile-dropdown h6:hover i {
+  color: #fff;
+}
+.navbar .profile-dropdown hr {
+  width: 90%;
+  height: 1px;
+  align-self: center;
+  margin: 3px 0;
+  background: #eee;
+}
+.navbar .profile-dropdown .info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  cursor: default;
+}
+.navbar .profile-dropdown .info span.value {
+  font-size: 12px;
+  font-weight: 700;
+}
+.navbar .profile-dropdown .info span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--grayText);
+}
 
 
 @media (max-width: 1080px) {

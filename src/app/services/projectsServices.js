@@ -550,6 +550,33 @@ export const changeDiffColumnTaskPositionService = (orgID, projectID, task, newP
     .catch(err => catchCode(err, 'There was a problem updating the task position. Please try again.', setToasts))
 }
 
+export const moveTaskToBacklogService = (tasksPath, myUserID, taskID, setToasts) => {
+  const orgID = tasksPath.split('/')[1]
+  const projectID = tasksPath.split('/')[3]
+  const eventsPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/events`
+  return getLastBacklogTaskPosition(orgID, projectID)
+  .then((position) => {
+    return updateSingleTaskItemService(
+      tasksPath,
+      taskID,
+      {
+        inSprint: false,
+        sprintID: null,
+        columnID: null,
+        position: null,
+        backlogPosition: position + 1,
+        status: 'backlog',
+      },
+      setToasts
+    )
+      .then(() => {
+        setToasts(successToast('Task moved to backlog.'))
+        createOrgProjectTaskEvent(eventsPath, myUserID, `Task moved to backlog`, 'fas fa-task', setToasts)
+      })
+  })
+  .catch(err => catchCode(err, 'There was a problem moving the task to the backlog. Please try again.', setToasts))
+}
+
 export const uploadOrgProjectTaskFiles = (filesPath, files, filesStoragePath, setLoading, setToasts) => {
   const orgID = filesPath.split('/')[1]
   const projectID = filesPath.split('/')[3]

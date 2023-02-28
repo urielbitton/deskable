@@ -12,6 +12,7 @@ import {
   changeDiffColumnTaskPositionService,
   createOrgProjectTaskCommentService, createOrgProjectTaskEvent,
   deleteProjectTaskService, getLastColumnTaskPosition,
+  moveTaskToBacklogService,
   updateSingleTaskItemService, uploadOrgProjectTaskFiles
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
@@ -337,23 +338,12 @@ export default function TaskContentDetails(props) {
   }
 
   const moveToBacklog = () => {
-    updateSingleTaskItem(
-      {
-        inSprint: false,
-        sprintID: null,
-        columnID: null,
-        position: null,
-        status: 'backlog'
-      },
-      'Moved the task to the backlog',
-      'fas fa-tasks',
-      'addTo'
+    moveTaskToBacklogService(
+      tasksPath, 
+      myUserID, 
+      taskID, 
+      setToasts
     )
-      .then(() => {
-        setCoverInputLoading(null)
-        setToasts(successToast('Task moved to the backlog.'))
-        setShowModal && setShowModal(false)
-      })
   }
 
   const archiveTask = () => {

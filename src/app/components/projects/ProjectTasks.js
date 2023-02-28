@@ -9,10 +9,12 @@ import { showXResultsOptions } from "app/data/general"
 import AppButton from "../ui/AppButton"
 import TaskFiltersPopup from "./TaskFiltersPopup"
 import { useOrgProjectColumns } from "app/hooks/projectsHooks"
+import { useParams } from "react-router-dom"
 
 export default function ProjectTasks({ project }) {
 
-  const projectColumns = useOrgProjectColumns(project.projectID)
+  const projectID = useParams().projectID
+  const projectColumns = useOrgProjectColumns(projectID)
   const [searchString, setSearchString] = useState('')
   const [query, setQuery] = useState('')
   const [numOfHits, setNumOfHits] = useState(0)
@@ -100,7 +102,10 @@ export default function ProjectTasks({ project }) {
   }
 
   return (
-    <div className="project-tasks">
+    <div 
+      className="project-tasks"
+      key={projectID}
+    >
       <div className="toolbar">
         <div className="search-info">
           <h5>{Math.min(numOfHits, hitsPerPage)} of <span>{numOfHits}</span> tasks</h5>

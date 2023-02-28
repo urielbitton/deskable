@@ -199,7 +199,10 @@ export default function ProjectBoard({ project, tasksFilter }) {
   }, [viewModalMode, newTaskModalMode])
 
   return (
-    <div className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}>
+    <div 
+      className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}
+      key={projectID}
+    >
       {
         isSprintActive ?
           <KanbanBoard

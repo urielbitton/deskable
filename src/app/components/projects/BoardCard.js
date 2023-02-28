@@ -1,7 +1,6 @@
 import { switchTaskPriority, switchTaskType } from "app/data/projectsData"
-import { successToast } from "app/data/toastsTemplates"
 import { useDocsCount } from "app/hooks/userHooks"
-import { createOrgProjectTaskEvent, updateSingleTaskItemService } from "app/services/projectsServices"
+import { moveTaskToBacklogService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
 import AppBadge from "../ui/AppBadge"
@@ -13,31 +12,20 @@ export default function BoardCard(props) {
 
   const { setToasts, myOrgID, myUserID } = useContext(StoreContext)
   const { taskID, title, taskNum, taskType, assigneesIDs,
-    priority, projectID, points } = props.task
+    priority, points } = props.task
   const { tasksPath, handleDeleteTask, dragging, setIsDragging,
     handleOpenTask } = props
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const filesNum = useDocsCount(`${tasksPath}/${taskID}/files`)
   const commentsNum = useDocsCount(`${tasksPath}/${taskID}/comments`)
-  const eventsPath = `organizations/${myOrgID}/projects/${projectID}/tasks/${taskID}/events`
 
   const moveToBacklog = () => {
-    return updateSingleTaskItemService(
-      tasksPath,
-      taskID,
-      {
-        inSprint: false,
-        sprintID: null,
-        columnID: null,
-        position: null,
-        status: 'backlog',
-      },
+    moveTaskToBacklogService(
+      tasksPath, 
+      myUserID, 
+      taskID, 
       setToasts
     )
-      .then(() => {
-        setToasts(successToast('Task moved to backlog.'))
-        createOrgProjectTaskEvent(eventsPath, myUserID, `Task moved to backlog`, 'fas fa-task', setToasts)
-      })
   }
 
   const archiveTask = () => {
@@ -85,7 +73,7 @@ export default function BoardCard(props) {
             bgColor={`${switchTaskType(taskType).color}22`}
             icon={switchTaskType(taskType).icon}
             iconSize="10px"
-            fontSize="11px"
+            fontSize="12px"
           />
           <span
             className="task-priority"

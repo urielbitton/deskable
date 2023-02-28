@@ -1,0 +1,77 @@
+.project-card {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: var(--cardShadow);
+  border: 1px solid var(--inputBorder);
+  transition: all 0.2s;
+  cursor: pointer;
+  overflow: hidden;
+}
+.project-card:hover {
+  background: var(--lightInputBg);
+}
+
+.project-card .header {
+  padding: 10px 15px;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-card .header h5 {
+  color: #fff;
+  font-weight: 600;
+}
+.project-card .header small {
+  color: #fff;
+  font-weight: 500;
+}
+
+.project-card .content {
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.project-card .content > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+.project-card .content > div h6 {
+  font-size: 13px;
+  color: #111;
+  font-weight: 600;
+}
+.project-card .content > div span {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 500;
+}
+
+.project-card .footer-info {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--lightInputBg);
+  border-top: 1px solid var(--inputBorder);
+}
+.project-card .footer-info h6 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 11px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.project-card .footer-info h6.right {
+  align-items: flex-end;
+}
+.project-card .footer-info h6 span {
+  font-weight: 500;
+}

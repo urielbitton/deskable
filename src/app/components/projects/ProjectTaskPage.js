@@ -25,7 +25,10 @@ export default function ProjectTaskPage() {
   }
 
   return task ? (
-    <div className="project-task-page">
+    <div 
+      className="project-task-page"
+      key={taskID}
+    >
       <div className="task-header">
         <div className="task-num">
           <span

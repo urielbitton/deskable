@@ -354,7 +354,7 @@ export default function SingleProject() {
               Team:
               <MultipleUsersAvatars
                 userIDs={allMembers}
-                maxAvatars={4}
+                maxAvatars={5}
                 avatarDimensions={27}
               />
             </small>
@@ -573,7 +573,7 @@ export default function SingleProject() {
         <p>You can ask your organization admin for access here.</p>
       </div>
     ) :
-      <div style={{ width: '100%', height: '100%', minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <i className="fal fa-spinner fa-spin" style={{ fontSize: 20 }} />
+      <div className="project-page-loader">
+        <i className="fal fa-spinner fa-spin" />
       </div>
 }

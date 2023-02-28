@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Routes } from "react-router-dom"
+import AllProjects from "./AllProjects"
 import NewProject from "./NewProject"
 import ProjectsHome from "./ProjectsHome"
 import ProjectsSettings from "./ProjectsSettings"
@@ -13,6 +14,7 @@ export default function ProjectsWindow() {
       <Routes>
         <Route index element={<ProjectsHome />} />
         <Route path=":projectID/*" element={<SingleProject />} />
+        <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />
         <Route path="settings" element={<ProjectsSettings />} />
         <Route path="new" element={<NewProject />} />

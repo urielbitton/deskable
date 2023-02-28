@@ -17,7 +17,7 @@ export default function ProjectTaskCard(props) {
   const filesPath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
   const commentsNum = useDocsCount(commentsPath)
   const filesNum = useDocsCount(filesPath)
-  const taskLocation = inSprint ? 'Active Sprint' : status === 'backlog' ? 'Backlog' : 'Completed'
+  const taskLocation = inSprint ? `Sprint: ${status}` : status === 'backlog' ? 'Backlog' : 'Completed'
   const reporter = useUser(reporterID)
 
   return (

@@ -58,7 +58,7 @@ export default function ProjectsSidebar() {
           to="/projects"
           className={location.pathname === '/projects' ? 'active' : 'not-active'}
         >
-          <i className="fas fa-browser" />
+          <i className="fas fa-th-large" />
           <span>Dashboard</span>
         </NavLink>
         <NavLink to="/projects/updates">

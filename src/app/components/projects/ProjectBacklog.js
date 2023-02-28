@@ -243,7 +243,10 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
   }
 
   return (
-    <div className={`project-backlog ${!taskDetailsOpen ? 'full' : ''}`}>
+    <div 
+      className={`project-backlog ${!taskDetailsOpen ? 'full' : ''}`}
+      key={projectID}
+    >
       <DragDropContext
         onDragEnd={handleMoveTask}
         onDragStart={onDragStart}

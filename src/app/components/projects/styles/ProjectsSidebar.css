@@ -99,6 +99,9 @@
 .projects-sidebar .menu a.not-active {
   background: inherit;
 }
+.projects-sidebar .menu a.not-active:hover {
+  background: var(--lightGrayText);
+}
 .projects-sidebar .menu a i {
   width: 20px;
 }

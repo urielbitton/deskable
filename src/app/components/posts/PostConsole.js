@@ -10,7 +10,7 @@ import './styles/PostConsole.css'
 export default function PostConsole(props) {
 
   const { myUser, myUserID, myOrgID, setToasts } = useContext(StoreContext)
-  const { title } = props
+  const { title, pathPrefix, placeholder } = props
   const [showPicker, setShowPicker] = useState(false)
   const [messageText, setMessageText] = useState('')
   const [uploadedImgs, setUploadedImgs] = useState([])
@@ -22,6 +22,7 @@ export default function PostConsole(props) {
     if(!isNotEmptyMessage || loading) return 
     if(uploadedImgs.length > 15) return setToasts(infoToast('You can only upload a maximum of 15 images.', true))
     createOrgPostService(
+      pathPrefix,
       myUserID,
       myOrgID,
       messageText,
@@ -47,7 +48,7 @@ export default function PostConsole(props) {
           alt="avatar"
         />
         <EmojiTextarea
-          placeholder="Write a post..."
+          placeholder={placeholder}
           showPicker={showPicker}
           setShowPicker={setShowPicker}
           messageText={messageText}

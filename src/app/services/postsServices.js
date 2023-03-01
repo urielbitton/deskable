@@ -25,14 +25,13 @@ export const getOrgPostByID = (orgID, postID, setPost) => {
   })
 }
 
-export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLoading, setToasts) => {
+export const createOrgPostService = (pathPrefix, userID, orgID, message, uploadedImgs, setLoading, setToasts) => {
   setLoading(true)
-  const postsPath = `organizations/${orgID}/posts`
-  const docID = getRandomDocID(postsPath)
-  const postStoragePath = `organizations/${orgID}/posts/${docID}/files`
+  const docID = getRandomDocID(pathPrefix)
+  const postStoragePath = `${pathPrefix}/${docID}/files`
   return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img?.file)) : null, postStoragePath, null)
     .then(data => {
-      return setDB(postsPath, docID, {
+      return setDB(pathPrefix, docID, {
         authorID: userID,
         dateCreated: new Date(),
         isEdited: false,
@@ -65,11 +64,12 @@ export const createOrgPostService = (userID, orgID, message, uploadedImgs, setLo
     })
 }
 
-export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs, deletedFiles, setLoading, setToasts) => {
+export const updateOrgPostService = (pathPrefix, postID, message, files, uploadedImgs, deletedFiles, setLoading, setToasts) => {
   setLoading(true)
-  const postStoragePath = `organizations/${orgID}/posts/${postID}/files`
+  const orgID = pathPrefix.split('/')[1]
+  const storagePath = `${pathPrefix}/${postID}/files`
   const deletedFilesFiltered = files.filter(file => !deletedFiles.find(name => name === file.name))
-  uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, postStoragePath, null)
+  uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img.file)) : null, storagePath, null)
     .then(data => {
       const postsPath = `organizations/${orgID}/posts`
       return updateDB(postsPath, postID, {
@@ -105,10 +105,11 @@ export const updateOrgPostService = (orgID, postID, message, files, uploadedImgs
     })
 }
 
-export const deleteOrgPostService = (orgID, postID, setLoading, setToasts) => {
+export const deleteOrgPostService = (pathPrefix, postID, setLoading, setToasts) => {
   setLoading(true)
+  const orgID = pathPrefix.split('/')[1]
   return httpsCallable(getFunctions(), 'onOrgPostDelete')({ 
-    orgID, postID 
+    pathPrefix, postID 
   })
     .then(() => {
       setLoading(false)
@@ -182,6 +183,18 @@ export const getOrgPostSubComments = (orgID, postID, commentID, setSubComments, 
   )
   onSnapshot(q, snapshot => {
     setSubComments(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+export const getAnnoucementsByOrgID = (orgID, setAnnouncements, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/announcements`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, snapshot => {
+    setAnnouncements(snapshot.docs.map(doc => doc.data()))
   })
 }
 

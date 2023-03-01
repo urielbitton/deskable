@@ -17,3 +17,12 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.posts-page .posts-column .tab-section {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+.posts-page .posts-column .tab-section.active {
+  display: flex;
+}

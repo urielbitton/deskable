@@ -1,8 +1,7 @@
 import useUser, { useDocsCount } from "app/hooks/userHooks"
 import {
-  addPostLikeService, addPostSavedService,
-  deleteOrgPostService,
-  removePostLikeService, removePostSavedService, updateOrgPostService
+  addPostLikeService, deleteOrgPostService,
+  removePostLikeService, updateOrgPostService
 } from "app/services/postsServices"
 import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
@@ -20,17 +19,14 @@ import PostComments from "./PostComments"
 import AppLink from "../ui/AppLink"
 import { useNavigate } from "react-router-dom"
 import PhotosModal from "../ui/PhotosModal"
-import ReportModal from "../ui/ReportModal"
-import { reportOrgPostOptions } from "app/data/general"
 
-export default function PostCard(props) {
+export default function AnnouncementCard(props) {
 
   const { myUserID, setToasts } = useContext(StoreContext)
   const { authorID, dateCreated, postID, postText, files,
-    orgID, likes, saved } = props.post
-  const { setShowLikesModal, setLikesStats, setShowSavedModal, 
+    orgID, likes, importance } = props.announcement
+  const { setShowLikesModal, setLikesStats, setShowSavedModal,
     setSavedStats } = props
-  const [showReportModal, setShowReportModal] = useState(false)
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [editMode, setEditMode] = useState(null)
@@ -39,10 +35,7 @@ export default function PostCard(props) {
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
   const [loading, setLoading] = useState(false)
   const [deletedFiles, setDeletedFiles] = useState([])
-  const [showPhotosModal, setShowPhotosModal] = useState({show: false, photos: []})
-  const [reportReason, setReportReason] = useState("")
-  const [reportMessage, setReportMessage] = useState("")
-  const [reportLoading, setReportLoading] = useState(false)
+  const [showPhotosModal, setShowPhotosModal] = useState({ show: false, photos: [] })
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -50,9 +43,7 @@ export default function PostCard(props) {
   const hasImgs = fileImgs?.length > 0
   const commentsNum = useDocsCount(`organizations/${orgID}/posts/${postID}/comments`)
   const likesNum = likes.length
-  const savedNum = saved.length
   const userHasLiked = likes.includes(myUserID)
-  const userHasSaved = saved.includes(myUserID)
   const navigate = useNavigate()
   const pathPrefix = `/organizations/${orgID}/posts`
 
@@ -118,7 +109,7 @@ export default function PostCard(props) {
   }
 
   const updatePost = () => {
-    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this post."))
+    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to edit this announcement."))
     if (!allowEditSave) return setToasts(infoToast("Please add some text or images to save."))
     if (editUploadedImgs.length > 15) return setToasts(infoToast("You can only upload a maximum of 15 images.", true))
     setLoading(true)
@@ -153,9 +144,9 @@ export default function PostCard(props) {
   }
 
   const deletePost = () => {
-    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to delete this post."))
-    const confirm = window.confirm("Are you sure you want to delete this post?")
-    if (!confirm) return setToasts(infoToast("Post not deleted."))
+    if (myUserID !== authorID) return setToasts(infoToast("You do not have permission to delete this announcement."))
+    const confirm = window.confirm("Are you sure you want to delete this announcement?")
+    if (!confirm) return
     deleteOrgPostService(
       pathPrefix,
       postID,
@@ -171,21 +162,9 @@ export default function PostCard(props) {
       removePostLikeService(myUserID, orgID, postID, setToasts)
   }
 
-  const bookmarkPost = () => {
-    if (!userHasSaved)
-      addPostSavedService(myUserID, orgID, postID, setToasts)
-    else
-      removePostSavedService(myUserID, orgID, postID, setToasts)
-  }
-
   const initLikesStats = () => {
     setShowLikesModal(true)
     setLikesStats(likes)
-  }
-
-  const initSavedStats = () => {
-    setShowSavedModal(true)
-    setSavedStats(saved)
   }
 
   useEffect(() => {
@@ -225,8 +204,6 @@ export default function PostCard(props) {
             items={[
               { label: "Edit", icon: "fas fa-pen", onClick: () => initEditPost(), private: authorID !== myUserID },
               { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost(), private: authorID !== myUserID },
-              { label: userHasSaved ? 'Unsave Post' : 'Save Post', icon: "fas fa-bookmark", onClick: () => bookmarkPost() },
-              { label: "Report", icon: "fas fa-flag", onClick: () => setShowReportModal(true) },
             ]}
           />
         </div>
@@ -252,7 +229,7 @@ export default function PostCard(props) {
               />
               <div className="btn-group">
                 <AppButton
-                  label="Save Post"
+                  label="Save Announcement"
                   rightIcon={loading ? "fas fa-spinner fa-spin" : null}
                   onClick={() => updatePost()}
                   disabled={!allowEditSave}
@@ -287,13 +264,6 @@ export default function PostCard(props) {
               {commentsNum} comment{commentsNum !== 1 ? 's' : ''}
             </small>
           }
-          {
-            savedNum > 0 &&
-            <small onClick={() => initSavedStats()}>
-              <i className="far fa-bookmark" />
-              {savedNum} save{savedNum !== 1 ? 'd' : ''}
-            </small>
-          }
         </div>
       </div>
       <div className="user-actions">
@@ -305,13 +275,9 @@ export default function PostCard(props) {
           <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
           <h6>Like{userHasLiked && 'd'}</h6>
         </div>
-        <div onClick={() => bookmarkPost()}>
-          <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />
-          <h6>Save{userHasSaved && 'd'}</h6>
-        </div>
       </div>
       <PostComments
-        post={props.post}
+        post={props.announcement}
         showComments={showComments}
         commentsNum={commentsNum}
         commentInputRef={commentInputRef}
@@ -327,18 +293,6 @@ export default function PostCard(props) {
         showModal={showPhotosModal.show}
         photos={showPhotosModal.photos}
         onClose={() => setShowPhotosModal({ show: false, photos: [] })}
-      />
-      <ReportModal
-        reportOptions={reportOrgPostOptions}
-        showModal={showReportModal}
-        setShowModal={setShowReportModal}
-        reportReason={reportReason}
-        setReportReason={setReportReason}
-        reportMessage={reportMessage}
-        setReportMessage={setReportMessage}
-        loading={reportLoading}
-        setReportLoading={setReportLoading}
-        reportedContent={postText}
       />
     </AppCard>
   )

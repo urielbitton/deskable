@@ -25,4 +25,5 @@
 }
 .app-table .headers h5 {
   color: var(--darkGrayText);
+  font-size: 12px;
 }

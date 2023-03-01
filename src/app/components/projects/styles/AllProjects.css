@@ -38,6 +38,82 @@
   font-size: 13px;
   opacity: 0.8;
 }
+.all-projects-page .toolbar .left .commonInput i.fa-times {
+  font-size: 16px;
+  cursor: pointer;
+}
 .all-projects-page .toolbar .left .appInput {
   width: 300px;
+}
+.all-projects-page .toolbar .left .appInput input:focus {
+  border: 1px solid var(--primary);
+}
+.all-projects-page .toolbar .hits-text {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+
+.all-projects-page .content {
+  margin: 20px 0;
+  margin-top: 40px;
+}
+.all-projects-page .content .app-table {
+  min-width: 700px;
+}
+.all-projects-page .content .app-table .header-item:first-child,
+.all-projects-page .content .app-table .header-item:last-child {
+  flex-basis: 50px!important;
+}
+.all-projects-page .content .app-table .headers {
+  gap: 15px;
+  border-bottom: 1px solid var(--inputBorder);
+  padding-bottom: 10px;
+}
+
+.all-projects-page .footer {
+  margin-top: 20px;
+}
+
+.all-projects-page .project-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+.all-projects-page .project-row:hover {
+  background: var(--lightInputBg)
+}
+.all-projects-page .project-row .title {
+  cursor: pointer;
+}
+.all-projects-page .project-row .title:hover h6 {
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.all-projects-page .project-row .row-item.small {
+  flex-basis: 50px;
+}
+.all-projects-page .project-row .row-item.star i {
+  font-size: 16px;
+  color: var(--primary);
+  cursor: pointer;
+}
+.all-projects-page .project-row .row-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-basis: 20%;
+}
+.all-projects-page .project-row .row-item h6 {
+  color: var(--darkGrayText);
+  font-weight: 600;
+  font-size: 13px;
+}
+.all-projects-page .project-row .row-item .dropdown-icon:hover {
+  background: var(--lightGrayText);
+  border-radius: 100%;
 }

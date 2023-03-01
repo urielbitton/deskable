@@ -84,12 +84,12 @@ export const switchTaskType = (type) => {
 }
 
 export const switchTaskPriority = (priority) => {
-  if (priority === 'lowest') return { color: '#1971ff', icon: 'fas fa-chevron-double-down' }
-  if (priority === 'low') return { color: '#17c1ff', icon: 'fas fa-chevron-down' }
-  if (priority === 'medium') return { color: '#ffd30d', icon: 'fas fa-grip-lines' }
-  if (priority === 'high') return { color: '#ff8800', icon: 'fas fa-chevron-up' }
-  if (priority === 'highest') return { color: '#ff2a00', icon: 'fas fa-chevron-double-up' }
-  return { color: '#ffd30d', icon: 'fas fa-grip-lines' }
+  if (priority === 'lowest') return { color: '#1971ff', icon: 'fas fa-chevron-double-down', level: 0 }
+  if (priority === 'low') return { color: '#17c1ff', icon: 'fas fa-chevron-down', level: 1 }
+  if (priority === 'medium') return { color: '#ffd30d', icon: 'fas fa-grip-lines', level: 2 }
+  if (priority === 'high') return { color: '#ff8800', icon: 'fas fa-chevron-up', level: 3 }
+  if (priority === 'highest') return { color: '#ff2a00', icon: 'fas fa-chevron-double-up', level: 4 }
+  return { color: '#ffd30d', icon: 'fas fa-grip-lines', level: 2 }
 }
 
 export const projectColumnsOptions = (columns) => {

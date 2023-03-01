@@ -1,23 +1,34 @@
-import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
-import { collection, doc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
-import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
-import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
+import {
+  collection, doc, limit,
+  onSnapshot, orderBy, query,
+  where
+} from "firebase/firestore"
+import { doGetUserByID } from "./userServices"
 
-export const getEmployeeByID = (orgID, employeeID, setEmployee) => {
-  const employeeRef = doc(db, `organizations/${orgID}/employees`, employeeID)
+export const getEmployeeByID = (userID, setEmployee) => {
+  const employeeRef = doc(db, `users`, userID)
   onSnapshot(employeeRef, snapshot => {
     setEmployee(snapshot.data())
   })
 }
 
+export const getEmployeesByOrgID = (userIDs, setEmployees) => {
+  const promises = userIDs?.map(userID => doGetUserByID(userID))
+  Promise.all(promises)
+  .then(users => {
+    setEmployees(users)
+  })
+}
+
 export const getYearEmployeesByOrgID = (orgID, year, setEmployees, lim) => {
-  const employeeRef = collection(db, `organizations/${orgID}/employees`)
+  const employeeRef = collection(db, `users`)
   const q = query(
-    employeeRef, 
-    where('dateJoined', '>=', new Date(year, 0, 0)), 
-    where('dateJoined', '<=', new Date(year, 11, 31)), 
-    orderBy('dateJoined', 'desc'), 
+    employeeRef,
+    where('activeOrgID', '==', orgID),
+    where('dateJoined', '>=', new Date(year, 0, 0)),
+    where('dateJoined', '<=', new Date(year, 11, 31)),
+    orderBy('dateJoined', 'desc'),
     limit(lim)
   )
   onSnapshot(q, snapshot => {
@@ -26,11 +37,12 @@ export const getYearEmployeesByOrgID = (orgID, year, setEmployees, lim) => {
 }
 
 export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees, lim) => {
-  const employeeRef = collection(db, `organizations/${orgID}/employees`)
+  const employeeRef = collection(db, `users`)
   const q = query(
-    employeeRef, 
-    where('dateJoined', '>=', new Date(year, month, 0)), 
-    where('dateJoined', '<=', new Date(year, month, 31)), 
+    employeeRef,
+    where('activeOrgID', '==', orgID),
+    where('dateJoined', '>=', new Date(year, month, 0)),
+    where('dateJoined', '<=', new Date(year, month, 31)),
     orderBy('dateJoined', 'desc'), limit(lim)
   )
   onSnapshot(q, snapshot => {
@@ -38,79 +50,15 @@ export const getYearAndMonthEmployeesByOrgID = (orgID, year, month, setEmployees
   })
 }
 
-export const getEmployeesByOrgID = (orgID, setEmployees, lim) => {
-  const employeeRef = collection(db, `organizations/${orgID}/employees`)
-  const q = query(
-    employeeRef, 
-    orderBy('dateJoined', 'desc'), 
-    limit(lim)
-  )
-  onSnapshot(q, snapshot => {
-    setEmployees(snapshot.docs.map(doc => doc.data()))
-  })
+export const createEmployeeService = (orgID, userID, setLoading, setToasts) => {
+
 }
 
-export const createEmployeeService = (orgID, uploadedImg, employee, setToasts, setLoading) => {
+export const updateEmployeeService = (orgID, userID, setLoading, setToasts) => {
+
+}
+
+export const removeEmployeeService = (orgID, userID, setLoading, setToasts) => {
   setLoading(true)
-  const storagePath = `organizations/${orgID}/employees`
-  const storageDocID = getRandomDocID(storagePath)
-  const employeeStoragePath = `${storagePath}/${storageDocID}`
-  return uploadMultipleFilesToFireStorage(uploadedImg ? [uploadedImg.file] : null, employeeStoragePath, ['photo-url'])
-    .then(fileURLS => {
-      const path = `organizations/${orgID}/employees`
-      const docID = getRandomDocID(path)
-      return setDB(path, docID, {
-        ...employee,
-        orgID,
-        employeeID: docID,
-        dateCreated: new Date(),
-        photoURL: fileURLS[0]?.downloadURL || null
-      })
-        .then(() => {
-          return docID
-        })
-    })
-    .catch(err => {
-      console.log(err)
-      setToasts(errorToast("There was an error creating the employee. Please try again."))
-      setLoading(false)
-    })
-}
 
-export const updateEmployeeService = (orgID, uploadedImg, employeeID, updatedProps, setLoading, setToasts) => {
-  const employeeStoragePath = `organizations/${orgID}/employees/${employeeID}`
-  const employeePath = `organizations/${orgID}/employees`
-  return uploadMultipleFilesToFireStorage(uploadedImg ? [uploadedImg.file] : null, employeeStoragePath, ['photo-url'])
-    .then(fileURLS => {
-      return updateDB(employeePath, employeeID, {
-        ...updatedProps,
-        photoURL: fileURLS[0]?.downloadURL || updatedProps.photoURL,
-      })
-      .then(() => {
-        setLoading(false)
-        setToasts(successToast("Employee updated successfully."))
-      })
-    })
-    .catch(err => {
-      setLoading(false)
-      setToasts(errorToast('An error occured while updating the contact. Please try again.'))
-      console.log(err)
-    })
-}
-
-export const deleteEmployeeService = (orgID, employeeID, setLoading, setToasts) => {
-  setLoading(true)
-  return deleteDB(`organizations/${orgID}/employees`, employeeID)
-    .then(() => {
-      return deleteMultipleStorageFiles(`organizations/${orgID}/employees/${employeeID}`, ['photo-url'])
-    })
-    .then(() => {
-      setLoading(false)
-      setToasts(successToast("Employee deleted successfully."))
-    })
-    .catch(err => {
-      setLoading(false)
-      setToasts(errorToast("There was an error deleting the employee. Please try again."))
-      console.log(err)
-    })
 }

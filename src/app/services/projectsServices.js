@@ -16,10 +16,11 @@ import {
   uploadMultipleFilesToFireStorage
 } from "./storageServices"
 
-export const getProjectsByOrgID = (orgID, setProjects, lim) => {
+export const getProjectsByOrgID = (orgID, myUserID, setProjects, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects`)
   const q = query(
     docRef,
+    where('members', 'array-contains', myUserID),
     orderBy('dateCreated', 'desc'),
     limit(lim)
   )
@@ -171,13 +172,14 @@ export const getOrgProjectClosedTasks = (orgID, projectID, setTasks, lim) => {
   })
 }
 
-export const getAllOrgOpenProjectTasks = (orgID, setTasks, sortBy, lim) => {
+export const getLastMonthOrgOpenProjectTasks = (orgID, isDone, setTasks, lim) => {
   const docRef = collectionGroup(db, 'tasks')
   const q = query(
     docRef,
-    where('isDone', '==', false),
+    where('dateModified', '>=', new Date(new Date().setMonth(new Date().getMonth() - 1))),
+    where('isDone', '==', isDone),
     where('orgID', '==', orgID),
-    orderBy(sortBy, 'desc'),
+    orderBy('dateModified', 'desc'),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {

@@ -10,7 +10,7 @@ export default function AllProjects() {
 
   return (
     <div className="all-projects-page">
-      <h3>Projects</h3>
+      <h3>Organization Projects</h3>
       <div className="toolbar">
         <div className="left">
           <AppInput

@@ -56,6 +56,12 @@
   gap: 20px;
   flex-wrap: wrap;
 }
+.projects-home .recents-flex .tasks-list .title-row .filters {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
 .projects-home .recents-flex .tasks-list .title-row .placeholder {
   font-size: 13px;
   color: var(--grayText);
@@ -81,6 +87,9 @@
   font-size: 12px;
   font-weight: 600;
 }
+.projects-home .recents-flex .tasks-list .title-row button {
+  padding: 8px 10px;
+} 
 
 .projects-home .recents-flex .tab-section {
   display: none;
@@ -111,15 +120,16 @@
 .projects-home .home-task-row .texts {
   display: flex;
   align-items: flex-start;
-  flex-basis: calc(70% - 10px);
+  flex-basis: calc(75% - 10px);
   gap: 10px;
 }
 .projects-home .home-task-row .texts .item {
   flex-basis: 20%;
 }
-.projects-home .home-task-row .task-title {
+.projects-home .home-task-row .task-title.item {
   display: flex;
   gap: 10px;
+  flex-basis: 33%;
 }
 .projects-home .home-task-row .task-title .icon-container {
   top: 4px;
@@ -148,7 +158,7 @@
 }
 
 .projects-home .home-task-row .assignees {
-  flex-basis: calc(30% - 10px);
+  flex-basis: calc(25% - 10px);
   display: flex;
   justify-content: flex-end;
 }

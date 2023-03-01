@@ -57,7 +57,6 @@ export default function RoutesContainer() {
           isClassA && myOrgID &&
           <>
             <Route path="employees" element={<EmployeesPage />} />
-            <Route path="employees/new" element={<NewEmployeePage />} />
             <Route path="employees/:employeeID" element={<EmployeePage />} />
           </>
         }

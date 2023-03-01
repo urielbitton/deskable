@@ -59,7 +59,6 @@ export default function Navbar() {
               rightIcon="fal fa-chevron-down"
               items={[
                 { label: "New Post", icon: "fas fa-newspaper", url: "/posts/new" },
-                isClassA && { label: "New Employee", icon: "fas fa-user-plus", url: "/employees/new" },
                 { label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" },
                 { label: "New Message", icon: "fas fa-comment", url: "/messages/new" },
                 { label: "New Meeting", icon: "fas fa-video", url: "/meetings/new" },

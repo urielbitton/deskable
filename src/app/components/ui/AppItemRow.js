@@ -4,7 +4,7 @@ import './styles/AppItemRow.css'
 export default function AppItemRow(props) {
 
   const { item1, item2, item3, item4, item5, item6, item7, item8, actions,
-    onDoubleClick, handleCheckChange, className } = props
+    onDoubleClick, onClick, handleCheckChange, className } = props
 
   const itemsArray = [item1, item2, item3, item4, item5, item6, item7, item8]
 
@@ -31,6 +31,7 @@ export default function AppItemRow(props) {
     <div
       className={`app-item-row ${className}`}
       onDoubleClick={onDoubleClick}
+      onClick={onClick}
     >
       {itemsRender}
       <div className="actions-row row-item">

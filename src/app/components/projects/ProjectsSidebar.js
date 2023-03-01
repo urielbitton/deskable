@@ -2,7 +2,7 @@ import { useOrgProjects } from "app/hooks/projectsHooks"
 import { StoreContext } from "app/store/store"
 import { truncateText } from "app/utils/generalUtils"
 import React, { useContext } from 'react'
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import './styles/ProjectsSidebar.css'
@@ -12,7 +12,6 @@ export default function ProjectsSidebar() {
   const { myUserImg, myUserName, myUser, showProjectsSidebar,
     setShowProjectsSidebar } = useContext(StoreContext)
   const location = useLocation()
-  const navigate = useNavigate()
   const projectsLimit = 5
   const projects = useOrgProjects(projectsLimit)
 

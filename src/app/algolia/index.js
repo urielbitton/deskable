@@ -9,7 +9,6 @@ export const algoliaSearchClient = algoliasearch(
 )
 
 export const usersIndex = algoliaSearchClient.initIndex('users_index')
-export const employeesIndex = algoliaSearchClient.initIndex('employees_index')
 
 export const tasksIndex = algoliaSearchClient.initIndex('tasks_index')
 export const tasksAscIndex = algoliaSearchClient.initIndex('tasks_date_asc')

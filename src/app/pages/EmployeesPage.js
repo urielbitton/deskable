@@ -10,6 +10,7 @@ import EmptyPage from "app/components/ui/EmptyPage"
 import EmployeesList from "app/components/employees/EmployeesList"
 import { pastUserYearsOptions } from "app/services/userServices"
 import { useYearMonthOrAllEmployees } from "app/hooks/employeeHooks"
+import { useOrganization } from "app/hooks/organizationHooks"
 
 export default function EmployeesPage() {
 
@@ -25,8 +26,9 @@ export default function EmployeesPage() {
   const [selectedMonth, setSelectedMonth] = useState('all')
   const limitsNum = 10
   const [employeesLimit, setEmployeesLimit] = useState(limitsNum)
-  const dbEmployees = useYearMonthOrAllEmployees(myOrgID, selectedYear, selectedMonth, employeesLimit)
-  const filters = `orgID:${myOrgID}`
+  const organization = useOrganization(myOrgID)
+  const dbEmployees = useYearMonthOrAllEmployees(myOrgID, organization?.employeesIDs, selectedYear, selectedMonth, employeesLimit)
+  const filters = `activeOrgID:${myOrgID}`
   const showAll = false
   const userYearJoined = myUser?.dateJoined?.toDate().getFullYear()
 

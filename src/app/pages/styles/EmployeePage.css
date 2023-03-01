@@ -42,6 +42,20 @@
 .employee-frame .header .right-side .app-badge {
   margin-left: 15px;
 }
+.employee-frame .header .right-side .appButton {
+  height: 35px;
+  width: 35px;
+  border: 1px solid var(--inputBorder);
+  padding: 0px;
+  background: #fff;
+}
+.employee-frame .header .right-side .appButton:hover {
+  background: var(--inputBg);
+}
+.employee-frame .header .right-side .appButton i {
+  font-size: 16px;
+  color: var(--grayText);
+}
 
 .employee-frame .info-container {
   padding: 40px 20px;

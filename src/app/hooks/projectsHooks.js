@@ -1,7 +1,7 @@
-import {
-  getAllOrgOpenProjectTasks,
-  getOrgProjectByID, getOrgProjectClosedTasks, getOrgProjectColumnByID,
-  getOrgProjectColumns, getOrgProjectFirstColumn, getOrgProjectOpenTasks, getOrgProjectTaskByID,
+import { getLastMonthOrgOpenProjectTasks, getOrgProjectByID, 
+  getOrgProjectClosedTasks, getOrgProjectColumnByID,
+  getOrgProjectColumns, getOrgProjectFirstColumn, 
+  getOrgProjectOpenTasks, getOrgProjectTaskByID,
   getOrgProjectTaskComments, getOrgProjectTaskEvents,
   getOrgProjectTaskFiles, getOrgProjectTasks,
   getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray,
@@ -14,13 +14,13 @@ import { useContext, useEffect, useState } from "react"
 
 export const useOrgProjects = (limit) => {
 
-  const { myOrgID } = useContext(StoreContext)
+  const { myOrgID, myUserID } = useContext(StoreContext)
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
     if (myOrgID)
-      getProjectsByOrgID(myOrgID, setProjects, limit)
-  }, [myOrgID, limit])
+      getProjectsByOrgID(myOrgID, myUserID, setProjects, limit)
+  }, [myOrgID, myUserID, limit])
 
   return projects
 }
@@ -232,15 +232,15 @@ export const useClosedProjectTasks = (projectID, limit) => {
   return tasks
 }
 
-export const useAllOrgOpenProjectTasks = (limit, sortBy) => {
+export const useLastMonthOrgOpenProjectTasks = (isDone, limit) => {
 
   const { myOrgID } = useContext(StoreContext)
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
     if (myOrgID)
-      getAllOrgOpenProjectTasks(myOrgID, setTasks, sortBy, limit)
-  }, [myOrgID, sortBy, limit])
+      getLastMonthOrgOpenProjectTasks(myOrgID, isDone, setTasks, limit)
+  }, [myOrgID, isDone, limit])
 
   return tasks
 }

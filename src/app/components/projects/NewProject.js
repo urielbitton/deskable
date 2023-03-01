@@ -126,7 +126,7 @@ export default function NewProject() {
               options={projectCategoriesOptions}
               value={category}
               onChange={(type) => setCategory(type.value)}
-              searchable={false}
+              searchable
             />
             <AppReactSelect
               label="Project Type"
@@ -139,7 +139,6 @@ export default function NewProject() {
               options={projectTypeOptions}
               value={projectType}
               onChange={(type) => setProjectType(type.value)}
-              searchable={false}
             />
             <AppReactSelect
               label="Project Access"
@@ -152,7 +151,6 @@ export default function NewProject() {
               options={projectAccessOptions}
               value={accessType}
               onChange={(type) => setAccessType(type.value)}
-              searchable={false}
             />
             <OrgUsersTagInput
               label="Invite Members"

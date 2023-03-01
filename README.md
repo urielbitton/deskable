@@ -36,6 +36,9 @@ To Dos
   - announcements cards ui - different than posts - add importance variable
   - design sidebar in posts page (either a filter to find posts/announcements or some stats about posts/announcements -  or both)
 
+- Employees
+  - finish refactoring employees
+
 Other Todos
 - start by creating an org (invitation only)
 - Link preview feature for posts & chats (use your own server for cors bypass)

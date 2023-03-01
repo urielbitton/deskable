@@ -36,7 +36,7 @@ export default function MultipleUsersAvatars(props) {
           className="more-avatars-circle"
           style={{ width: avatarDimensions, height: avatarDimensions }}
         >
-          +${avatarUsers.length - maxAvatars}
+          +{avatarUsers.length - maxAvatars}
         </div>
       }
     </div>

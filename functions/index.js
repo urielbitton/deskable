@@ -11,7 +11,6 @@ const API_KEY = functions.config().algolia.key
 
 // @ts-ignore
 const client = algoliasearch(APP_ID, API_KEY)
-const employeesIndex = client.initIndex('employees_index')
 const usersIndex = client.initIndex('users_index')
 const projectsIndex = client.initIndex('projects_index')
 const tasksIndex = client.initIndex('tasks_index')
@@ -35,37 +34,6 @@ exports.deleteFromIndexUsers = functions
   .region('northamerica-northeast1')
   .firestore.document('users/{userID}').onDelete((snapshot, context) => {
     return usersIndex.deleteObject(snapshot.id)
-  })
-
-exports.addToIndexEmployees = functions
-  .region('northamerica-northeast1')
-  .firestore.document('organizations/{orgID}/employees/{employeeID}').onCreate((snapshot, context) => {
-    const data = snapshot.data()
-    return updateDB('organizations', data.orgID, {
-      employeesIDs: firebaseArrayAdd(data.employeeID),
-    })
-      .then(() => {
-        return employeesIndex.saveObject({ ...data, objectID: snapshot.id })
-      })
-  })
-
-exports.updateIndexEmployees = functions
-  .region('northamerica-northeast1')
-  .firestore.document('organizations/{orgID}/employees/{employeeID}').onUpdate((change) => {
-    const newData = change.after.data()
-    return employeesIndex.saveObject({ ...newData, objectID: change.after.id })
-  })
-
-exports.deleteFromIndexEmployees = functions
-  .region('northamerica-northeast1')
-  .firestore.document('organizations/{orgID}/employees/{employeeID}').onDelete((snapshot, context) => {
-    const data = snapshot.data()
-    return updateDB('organizations', data.orgID, {
-      employeesIDs: firebaseArrayRemove(data.employeeID),
-    })
-      .then(() => {
-        return employeesIndex.deleteObject(snapshot.id)
-      })
   })
 
 exports.addToIndexProjects = functions

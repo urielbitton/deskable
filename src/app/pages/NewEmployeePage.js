@@ -11,11 +11,11 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { useEmployee } from "app/hooks/employeeHooks"
 import { StoreContext } from "app/store/store"
 import { infoToast, successToast } from "app/data/toastsTemplates"
-import { createEmployeeService, deleteEmployeeService, updateEmployeeService } from "app/services/employeeServices"
 import { validateEmail, validatePhone } from "app/utils/generalUtils"
 import { employeeStatusOptions } from "app/data/general"
 import { convertDateToInputFormat, convertInputDateToDateFormat } from "app/utils/dateUtils"
 import CountryStateCity from "app/components/ui/CountryStateCity"
+import { createEmployeeService, removeEmployeeService, updateEmployeeService } from "app/services/employeeServices"
 
 export default function NewEmployeePage() {
 
@@ -23,7 +23,7 @@ export default function NewEmployeePage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const editMode = searchParams.get('edit') === 'true'
   const editEmployeeID = searchParams.get('employeeID')
-  const editEmployee = useEmployee(myOrgID, editEmployeeID)
+  const editEmployee = useEmployee(editEmployeeID)
   const [showTaskMenu, setShowTaskMenu] = useState(null)
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -113,7 +113,7 @@ export default function NewEmployeePage() {
     const confirm = window.confirm("Are you sure you want to delete this employee?")
     if (!confirm) return setToasts(infoToast("Employee not deleted"))
     setPageLoading(true)
-    deleteEmployeeService(
+    removeEmployeeService(
       myOrgID,
       editEmployeeID,
       setPageLoading,

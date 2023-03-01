@@ -1,9 +1,16 @@
-import { recentTasksSortByOptions, recentTasksSortBySwitch, 
-  switchTaskPriority, switchTaskType } from "app/data/projectsData"
-import { useAllOrgOpenProjectTasks, useOrgProjects } from "app/hooks/projectsHooks"
+import {
+  recentTasksSortByOptions, recentTasksSortBySwitch,
+  switchTaskPriority, switchTaskType
+} from "app/data/projectsData"
+import {
+  useLastMonthOrgOpenProjectTasks,
+  useOrgProjects
+} from "app/hooks/projectsHooks"
+import { StoreContext } from "app/store/store"
 import { getTimeAgo } from "app/utils/dateUtils"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link } from "react-router-dom"
+import AppButton from "../ui/AppButton"
 import { AppReactSelect } from "../ui/AppInputs"
 import AppScrollSlider from "../ui/AppScrollSlider"
 import AppTabsBar from "../ui/AppTabsBar"
@@ -14,13 +21,40 @@ import './styles/ProjectsHome.css'
 
 export default function ProjectsHome({ setShowScroll }) {
 
+  const { myUserID } = useContext(StoreContext)
   const [tabsBarIndex, setTabsBarIndex] = useState('tasks')
   const [sortBy, setSortBy] = useState(recentTasksSortByOptions[0].value)
+  const [assignToMe, setAssignToMe] = useState(false)
+  const [showOpenTasks, setShowOpenTasks] = useState(true)
   const projectsLimit = 5
-  const tasksLimit = 25
+  const tasksLimit = 50
   const recentProjects = useOrgProjects(projectsLimit)
-  const recentOrgTasks = useAllOrgOpenProjectTasks(tasksLimit, sortBy)
+  const recentOrgTasks = useLastMonthOrgOpenProjectTasks(!showOpenTasks, tasksLimit)
   const projectsSliderRef = useRef(null)
+  const oneWeekMs = 604800000
+  const oneMonthMs = 2592000000
+
+  const recentTasksSort = (a, b) => {
+    if (sortBy === 'priority') {
+      return (switchTaskPriority(b.priority).level - switchTaskPriority(a.priority).level)
+    }
+    else if (sortBy === 'points') {
+      return b.points - a.points
+    }
+    return b.dateModified?.toDate() - a.dateModified?.toDate()
+  }
+
+  const lastWeekOrgTasksFiltered = recentOrgTasks
+  ?.filter(task => task.dateModified?.toDate() > Date.now() - oneWeekMs)
+  .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
+  .filter(task => !showOpenTasks || !task.isDone)
+  .sort((a, b) => recentTasksSort(a, b))
+
+  const lastMonthOrgTasksFiltered = recentOrgTasks
+  ?.filter(task => task.dateModified?.toDate() > Date.now() - oneMonthMs && task.dateModified?.toDate() < Date.now() - oneWeekMs)
+  .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
+  .filter(task => !showOpenTasks || !task.isDone)
+  .sort((a, b) => recentTasksSort(a, b))
 
   const recentProjectsList = recentProjects?.map((project, index) => {
     return <ProjectCard
@@ -29,18 +63,14 @@ export default function ProjectsHome({ setShowScroll }) {
     />
   })
 
-  const recentLastWeekOrgTasksList = recentOrgTasks
-    ?.filter(task => task.dateModified?.toDate() > Date.now() - 604800000)
-    .map((task, index) => {
+  const recentLastWeekOrgTasksList = lastWeekOrgTasksFiltered.map((task, index) => {
       return <TaskRow
         key={index}
         task={task}
       />
     })
 
-  const recentLastMonthOrgTasksList = recentOrgTasks
-    ?.filter(task => task.dateModified?.toDate() > Date.now() - 2592000000 && task.dateModified?.toDate() < Date.now() - 604800000)
-    .map((task, index) => {
+  const recentLastMonthOrgTasksList = lastMonthOrgTasksFiltered.map((task, index) => {
       return <TaskRow
         key={index}
         task={task}
@@ -95,25 +125,37 @@ export default function ProjectsHome({ setShowScroll }) {
         <div className={`tab-section ${tabsBarIndex === 'tasks' ? 'active' : ''}`}>
           <div className="tasks-list">
             <div className="title-row">
-              <h6>In the last week</h6>
-              <AppReactSelect
-                label="Sort By"
-                options={recentTasksSortByOptions}
-                onChange={(option) => setSortBy(option.value)}
-                value={sortBy}
-                placeholder={
-                  <h5 className="placeholder">
-                    <i className={recentTasksSortBySwitch(sortBy).icon} />
-                    {recentTasksSortBySwitch(sortBy).name}
-                  </h5>
-                }
-              />
+              <h6>In the last week ({lastWeekOrgTasksFiltered.length})</h6>
+              <div className="filters">
+              <AppButton
+                  label={showOpenTasks ? 'Closed Tasks' : 'Open Tasks'}
+                  buttonType={!showOpenTasks ? 'primaryBtn' : 'outlineBtn'}
+                  onClick={() => setShowOpenTasks(prev => !prev)}
+                />
+                <AppButton
+                  label={!assignToMe ? 'Assigned to me' : 'All Assignees'}
+                  buttonType={assignToMe ? 'primaryBtn' : 'outlineBtn'}
+                  onClick={() => setAssignToMe(prev => !prev)}
+                />
+                <AppReactSelect
+                  label="Sort By"
+                  options={recentTasksSortByOptions}
+                  onChange={(option) => setSortBy(option.value)}
+                  value={sortBy}
+                  placeholder={
+                    <h5 className="placeholder">
+                      <i className={recentTasksSortBySwitch(sortBy).icon} />
+                      {recentTasksSortBySwitch(sortBy).name}
+                    </h5>
+                  }
+                />
+              </div>
             </div>
             <div className="sub-section">
               {recentLastWeekOrgTasksList}
             </div>
             <div className="title-row">
-              <h6>In the last month</h6>
+              <h6>In the last month ({lastMonthOrgTasksFiltered.length})</h6>
             </div>
             <div className="sub-section">
               {recentLastMonthOrgTasksList}
@@ -144,7 +186,7 @@ export function TaskRow(props) {
     taskID } = props.task
 
   return (
-    <Link 
+    <Link
       className="home-task-row"
       to={`/projects/${projectID}/backlog?taskID=${taskID}`}
     >
@@ -186,7 +228,7 @@ export function TaskRow(props) {
           assigneesIDs?.length > 0 ?
             <MultipleUsersAvatars
               userIDs={assigneesIDs}
-              maxAvatars={10}
+              maxAvatars={5}
               avatarDimensions={27}
             /> :
             <small>No Assignees</small>

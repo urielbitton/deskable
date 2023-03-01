@@ -170,7 +170,6 @@ export default function ProjectTasks({ project }) {
             options={projectTasksSortByOptions}
             onChange={(sortBy) => setSortByIndex(sortBy.value)}
             value={sortByIndex}
-            searchable={false}
           />
         </div>
       </div>

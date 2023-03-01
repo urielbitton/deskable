@@ -1,4 +1,4 @@
-import { employeesIndex } from "app/algolia"
+import { usersIndex } from "app/algolia"
 import { useInstantSearch } from "app/hooks/searchHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext } from 'react'
@@ -15,7 +15,7 @@ export default function EmployeesList(props) {
 
   const employees = useInstantSearch(
     query,
-    employeesIndex,
+    usersIndex,
     filters,
     setNumOfHits,
     setNumOfPages,

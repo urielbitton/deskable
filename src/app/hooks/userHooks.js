@@ -25,7 +25,8 @@ export function useUsers(userIDs) {
   useEffect(() => {
     if(userIDs?.length) {
       const promises = userIDs.map(userID => doGetUserByID(userID))
-      Promise.all(promises).then(users => {
+      Promise.all(promises)
+      .then(users => {
         setAppUsers(users)
       })
     }

@@ -6,7 +6,7 @@ import PageTitleBar from "app/components/ui/PageTitleBar"
 import { infoToast } from "app/data/toastsTemplates"
 import { useEmployee } from "app/hooks/employeeHooks"
 import { useOrganization } from "app/hooks/organizationHooks"
-import { deleteEmployeeService } from "app/services/employeeServices"
+import { removeEmployeeService } from "app/services/employeeServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import { formatPhoneNumber } from "app/utils/generalUtils"
@@ -19,22 +19,19 @@ export default function EmployeePage() {
   const { myOrgID, setToasts, setPageLoading } = useContext(StoreContext)
   const [showTaskMenu, setShowTaskMenu] = useState(null)
   const employeeID = useParams().employeeID
-  const employee = useEmployee(myOrgID, employeeID)
+  const employee = useEmployee(employeeID)
   const organization = useOrganization(myOrgID)
   const navigate = useNavigate()
 
   const handleDelete = () => {
     const confirm = window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName} from your employees?`)
     if (!confirm) return setToasts(infoToast("Employee not deleted."))
-    deleteEmployeeService(
+    removeEmployeeService(
       myOrgID,
       employeeID,
       setPageLoading,
       setToasts
     )
-    .then(() => {
-      navigate(`/employees`)
-    })
   }
 
   return employee ? (
@@ -72,19 +69,19 @@ export default function EmployeePage() {
           </div>
           <div className="right-side">
             <AppButton
-              buttonType="iconWhiteBtn"
+              buttonType="iconBtn small"
               leftIcon="fas fa-phone"
             />
             <AppButton
-              buttonType="iconWhiteBtn"
+              buttonType="iconBtn small"
               leftIcon="fas fa-envelope"
             />
             <AppButton
-              buttonType="iconWhiteBtn"
+              buttonType="iconBtn small"
               leftIcon="fas fa-comment"
             />
             <AppButton
-              buttonType="iconWhiteBtn"
+              buttonType="iconBtn small"
               leftIcon="fas fa-video"
             />
             <AppBadge

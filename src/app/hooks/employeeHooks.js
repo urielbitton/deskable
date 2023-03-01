@@ -1,27 +1,44 @@
-import { getEmployeeByID, getEmployeesByOrgID, 
+import { getEmployeeByID, 
+  getEmployeesByOrgID, 
   getYearAndMonthEmployeesByOrgID, 
   getYearEmployeesByOrgID } from "app/services/employeeServices"
 import { useEffect, useState } from "react"
 
-export const useEmployee = (orgID, employeeID) => {
+export const useEmployee = (userID) => {
 
   const [employee, setEmployee] = useState(null)
 
   useEffect(() => {
-    if (orgID && employeeID) {
-      getEmployeeByID(orgID, employeeID, setEmployee)
+    if (userID) {
+      getEmployeeByID(userID, setEmployee)
     }
-  }, [orgID, employeeID])
+  }, [userID])
 
   return employee
 }
 
-export const useYearMonthOrAllEmployees = (orgID, year, month, limit) => {
+export function useEmployees(userIDs) {
 
   const [employees, setEmployees] = useState([])
 
   useEffect(() => {
-    if (orgID) {
+    if(userIDs?.length) {
+      getEmployeesByOrgID(userIDs, setEmployees)
+    }
+    else {
+      setEmployees([])
+    }
+  },[userIDs])
+
+  return employees
+}
+
+export const useYearMonthOrAllEmployees = (orgID, userIDs, year, month, limit) => {
+
+  const [employees, setEmployees] = useState([])
+
+  useEffect(() => {
+    if (orgID || userIDs?.length) {
       if(year !== 'all' && month === 'all') {
         getYearEmployeesByOrgID(orgID, year, setEmployees, limit)
       }
@@ -29,10 +46,10 @@ export const useYearMonthOrAllEmployees = (orgID, year, month, limit) => {
         getYearAndMonthEmployeesByOrgID(orgID, year, month, setEmployees, limit)
       }
       else {
-        getEmployeesByOrgID(orgID, setEmployees, limit)
+        getEmployeesByOrgID(userIDs, setEmployees)
       }
     }
-  }, [orgID, year, month, limit])
+  }, [orgID, userIDs, year, month, limit])
 
   return employees
 }

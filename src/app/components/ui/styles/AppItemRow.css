@@ -9,6 +9,7 @@
   box-shadow: var(--cardShadow);
   width: 100%;
   transition: all 0.2s;
+  cursor: pointer;
 }
 .app-item-row.selected {
   background: #fff;

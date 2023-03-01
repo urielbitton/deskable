@@ -288,7 +288,7 @@ export const AppReactSelect = (props) => {
   const { options, label, onChange, value, className,
     containerStyles, defaultValue, placeholder, subText,
     menuPlacement="auto", hideDropdownArrow, centerOptions,
-    searchable } = props
+    searchable=false } = props
   const selectRef = useRef(null)
 
   const formatOptionLabel = ({ label, icon, iconColor }) => (

@@ -43,7 +43,6 @@ export default function TaskFiltersPopup(props) {
           options={[selectAllOption, ...taskTypeOptions]}
           onChange={(sortBy) => setTaskTypeFilter(sortBy.value)}
           value={taskTypeFilter}
-          searchable={false}
         />
         <AppReactSelect
           label="Points"
@@ -59,7 +58,6 @@ export default function TaskFiltersPopup(props) {
           options={[selectAllOption, ...taskPointsOptions]}
           onChange={(sortBy) => setPointsFilter(sortBy.value)}
           value={pointsFilter}
-          searchable={false}
         />
         <AppReactSelect
           label="Priority"
@@ -75,7 +73,6 @@ export default function TaskFiltersPopup(props) {
           options={[selectAllOption, ...taskPriorityOptions]}
           onChange={(sortBy) => setPriorityFilter(sortBy.value)}
           value={priorityFilter}
-          searchable={false}
         />
         <AppReactSelect
           label="Task Status"
@@ -91,7 +88,6 @@ export default function TaskFiltersPopup(props) {
           options={[selectAllOption, ...taskStatusOptions]}
           onChange={(sortBy) => setStatusFilter(sortBy.value)}
           value={statusFilter}
-          searchable={false}
         />
       </div>
       <div className="popup-footer">

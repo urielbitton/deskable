@@ -61,6 +61,10 @@ export default function ProjectsSidebar() {
           <i className="fas fa-th-large" />
           <span>Dashboard</span>
         </NavLink>
+        <NavLink to="/projects/all-projects">
+          <i className="fas fa-project-diagram" />
+          <span>Projects</span>
+        </NavLink>
         <NavLink to="/projects/updates">
           <i className="fas fa-clock" />
           <span>Updates</span>
@@ -77,9 +81,6 @@ export default function ProjectsSidebar() {
       <div className="section section-projects">
         <h5>
           <span>Projects</span>
-          <Link to="/projects/all-projects">
-            View All
-          </Link>
         </h5>
         <div className="all-projects-list">
           {projectsList}

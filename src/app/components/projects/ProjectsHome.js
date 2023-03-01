@@ -54,7 +54,7 @@ export default function ProjectsHome({ setShowScroll }) {
 
   return (
     <div className="projects-home">
-      <h3>Projects</h3>
+      <h3>Dashboard</h3>
       <div className="recents-flex">
         <div className="titles">
           <h5>Recent Projects</h5>

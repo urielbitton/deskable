@@ -1,0 +1,43 @@
+.all-projects-page {
+  display: flex;
+  flex-direction: column;
+}
+.all-projects-page > h3 {
+  color: var(--darkGrayText);
+  margin-bottom: 20px;
+}
+
+.all-projects-page .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.all-projects-page .toolbar .left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.all-projects-page .toolbar .left .commonInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.all-projects-page .toolbar .left .commonInput h6 {
+  color: var(--darkGrayText);
+  font-weight: 600;
+  font-size: 13px;
+}
+.all-projects-page .toolbar .left .commonInput i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  color: var(--grayText);
+  font-size: 13px;
+  opacity: 0.8;
+}
+.all-projects-page .toolbar .left .appInput {
+  width: 300px;
+}

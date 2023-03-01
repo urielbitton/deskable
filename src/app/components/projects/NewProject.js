@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './styles/NewProject.css'
 import newProjectImg from 'app/assets/images/new-project-trans.png'
 import newProjectBlob from 'app/assets/images/new-project-blob.svg'
@@ -19,8 +19,7 @@ import AvatarPicker from "../ui/AvatarPicker"
 
 export default function NewProject() {
 
-  const { myOrgID, setShowProjectsSidebar, myUserID,
-    setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts } = useContext(StoreContext)
   const [name, setName] = useState('')
   const [projectType, setProjectType] = useState(projectTypeOptions[0].value)
   const [accessType, setAccessType] = useState(projectAccessOptions[0].value)
@@ -91,10 +90,6 @@ export default function NewProject() {
         navigate(`/projects/${projectID}/backlog`)
       })
   }
-
-  useEffect(() => {
-    setShowProjectsSidebar(false)
-  }, [setShowProjectsSidebar])
 
   return (
     <div className="new-project-container">

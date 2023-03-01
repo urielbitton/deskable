@@ -13,6 +13,7 @@ const API_KEY = functions.config().algolia.key
 const client = algoliasearch(APP_ID, API_KEY)
 const employeesIndex = client.initIndex('employees_index')
 const usersIndex = client.initIndex('users_index')
+const projectsIndex = client.initIndex('projects_index')
 const tasksIndex = client.initIndex('tasks_index')
 
 
@@ -65,6 +66,26 @@ exports.deleteFromIndexEmployees = functions
       .then(() => {
         return employeesIndex.deleteObject(snapshot.id)
       })
+  })
+
+exports.addToIndexProjects = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}').onCreate((snapshot, context) => {
+    const data = snapshot.data()
+    return projectsIndex.saveObject({ ...data, objectID: snapshot.id })
+  })
+
+exports.updateIndexProjects = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}').onUpdate((change) => {
+    const newData = change.after.data()
+    return projectsIndex.saveObject({ ...newData, objectID: change.after.id })
+  })
+
+exports.deleteFromIndexProjects = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}').onDelete((snapshot, context) => {
+    return projectsIndex.deleteObject(snapshot.id)
   })
 
 exports.addToIndexProjectTasks = functions
@@ -125,10 +146,10 @@ exports.onOrgProjectDelete = functions
     const projectID = data.projectID
     const path = `organizations/${orgID}/projects`
     return recursivelyDeleteDocument(path, projectID)
-    .then(() => {
-      deleteStorageFolder(`organizations/${orgID}/projects/${projectID}`)
-    })
-    .catch((error) => console.log(error))
+      .then(() => {
+        deleteStorageFolder(`organizations/${orgID}/projects/${projectID}`)
+      })
+      .catch((error) => console.log(error))
   })
 
 exports.onOrgProjectTaskDelete = functions
@@ -138,10 +159,10 @@ exports.onOrgProjectTaskDelete = functions
     const taskID = data.taskID
     const path = `organizations/${orgID}/projects/${projectID}/tasks`
     return recursivelyDeleteDocument(path, taskID)
-    .then(() => {
-      deleteStorageFolder(`organizations/${orgID}/projects/${projectID}/tasks/${taskID}`)
-    })
-    .catch((error) => console.log(error))
+      .then(() => {
+        deleteStorageFolder(`organizations/${orgID}/projects/${projectID}/tasks/${taskID}`)
+      })
+      .catch((error) => console.log(error))
   })
 
 exports.onOrgPostDelete = functions
@@ -150,10 +171,10 @@ exports.onOrgPostDelete = functions
     const postID = data.postID
     const path = `organizations/${orgID}/posts`
     return recursivelyDeleteDocument(path, postID)
-    .then(() => {
-      deleteStorageFolder(`organizations/${orgID}/posts/${postID}`)
-    })
-    .catch((error) => console.log(error))
+      .then(() => {
+        deleteStorageFolder(`organizations/${orgID}/posts/${postID}`)
+      })
+      .catch((error) => console.log(error))
   })
 
 

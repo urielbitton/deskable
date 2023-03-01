@@ -56,6 +56,9 @@
   gap: 20px;
   flex-wrap: wrap;
 }
+.projects-home .recents-flex .tasks-list .title-row.bottom {
+  margin: 15px 0;
+}
 .projects-home .recents-flex .tasks-list .title-row .filters {
   display: flex;
   align-items: center;
@@ -119,7 +122,7 @@
 }
 .projects-home .home-task-row .texts {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   flex-basis: calc(75% - 10px);
   gap: 10px;
 }

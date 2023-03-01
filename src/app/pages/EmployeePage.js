@@ -88,7 +88,7 @@ export default function EmployeePage() {
               label={organization?.name}
               icon="fas fa-briefcase"
               light
-              onClick={() => navigate(`/organization/${organization?.organizationID}`)}
+              onClick={() => navigate('/my-organization')}
             />
           </div>
         </div>

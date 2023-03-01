@@ -45,13 +45,15 @@ export default function ProjectsHome({ setShowScroll }) {
   }
 
   const lastWeekOrgTasksFiltered = recentOrgTasks
-  ?.filter(task => task.dateModified?.toDate() > Date.now() - oneWeekMs)
+  ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
+  .filter(task => task.dateModified?.toDate() > Date.now() - oneWeekMs)
   .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
   .filter(task => !showOpenTasks || !task.isDone)
   .sort((a, b) => recentTasksSort(a, b))
-
+  
   const lastMonthOrgTasksFiltered = recentOrgTasks
-  ?.filter(task => task.dateModified?.toDate() > Date.now() - oneMonthMs && task.dateModified?.toDate() < Date.now() - oneWeekMs)
+  ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
+  .filter(task => task.dateModified?.toDate() > Date.now() - oneMonthMs && task.dateModified?.toDate() < Date.now() - oneWeekMs)
   .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
   .filter(task => !showOpenTasks || !task.isDone)
   .sort((a, b) => recentTasksSort(a, b))
@@ -154,7 +156,7 @@ export default function ProjectsHome({ setShowScroll }) {
             <div className="sub-section">
               {recentLastWeekOrgTasksList}
             </div>
-            <div className="title-row">
+            <div className="title-row bottom">
               <h6>In the last month ({lastMonthOrgTasksFiltered.length})</h6>
             </div>
             <div className="sub-section">

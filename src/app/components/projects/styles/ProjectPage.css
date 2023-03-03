@@ -1,0 +1,43 @@
+.project-page {
+  display: flex;
+  flex-direction: column;
+}
+.project-page .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  height: 45px;
+  margin-top: -10px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.project-page .toolbar .left button {
+  background: var(--inputBg);
+  color: var(--darkGrayText);
+}
+.project-page .toolbar .left button:hover {
+  background: var(--lightGrayText);
+}
+.project-page .page-content {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: auto 300px;
+  gap: 15px;
+  height: calc(100vh - 160px);
+}
+
+.project-page .page-content .page-sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.project-page .tox-tinymce {
+  border: none;
+}
+.project-page .tox:not(.tox-tinymce-inline) .tox-editor-header {
+  box-shadow: none;
+  border-bottom: 1px solid var(--inputBorder);
+  padding: 0;
+}

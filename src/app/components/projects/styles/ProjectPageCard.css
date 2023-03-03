@@ -1,0 +1,70 @@
+.project-page-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--cardShadow);
+  border: 1px solid var(--inputBorder);
+  background: #fff;
+  width: 230px;
+  height: 145px;
+}
+.project-page-card:hover {
+  background: var(--inputBg);
+}
+.project-page-card .header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid var(--inputBorder);
+  padding-bottom: 10px;
+}
+.project-page-card .header .texts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-page-card .header .texts h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+}
+.project-page-card .header .right {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.project-page-card .header .icon-container {
+  background: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+}
+.project-page-card:hover .header .icon-container {
+  opacity: 1;
+  visibility: visible;
+}
+
+.project-page-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.project-page-card .card-body h6 {
+  font-size: 12px;
+  color: var(--darkGrayText);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.project-page-card .card-body h6 span {
+  font-size: 12px;
+  font-weight: 500;
+}
+.project-page-card .card-body .editors-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

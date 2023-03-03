@@ -1,23 +1,21 @@
-import { tasksIndex } from "app/algolia"
-import { switchTaskType } from "app/data/projectsData"
 import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
-import { useInstantSearch } from "app/hooks/searchHooks"
+import { useMultipleQueries } from "app/hooks/searchHooks"
 import { useUsers } from "app/hooks/userHooks"
 import {
   cancelOrgProjectInvitationService,
   completeProjectSprintService,
-  createProjectColumnService, deleteOrgProjectService,
+  createProjectColumnService,
   inviteMembersToProjectService,
   updateOrgProjectService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
-import { areArraysEqual, truncateText } from "app/utils/generalUtils"
+import { areArraysEqual } from "app/utils/generalUtils"
 import React, { useContext, useEffect, useState } from 'react'
 import {
-  NavLink, Route, Routes, useLocation, useNavigate,
-  useParams, useSearchParams
+  NavLink, Route, Routes,
+  useLocation, useNavigate, useParams
 } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
@@ -32,6 +30,7 @@ import OrgUsersTagInput from "./OrgUsersTagInput"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
 import ProjectPages from "./ProjectPages"
+import ProjectSearchItem from "./ProjectSearchItem"
 import ProjectSettings from "./ProjectSettings"
 import ProjectTaskPage from "./ProjectTaskPage"
 import ProjectTasks from "./ProjectTasks"
@@ -51,11 +50,8 @@ export default function SingleProject() {
   const [selectedFilterUsers, setSelectedFilterUsers] = useState([])
   const [searchString, setSearchString] = useState('')
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
-  const [query, setQuery] = useState('')
-  const [numOfHits, setNumOfHits] = useState(0)
-  const [numOfPages, setNumOfPages] = useState(0)
-  const [pageNum, setPageNum] = useState(0)
-  const [hitsPerPage, setHitsPerPage] = useState(10)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [totalHits, setTotalHits] = useState(0)
   const [searchLoading, setSearchLoading] = useState(false)
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [invitesQuery, setInvitesQuery] = useState('')
@@ -65,6 +61,7 @@ export default function SingleProject() {
   const [projectInvitees, setProjectInvitees] = useState([])
   const [usersLoading, setUsersLoading] = useState(false)
   const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID}`
+  const searchHitsPerPage = 20
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
   const navigate = useNavigate()
@@ -108,39 +105,60 @@ export default function SingleProject() {
     })
   }
 
-  const searchTasks = useInstantSearch(
-    query,
-    tasksIndex,
-    searchFilters,
-    setNumOfHits,
-    setNumOfPages,
-    pageNum,
-    hitsPerPage,
+  const multipleQueries = [
+    {
+      indexName: 'tasks_index',
+      query: searchQuery,
+      params: {
+        hitsPerPage: searchHitsPerPage,
+        filters: searchFilters
+      }
+    },
+    {
+      indexName: 'project_pages_index',
+      query: searchQuery,
+      params: {
+        hitsPerPage: searchHitsPerPage,
+        filters: searchFilters
+      }
+    }
+  ]
+
+  const limitsArr = []
+
+  const searchResultsList = useMultipleQueries(
+    searchQuery,
+    multipleQueries,
+    setTotalHits,
+    limitsArr,
     setSearchLoading,
     showAll
   )
 
-  const searchTasksList = searchTasks?.map((task, index) => {
+  const searchTasksList = searchResultsList?.map((result, index) => {
     return <div
+      className="search-result-list"
       key={index}
-      className="search-result-row"
-      onClick={() => {
-        navigate(`backlog?taskID=${task.taskID}`)
-        setShowSearchDropdown(false)
-      }}
     >
-      <div className="left">
-        <span
-          className="icon"
-          style={{ background: switchTaskType(task.taskType).color }}
-        >
-          <i className={switchTaskType(task?.taskType).icon} />
-        </span>
-        <h6>{truncateText(task.title, 60)}</h6>
-      </div>
-      <div className="right">
-        <small>{task.taskNum}</small>
-      </div>
+      {
+        result?.hits?.length > 0 ?
+          <h6>Tasks ({result?.hits?.length})</h6> :
+          <h6><i className="fas fa-file-search" />No Results Found</h6>
+      }
+      {
+        result?.hits?.map((item, index) => {
+          return <ProjectSearchItem
+            key={index}
+            itemID={item.objectID}
+            isTaskType={item.taskID !== undefined}
+            setShowSearchDropdown={setShowSearchDropdown}
+            projectID={item.projectID}
+            title={item.title}
+            taskType={item.taskType}
+            taskNum={item.taskNum}
+          />
+        })
+      }
     </div>
   })
 
@@ -188,7 +206,7 @@ export default function SingleProject() {
 
   const handleClearSearch = () => {
     setSearchString('')
-    setQuery('')
+    setSearchQuery('')
   }
 
   const resetColumnModal = () => {
@@ -345,7 +363,7 @@ export default function SingleProject() {
             value={searchString}
             onChange={(e) => setSearchString(e.target.value)}
             onEnterPress={() => {
-              setQuery(searchString)
+              setSearchQuery(searchString)
               setShowSearchDropdown(true)
             }}
             searchResults={searchTasksList}
@@ -353,11 +371,6 @@ export default function SingleProject() {
             setShowSearchDropdown={setShowSearchDropdown}
             searchLoading={searchLoading}
             clearSearch={() => handleClearSearch()}
-            dropdownTitle={
-              numOfHits > 0 ?
-                <h6>{`Tasks (${numOfHits})`}</h6> :
-                <h6><i className="fas fa-file-search" />No Results Found</h6>
-            }
           />
         </div>
       </div>
@@ -508,7 +521,7 @@ export default function SingleProject() {
             label="Search for members to invite to the project"
             name="invites"
             placeholder="Invite members..."
-            query={invitesQuery}
+            searchQuery={invitesQuery}
             value={invitesQuery}
             onChange={(e) => setInvitesQuery(e.target.value)}
             setLoading={setSearchLoading}

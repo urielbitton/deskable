@@ -1,0 +1,30 @@
+.project-pages {
+  display: flex;
+  flex-direction: column;
+}
+.project-pages .titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+}
+.project-pages .titles h5 {
+  color: var(--darkGrayText);
+  font-size: 14px;
+}
+.project-pages .titles small {
+  color: var(--grayText);
+  font-size: 13px;
+}
+
+.project-pages .content-flex {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 30px;
+}
+.project-pages .content-flex .load-more-btn {
+  flex-basis: 100%;
+  margin-top: 20px;
+}

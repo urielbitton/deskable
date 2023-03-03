@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Route, Routes } from "react-router-dom"
 import AllProjects from "./AllProjects"
 import NewProject from "./NewProject"
+import ProjectPage from "./ProjectPage"
 import ProjectsHome from "./ProjectsHome"
 import ProjectsMainSettings from "./ProjectsMainSettings"
 import ProjectsUpdates from "./ProjectsUpdates"
@@ -17,6 +18,7 @@ export default function ProjectsWindow() {
       <Routes>
         <Route index element={<ProjectsHome setShowScroll={setShowScroll} />} />
         <Route path=":projectID/*" element={<SingleProject />} />
+        <Route path=":projectID/pages/:pageID" element={<ProjectPage />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />
         <Route path="settings" element={<ProjectsMainSettings />} />

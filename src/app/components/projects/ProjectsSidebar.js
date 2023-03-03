@@ -85,9 +85,6 @@ export default function ProjectsSidebar() {
           {projectsList}
         </div>
       </div>
-      <div className="section section-tasks">
-        <h5>Project Tasks</h5>
-      </div>
     </div>
   )
 }

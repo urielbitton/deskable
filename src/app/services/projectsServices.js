@@ -16,6 +16,8 @@ import {
   uploadMultipleFilesToFireStorage
 } from "./storageServices"
 
+//db reads
+
 export const getProjectsByOrgID = (orgID, myUserID, setProjects, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects`)
   const q = query(
@@ -212,6 +214,21 @@ export const getOrgProjectTasksInBacklog = (orgID, projectID, setTasks) => {
     setTasks(snapshot.docs.map(doc => doc.data()))
   })
 }
+
+export const getOrgProjectPages = (orgID, projectID, setPages, lim) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/pages`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(lim)
+  )
+  onSnapshot(q, (snapshot) => {
+    setPages(snapshot.docs.map(doc => doc.data()))
+  })
+}
+
+
+//db writes
 
 export const catchCode = (err, errorText, setToasts, setLoading) => {
   console.log(err)

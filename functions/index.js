@@ -14,8 +14,9 @@ const client = algoliasearch(APP_ID, API_KEY)
 const usersIndex = client.initIndex('users_index')
 const projectsIndex = client.initIndex('projects_index')
 const tasksIndex = client.initIndex('tasks_index')
+const projectPagesIndex = client.initIndex('project_pages_index')
 
-
+//users index
 exports.addToIndexUsers = functions
   .region('northamerica-northeast1')
   .firestore.document('users/{userID}').onCreate((snapshot, context) => {
@@ -36,6 +37,7 @@ exports.deleteFromIndexUsers = functions
     return usersIndex.deleteObject(snapshot.id)
   })
 
+  //projects index
 exports.addToIndexProjects = functions
   .region('northamerica-northeast1')
   .firestore.document('organizations/{orgID}/projects/{projectID}').onCreate((snapshot, context) => {
@@ -56,6 +58,7 @@ exports.deleteFromIndexProjects = functions
     return projectsIndex.deleteObject(snapshot.id)
   })
 
+//tasks index
 exports.addToIndexProjectTasks = functions
   .region('northamerica-northeast1')
   .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onCreate((snapshot, context) => {
@@ -76,6 +79,28 @@ exports.deleteFromIndexProjectTasks = functions
     return tasksIndex.deleteObject(snapshot.id)
   })
 
+exports.addToIndexProjectPages = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/pages/{pageID}').onCreate((snapshot, context) => {
+    const data = snapshot.data()
+    return projectPagesIndex.saveObject({ ...data, objectID: snapshot.id })
+  })
+
+exports.updateIndexProjectPages = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/pages/{pageID}').onUpdate((change) => {
+    const newData = change.after.data()
+    return projectPagesIndex.saveObject({ ...newData, objectID: change.after.id })
+  })
+
+exports.deleteFromIndexProjectPages = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/projects/{projectID}/pages/{pageID}').onDelete((snapshot, context) => {
+    return projectPagesIndex.deleteObject(snapshot.id)
+  })
+
+
+//on triggers
 exports.onCreateProjectTask = functions
   .region('northamerica-northeast1')
   .firestore.document('organizations/{orgID}/projects/{projectID}/tasks/{taskID}').onCreate((snapshot, context) => {
@@ -145,8 +170,8 @@ exports.onOrgPostDelete = functions
   })
 
 
-//utility functions
 
+//utility functions
 function recursivelyDeleteDocument(path, docID) {
   return firebase.firestore().recursiveDelete(firebase.firestore().doc(`${path}/${docID}`))
 }

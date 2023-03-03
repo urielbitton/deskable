@@ -30,19 +30,19 @@ export function useInstantSearch(query, searchIndex, filters,
   return searchResults
 }
 
-export const useMultipleQueries = (query, setTotalResults, queries, limit, setLoading) => {
+export const useMultipleQueries = (query, queries, setTotalHits, limitsArr, setLoading, showAll) => {
 
   const [searchResults, setSearchResults] = useState([])
 
   useEffect(() => {
-    if (query?.length) {
+    if (query?.length || showAll) {
       setLoading(true)
       algoliaSearchClient.multipleQueries(queries, {
         strategy: 'none',  
       })
         .then((results) => {
           setSearchResults(results.results)
-          setTotalResults(results.results?.map(result => result.nbHits)?.reduce((a, b) => a + b, 0))
+          setTotalHits(results.results?.map(result => result.nbHits)?.reduce((a, b) => a + b, 0))
           setLoading(false)
         })
         .catch(err => {
@@ -50,7 +50,7 @@ export const useMultipleQueries = (query, setTotalResults, queries, limit, setLo
           setLoading(false)
         })
     }
-  }, [...limit, query])
+  }, [...limitsArr, query])
 
   return searchResults
 }

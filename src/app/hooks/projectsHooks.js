@@ -1,7 +1,8 @@
-import { getLastMonthOrgOpenProjectTasks, getOrgProjectByID, 
+import {
+  getLastMonthOrgOpenProjectTasks, getOrgProjectByID,
   getOrgProjectClosedTasks, getOrgProjectColumnByID,
-  getOrgProjectColumns, getOrgProjectFirstColumn, 
-  getOrgProjectOpenTasks, getOrgProjectTaskByID,
+  getOrgProjectColumns, getOrgProjectFirstColumn,
+  getOrgProjectOpenTasks, getOrgProjectPages, getOrgProjectTaskByID,
   getOrgProjectTaskComments, getOrgProjectTaskEvents,
   getOrgProjectTaskFiles, getOrgProjectTasks,
   getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray,
@@ -243,4 +244,17 @@ export const useLastMonthOrgOpenProjectTasks = (isDone, limit) => {
   }, [myOrgID, isDone, limit])
 
   return tasks
+}
+
+export const useProjectPages = (projectID, limit) => {
+
+  const { myOrgID } = useContext(StoreContext)
+  const [pages, setPages] = useState([])
+
+  useEffect(() => {
+    if (myOrgID && projectID)
+      getOrgProjectPages(myOrgID, projectID, setPages, limit)
+  }, [myOrgID, projectID, limit])
+
+  return pages
 }

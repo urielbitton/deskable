@@ -10,6 +10,7 @@ export const algoliaSearchClient = algoliasearch(
 
 export const usersIndex = algoliaSearchClient.initIndex('users_index')
 export const projectsIndex = algoliaSearchClient.initIndex('projects_index')
+
 export const tasksIndex = algoliaSearchClient.initIndex('tasks_index')
 export const tasksAscIndex = algoliaSearchClient.initIndex('tasks_date_asc')
 export const tasksPointsDescIndex = algoliaSearchClient.initIndex('tasks_points_desc')
@@ -20,3 +21,5 @@ export const tasksPriorityAscIndex = algoliaSearchClient.initIndex('tasks_priori
 export const tasksStatusDescIndex = algoliaSearchClient.initIndex('tasks_status_desc')
 export const tasksTitleDescIndex = algoliaSearchClient.initIndex('tasks_title_desc')
 export const tasksTitleAscIndex = algoliaSearchClient.initIndex('tasks_title_asc')
+
+export const projectPagesIndex = algoliaSearchClient.initIndex('project_pages_index')

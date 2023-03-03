@@ -359,6 +359,55 @@ export const recentTasksSortBySwitch = (sortBy) => {
   return {name: 'Date Modified', icon: 'fas fa-calendar-alt'}
 }
 
+export const projectPagesTypesOptions = [
+  {
+    label: 'Guide',
+    value: 'guide',
+    icon: 'fas fa-book',
+  },
+  {
+    label: 'FAQ',
+    value: 'faq',
+    icon: 'fas fa-question',
+  },
+  {
+    label: 'Documentation',
+    value: 'documentation',
+    icon: 'fas fa-file-alt',
+  },
+  {
+    label: 'Project Plan',
+    value: 'projectPlan',
+    icon: 'fas fa-tasks',
+  },
+  {
+    label: 'Status Report',
+    value: 'statusReport',
+    icon: 'fas fa-chart-line',
+  },
+  {
+    label: 'Meeting Notes',
+    value: 'meetingNotes',
+    icon: 'fas fa-sticky-note',
+  },
+  {
+    label: 'Other',
+    value: 'other',
+    icon: 'far fa-circle',
+  }
+]
+
+export const switchProjectPagesTypes = (type) => {
+  if (type === 'guide') return {name: 'Guide', icon: 'fas fa-book'}
+  if (type === 'faq') return {name: 'FAQ', icon: 'fas fa-question'}
+  if (type === 'documentation') return {name: 'Documentation', icon: 'fas fa-file-alt'}
+  if (type === 'projectPlan') return {name: 'Project Plan', icon: 'fas fa-tasks'}
+  if (type === 'statusReport') return {name: 'Status Report', icon: 'fas fa-chart-line'}
+  if (type === 'meetingNotes') return {name: 'Meeting Notes', icon: 'fas fa-sticky-note'}
+  if (type === 'other') return {name: 'Other', icon: 'far fa-circle'}
+  return {name: 'Other', icon: 'far fa-circle'} 
+}
+
 export const projectAvatarsList = [
   {
     src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-1.png?alt=media&token=01fb1ae4-2d21-4f72-9ffd-d46c13868ac7',

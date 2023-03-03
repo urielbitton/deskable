@@ -10,8 +10,7 @@ html, body {
   --extraLightPrimary: #7dc24426;
   --secondary: #BAB69B;
   --red: #ff4d4d;
-  --blue: #006aff;
-  --lightBlue: #daf3ff;
+  --blue: #2881ff;
   --lightRed: #ffe2e2;
   --bg: #f8f8ff;
   --grayText: #696e93;
@@ -238,6 +237,13 @@ em-emoji-picker {
 }
 #calendar {
   overflow-x:auto;
+}
+
+/* TinyMCE styles */
+.tox .tox-tbtn:hover,
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn:active {
+  background: var(--darkInputBg)!important;
 }
 
 

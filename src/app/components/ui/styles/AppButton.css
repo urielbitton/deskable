@@ -114,6 +114,15 @@
   color: var(--primary);
 }
 
+.appButton.invertedGrayBtn {
+  color: var(--darkGrayText);
+  background: transparent;
+}
+.appButton.invertedGrayBtn:hover {
+  background: var(--darkInputBg);
+  color: var(--darkGrayText);
+}
+
 .appButton.disabled {
   background: #ddd;
   border-color: #ddd;

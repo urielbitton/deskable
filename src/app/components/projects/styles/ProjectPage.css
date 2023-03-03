@@ -2,42 +2,75 @@
   display: flex;
   flex-direction: column;
 }
-.project-page .toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  height: 45px;
-  margin-top: -10px;
-  border-bottom: 1px solid var(--inputBorder);
-}
-.project-page .toolbar .left button {
-  background: var(--inputBg);
-  color: var(--darkGrayText);
-}
-.project-page .toolbar .left button:hover {
-  background: var(--lightGrayText);
-}
+
 .project-page .page-content {
-  margin-top: 15px;
   display: grid;
-  grid-template-columns: auto 300px;
-  gap: 15px;
+  grid-template-columns: auto 350px;
   height: calc(100vh - 160px);
+}
+.project-page .page-content.hide-sidebar {
+  grid-template-columns: auto;
+}
+
+.project-page .page-content .editor-container .appInput {
+  top: 75px;
+  z-index: 10;
+}
+.project-page .page-content .editor-container .appInput input {
+  border: none;
+  font-size: 25px;
+  padding-left: 17px;
+}
+.project-page .page-content .editor-container .appInput input::placeholder {
+  color: #9296b3;
+}
+.project-page .tox-tinymce {
+  border: none;
+  overflow: visible;
+  margin-top: -38px;
+}
+.project-page .tox:not(.tox-tinymce-inline) .tox-editor-header {
+  box-shadow: none;
+  border-bottom: 2px solid var(--inputBorder);
+  padding: 0;
+  padding-bottom: 5px;
+}
+.project-page .tox .tox-sidebar-wrap {
+  margin-top: 70px;
 }
 
 .project-page .page-content .page-sidebar {
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 15px;
   overflow-y: auto;
+  margin-top: 0px;
+  border-left: 2px solid var(--inputBorder);
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar .side {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar .icon-container:hover {
+  background: var(--darkInputBg);
 }
 
-.project-page .tox-tinymce {
-  border: none;
+.tox .tox-dialog .tox-dialog__footer button {
+  background: var(--primary);
+  border-color: var(--primary);
 }
-.project-page .tox:not(.tox-tinymce-inline) .tox-editor-header {
-  box-shadow: none;
-  border-bottom: 1px solid var(--inputBorder);
-  padding: 0;
+.tox .tox-dialog .tox-dialog__footer button:active {
+  filter: brightness(0.9);
+}
+.tox .tox-dialog .tox-dialog__footer button:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  filter: brightness(1.1);
 }

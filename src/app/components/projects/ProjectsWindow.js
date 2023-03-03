@@ -12,13 +12,17 @@ import './styles/ProjectsWindow.css'
 export default function ProjectsWindow() {
 
   const [showScroll, setShowScroll] = useState(false)
+  const [windowPadding, setWindowPadding] = useState('20px')
 
   return (
-    <div className={`projects-window ${showScroll ? 'show-scroll' : ''}`}>
+    <div 
+      className={`projects-window ${showScroll ? 'show-scroll' : ''}`}
+      style={{padding: windowPadding}}
+    >
       <Routes>
         <Route index element={<ProjectsHome setShowScroll={setShowScroll} />} />
         <Route path=":projectID/*" element={<SingleProject />} />
-        <Route path=":projectID/pages/:pageID" element={<ProjectPage />} />
+        <Route path=":projectID/pages/:pageID" element={<ProjectPage setWindowPadding={setWindowPadding} />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />
         <Route path="settings" element={<ProjectsMainSettings />} />

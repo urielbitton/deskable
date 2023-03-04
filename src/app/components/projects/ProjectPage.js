@@ -18,6 +18,8 @@ export default function ProjectPage({ setWindowPadding }) {
   const pageID = useParams().pageID
   const editorRef = useRef(null)
   const navigate = useNavigate()
+  const draft = localStorage.getItem(`projectPageDraft`) || ''
+  const titleDraft = localStorage.getItem(`projectPageTitleDraft`) || ''
 
   const backToProject = () => {
     setShowProjectsSidebar(true)
@@ -28,6 +30,15 @@ export default function ProjectPage({ setWindowPadding }) {
     if (editorRef.current) {
       editorRef.current.execCommand('mcePreview')
     }
+  }
+
+  const publishPage = () => {
+    localStorage.removeItem(`projectPageDraft`)
+    console.log('published!')
+  }
+
+  const autoSaveDraft = (value) => {
+    localStorage.setItem(`projectPageDraft`, value)
   }
 
   const editPage = () => {
@@ -41,29 +52,42 @@ export default function ProjectPage({ setWindowPadding }) {
   useEffect(() => {
     setShowProjectsSidebar(false)
     setWindowPadding('0')
+    return () => setWindowPadding('20px')
   }, [])
+
+  useEffect(() => {
+    setTitle(titleDraft)
+  }, [titleDraft])
 
   return (
     <div className="project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
-          <AppInput
-            placeholder="Add a page title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          <div className="title-header">
+            <AppInput
+              placeholder="Add a page title"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                localStorage.setItem(`projectPageTitleDraft`, e.target.value)
+              }}
+            />
+          </div>
           <TinymceEditor
             editorRef={editorRef}
             editorHeight="calc(100vh - 100px)"
             customBtnOnClick={backToProject}
             customBtnLabel="Back to Project"
+            onEditorChange={(value) => autoSaveDraft(value)}
+            loadContent={draft}
           />
         </div>
         <div className="page-sidebar">
-          <div className="sidebar-toolbar">
+          <div className="sidebar-toolbar sidebar-section">
             <div className="side">
               <AppButton
                 label="Publish"
+                onClick={() => publishPage()}
               />
               <AppButton
                 label="Invite"
@@ -74,11 +98,11 @@ export default function ProjectPage({ setWindowPadding }) {
               <IconContainer
                 icon="fas fa-grip-lines-vertical"
                 iconColor="var(--darkGrayText)"
-                tooltip="Toggle Sidebar"
+                tooltip="Hide Sidebar"
                 dimensions={25}
                 inverted
                 iconSize="15px"
-                onClick={() => setHideSidebar(prev => !prev)}
+                onClick={() => setHideSidebar(true)}
               />
               <DropdownIcon
                 icon="far fa-ellipsis-h"
@@ -97,7 +121,7 @@ export default function ProjectPage({ setWindowPadding }) {
               />
             </div>
           </div>
-          <div className="page-info">
+          <div className="page-info sidebar-section">
             <div className="titles">
               <h5>Page Info</h5>
             </div>
@@ -105,7 +129,7 @@ export default function ProjectPage({ setWindowPadding }) {
 
             </div>
           </div>
-          <div className="page-templates">
+          <div className="page-templates sidebar-section">
             <div className="titles">
               <h5>Templates</h5>
             </div>
@@ -113,6 +137,21 @@ export default function ProjectPage({ setWindowPadding }) {
 
             </div>
           </div>
+          {
+            hideSidebar &&
+            <div className="folded-sidebar">
+              <IconContainer
+                icon="fas fa-grip-lines-vertical"
+                iconColor="var(--darkGrayText)"
+                tooltip="Show Sidebar"
+                dimensions={27}
+                inverted
+                iconSize={16}
+                onClick={() => setHideSidebar(false)}
+                className="toggle-sidebar-icon"
+              />
+            </div>
+          }
         </div>
       </div>
     </div>

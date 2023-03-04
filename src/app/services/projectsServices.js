@@ -219,6 +219,7 @@ export const getOrgProjectPages = (orgID, projectID, setPages, lim) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/pages`)
   const q = query(
     docRef,
+    where('isPublished', '==', true),
     orderBy('dateCreated', 'desc'),
     limit(lim)
   )

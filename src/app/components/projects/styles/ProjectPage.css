@@ -9,9 +9,39 @@
   height: calc(100vh - 160px);
 }
 .project-page .page-content.hide-sidebar {
-  grid-template-columns: auto;
+  grid-template-columns: auto 40px;
+}
+.project-page .page-content.hide-sidebar .page-sidebar {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  padding-top: 10px;
+  border: none;
+}
+.project-page .page-content.hide-sidebar .page-sidebar .folded-sidebar {
+  border-bottom: 2px solid var(--inputBorder);
+  height: 46px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.project-page .page-content.hide-sidebar .toggle-sidebar-icon {
+  transform: rotate(90deg);
+}
+.project-page .page-content.hide-sidebar .toggle-sidebar-icon:hover {
+  background: var(--darkInputBg);
+}
+.project-page .page-content.hide-sidebar .page-sidebar .sidebar-section {
+  display: none;
 }
 
+.project-page .page-content .editor-container .title-header {
+  padding: 0 10px;
+  width: 100%;
+}
 .project-page .page-content .editor-container .appInput {
   top: 75px;
   z-index: 10;
@@ -19,6 +49,7 @@
 .project-page .page-content .editor-container .appInput input {
   border: none;
   font-size: 25px;
+  font-weight: 600;
   padding-left: 17px;
 }
 .project-page .page-content .editor-container .appInput input::placeholder {
@@ -37,6 +68,7 @@
 }
 .project-page .tox .tox-sidebar-wrap {
   margin-top: 70px;
+  padding: 0 10px;
 }
 
 .project-page .page-content .page-sidebar {

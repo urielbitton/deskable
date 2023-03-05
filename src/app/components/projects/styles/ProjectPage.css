@@ -55,6 +55,8 @@
 .project-page .page-content .editor-container .appInput input::placeholder {
   color: #9296b3;
 }
+
+/* Tinymce css */
 .project-page .tox-tinymce {
   border: none;
   overflow: visible;
@@ -70,30 +72,6 @@
   margin-top: 70px;
   padding: 0 10px;
 }
-
-.project-page .page-content .page-sidebar {
-  display: flex;
-  flex-direction: column;
-  padding: 15px;
-  overflow-y: auto;
-  margin-top: 0px;
-  border-left: 2px solid var(--inputBorder);
-}
-.project-page .page-content .page-sidebar .sidebar-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.project-page .page-content .page-sidebar .sidebar-toolbar .side {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.project-page .page-content .page-sidebar .sidebar-toolbar .icon-container:hover {
-  background: var(--darkInputBg);
-}
-
 .tox .tox-dialog .tox-dialog__footer button {
   background: var(--primary);
   border-color: var(--primary);
@@ -105,4 +83,125 @@
   background: var(--primary);
   border-color: var(--primary);
   filter: brightness(1.1);
+}
+
+.project-page .page-content .page-sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  margin-top: 0px;
+  border-left: 2px solid var(--inputBorder);
+  height: 100%;
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--inputBorder);
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar .side {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-page .page-content .page-sidebar .sidebar-toolbar .icon-container:hover {
+  background: var(--darkInputBg);
+}
+
+.project-page .page-sidebar .page-info {
+  border-bottom: 2px solid var(--inputBorder);
+}
+.project-page .page-sidebar .sidebar-section {
+  padding: 15px;
+}
+.project-page .page-sidebar .sidebar-section .titles {
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.project-page .page-sidebar .page-info-content {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project-page .page-sidebar .page-info-content .page-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+} 
+.project-page .page-sidebar .page-info-content .page-info-item h6 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.project-page .page-sidebar .page-info-content .page-info-item span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grayText);
+}
+.project-page .page-sidebar .page-info-content .page-info-item .creator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.project-page .page-sidebar .page-info-content .page-info-item .multiple-users-avatars {
+  margin-right: 5px;
+}
+
+.project-page .page-sidebar .page-templates {
+  height: 100%;
+  overflow-y: auto;
+}
+.project-page .page-sidebar .page-templates-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project-page .page-sidebar .page-templates-content .appInput i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  color: var(--grayText);
+  opacity: 0.5;
+}
+.project-page .page-sidebar .page-templates-content .appInput input {
+  padding-right: 35px;
+}
+.project-page .page-sidebar .page-templates-content .template-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.project-page .page-sidebar .page-templates-content .template-item:hover {
+  background: var(--inputBg);
+}
+.project-page .page-sidebar .page-templates-content .template-item:active {
+  background: var(--darkInputBg);
+}
+.project-page .page-sidebar .page-templates-content .template-item .text-side {
+  display: flex;
+  flex-direction: column;
+}
+.project-page .page-sidebar .page-templates-content .template-item h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--darkGrayText); 
+}
+.project-page .page-sidebar .page-templates-content .template-item p {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--grayText);
 }

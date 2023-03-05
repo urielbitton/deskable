@@ -4,11 +4,11 @@ import './styles/AppBadge.css'
 export default function AppBadge(props) {
 
   const { label, icon='', light=true, fontSize='12px',
-    onClick, color, bgColor, iconSize } = props
+    onClick, color, bgColor, iconSize, className='' } = props
 
   return (
     <div 
-      className={`app-badge ${light ? 'light' : ''} ${onClick ? 'clickable' : ''}`}
+      className={`app-badge ${className} ${light ? 'light' : ''} ${onClick ? 'clickable' : ''}`}
       style={{ color, background: bgColor }}
       onClick={(e) => onClick && onClick(e)}
     >

@@ -408,6 +408,53 @@ export const switchProjectPagesTypes = (type) => {
   return {name: 'Other', icon: 'far fa-circle'} 
 }
 
+export const projectPageTemplates = [
+  {
+    name: 'Project Plan',
+    type: 'projectPlan',
+    icon: 'fas fa-tasks',
+    iconColor: 'var(--storyBlue)',
+    description: 'A document that contains a project scope and objectives for you to plan.',
+    template: {
+      title: 'Project Plan',
+      content: '<p>Project Plan</p>',
+    }
+  },
+  {
+    name: 'Status Report',
+    type: 'statusReport',
+    icon: 'fas fa-chart-line',
+    iconColor: '#ffc400',
+    description: 'Write and organize reports to keep your team up to date on your progress.',
+    template: {
+      title: 'Status Report',
+      content: '<p>Status Report</p>',
+    }
+  },
+  {
+    name: 'Meeting Notes',
+    type: 'meetingNotes',
+    icon: 'fas fa-sticky-note',
+    iconColor: '#c200ed',
+    description: 'Jot down notes during your meetings to keep track of important information.',
+    template: {
+      title: 'Meeting Notes',
+      content: '<p>Meeting Notes</p>',
+    }
+  },
+  {
+    name: 'Brainstorming',
+    type: 'brainstorming',
+    icon: 'fas fa-lightbulb',
+    iconColor: '#ed0037',
+    description: 'Brainstorm ideas and organize them into lists.',
+    template: {
+      title: 'Brainstorming',
+      content: '<p>Brainstorming</p>',
+    }
+  }
+]
+
 export const projectAvatarsList = [
   {
     src: 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fproject-avatars%2Fproject-avatar-1.png?alt=media&token=01fb1ae4-2d21-4f72-9ffd-d46c13868ac7',

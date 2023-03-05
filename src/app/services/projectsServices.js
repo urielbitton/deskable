@@ -228,6 +228,13 @@ export const getOrgProjectPages = (orgID, projectID, setPages, lim) => {
   })
 }
 
+export const getOrgProjectPageByID = (orgID, projectID, pageID, setPage) => {
+  const docRef = doc(db, `organizations/${orgID}/projects/${projectID}/pages`, pageID)
+  onSnapshot(docRef, (doc) => {
+    setPage(doc.data())
+  })
+}
+
 
 //db writes
 

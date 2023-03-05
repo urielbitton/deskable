@@ -2,7 +2,7 @@ import {
   getLastMonthOrgOpenProjectTasks, getOrgProjectByID,
   getOrgProjectClosedTasks, getOrgProjectColumnByID,
   getOrgProjectColumns, getOrgProjectFirstColumn,
-  getOrgProjectOpenTasks, getOrgProjectPages, getOrgProjectTaskByID,
+  getOrgProjectOpenTasks, getOrgProjectPageByID, getOrgProjectPages, getOrgProjectTaskByID,
   getOrgProjectTaskComments, getOrgProjectTaskEvents,
   getOrgProjectTaskFiles, getOrgProjectTasks,
   getOrgProjectTasksByColumnID, getOrgProjectTasksByColumnsArray,
@@ -258,3 +258,16 @@ export const useProjectPages = (projectID, limit) => {
 
   return pages
 }
+
+export const useProjectPage = (projectID, pageID) => {
+  
+    const { myOrgID } = useContext(StoreContext)
+    const [page, setPage] = useState(null)
+  
+    useEffect(() => {
+      if (myOrgID && projectID && pageID)
+        getOrgProjectPageByID(myOrgID, projectID, pageID, setPage)
+    }, [myOrgID, projectID, pageID])
+  
+    return page
+  }

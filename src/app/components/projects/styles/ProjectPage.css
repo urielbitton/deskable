@@ -56,6 +56,23 @@
   color: #9296b3;
 }
 
+.read-project-page .page-content .editor-container {
+  padding: 30px;
+  margin-top: 10px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.read-project-page .page-content .editor-container .title-header {
+  padding: 0;
+}
+.read-project-page .page-content .editor-container .title-header h3 {
+  font-size: 25px;
+  color: var(--darkGrayText);
+}
+.read-project-page .read-content {
+  margin-top: 20px;
+}
+
 /* Tinymce css */
 .project-page .tox-tinymce {
   border: none;
@@ -158,6 +175,9 @@
 .project-page .page-sidebar .page-templates {
   height: 100%;
   overflow-y: auto;
+}
+.read-project-page .page-sidebar .page-templates {
+  display: none;
 }
 .project-page .page-sidebar .page-templates-content {
   display: flex;

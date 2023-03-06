@@ -5,6 +5,7 @@ import { getTimeAgo } from "app/utils/dateUtils"
 import React, { useContext, useEffect } from 'react'
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
+import HtmlDisplayer from "../ui/HtmlDisplayer"
 import './styles/TaskEvent.css'
 
 export default function TaskEvent(props) {
@@ -60,7 +61,7 @@ export default function TaskEvent(props) {
         </div>
         <div className="content">
           <i className={icon}></i>
-          <p dangerouslySetInnerHTML={{ __html: title }} />
+          <HtmlDisplayer html={title}/>
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import ProjectsMainSettings from "./ProjectsMainSettings"
 import ProjectsUpdates from "./ProjectsUpdates"
 import SingleProject from "./SingleProject"
 import './styles/ProjectsWindow.css'
+import WritePage from "./WritePage"
 
 export default function ProjectsWindow() {
 
@@ -23,6 +24,8 @@ export default function ProjectsWindow() {
         <Route index element={<ProjectsHome setShowScroll={setShowScroll} />} />
         <Route path=":projectID/*" element={<SingleProject />} />
         <Route path=":projectID/pages/:pageID" element={<ProjectPage setWindowPadding={setWindowPadding} />} />
+        <Route path=":projectID/pages/:pageID/:editPage" element={<WritePage setWindowPadding={setWindowPadding} />} />
+        <Route path=":projectID/pages/new-page" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />
         <Route path="settings" element={<ProjectsMainSettings />} />

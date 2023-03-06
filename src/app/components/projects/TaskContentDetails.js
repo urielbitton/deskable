@@ -34,6 +34,7 @@ import TaskComment from "./TaskComment"
 import TaskEvent from "./TaskEvent"
 import './styles/TaskContentDetails.css'
 import AppScrollSlider from "../ui/AppScrollSlider"
+import HtmlDisplayer from "../ui/HtmlDisplayer"
 
 export default function TaskContentDetails(props) {
 
@@ -431,7 +432,7 @@ export default function TaskContentDetails(props) {
               onClick={() => setShowCoverInput('description')}
               style={{ display: showCoverInput === 'description' ? 'none' : 'block' }}
             >
-              <p dangerouslySetInnerHTML={{ __html: task.description }} />
+              <HtmlDisplayer html={task.description}/>
             </div>
           </div>
         </div>

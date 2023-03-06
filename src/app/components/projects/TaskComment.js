@@ -9,6 +9,7 @@ import React, { useContext, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
+import HtmlDisplayer from "../ui/HtmlDisplayer"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import './styles/TaskComment.css'
 
@@ -108,7 +109,7 @@ export default function TaskComment(props) {
       <div className="comment-body">
         {
           !editMode ?
-            <p dangerouslySetInnerHTML={{ __html: text }} /> :
+            <HtmlDisplayer html={text}/> :
             <div className="editor-container">
               <WysiwygEditor
                 placeholder="Enter a comment..."

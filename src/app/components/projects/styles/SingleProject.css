@@ -87,6 +87,11 @@
   color: var(--darkGrayText);
   font-weight: 600;
 }
+.single-project .project-toolbar .bottom-side .app-tabs-bar a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .single-project .project-toolbar .left-side {
   display: flex;
   flex-direction: column;

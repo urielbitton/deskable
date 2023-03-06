@@ -440,11 +440,11 @@ export default function SingleProject() {
             noSpread
             spacedOut={10}
           >
-            <NavLink to={`/projects/${projectID}/backlog`}>Backlog</NavLink>
-            <NavLink to={`/projects/${projectID}/board`}>Board</NavLink>
-            <NavLink to={`/projects/${projectID}/tasks`}>Tasks</NavLink>
-            <NavLink to={`/projects/${projectID}/pages`}>Pages</NavLink>
-            <NavLink to={`/projects/${projectID}/settings`}>Settings</NavLink>
+            <NavLink to={`/projects/${projectID}/backlog`}><i className="fas fa-list"/>Backlog</NavLink>
+            <NavLink to={`/projects/${projectID}/board`}><i className="fas fa-columns"/>Board</NavLink>
+            <NavLink to={`/projects/${projectID}/tasks`}><i className="fas fa-tasks"/>Tasks</NavLink>
+            <NavLink to={`/projects/${projectID}/pages`}><i className="fas fa-file-alt"/>Pages</NavLink>
+            <NavLink to={`/projects/${projectID}/settings`}><i className="fas fa-cog"/>Settings</NavLink>
           </AppTabsBar>
         </div>
       </div>

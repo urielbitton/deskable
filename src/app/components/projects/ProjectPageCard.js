@@ -13,6 +13,10 @@ export default function ProjectPageCard(props) {
     editorsIDs } = props.page
   const { showCardMenu, setShowCardMenu } = props
 
+  const deletePage = () => {
+    
+  }
+
   return (
     <Link
       to={`/projects/${projectID}/pages/${pageID}`}
@@ -40,8 +44,8 @@ export default function ProjectPageCard(props) {
               setShowCardMenu(prev => prev === pageID ? null : pageID)
             }}
             items={[
-              { label: 'Move to Trash', icon: 'fas fa-trash-alt', onClick: () => console.log('Move to Trash') },
-              { label: 'Duplicate', icon: 'fas fa-copy', onClick: () => console.log('Duplicate') },
+              { label: 'Edit Page', icon: 'fas fa-pen', url: `/projects/${projectID}/pages/${pageID}?edit=true` },
+              { label: 'Move to Trash', icon: 'fas fa-trash-alt', onClick: () => deletePage() },
             ]}
           />
         </div>

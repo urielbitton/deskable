@@ -1,4 +1,4 @@
-import { projectPageTemplates } from "app/data/projectsData"
+import { Editor } from "@tinymce/tinymce-react"
 import { useProjectPage } from "app/hooks/projectsHooks"
 import useUser from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
@@ -12,83 +12,35 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
-import TinymceEditor from "../ui/TinymceEditor"
 import './styles/ProjectPage.css'
+
+const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
 
 export default function ProjectPage({ setWindowPadding }) {
 
-  const { setShowProjectsSidebar } = useContext(StoreContext)
+  const { setShowProjectsSidebar, setPageLoading } = useContext(StoreContext)
   const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
   const [showMenu, setShowMenu] = useState(null)
   const [hideSidebar, setHideSidebar] = useState(false)
   const projectID = useParams().projectID
   const pageID = useParams().pageID
   const page = useProjectPage(projectID, pageID)
-  const editorRef = useRef(null)
-  const navigate = useNavigate()
-  const draft = localStorage.getItem(`projectPageDraft`) || ''
-  const titleDraft = localStorage.getItem(`projectPageTitleDraft`) || ''
   const pageCreator = useUser(page?.creatorID)
+  const navigate = useNavigate()
+  const editorRef = useRef(null)
 
-  const pageTemplatesList = projectPageTemplates?.map((template, index) => {
-    return <div
-      className="template-item"
-      onClick={() => insertTemplate(template.template)}
-      key={index}
-    >
-      <div className="icon-side">
-        <IconContainer
-          icon={template.icon}
-          bgColor={template.iconColor}
-          iconColor="#fff"
-          iconSize={17}
-          dimensions={30}
-        />
-      </div>
-      <div className="text-side">
-        <h5>{template.name}</h5>
-        <p>{template.description}</p>
-      </div>
-    </div>
-  })
-
-  const insertTemplate = (template) => {
-    if(!editorRef.current) return
-    if (editorRef.current.getContent() !== '') {
-      if (!window.confirm('Are you sure you want to insert a template? This will overwrite your current content.')) {
-        return
-      }
-    }
-    editorRef.current.setContent(template.content)
-    setTitle(template.title)
-  }
-
-  const backToProject = () => {
-    setShowProjectsSidebar(true)
-    navigate(`/projects/${projectID}`)
-  }
-
-  const previewPage = () => {
-    if (editorRef.current) {
-      editorRef.current.execCommand('mcePreview')
-    }
-  }
-
-  const publishPage = () => {
-    localStorage.removeItem(`projectPageDraft`)
-    console.log('published!')
-  }
-
-  const autoSaveDraft = (value) => {
-    localStorage.setItem(`projectPageDraft`, value)
-  }
-
-  const editPage = () => {
-
-  }
-
-  const deletePage = () => {
-
+  const triggerEditPage = () => {
+    setPageLoading(true)
+    const timeDelay = Math.floor(Math.random() * 500) + 500
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeDelay)
+    })
+      .then(() => {
+        setPageLoading(false)
+        navigate(`/projects/${projectID}/pages/${pageID}/:editPage`)
+      })
+      .catch(err => setPageLoading(false))
   }
 
   useEffect(() => {
@@ -98,41 +50,42 @@ export default function ProjectPage({ setWindowPadding }) {
   }, [])
 
   useEffect(() => {
-    setTitle(titleDraft)
-  }, [titleDraft])
+    setTitle(page?.title)
+    setContent(page?.content)
+  }, [page])
 
   return (
-    <div className="project-page">
+    <div className="project-page read-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
           <div className="title-header">
-            <AppInput
-              placeholder="Add a page title"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value)
-                localStorage.setItem(`projectPageTitleDraft`, e.target.value)
+            <h3>{title}</h3>
+          </div>
+          <div className="read-content">
+            <Editor
+              apiKey={tinymceAPIKey}
+              ref={editorRef}
+              init={{
+                readonly: true,
+                menubar: false,
+                statusbar: false,
+                toolbar: false,
+                contenteditable: false,
               }}
+              value={content}
             />
           </div>
-          <TinymceEditor
-            editorRef={editorRef}
-            editorHeight="calc(100vh - 100px)"
-            customBtnOnClick={backToProject}
-            customBtnLabel="Back to Project"
-            onEditorChange={(value) => autoSaveDraft(value)}
-            loadContent={draft}
-          />
         </div>
         <div className="page-sidebar">
           <div className="sidebar-toolbar sidebar-section">
             <div className="side">
               <AppButton
-                label="Publish"
-                onClick={() => publishPage()}
+                label="Edit Page"
+                onClick={() => triggerEditPage()}
               />
               <AppButton
                 label="Invite"
+                onClick={() => console.log('invite')}
                 buttonType="invertedGrayBtn"
               />
             </div>
@@ -155,9 +108,7 @@ export default function ProjectPage({ setWindowPadding }) {
                 showMenu={showMenu === pageID}
                 setShowMenu={setShowMenu}
                 items={[
-                  { label: 'Preview Page', icon: 'fas fa-eye', onClick: () => previewPage() },
-                  { label: 'Edit Page', icon: 'fas fa-pen', onClick: () => editPage() },
-                  { label: 'Delete Page', icon: 'fas fa-trash', onClick: () => deletePage() },
+                  { label: 'Invite', icon: 'fas fa-user-plus', onClick: () => console.log('Invite') },
                 ]}
                 onClick={() => setShowMenu(prev => prev !== pageID ? pageID : null)}
               />
@@ -219,7 +170,6 @@ export default function ProjectPage({ setWindowPadding }) {
                 placeholder="Search Templates"
                 iconright={<i className="far fa-search" />}
               />
-              {pageTemplatesList}
             </div>
           </div>
           {

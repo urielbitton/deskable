@@ -3,6 +3,7 @@ const algoliasearch = require('algoliasearch')
 const firebase = require("firebase-admin")
 firebase.initializeApp()
 const db = firebase.firestore()
+const storage = firebase.storage()
 db.settings({ ignoreUndefinedProperties: true })
 const sgMail = require('@sendgrid/mail')
 
@@ -169,6 +170,27 @@ exports.onOrgPostDelete = functions
       .catch((error) => console.log(error))
   })
 
+exports.uploadHtmlToFirestorage = functions
+  .https.onCall((data, context) => {
+    const content = data.content
+    const path = data.path
+    const fileName = data.fileName
+    const storageRef = storage.bucket().file(`${path}/${fileName}`)
+    return storageRef.save(content, {
+      metadata: {
+        contentType: 'text/plain',
+      },
+    })
+    .then(() => {
+      return storageRef.getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491'
+    })
+    .then((signedURLs) => {
+      return signedURLs[0]
+    })
+  })
+})
 
 
 //utility functions

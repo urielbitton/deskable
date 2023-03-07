@@ -1,5 +1,5 @@
 import { Editor } from "@tinymce/tinymce-react"
-import { useProjectPage } from "app/hooks/projectsHooks"
+import { useOrgProject, useProjectPage } from "app/hooks/projectsHooks"
 import useUser from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
@@ -12,23 +12,24 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
+import AskProjectAccess from "./AskProjectAccess"
 import './styles/ProjectPage.css'
 
 const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
 
 export default function ProjectPage({ setWindowPadding }) {
 
-  const { setShowProjectsSidebar, setPageLoading } = useContext(StoreContext)
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const { setShowProjectsSidebar, setPageLoading, myUserID } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const [hideSidebar, setHideSidebar] = useState(false)
   const projectID = useParams().projectID
   const pageID = useParams().pageID
+  const project = useOrgProject(projectID)
   const page = useProjectPage(projectID, pageID)
   const pageCreator = useUser(page?.creatorID)
   const navigate = useNavigate()
   const editorRef = useRef(null)
+  const userIsMember = project?.members?.includes(myUserID)
 
   const triggerEditPage = () => {
     setPageLoading(true)
@@ -38,9 +39,15 @@ export default function ProjectPage({ setWindowPadding }) {
     })
       .then(() => {
         setPageLoading(false)
-        navigate(`/projects/${projectID}/pages/${pageID}/:editPage`)
+        navigate(`/projects/${projectID}/pages/${pageID}/edit?edit=true`)
       })
       .catch(err => setPageLoading(false))
+  }
+
+  const previewPage = () => {
+    if (editorRef.current) {
+      editorRef.current.execCommand('mcePreview')
+    }
   }
 
   useEffect(() => {
@@ -49,30 +56,22 @@ export default function ProjectPage({ setWindowPadding }) {
     return () => setWindowPadding('20px')
   }, [])
 
-  useEffect(() => {
-    setTitle(page?.title)
-    setContent(page?.content)
-  }, [page])
-
-  return (
+  return page ? (
     <div className="project-page read-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
-          <div className="title-header">
-            <h3>{title}</h3>
-          </div>
           <div className="read-content">
             <Editor
               apiKey={tinymceAPIKey}
-              ref={editorRef}
+              onInit={(evt, editor) => editorRef.current = editor}
               init={{
-                readonly: true,
                 menubar: false,
                 statusbar: false,
                 toolbar: false,
-                contenteditable: false,
+                height: 'calc(100vh - 60px)',
               }}
-              value={content}
+              value={page?.content}
+              disabled
             />
           </div>
         </div>
@@ -108,7 +107,7 @@ export default function ProjectPage({ setWindowPadding }) {
                 showMenu={showMenu === pageID}
                 setShowMenu={setShowMenu}
                 items={[
-                  { label: 'Invite', icon: 'fas fa-user-plus', onClick: () => console.log('Invite') },
+                  { label: 'Preview Page', icon: 'fas fa-eye', onClick: () => previewPage() },
                 ]}
                 onClick={() => setShowMenu(prev => prev !== pageID ? pageID : null)}
               />
@@ -123,6 +122,10 @@ export default function ProjectPage({ setWindowPadding }) {
               />
             </div>
             <div className="page-info-content">
+              <div className="page-info-item title">
+                <h6>Page Title</h6>
+                <span>{page?.title}</span>
+              </div>
               <div className="page-info-item">
                 <h6>Created By</h6>
                 <div className="creator">
@@ -190,5 +193,11 @@ export default function ProjectPage({ setWindowPadding }) {
         </div>
       </div>
     </div>
-  )
+  ) :
+    page && !userIsMember ? (
+      <AskProjectAccess />
+    ) :
+      <div className="project-page-loader">
+        <i className="fal fa-spinner fa-spin" />
+      </div>
 }

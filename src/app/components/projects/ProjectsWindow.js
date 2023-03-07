@@ -24,7 +24,7 @@ export default function ProjectsWindow() {
         <Route index element={<ProjectsHome setShowScroll={setShowScroll} />} />
         <Route path=":projectID/*" element={<SingleProject />} />
         <Route path=":projectID/pages/:pageID" element={<ProjectPage setWindowPadding={setWindowPadding} />} />
-        <Route path=":projectID/pages/:pageID/:editPage" element={<WritePage setWindowPadding={setWindowPadding} />} />
+        <Route path=":projectID/pages/:pageID/edit" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path=":projectID/pages/new-page" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="updates" element={<ProjectsUpdates />} />

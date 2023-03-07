@@ -5,12 +5,11 @@ import { StoreContext } from "app/store/store"
 
 const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
 
-export default function TinymceEditor(props) {
+export default function PageEditor(props) {
 
   const { setToasts } = useContext(StoreContext)
   const { editorRef, editorHeight = 300, customBtnOnClick,
-    customBtnLabel, onEditorChange, onFocus, loadContent,
-    onCtrlSave, readOnly } = props
+    customBtnLabel, onEditorChange, onFocus, loadContent } = props
 
   return (
     <Editor
@@ -24,7 +23,6 @@ export default function TinymceEditor(props) {
         placeholder: 'Start jotting down ideas here...or use the sidebar templates to get inspired quickly.',
         menubar: false,
         statusbar: false,
-        readOnly,
         fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
         contextmenu: "link image inserttable | cell row column deletetable",
         setup: (editor) => {
@@ -34,19 +32,19 @@ export default function TinymceEditor(props) {
               onAction: () => customBtnOnClick(),
             })
           }
-        },
+        }, 
         plugins: [
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
           'anchor', 'searchreplace', 'fullscreen', 'emoticons',
           'insertdatetime', 'media', 'table', 'help', 'wordcount', 'inlinecode',
           'codesample', 'template', 'fontSelect', 'fontsizeselect', 'mentions',
-          'print'
+          'print', 'insertdatetime', 'pagebreak', 'code', 'export'
         ],
         toolbar: 'customBtn undo redo | blocks | fontsizeselect ' +
           'bold italic forecolor | alignleft aligncenter ' +
           'alignright alignjustify | bullist numlist outdent indent | ' +
-          'searchreplace codesample image emoticons mentions link table ' +
-          'print help',
+          'searchreplace codesample code insertdatetime image emoticons link table ' +
+          'print help ' + 'export',
         content_style: `body { font-family:Helvetica,Arial,sans-serif; font-size:15px } ` +
           `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before { color: #9296b3; } ` +
           `td { padding: 0 5px }`,

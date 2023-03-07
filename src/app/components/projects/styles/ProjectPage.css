@@ -5,8 +5,8 @@
 
 .project-page .page-content {
   display: grid;
-  grid-template-columns: auto 350px;
-  height: calc(100vh - 160px);
+  grid-template-columns: auto 330px;
+  height: calc(100vh - 85px);
 }
 .project-page .page-content.hide-sidebar {
   grid-template-columns: auto 40px;
@@ -20,6 +20,9 @@
   padding-top: 10px;
   border: none;
 }
+.read-project-page .page-content.hide-sidebar .page-sidebar {
+  padding-top: 0;
+}
 .project-page .page-content.hide-sidebar .page-sidebar .folded-sidebar {
   border-bottom: 2px solid var(--inputBorder);
   height: 46px;
@@ -27,6 +30,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.read-project-page .page-content.hide-sidebar .page-sidebar .folded-sidebar {
+  border: none;
 }
 .project-page .page-content.hide-sidebar .toggle-sidebar-icon {
   transform: rotate(90deg);
@@ -56,24 +62,10 @@
   color: #9296b3;
 }
 
-.read-project-page .page-content .editor-container {
-  padding: 30px;
-  margin-top: 10px;
-  height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-.read-project-page .page-content .editor-container .title-header {
-  padding: 0;
-}
-.read-project-page .page-content .editor-container .title-header h3 {
-  font-size: 25px;
-  color: var(--darkGrayText);
-}
-.read-project-page .read-content {
-  margin-top: 20px;
-}
-
 /* Tinymce css */
+.project-page iframe {
+  border-radius: 0;
+}
 .project-page .tox-tinymce {
   border: none;
   overflow: visible;
@@ -87,7 +79,7 @@
 }
 .project-page .tox .tox-sidebar-wrap {
   margin-top: 70px;
-  padding: 0 10px;
+  padding-left: 10px;
 }
 .tox .tox-dialog .tox-dialog__footer button {
   background: var(--primary);
@@ -163,6 +155,10 @@
   font-weight: 600;
   color: var(--grayText);
 }
+.project-page .page-sidebar .page-info-content .page-info-item.title span {
+  font-weight: 700;
+  text-transform: uppercase;
+}
 .project-page .page-sidebar .page-info-content .page-info-item .creator {
   display: flex;
   align-items: center;
@@ -224,4 +220,23 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--grayText);
+}
+
+/* Read-only project page css */
+.read-project-page .page-content .editor-container {
+  margin-top: 10px;
+}
+.read-project-page .page-content .editor-container .title-header {
+  padding: 0;
+  padding-left: 30px;
+  z-index: 100;
+  margin-bottom: 15px;
+}
+.read-project-page .page-content .editor-container .title-header h3 {
+  font-size: 25px;
+  color: var(--darkGrayText);
+}
+.read-project-page .tox .tox-sidebar-wrap {
+  margin-top: 30px;
+  padding-right: 0;
 }

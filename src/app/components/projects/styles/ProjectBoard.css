@@ -1,11 +1,43 @@
 .kanban-board-container {
   height: 100%;
   overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
+
 .kanban-board-container.is-dragging .react-kanban-column {
   border: 2px dashed #aaa;
 }
 
+.kanban-board-container .column-adder {
+  border-radius: 5px;
+  padding: 10px;
+  background: var(--inputBg);
+}
+
+.kanban-board-container .column-adder .column-add-btn {
+  width: 250px;
+  height: 30px;
+  border: 1px solid var(--tableBorder);
+  background: var(--inputBg);
+  filter: brightness(0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.kanban-board-container .column-adder .column-add-btn:active {
+  transform: scale(0.98);
+}
+.kanban-board-container .column-adder .column-add-btn i {
+  font-size: 17px;
+  color: var(--grayText);
+}
+.kanban-board-container .column-adder .column-add-btn:hover {
+  filter: brightness(0.92);
+}
 
 .start-sprint-container {
   width: 100%;
@@ -15,17 +47,20 @@
   justify-content: center;
   flex-direction: column;
 }
+
 .start-sprint-container img {
   width: 300px;
   margin-bottom: 20px;
   margin-top: 40px;
 }
+
 .start-sprint-container h5 {
   font-size: 17px;
   color: var(--darkGrayText);
   font-weight: 600;
   margin-bottom: 5px;
 }
+
 .start-sprint-container p {
   font-size: 14px;
   color: var(--grayText);

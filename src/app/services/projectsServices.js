@@ -1102,8 +1102,31 @@ export const cancelOrgProjectInvitationService = (orgID, project, userID, setToa
     .catch(err => catchCode(err, 'There was a problem cancelling the invitation. Please try again.', setToasts, setLoading))
 }
 
-export const newPublishProjectPageService = (path, title, content, setToasts, setLoading) => {
-
+export const newPublishProjectPageService = (path, myUserID, title, content, setToasts, setLoading) => {
+  setLoading(true)
+  const orgID = path.split('/')[1]
+  const projectID = path.split('/')[3]
+  const docID = getRandomDocID(path)
+  return setDB(path, docID, {
+    content,
+    creatorID: myUserID,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+    editorsIDs: [myUserID],
+    isPublished: true,
+    orgID,
+    projectID,
+    pageID: docID,
+    status: 'published',
+    title,
+    type: 'general'
+  })
+    .then(() => {
+      setToasts(successToast('The page has been published.'))
+      setLoading(false)
+      return docID
+    })
+    .catch(err => catchCode(err, 'There was a problem publishing the page. Please try again.', setToasts, setLoading))
 }
 
 export const updatePublishProjectPageService = (path, pageID, title, content, setToasts, setLoading) => {

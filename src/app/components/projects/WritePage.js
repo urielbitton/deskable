@@ -1,11 +1,12 @@
 import { projectPageTemplates } from "app/data/projectPageTemplates"
-import { useProjectPage } from "app/hooks/projectsHooks"
+import { infoToast } from "app/data/toastsTemplates"
+import { useOrgProject, useProjectPage } from "app/hooks/projectsHooks"
 import useUser from "app/hooks/userHooks"
-import { updatePublishProjectPageService } from "app/services/projectsServices"
+import { newPublishProjectPageService, updatePublishProjectPageService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import AppBadge from "../ui/AppBadge"
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
@@ -13,56 +14,70 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
-import TinymceEditor from "../ui/TinymceEditor"
+import PreventTabClose from "../ui/PreventTabClose"
+import AskProjectAccess from "./AskProjectAccess"
 import './styles/ProjectPage.css'
+import PageEditor from "../ui/PageEditor"
 
 export default function WritePage({ setWindowPadding }) {
 
-  const { setShowProjectsSidebar, setToasts, setPageLoading } = useContext(StoreContext)
-  const [title, setTitle] = useState('')
+  const { setShowProjectsSidebar, setToasts, setPageLoading,
+    myUserID, myOrgID } = useContext(StoreContext)
+  const [editTitle, setEditTitle] = useState('')
   const [showMenu, setShowMenu] = useState(null)
   const [hideSidebar, setHideSidebar] = useState(false)
+  const [templatesSearchString, setTemplatesSearchString] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
   const projectID = useParams().projectID
+  const project = useOrgProject(projectID)
   const pageID = useParams().pageID
-  const editMode = useParams().editPage
+  const editMode = searchParams.get('edit') === 'true'
   const page = useProjectPage(projectID, pageID)
   const editorRef = useRef(null)
   const navigate = useNavigate()
-  const draft = localStorage.getItem(`projectPageDraft`) || ''
-  const titleDraft = localStorage.getItem(`projectPageTitleDraft`) || ''
+  const content = editMode ? page?.content : localStorage.getItem(`projectPageDraft`) || ''
+  const contentTitle = editMode ? page?.title : localStorage.getItem(`projectPageTitleDraft`) || ''
   const pageCreator = useUser(page?.creatorID)
+  const preventPageClose = page?.content !== localStorage.getItem(`projectPageTitleDraft`) || editTitle?.length > 0
+  const userIsMember = project?.members?.includes(myUserID)
 
-  const pageTemplatesList = projectPageTemplates?.map((template, index) => {
-    return <div
-      className="template-item"
-      onClick={() => insertTemplate(template.template)}
-      key={index}
-    >
-      <div className="icon-side">
-        <IconContainer
-          icon={template.icon}
-          bgColor={template.iconColor}
-          iconColor="#fff"
-          iconSize={17}
-          dimensions={30}
-        />
+  const pageTemplatesList = projectPageTemplates
+    ?.filter(template => {
+      return template.name.toLowerCase().includes(templatesSearchString.toLowerCase()) ||
+        template.description.toLowerCase().includes(templatesSearchString.toLowerCase())
+    })
+    .map((template, index) => {
+      return <div
+        className="template-item"
+        onClick={() => insertTemplate(template.template)}
+        key={index}
+      >
+        <div className="icon-side">
+          <IconContainer
+            icon={template.icon}
+            bgColor={template.iconColor}
+            iconColor="#fff"
+            iconSize={17}
+            dimensions={30}
+          />
+        </div>
+        <div className="text-side">
+          <h5>{template.name}</h5>
+          <p>{template.description}</p>
+        </div>
       </div>
-      <div className="text-side">
-        <h5>{template.name}</h5>
-        <p>{template.description}</p>
-      </div>
-    </div>
-  })
+    })
 
   const insertTemplate = (template) => {
     if (!editorRef.current) return
-    if (editorRef.current.getContent() !== '') {
+    if (editorRef.current.getContent() !== '' || editTitle !== '') {
       if (!window.confirm('Are you sure you want to insert a template? This will overwrite your current content.')) {
         return
       }
     }
     editorRef.current.setContent(template.content)
-    setTitle(template.title)
+    setEditTitle(template.title)
+    localStorage.setItem(`projectPageTitleDraft`, template.title)
   }
 
   const backToProject = () => {
@@ -76,22 +91,44 @@ export default function WritePage({ setWindowPadding }) {
     }
   }
 
+  const afterPagePublish = (pageID) => {
+    navigate(`/projects/${projectID}/pages/${pageID}`)
+    localStorage.removeItem(`projectPageDraft`)
+    localStorage.removeItem(`projectPageTitleDraft`)
+  }
+
   const publishPage = () => {
+    if (!editorRef.current.getContent() || !editTitle)
+      return setToasts(infoToast('Please add a title and content to your page before publishing.'))
     const pageSize = new Blob([editorRef.current.getContent()], { type: 'text/plain' }).size
-    const path = `organizations/${page?.orgID}/projects/${projectID}/pages`
+    const path = `organizations/${myOrgID}/projects/${projectID}/pages`
     if (pageSize <= 999990) {
-      updatePublishProjectPageService(
-        path,
-        pageID,
-        title,
-        editorRef.current.getContent(),
-        setToasts,
-        setPageLoading
-      )
-        .then(() => {
-          localStorage.removeItem(`projectPageDraft`)
-          localStorage.removeItem(`projectPageTitleDraft`)
-        })
+      if (editMode) {
+        updatePublishProjectPageService(
+          path,
+          pageID,
+          editTitle,
+          editorRef.current.getContent(),
+          setToasts,
+          setPageLoading
+        )
+          .then(() => {
+            afterPagePublish(pageID)
+          })
+      }
+      else {
+        newPublishProjectPageService(
+          path,
+          myUserID,
+          editTitle,
+          editorRef.current.getContent(),
+          setToasts,
+          setPageLoading
+        )
+          .then((docID) => {
+            afterPagePublish(docID)
+          })
+      }
     }
   }
 
@@ -104,21 +141,25 @@ export default function WritePage({ setWindowPadding }) {
   }
 
   const triggerCancelEdit = () => {
-    setPageLoading(true)
     const timeDelay = Math.floor(Math.random() * 500) + 500
     if (window.confirm('Are you sure you want to cancel editing this page?')) {
+      setPageLoading(true)
       return new Promise((resolve) => {
         setTimeout(resolve, timeDelay)
       })
-      .then(() => {
-        setPageLoading(false)
-        navigate(`/projects/${projectID}/pages/${pageID}`)
-      })
-      .catch(err => setPageLoading(false))
+        .then(() => {
+          setPageLoading(false)
+          navigate(editMode ? `/projects/${projectID}/pages/${pageID}` : `/projects/${projectID}/pages`)
+        })
+        .catch(err => setPageLoading(false))
     }
   }
 
   const deletePage = () => {
+
+  }
+
+  const inviteEditors = () => {
 
   }
 
@@ -129,30 +170,30 @@ export default function WritePage({ setWindowPadding }) {
   }, [])
 
   useEffect(() => {
-    setTitle(titleDraft)
-  }, [titleDraft])
+    setEditTitle(contentTitle)
+  }, [contentTitle])
 
-  return (
+  return userIsMember ? (
     <div className="project-page edit-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
           <div className="title-header">
             <AppInput
               placeholder="Add a page title"
-              value={title}
+              value={editTitle}
               onChange={(e) => {
-                setTitle(e.target.value)
+                setEditTitle(e.target.value)
                 localStorage.setItem(`projectPageTitleDraft`, e.target.value)
               }}
             />
           </div>
-          <TinymceEditor
+          <PageEditor
             editorRef={editorRef}
             editorHeight="calc(100vh - 100px)"
             customBtnOnClick={backToProject}
             customBtnLabel="Back to Project"
             onEditorChange={(value) => autoSaveDraft(value)}
-            loadContent={draft}
+            loadContent={content}
           />
         </div>
         <div className="page-sidebar">
@@ -188,14 +229,17 @@ export default function WritePage({ setWindowPadding }) {
                 setShowMenu={setShowMenu}
                 items={[
                   { label: 'Preview Page', icon: 'fas fa-eye', onClick: () => previewPage() },
-                  { label: 'Edit Page', icon: 'fas fa-pen', onClick: () => editPage() },
-                  { label: 'Delete Page', icon: 'fas fa-trash', onClick: () => deletePage() },
+                  ...(editMode ? [{ label: 'Invite Editors', icon: 'fas fa-user-plus', onClick: () => inviteEditors() }] : []),
+                  ...(editMode ? [{ label: 'Delete Page', icon: 'fas fa-trash', onClick: () => deletePage() }] : []),
                 ]}
                 onClick={() => setShowMenu(prev => prev !== pageID ? pageID : null)}
               />
             </div>
           </div>
-          <div className="page-info sidebar-section">
+          <div
+            className="page-info sidebar-section"
+            style={{ display: editMode ? 'block' : 'none' }}
+          >
             <div className="titles">
               <h5>Page Info</h5>
               <AppBadge
@@ -249,7 +293,16 @@ export default function WritePage({ setWindowPadding }) {
             <div className="page-templates-content">
               <AppInput
                 placeholder="Search Templates"
-                iconright={<i className="far fa-search" />}
+                iconright={!templatesSearchString.length ?
+                  <i className="far fa-search" /> :
+                  <i
+                    className="fal fa-times"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setTemplatesSearchString('')}
+                  />
+                }
+                onChange={(e) => setTemplatesSearchString(e.target.value)}
+                value={templatesSearchString}
               />
               {pageTemplatesList}
             </div>
@@ -271,6 +324,11 @@ export default function WritePage({ setWindowPadding }) {
           }
         </div>
       </div>
+      <PreventTabClose
+        preventClose={preventPageClose}
+        warningMessage="Are you sure you want to leave this page? Your changes will be saved as a draft."
+      />
     </div>
-  )
+  ) :
+    <AskProjectAccess />
 }

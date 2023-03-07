@@ -27,8 +27,17 @@ export default function ProjectPages({ project }) {
   return (
     <div className="project-pages">
       <div className="titles">
-        <h5>Pages</h5>
-        <small>Pages are documentation or notes for your projects or project tasks.</small>
+        <div className="left">
+          <h5>Pages</h5>
+          <small>Pages are documentation or notes for your projects or project tasks.</small>
+        </div>
+        <div className="actions">
+          <AppButton
+            label="New Page"
+            url={`/projects/${project?.projectID}/pages/new-page`}
+            leftIcon="fal fa-plus"
+          />
+        </div>
       </div>
       <div className="content-flex">
         {pagesList}

@@ -1,9 +1,11 @@
 import React, { useEffect } from "react"
 
-export default function PreventTabClose({preventClose}) {
+export default function PreventTabClose({preventClose, ...props}) {
+
+  const { warningMessage='You have unsaved changes. Are you sure you want to close the tab?' } = props
 
   const eventReturnValue = (e) => {
-    return e.returnValue = 'You have unsaved changes. Are you sure you want to close the tab?'
+    return e.returnValue = warningMessage
   }
 
   useEffect(() => {

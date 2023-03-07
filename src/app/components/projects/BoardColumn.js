@@ -89,7 +89,7 @@ export default function BoardColumn(props) {
                 onClick: initRenameColumn,
                 icon: notColumnEditing ? 'fas fa-pen' : 'far fa-times'
               },
-              { label: 'Remove', onClick: () => deleteColumn, icon: 'fas fa-trash' }
+              { label: 'Remove', onClick: () => deleteColumn(), icon: 'fas fa-trash' }
             ]}
           />
         </div>

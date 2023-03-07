@@ -8,7 +8,8 @@ import {
   createProjectTaskService, deleteProjectColumnService,
   getLastColumnTaskPosition, renameBoardColumnService,
   deleteProjectTaskService,
-  getLastBacklogTaskPosition
+  getLastBacklogTaskPosition,
+  createProjectColumnService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
@@ -19,6 +20,8 @@ import NewTaskModal from "./NewTaskModal"
 import TaskModal from "./TaskModal"
 import './styles/ProjectBoard.css'
 import noActiveSprintImg from 'app/assets/images/no-active-sprint.png'
+import AppModal from "../ui/AppModal"
+import { AppInput } from "../ui/AppInputs"
 
 export default function ProjectBoard({ project, tasksFilter }) {
 
@@ -45,6 +48,9 @@ export default function ProjectBoard({ project, tasksFilter }) {
   const [reporter, setReporter] = useState(null)
   const [isDragging, setIsDragging] = useState(false)
   const [taskNum, setTaskNum] = useState(0)
+  const [showColumnModal, setShowColumnModal] = useState(false)
+  const [columnTitle, setColumnTitle] = useState('')
+  const [columnLoading, setColumnLoading] = useState(false)
   const dynamicColumnID = columns?.find(column => column.title === status)?.columnID
   const tasksPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
   const columnsPath = `organizations/${myOrgID}/projects/${projectID}/columns`
@@ -189,6 +195,25 @@ export default function ProjectBoard({ project, tasksFilter }) {
     }
   }
 
+  const resetColumnModal = () => {
+    setShowColumnModal(false)
+    setColumnTitle('')
+  }
+
+  const addColumn = () => {
+    if (!columnTitle) return setToasts(infoToast('Please enter a title for the column.'))
+    createProjectColumnService(
+      myOrgID,
+      projectID,
+      columnTitle,
+      setColumnLoading,
+      setToasts
+    )
+      .then(() => {
+        resetColumnModal()
+      })
+  }
+
   useEffect(() => {
     if (viewModalMode) {
       setViewTaskModal(true)
@@ -199,26 +224,37 @@ export default function ProjectBoard({ project, tasksFilter }) {
   }, [viewModalMode, newTaskModalMode])
 
   return (
-    <div 
+    <div
       className={`kanban-board-container ${isDragging ? 'is-dragging' : ''}`}
       key={projectID}
     >
       {
         isSprintActive ?
-          <KanbanBoard
-            board={board}
-            removeColumn={removeColumn}
-            renameColumn={renameColumn}
-            initAddTask={initAddTask}
-            handleDeleteTask={handleDeleteTask}
-            handleOpenTask={handleOpenTask}
-            onCardDragEnd={onCardDragEnd}
-            editTitleMode={editTitleMode}
-            setEditTitleMode={setEditTitleMode}
-            tasksPath={tasksPath}
-            isDragging={isDragging}
-            setIsDragging={setIsDragging}
-          /> :
+          <>
+            <KanbanBoard
+              board={board}
+              removeColumn={removeColumn}
+              renameColumn={renameColumn}
+              initAddTask={initAddTask}
+              handleDeleteTask={handleDeleteTask}
+              handleOpenTask={handleOpenTask}
+              onCardDragEnd={onCardDragEnd}
+              editTitleMode={editTitleMode}
+              setEditTitleMode={setEditTitleMode}
+              tasksPath={tasksPath}
+              isDragging={isDragging}
+              setIsDragging={setIsDragging}
+            />
+            <div className="column-adder">
+              <div 
+                className="column-add-btn"
+                onClick={() => setShowColumnModal(true)}
+              >
+                <i className="fal fa-plus" />
+              </div>
+            </div>
+          </>
+          :
           <div className="start-sprint-container">
             <img src={noActiveSprintImg} alt="No Active Sprint" />
             <h5>There are no active sprints.</h5>
@@ -262,6 +298,34 @@ export default function ProjectBoard({ project, tasksFilter }) {
         showModal={viewTaskModal}
         setShowModal={setViewTaskModal}
       />
+      <AppModal
+        showModal={showColumnModal}
+        setShowModal={setShowColumnModal}
+        label="Add Column"
+        portalClassName="add-column-modal"
+        actions={
+          <>
+            <AppButton
+              label="Add Column"
+              buttonType="primaryBtn"
+              onClick={() => addColumn()}
+              rightIcon={columnLoading ? "fas fa-spinner fa-spin" : null}
+            />
+            <AppButton
+              label="Cancel"
+              buttonType="outlineBtn"
+              onClick={() => resetColumnModal()}
+            />
+          </>
+        }
+      >
+        <AppInput
+          label="Column Title"
+          placeholder="Enter a column title"
+          value={columnTitle}
+          onChange={e => setColumnTitle(e.target.value)}
+        />
+      </AppModal>
     </div>
   )
 }

@@ -76,7 +76,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 }
 .app-modal-container .app-modal > footer button[disabled] {
   pointer-events: none;

@@ -140,7 +140,7 @@ hr {
 .capitalize, .cap {
   text-transform: capitalize
 }
-.uppercase {
+.uppercase, .upper {
   text-transform: uppercase
 }
 .lowercase {

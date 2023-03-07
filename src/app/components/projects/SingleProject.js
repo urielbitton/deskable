@@ -26,6 +26,7 @@ import DropdownButton from "../ui/DropdownButton"
 import DropdownSearch from "../ui/DropdownSearch"
 import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
+import AskProjectAccess from "./AskProjectAccess"
 import OrgUsersTagInput from "./OrgUsersTagInput"
 import ProjectBacklog from "./ProjectBacklog"
 import ProjectBoard from "./ProjectBoard"
@@ -565,10 +566,7 @@ export default function SingleProject() {
     </div>
   ) :
     project && !userIsMember ? (
-      <div>
-        <h4>You are not a member of this project.</h4>
-        <p>You can ask your organization admin for access here.</p>
-      </div>
+      <AskProjectAccess />
     ) :
       <div className="project-page-loader">
         <i className="fal fa-spinner fa-spin" />

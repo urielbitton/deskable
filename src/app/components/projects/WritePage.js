@@ -39,7 +39,7 @@ export default function WritePage({ setWindowPadding }) {
   const contentTitle = editMode ? page?.title : localStorage.getItem(`projectPageTitleDraft`) || ''
   const pageCreator = useUser(page?.creatorID)
   const preventPageClose = page?.content !== localStorage.getItem(`projectPageTitleDraft`) || editTitle?.length > 0
-  const userIsMember = project?.members?.includes(myUserID)
+  const userIsMemberAndEditor = project?.members?.includes(myUserID) && page?.editorsIDs?.includes(myUserID)
 
   const pageTemplatesList = projectPageTemplates
     ?.filter(template => {
@@ -173,7 +173,7 @@ export default function WritePage({ setWindowPadding }) {
     setEditTitle(contentTitle)
   }, [contentTitle])
 
-  return userIsMember ? (
+  return userIsMemberAndEditor ? (
     <div className="project-page edit-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">

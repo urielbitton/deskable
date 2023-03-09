@@ -43,6 +43,9 @@
 .project-page .page-content.hide-sidebar .page-sidebar .sidebar-section {
   display: none;
 }
+.read-project-page .read-content {
+  padding-top: 20px;
+}
 
 .project-page .page-content .editor-container .title-header {
   padding: 0 10px;
@@ -134,8 +137,13 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+.project-page .page-sidebar .sidebar-section .app-badge-select .app-badge i {
+  display: none;
+}
+.project-page .page-sidebar .sidebar-section .app-badge-select:hover .app-badge i {
+  display: block;
+}
 .project-page .page-sidebar .page-info-content {
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -220,6 +228,25 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--grayText);
+}
+.project-page .page-export-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project-page .page-export-content .appButton {
+  font-size: 13px;
+}
+.project-page .page-export-content .page-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.project-page .page-export-content .page-info-item h6 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--darkGrayText);
 }
 
 /* Read-only project page css */

@@ -522,7 +522,7 @@ export default function SingleProject() {
             label="Search for members to invite to the project"
             name="invites"
             placeholder="Invite members..."
-            searchQuery={invitesQuery}
+            query={invitesQuery}
             value={invitesQuery}
             onChange={(e) => setInvitesQuery(e.target.value)}
             setLoading={setSearchLoading}

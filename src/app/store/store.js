@@ -25,6 +25,7 @@ const StoreContextProvider = ({children}) => {
   const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
   const [hideRightBar, setHideRightBar] = useState(false)
   const [showProjectsSidebar, setShowProjectsSidebar] = useState(localStorage.getItem('showProjectsSidebar') === "true")
+  const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -64,7 +65,8 @@ const StoreContextProvider = ({children}) => {
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,
     newEventModal, setNewEventModal,
-    hideRightBar, setHideRightBar, showProjectsSidebar, setShowProjectsSidebar
+    hideRightBar, setHideRightBar, showProjectsSidebar, setShowProjectsSidebar,
+    tinymceAPIKey
   }}>
     {children}
   </StoreContext.Provider>

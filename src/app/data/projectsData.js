@@ -361,6 +361,11 @@ export const recentTasksSortBySwitch = (sortBy) => {
 
 export const projectPagesTypesOptions = [
   {
+    label: 'General',
+    value: 'general',
+    icon: 'fas fa-info-circle',
+  },
+  {
     label: 'Guide',
     value: 'guide',
     icon: 'fas fa-book',
@@ -407,6 +412,29 @@ export const switchProjectPagesTypes = (type) => {
   if (type === 'other') return {name: 'Other', icon: 'far fa-circle'}
   return {name: 'Other', icon: 'far fa-circle'} 
 }
+
+export const projectPageStatusOptions = [
+  {
+    label: 'Draft',
+    value: 'draft',
+  },
+  {
+    label: 'Published',
+    value: 'published',
+  },
+  {
+    label: 'In Progress',
+    value: 'inProgress',
+  },
+  {
+    label: 'Completed',
+    value: 'completed',
+  },
+  {
+    label: 'Archived',
+    value: 'archived',
+  }
+]
 
 export const projectAvatarsList = [
   {

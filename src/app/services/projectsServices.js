@@ -1156,3 +1156,36 @@ export const updateProjectPageService = (path, pageID, project, setToasts, setLo
     })
     .catch(err => catchCode(err, 'There was a problem updating the page. Please try again.', setToasts, setLoading))
 }
+
+export const projectPageInviteMembersService = (path, page, inviteesIDs, inviterName, setToasts, setLoading) => {
+  setLoading(true)
+  const batch = writeBatch(db)
+  const projectID = path.split('/')[3]
+  return updateDB(path, page.pageID, {
+    editorsIDs: firebaseArrayAdd(...inviteesIDs),
+    dateModified: new Date()
+  })
+    .then(() => {
+      for (const inviteeID of inviteesIDs) {
+        const usersNotifsPath = `users/${inviteeID}/notifications`
+        const notifID = getRandomDocID(usersNotifsPath)
+        batch.set(doc(db, usersNotifsPath, notifID), {
+          notificationID: notifID,
+          dateCreated: new Date(),
+          isRead: false,
+          title: `${inviterName} has invited you to edit the project page: ${page.title}.`,
+          text: 'Project Page Edit Invitation',
+          icon: 'fas fa-file-alt',
+          url: `/projects/${projectID}/pages/${page.pageID}/edit?edit=true`
+        })
+      }
+    })
+    .then(() => {
+      return batch.commit()
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('User invitations have been sent.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem sending the invitations. Please try again.', setToasts, setLoading))
+}

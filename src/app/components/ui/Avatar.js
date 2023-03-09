@@ -13,6 +13,7 @@ export default function Avatar(props) {
       style={{width: dimensions, height: dimensions, minWidth: dimensions, border}}
       title={title}
       onClick={() => onClick && onClick()}
+      key={src}
     >
       <img 
         src={src} 

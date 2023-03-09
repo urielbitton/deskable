@@ -3,11 +3,9 @@ import { Editor } from '@tinymce/tinymce-react'
 import { successToast } from "app/data/toastsTemplates"
 import { StoreContext } from "app/store/store"
 
-const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
-
 export default function PageEditor(props) {
 
-  const { setToasts } = useContext(StoreContext)
+  const { setToasts, tinymceAPIKey } = useContext(StoreContext)
   const { editorRef, editorHeight = 300, customBtnOnClick,
     customBtnLabel, onEditorChange, onFocus, loadContent } = props
 

@@ -47,20 +47,6 @@
   font-size: 12px;
   font-weight: 600;
 }
-.new-project-container .form-container .form .input-placeholder {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.new-project-container .form-container .form .input-placeholder i {
-  color: var(--grayText);
-}
-.new-project-container .form-container .form .input-placeholder h5 {
-  font-size: 14px;
-  color: var(--darkGrayText);
-  font-weight: 500;
-  text-transform: capitalize;
-}
 .new-project-container .form-container .form .selected-user {
   background: var(--inputBg);
   padding: 8px 10px;

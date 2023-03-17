@@ -1,3 +1,28 @@
 .project-settings {
-  
+  display: flex;
+  flex-direction: column;
+}
+
+.project-settings .settings-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  margin-bottom: 40px;
+  width: 800px;
+}
+.project-settings .settings-container > h5 {
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.project-settings .settings-container .settings-section input:disabled,
+.project-settings .settings-container .settings-section textarea:disabled {
+  background: #f1f1f1;
+  cursor: default;
+}
+.project-settings .settings-container .settings-section textarea {
+  resize: vertical;
+  max-height: 150px;
+  min-height: 100px;
 }

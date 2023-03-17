@@ -8,7 +8,7 @@ import googleIcon from 'app/assets/images/google-icon.png'
 import facebookIcon from 'app/assets/images/facebook-icon.png'
 import { facebookAuthService, googleAuthService, plainAuthService } from "app/services/authServices"
 import { validateEmail } from "app/utils/generalUtils"
-import registerCover from 'app/assets/images/register-cover.png'
+import loginCover from 'app/assets/images/login-cover.png'
 import logo from 'app/assets/images/logo.png'
 import AppButton from "app/components/ui/AppButton"
 import { infoToast } from "app/data/toastsTemplates"
@@ -73,10 +73,10 @@ export default function Register() {
       <div className="login-info">
         <div className="container">
         <div className="auth-titles">
-            <h4>Sign Up</h4>
             <div className="logo-container">
               <img src={logo} className="logo" alt="logo" />
             </div>
+            <h4>Sign Up</h4>
           </div>
           <div className="social-logins">
             <div
@@ -171,9 +171,9 @@ export default function Register() {
         </div>
       </div>
       <div className="login-cover register-cover">
-        <img src={registerCover} alt="register-cover" />
+      <img src={loginCover} alt="login-cover" />
         <h5>Boost your team's efficiency.</h5>
-        <p>Try Workable now and take advantage of an all-in-one-place taskforce platform.</p>
+        <p>Try Deskable now and take advantage of an all-in-one, centralized workplace platform.</p>
       </div>
     </div>
   )

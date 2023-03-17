@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom"
 import PhotosModal from "../ui/PhotosModal"
 import ReportModal from "../ui/ReportModal"
 import { reportOrgPostOptions } from "app/data/general"
+import ImgSkeleton from "../ui/ImgSkeleton"
 
 export default function PostCard(props) {
 
@@ -43,6 +44,7 @@ export default function PostCard(props) {
   const [reportReason, setReportReason] = useState("")
   const [reportMessage, setReportMessage] = useState("")
   const [reportLoading, setReportLoading] = useState(false)
+  const [imgLoading, setImgLoading] = useState(true)
   const postAuthor = useUser(authorID)
   const editUploadRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -73,7 +75,9 @@ export default function PostCard(props) {
         <img
           src={img.url}
           alt="post-img"
+          onLoad={() => setImgLoading(false)}
         />
+        <ImgSkeleton loading={imgLoading} />
         {
           fileImgs.length > 3 && index === 2 &&
           <div className="cover-item">

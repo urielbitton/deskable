@@ -42,7 +42,8 @@ export default function ProjectPage({ setWindowPadding }) {
   const invitedUsers = useUsers(inviteesIDs)
   const userIsMember = project?.members?.includes(myUserID)
   const pagePath = `organizations/${myOrgID}/projects/${projectID}/pages`
-  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID}`
+  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT `+
+  `${page?.editorsIDs?.map(editor => `userID:${editor}`).join(' AND NOT ')}`
 
   const invitedUsersList = invitedUsers?.map((user, index) => {
     return <div
@@ -87,6 +88,13 @@ export default function ProjectPage({ setWindowPadding }) {
 
   const exportToWord = () => {
 
+  }
+
+  const exportToPDF = () => {
+    editorRef.current.execCommand('mceExportDownload', false, {
+      format: 'clientpdf',
+      settings: {}
+    })
   }
 
   const updatePageSingleValue = (key, value) => {
@@ -144,6 +152,7 @@ export default function ProjectPage({ setWindowPadding }) {
                 statusbar: false,
                 toolbar: false,
                 height: 'calc(100vh - 80px)',
+                plugins: ['preview', 'export'],
               }}
               value={page?.content}
               disabled
@@ -273,7 +282,7 @@ export default function ProjectPage({ setWindowPadding }) {
                 <AppButton
                   label="Export PDF"
                   leftIcon="fas fa-file-pdf"
-                  onClick={() => console.log('export pdf')}
+                  onClick={() => exportToPDF()}
                 />
               </div>
               <div className="page-info-item">
@@ -363,7 +372,7 @@ export default function ProjectPage({ setWindowPadding }) {
     </div>
   ) :
     page && !userIsMember ? (
-      <AskProjectAccess />
+      <AskProjectAccess project={project} />
     ) :
       <div className="project-page-loader">
         <i className="fal fa-spinner fa-spin" />

@@ -1,17 +1,22 @@
 import React from 'react'
 import './styles/EmptyPage.css'
-import emptyPage from 'app/assets/images/no-results.png'
 import AppButton from "./AppButton"
 import PageLoader from "./PageLoader"
 
 export default function EmptyPage(props) {
 
-  const { img=emptyPage, label, sublabel, btnLabel='Add', btnLink,
-  btnClick, btnIcon, object } = props
+  const { img, label, sublabel, btnLabel='Add', btnLink,
+  btnClick, btnIcon, object, iconImg } = props
 
   return !object && object !== null ? (
     <div className="empty-page">
-      <img src={img} alt="no-results" />
+      {
+        img ?
+        <img src={img} alt="no-results" /> :
+        iconImg ? 
+        <i className={iconImg} /> : 
+        null
+      }
       <h5>{label}</h5>
       <p>{sublabel}</p>
       {

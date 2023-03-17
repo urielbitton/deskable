@@ -156,6 +156,21 @@ hr {
 .commoninput h6 {
   cursor: auto;
 }
+.img-skeleton {
+  width: 95%;
+  height: 95%;
+  border-radius: 5px;
+  animation: skeleton 2s infinite ease-in-out;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@keyframes skeleton {
+  0% { background: #f1f1f1; }
+  50% { background: #ddd; }
+  100% { background: #f1f1f1; }
+}
+
 em-emoji-picker {
   position: absolute;
 }

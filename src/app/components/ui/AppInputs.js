@@ -5,7 +5,7 @@ import Select from 'react-select'
 
 export function AppInput(props) {
 
-  const { label, className, iconleft, iconright, title = '' } = props
+  const { label, className, iconleft, iconright, title = '', subtext } = props
 
   return (
     <label
@@ -16,6 +16,7 @@ export function AppInput(props) {
       <input {...props} />
       {iconright}
       {iconleft}
+      {subtext}
     </label>
   )
 }
@@ -94,7 +95,7 @@ export function AppSwitch(props) {
 export const AppCoverInput = (props) => {
 
   const { label, value, onChange, className, iconleft, iconright,
-    title, type, showInput, setShowInput, cover, name, onCheck, 
+    title, type, showInput, setShowInput, cover, name, onCheck,
     onPressEnter, onCancel, loading, linkEnterPressToOnCheck } = props
   const inputRef = useRef(null)
 
@@ -105,7 +106,7 @@ export const AppCoverInput = (props) => {
   }
 
   const handleOnKeUp = (e) => {
-    if(e.key === "Enter") {
+    if (e.key === "Enter") {
       onPressEnter && onPressEnter(e)
       linkEnterPressToOnCheck && handleCheck(e)
     }
@@ -226,7 +227,7 @@ export const AppCoverSelect = (props) => {
           style={{ color: iconColor, marginRight: label ? '10px' : '0' }}
         />
       }
-      { label && <span>{label}</span> }
+      {label && <span>{label}</span>}
     </div>
   )
 
@@ -242,7 +243,7 @@ export const AppCoverSelect = (props) => {
       className={`appCoverSelect appCoverInput commonInput ${className ?? ""}`}
       style={containerStyles}
     >
-      { label && <h6>{label}</h6> }
+      {label && <h6>{label}</h6>}
       <div
         className="select-container"
         onClick={(e) => openSelect(e)}
@@ -287,23 +288,26 @@ export const AppReactSelect = (props) => {
 
   const { options, label, onChange, value, className,
     containerStyles, defaultValue, placeholder, subText,
-    menuPlacement="auto", hideDropdownArrow, centerOptions,
-    searchable=false } = props
+    menuPlacement = "auto", hideDropdownArrow, centerOptions,
+    searchable = false, disabled } = props
   const selectRef = useRef(null)
 
-  const formatOptionLabel = ({ label, icon, iconColor }) => (
-    <div 
+  const formatOptionLabel = ({ label, description, icon, iconColor }) => (
+    <div
       className="select-option"
-      style={centerOptions ? {display: 'flex', alignItems: 'center', justifyContent: 'center'} : null}
+      style={centerOptions ? { display: 'flex', flexDirection: 'column', gap: 5 } : null}
     >
-      {
-        icon &&
-        <i
-          className={icon}
-          style={{ color: iconColor, marginRight: label ? '10px' : '0' }}
-        />
-      }
-      { label && <span>{label}</span>}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {
+            icon &&
+            <i
+              className={icon}
+              style={{ color: iconColor, marginRight: label ? '10px' : '0' }}
+            />
+          }
+          {label && <span>{label}</span>}
+        </div>
+        {description && <small style={{color: '#555'}}>{description}</small>}
     </div>
   )
 
@@ -312,13 +316,14 @@ export const AppReactSelect = (props) => {
       className={`reactSelect appSelect commonInput ${className ?? ""}`}
       style={containerStyles}
     >
-      { label && <h6>{label}</h6> }
+      {label && <h6>{label}</h6>}
       <Select
         onChange={(value) => onChange(value)}
         value={value}
         placeholder={placeholder}
         defaultValue={defaultValue || value}
         options={options}
+        isDisabled={disabled}
         formatOptionLabel={formatOptionLabel}
         openMenuOnFocus
         isSearchable={searchable}
@@ -332,7 +337,7 @@ export const AppReactSelect = (props) => {
         menuPortalTarget={document.body}
         className="react-select"
       />
-      { subText && <small className="sub-text">{subText}</small> }
+      {subText && <small className="sub-text">{subText}</small>}
     </label>
   )
 }

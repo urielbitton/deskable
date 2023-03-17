@@ -105,6 +105,7 @@ export const projectColumnsOptions = (columns) => {
 export const projectTypeOptions = [
   {
     label: 'Administrator Based',
+    description: 'Only project administrators can add or remove team members, manage settings and edit project details.',
     value: 'admin',
     icon: 'fas fa-user-shield',
     iconColor: 'var(--grayText)'
@@ -112,6 +113,7 @@ export const projectTypeOptions = [
   {
     label: 'Team Based',
     value: 'team',
+    description: 'All team members can add or remove team members, manage settings and edit project details. Only project administrators can delete the project.',
     icon: 'fas fa-users',
     iconColor: 'var(--grayText)'
   }
@@ -127,12 +129,14 @@ export const projectAccessOptions = [
   {
     label: 'Open',
     value: 'open',
+    description: 'Anyone in your organization can join the project.',
     icon: 'fas fa-unlock',
     iconColor: 'var(--grayText)'
   },
   {
     label: 'Invite Only',
     value: 'invite',
+    description: 'Project access is restricted to team members only.',
     icon: 'fas fa-lock',
     iconColor: 'var(--grayText)'
   }

@@ -79,11 +79,21 @@
 .users-search-input .users-results-list .user-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   padding: 5px 10px;
   cursor: pointer;
   transition: all 0.2s;
   background: #fff;
+}
+.users-search-input .users-results-list .user-row .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.users-search-input .users-results-list .user-row .right small {
+  font-size: 12px;
+  color: var(--grayText);
 }
 .users-search-input .users-results-list .user-row:hover {
   background-color: var(--lightInputBg);

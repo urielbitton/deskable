@@ -117,3 +117,7 @@
   background: var(--lightGrayText);
   border-radius: 100%;
 }
+.all-projects-page .project-row .row-item.last i {
+  color: var(--grayText);
+  font-size: 14px;
+}

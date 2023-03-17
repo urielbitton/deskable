@@ -12,8 +12,10 @@ import { AppInput } from "../ui/AppInputs"
 import AppPagination from "../ui/AppPagination"
 import AppTable from "../ui/AppTable"
 import Avatar from "../ui/Avatar"
+import EmptyPage from "../ui/EmptyPage"
 import IconContainer from "../ui/IconContainer"
 import './styles/AllProjects.css'
+import noProjectsImg from 'app/assets/images/no-projects-illustration.png'
 
 export default function AllProjects() {
 
@@ -69,7 +71,7 @@ export default function AllProjects() {
     setQuery('')
   }
 
-  return (
+  return allProjects ? (
     <div className="all-projects-page">
       <h3>Organization Projects</h3>
       <div className="toolbar">
@@ -124,16 +126,26 @@ export default function AllProjects() {
         />
       </div>
     </div>
-  )
+  ) :
+    <EmptyPage
+      label="You have no projects yet"
+      sublabel="Create a new project or join an existing one"
+      btnLink="/projects/new"
+      btnIcon="fal fa-plus"
+      btnLabel="New Project"
+      img={noProjectsImg}
+    />
 }
 
 export function ProjectRow(props) {
 
+  const { myUserID } = useContext(StoreContext)
   const { name, ownerID, category, dateCreated, projectKey,
-    projectID, isStarred } = props.project
+    projectID, isStarred, members } = props.project
   const { onStarClick } = props
   const owner = useUser(ownerID)
   const navigate = useNavigate()
+  const hasAccess = members?.includes(myUserID)
 
   return (
     <div className="project-row">
@@ -165,7 +177,7 @@ export function ProjectRow(props) {
       <div className="row-item">
         <h6>{convertClassicDate(convertAlgoliaDate(dateCreated))}</h6>
       </div>
-      <div className="row-item small">
+      <div className="row-item small last">
         <IconContainer
           icon="fas fa-cog"
           dimensions={22}
@@ -173,6 +185,13 @@ export function ProjectRow(props) {
           iconSize={15}
           onClick={() => navigate(`/projects/${projectID}/settings`)}
         />
+        {
+          !hasAccess &&
+          <i 
+            className="fas fa-lock" 
+            title="You do not have access to this project"
+          />
+        }
       </div>
     </div>
   )

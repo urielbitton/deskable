@@ -2,7 +2,7 @@ import { projectPageTemplates } from "app/data/projectPageTemplates"
 import { infoToast } from "app/data/toastsTemplates"
 import { useOrgProject, useProjectPage } from "app/hooks/projectsHooks"
 import useUser from "app/hooks/userHooks"
-import { newPublishProjectPageService, updatePublishProjectPageService } from "app/services/projectsServices"
+import { deleteProjectPageService, newPublishProjectPageService, updatePublishProjectPageService } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -82,7 +82,7 @@ export default function WritePage({ setWindowPadding }) {
 
   const backToProject = () => {
     setShowProjectsSidebar(true)
-    navigate(`/projects/${projectID}`)
+    navigate(`/projects/${projectID}/pages`)
   }
 
   const previewPage = () => {
@@ -136,10 +136,6 @@ export default function WritePage({ setWindowPadding }) {
     localStorage.setItem(`projectPageDraft`, value)
   }
 
-  const editPage = () => {
-
-  }
-
   const triggerCancelEdit = () => {
     const timeDelay = Math.floor(Math.random() * 500) + 500
     if (window.confirm('Are you sure you want to cancel editing this page?')) {
@@ -156,7 +152,17 @@ export default function WritePage({ setWindowPadding }) {
   }
 
   const deletePage = () => {
-
+    const confirm = window.confirm('Are you sure you want to delete this page?')
+    if (!confirm) return
+    deleteProjectPageService(
+      `organizations/${myOrgID}/projects/${projectID}/pages`,
+      pageID,
+      setToasts,
+      setPageLoading
+    )
+      .then(() => {
+        navigate(`/projects/${projectID}/pages`)
+      })
   }
 
   const inviteEditors = () => {
@@ -173,7 +179,7 @@ export default function WritePage({ setWindowPadding }) {
     setEditTitle(contentTitle)
   }, [contentTitle])
 
-  return userIsMemberAndEditor ? (
+  return (editMode ? userIsMemberAndEditor : true) ? (
     <div className="project-page edit-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
@@ -330,5 +336,5 @@ export default function WritePage({ setWindowPadding }) {
       />
     </div>
   ) :
-    <AskProjectAccess />
+  <AskProjectAccess project={project} />
 }

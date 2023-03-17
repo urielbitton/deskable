@@ -96,10 +96,10 @@ export default function Login() {
       <div className="login-info">
         <div className="container">
           <div className="auth-titles">
-            <h4>Sign In</h4>
             <div className="logo-container">
               <img src={logo} className="logo" alt="logo" />
             </div>
+            <h4>Sign In</h4>
           </div>
           <div className="social-logins">
             <div
@@ -168,8 +168,8 @@ export default function Login() {
       </div>
       <div className="login-cover">
         <img src={loginCover} alt="login-cover" />
-        <h5>Boost your team's efficiency.</h5>
-        <p>Try Workable now and take advantage of an all-in-one-place taskforce platform.</p>
+        <h5>Experience faster and easier collaboration</h5>
+        <p>Try Deskable now and take advantage of an all-in-one, centralized workplace platform.</p>
       </div>
     </div>
   )

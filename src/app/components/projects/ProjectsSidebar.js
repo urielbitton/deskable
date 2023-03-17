@@ -64,10 +64,6 @@ export default function ProjectsSidebar() {
           <i className="fas fa-project-diagram" />
           <span>Projects</span>
         </NavLink>
-        <NavLink to="/projects/updates">
-          <i className="fas fa-clock" />
-          <span>Updates</span>
-        </NavLink>
         <NavLink to="/projects/settings">
           <i className="fas fa-sliders-v" />
           <span>Settings</span>

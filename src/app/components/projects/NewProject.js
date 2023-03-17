@@ -126,10 +126,9 @@ export default function NewProject() {
               options={projectCategoriesOptions}
               value={category}
               onChange={(type) => setCategory(type.value)}
-              searchable
             />
             <AppReactSelect
-              label="Project Type"
+              label="Management Type"
               placeholder={
                 <div className="input-placeholder">
                   <i className={switchProjectType(accessType).icon} />
@@ -141,7 +140,7 @@ export default function NewProject() {
               onChange={(type) => setProjectType(type.value)}
             />
             <AppReactSelect
-              label="Project Access"
+              label="Access Rights"
               placeholder={
                 <div className="input-placeholder">
                   <i className={switchProjectAccess(accessType).icon} />

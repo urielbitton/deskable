@@ -60,8 +60,8 @@ export default function RoutesContainer() {
             <Route path="employees/:employeeID" element={<EmployeePage />} />
           </>
         }
-        <Route path="*" element={<ErrorPage />} />
         <Route path="user-management/*" element={<UserManagement />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
   )

@@ -2,7 +2,6 @@ import AppSelectBar from "app/components/ui/AppSelectBar"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import './styles/EmployeesPage.css'
-import noResultsImg from 'app/assets/images/no-results.png'
 import HelmetTitle from "app/components/ui/HelmetTitle"
 import AppButton from "app/components/ui/AppButton"
 import { monthSelectOptions } from "app/data/general"
@@ -11,6 +10,7 @@ import EmployeesList from "app/components/employees/EmployeesList"
 import { pastUserYearsOptions } from "app/services/userServices"
 import { useYearMonthOrAllEmployees } from "app/hooks/employeeHooks"
 import { useOrganization } from "app/hooks/organizationHooks"
+import noResultsImg from 'app/assets/images/no-results.png'
 
 export default function EmployeesPage() {
 
@@ -119,6 +119,8 @@ export default function EmployeesPage() {
             sublabel="Refine your search or create a new employee."
             btnLink="/employees/new"
             btnIcon="fal fa-user-plus"
+            btnLabel="New Employee"
+            img={noResultsImg}
           />
       }
     </div>

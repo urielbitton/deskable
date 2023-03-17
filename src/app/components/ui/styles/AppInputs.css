@@ -166,3 +166,18 @@
 .appCoverSelect {
   z-index: 15;
 }
+
+.reactSelect .input-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.reactSelect .input-placeholder i {
+  color: var(--grayText);
+}
+.reactSelect .input-placeholder h5 {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 500;
+  text-transform: capitalize;
+}

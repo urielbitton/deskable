@@ -251,6 +251,7 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
   return setDB(path, docID, {
     ...project,
     activeSprintID: null,
+    admins: [userID],
     dateCreated: new Date(),
     description: '',
     isActive: true,
@@ -1157,6 +1158,16 @@ export const updateProjectPageService = (path, pageID, project, setToasts, setLo
     .catch(err => catchCode(err, 'There was a problem updating the page. Please try again.', setToasts, setLoading))
 }
 
+export const deleteProjectPageService = (path, pageID, setToasts, setLoading) => {
+  setLoading(true)
+  return deleteDB(path, pageID)
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('The page has been deleted.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem deleting the page. Please try again.', setToasts, setLoading))
+}
+
 export const projectPageInviteMembersService = (path, page, inviteesIDs, inviterName, setToasts, setLoading) => {
   setLoading(true)
   const batch = writeBatch(db)
@@ -1188,4 +1199,25 @@ export const projectPageInviteMembersService = (path, page, inviteesIDs, inviter
       setToasts(successToast('User invitations have been sent.'))
     })
     .catch(err => catchCode(err, 'There was a problem sending the invitations. Please try again.', setToasts, setLoading))
+}
+
+export const requestProjectAccessService = (path, myUser, project, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(path, project.projectID, {
+    requests: firebaseArrayAdd(myUser.userID) 
+  })
+  .then(() => {
+    return createNotification(
+      project.ownerID,
+      'Project access requested',
+      `${myUser.firstName} ${myUser.lastName} has requested access to join your project: ${project.name}.`,
+      'fas fa-project-diagram',
+      `/projects/${project.projectID}/backlog`
+    )
+  })
+  .then(() => {
+    setLoading(false)
+    setToasts(successToast('Your request has been sent.'))
+  })
+  .catch(err => catchCode(err, 'There was a problem sending your request. Please try again.', setToasts, setLoading))
 }

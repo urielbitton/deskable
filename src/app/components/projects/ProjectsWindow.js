@@ -5,7 +5,6 @@ import NewProject from "./NewProject"
 import ProjectPage from "./ProjectPage"
 import ProjectsHome from "./ProjectsHome"
 import ProjectsMainSettings from "./ProjectsMainSettings"
-import ProjectsUpdates from "./ProjectsUpdates"
 import SingleProject from "./SingleProject"
 import './styles/ProjectsWindow.css'
 import WritePage from "./WritePage"
@@ -27,7 +26,6 @@ export default function ProjectsWindow() {
         <Route path=":projectID/pages/:pageID/edit" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path=":projectID/pages/new-page" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path="all-projects" element={<AllProjects />} />
-        <Route path="updates" element={<ProjectsUpdates />} />
         <Route path="settings" element={<ProjectsMainSettings />} />
         <Route path="new" element={<NewProject />} />
       </Routes>

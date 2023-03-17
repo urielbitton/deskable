@@ -10,6 +10,8 @@ import AppButton from "../ui/AppButton"
 import TaskFiltersPopup from "./TaskFiltersPopup"
 import { useOrgProjectColumns } from "app/hooks/projectsHooks"
 import { useParams } from "react-router-dom"
+import noTasksImg from 'app/assets/images/project-task-illustration.png'
+import EmptyPage from "../ui/EmptyPage"
 
 export default function ProjectTasks({ project }) {
 
@@ -46,11 +48,11 @@ export default function ProjectTasks({ project }) {
     priorityFilter === applyFilters.priority &&
     statusFilter === applyFilters.status
 
-  const searchFilters = `orgID:${project.orgID} AND projectID:${project.projectID} `+
-  `${applyFilters.taskType !== 'all' ? ` AND taskType:${applyFilters.taskType} ` : ''}`+
-  `${applyFilters.points !== 'all' ? ` AND points:${applyFilters.points} ` : ''}`+
-  `${applyFilters.priority !== 'all' ? ` AND priority:${applyFilters.priority} ` : ''}`+
-  `${applyFilters.status !== 'all' ? ` AND status: "${applyFilters.status}" ` : ''}`
+  const searchFilters = `orgID:${project.orgID} AND projectID:${project.projectID} ` +
+    `${applyFilters.taskType !== 'all' ? ` AND taskType:${applyFilters.taskType} ` : ''}` +
+    `${applyFilters.points !== 'all' ? ` AND points:${applyFilters.points} ` : ''}` +
+    `${applyFilters.priority !== 'all' ? ` AND priority:${applyFilters.priority} ` : ''}` +
+    `${applyFilters.status !== 'all' ? ` AND status: "${applyFilters.status}" ` : ''}`
 
 
   const allTasks = useInstantSearch(
@@ -101,8 +103,8 @@ export default function ProjectTasks({ project }) {
     setQuery('')
   }
 
-  return (
-    <div 
+  return allTasks ? (
+    <div
       className="project-tasks"
       key={projectID}
     >
@@ -153,7 +155,7 @@ export default function ProjectTasks({ project }) {
               setPriorityFilter={setPriorityFilter}
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
-              taskStatusOptions={projectColumns?.map(column => ({value: column.title, label: column.title}))}
+              taskStatusOptions={projectColumns?.map(column => ({ value: column.title, label: column.title }))}
               disableApply={disableApplyFilters}
               saveFilters={handleSaveFilters}
               clearFilters={() => handleClearFilters()}
@@ -185,5 +187,13 @@ export default function ProjectTasks({ project }) {
         />
       </div>
     </div>
-  )
+  ) :
+    <EmptyPage
+      label="You have no tasks yet"
+      sublabel="Create a new task to get started"
+      btnLink={`/projects/${projectID}/backlog`}
+      btnIcon="fal fa-plus"
+      btnLabel="New Task"
+      img={noTasksImg}
+    />
 }

@@ -60,8 +60,8 @@ export default function SingleProject() {
   const [inviteLoading, setInviteLoading] = useState(false)
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [projectInvitees, setProjectInvitees] = useState([])
-  const [usersLoading, setUsersLoading] = useState(false)
-  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID}`
+  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT `+
+  `${project?.members?.map(member => `userID:${member}`).join(' AND NOT ')}`
   const searchHitsPerPage = 20
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
@@ -542,6 +542,7 @@ export default function SingleProject() {
             onClear={() => setInviteesIDs([])}
             showAll={false}
             typeSearch
+            showUserEmails
           />
           {
             invitedUsers?.length > 0 &&
@@ -566,9 +567,14 @@ export default function SingleProject() {
     </div>
   ) :
     project && !userIsMember ? (
-      <AskProjectAccess />
+      <AskProjectAccess project={project} />
     ) :
-      <div className="project-page-loader">
-        <i className="fal fa-spinner fa-spin" />
+      <div className="project-page-not-found">
+        <i className="fas fa-island-tropical" />
+        <h5>The project page you are looking for does not exist</h5>
+        <AppButton
+          label="Go to Projects"
+          url="/projects"
+        />
       </div>
 }

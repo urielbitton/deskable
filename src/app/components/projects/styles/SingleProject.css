@@ -231,14 +231,21 @@
   background: var(--inputBg);
 }
 
-.project-page-loader {
+.project-page-not-found {
   width: 100%; 
   height: 100%; 
   min-height: 200px;
   display: flex; 
   align-items: center; 
-  justify-content: center
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
 }
-.project-page-loader i {
-  font-size: 20px;
+.project-page-not-found h5 {
+  color: var(--darkGrayText);
+  font-size: 17px;
+}
+.project-page-not-found i {
+  font-size: 40px;
+  color: var(--darkGrayText);
 }

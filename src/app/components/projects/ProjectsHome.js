@@ -18,6 +18,8 @@ import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import ProjectCard from "./ProjectCard"
 import './styles/ProjectsHome.css'
+import EmptyPage from "../ui/EmptyPage"
+import noProjectsImg from 'app/assets/images/no-projects-illustration.png'
 
 export default function ProjectsHome({ setShowScroll }) {
 
@@ -33,6 +35,7 @@ export default function ProjectsHome({ setShowScroll }) {
   const projectsSliderRef = useRef(null)
   const oneWeekMs = 604800000
   const oneMonthMs = 2592000000
+  const noProjects = recentProjects?.length === 0
 
   const recentTasksSort = (a, b) => {
     if (sortBy === 'priority') {
@@ -45,18 +48,18 @@ export default function ProjectsHome({ setShowScroll }) {
   }
 
   const lastWeekOrgTasksFiltered = recentOrgTasks
-  ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
-  .filter(task => task.dateModified?.toDate() > Date.now() - oneWeekMs)
-  .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
-  .filter(task => !showOpenTasks || !task.isDone)
-  .sort((a, b) => recentTasksSort(a, b))
-  
+    ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
+    .filter(task => task.dateModified?.toDate() > Date.now() - oneWeekMs)
+    .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
+    .filter(task => !showOpenTasks || !task.isDone)
+    .sort((a, b) => recentTasksSort(a, b))
+
   const lastMonthOrgTasksFiltered = recentOrgTasks
-  ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
-  .filter(task => task.dateModified?.toDate() > Date.now() - oneMonthMs && task.dateModified?.toDate() < Date.now() - oneWeekMs)
-  .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
-  .filter(task => !showOpenTasks || !task.isDone)
-  .sort((a, b) => recentTasksSort(a, b))
+    ?.filter(task => recentOrgTasks?.some(t => t.projectID === task.projectID && t.assigneesIDs.includes(myUserID)))
+    .filter(task => task.dateModified?.toDate() > Date.now() - oneMonthMs && task.dateModified?.toDate() < Date.now() - oneWeekMs)
+    .filter(task => !assignToMe || task.assigneesIDs?.includes(myUserID))
+    .filter(task => !showOpenTasks || !task.isDone)
+    .sort((a, b) => recentTasksSort(a, b))
 
   const recentProjectsList = recentProjects?.map((project, index) => {
     return <ProjectCard
@@ -66,25 +69,25 @@ export default function ProjectsHome({ setShowScroll }) {
   })
 
   const recentLastWeekOrgTasksList = lastWeekOrgTasksFiltered.map((task, index) => {
-      return <TaskRow
-        key={index}
-        task={task}
-      />
-    })
+    return <TaskRow
+      key={index}
+      task={task}
+    />
+  })
 
   const recentLastMonthOrgTasksList = lastMonthOrgTasksFiltered.map((task, index) => {
-      return <TaskRow
-        key={index}
-        task={task}
-      />
-    })
+    return <TaskRow
+      key={index}
+      task={task}
+    />
+  })
 
   useEffect(() => {
     setShowScroll(true)
     return () => setShowScroll(false)
   }, [])
 
-  return (
+  return !noProjects ? (
     <div className="projects-home">
       <h3>Dashboard</h3>
       <div className="recents-flex">
@@ -129,7 +132,7 @@ export default function ProjectsHome({ setShowScroll }) {
             <div className="title-row">
               <h6>In the last week ({lastWeekOrgTasksFiltered.length})</h6>
               <div className="filters">
-              <AppButton
+                <AppButton
                   label={showOpenTasks ? 'Closed Tasks' : 'Open Tasks'}
                   buttonType={!showOpenTasks ? 'primaryBtn' : 'outlineBtn'}
                   onClick={() => setShowOpenTasks(prev => !prev)}
@@ -178,7 +181,15 @@ export default function ProjectsHome({ setShowScroll }) {
         </div>
       </div>
     </div>
-  )
+  ) :
+    <EmptyPage
+      label="You have no projects yet"
+      sublabel="Create a new project or join an existing one"
+      btnLink="/projects/new"
+      btnIcon="fal fa-plus"
+      btnLabel="New Project"
+      img={noProjectsImg}
+    />
 }
 
 export function TaskRow(props) {

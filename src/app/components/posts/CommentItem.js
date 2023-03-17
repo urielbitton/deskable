@@ -14,6 +14,7 @@ import Avatar from "../ui/Avatar"
 import DropdownIcon from "../ui/DropDownIcon"
 import EmojiTextarea from "../ui/EmojiTextarea"
 import IconContainer from "../ui/IconContainer"
+import ImgSkeleton from "../ui/ImgSkeleton"
 import ReportModal from "../ui/ReportModal"
 import PostSubComments from "./PostSubComments"
 import './styles/CommentItem.css'
@@ -35,6 +36,7 @@ export default function CommentItem(props) {
   const [reportReason, setReportReason] = useState('')
   const [reportMessage, setReportMessage] = useState('')
   const [reportLoading, setReportLoading] = useState(false)
+  const [imgLoading, setImgLoading] = useState(true)
   const author = useUser(authorID)
   const editUploadRef = useRef(null)
   const subCommentInputRef = useRef(null)
@@ -61,7 +63,7 @@ export default function CommentItem(props) {
 
   const initReply = () => {
     setShowReplySection(prev => prev !== commentID ? commentID : null)
-    if(showReplySection !== commentID)
+    if (showReplySection !== commentID)
       commentInputRef.current.focus()
   }
 
@@ -181,7 +183,9 @@ export default function CommentItem(props) {
                   src={file.url}
                   alt="comment-img"
                   onClick={() => initShowPhotoModal()}
+                  onLoad={() => setImgLoading(false)}
                 />
+                <ImgSkeleton loading={imgLoading} />
                 {
                   editMode === commentID &&
                   <IconContainer
@@ -191,18 +195,6 @@ export default function CommentItem(props) {
                     dimensions={25}
                   />
                 }
-              </div>
-            }
-            {
-              likesNum > 0 &&
-              <div
-                className="likes-counter"
-                onClick={() => initLikesStats()}
-              >
-                <div className="like-btn">
-                  <i className="fas fa-heart" />
-                </div>
-                <small>{likesNum}</small>
               </div>
             }
           </div>
@@ -233,6 +225,18 @@ export default function CommentItem(props) {
           <small className="no-underline">
             <span>{getTimeAgo(dateCreated?.toDate())}</span>
           </small>
+          {
+            likesNum > 0 &&
+            <div
+              className="likes-counter"
+              onClick={() => initLikesStats()}
+            >
+              <div className="like-btn">
+                <i className="fas fa-heart" />
+              </div>
+              <small>{likesNum}</small>
+            </div>
+          }
         </div>
         <PostSubComments
           showReplySection={showReplySection}

@@ -12,7 +12,7 @@ export default function UsersSearchInput(props) {
     setShowDropdown, onFocus, onBlur, iconleft,
     name, tag, selectedUsers, multiple,
     onUserRemove, maxAvatars, onClear, inputSubtitle,
-    showAll, typeSearch } = props
+    showAll, typeSearch, showUserEmails } = props
 
   const usersRender = users?.map((user) => {
     return <div
@@ -20,15 +20,20 @@ export default function UsersSearchInput(props) {
       className="user-row"
       onClick={(e) => onUserClick(e, user)}
     >
-      {
-        showImgs &&
-        <Avatar
-          src={user.photoURL}
-          dimensions={35}
-          alt={`${user.firstName} ${user.lastName}`}
-        />
-      }
-      <h6>{user.firstName} {user.lastName}</h6>
+      <div className="left">
+        {
+          showImgs &&
+          <Avatar
+            src={user.photoURL}
+            dimensions={35}
+            alt={`${user.firstName} ${user.lastName}`}
+          />
+        }
+        <h6>{user.firstName} {user.lastName}</h6>
+      </div>
+      <div className="right">
+        { showUserEmails && <small>{user.email}</small> }
+      </div>
     </div>
   })
 

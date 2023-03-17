@@ -2,8 +2,10 @@ import { useProjectPages } from "app/hooks/projectsHooks"
 import { useDocsCount } from "app/hooks/userHooks"
 import React, { useState } from 'react'
 import AppButton from "../ui/AppButton"
+import EmptyPage from "../ui/EmptyPage"
 import ProjectPageCard from "./ProjectPageCard"
 import './styles/ProjectPages.css'
+import noPagesImg from 'app/assets/images/project-page-illustration.png'
 
 export default function ProjectPages({ project }) {
 
@@ -24,7 +26,7 @@ export default function ProjectPages({ project }) {
     />
   })
 
-  return (
+  return pagesList ? (
     <div className="project-pages">
       <div className="titles">
         <div className="left">
@@ -52,5 +54,13 @@ export default function ProjectPages({ project }) {
         }
       </div>
     </div>
-  )
+  ) :
+    <EmptyPage
+      label="You have no pages yet"
+      sublabel="Create a new page to get started"
+      btnLink={`/projects/${project?.projectID}/pages/new-page`}
+      btnIcon="fal fa-plus"
+      btnLabel="New page"
+      img={noPagesImg}
+    />
 }

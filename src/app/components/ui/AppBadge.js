@@ -4,7 +4,7 @@ import './styles/AppBadge.css'
 export default function AppBadge(props) {
 
   const { label, icon = '', light = true, fontSize = '12px',
-    onClick, color, bgColor, iconSize, className = '' } = props
+    onClick, color, bgColor, iconSize='11px', className = '' } = props
 
   return (
     <div

@@ -23,18 +23,19 @@ import {
   addNewSprintTaskService,
   addNewBacklogTaskService,
   startProjectSprintService,
-  completeProjectSprintService
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { switchTaskType, taskTypeOptions } from "app/data/projectsData"
 import BacklogTaskDetails from "./BacklogTaskDetails"
 import { updateDB } from "app/services/CrudDB"
-import { infoToast, successToast } from "app/data/toastsTemplates"
+import { infoToast } from "app/data/toastsTemplates"
 import { noWhiteSpaceChars } from 'app/utils/generalUtils'
 
-export default function ProjectBacklog({ project, backlogTasksFilter }) {
+export default function ProjectBacklog(props) {
 
   const { myOrgID, setToasts, myUserID, setPageLoading } = useContext(StoreContext)
+  const { project, backlogTasksFilter, setShowCompleteSprintModal,
+    setShowSprintDetailsModal } = props
   const projectID = useParams().projectID
   const [searchParams, setSearchParams] = useSearchParams()
   const paramTaskID = searchParams.get('taskID')
@@ -204,21 +205,6 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
       })
   }
 
-  const editSprint = () => {
-
-  }
-
-  const markCompleted = () => {
-    const confirm = window.confirm('Are you sure you want to mark this sprint as completed? Incomplete tasks will be moved to the backlog.')
-    if (!confirm) return
-    completeProjectSprintService(
-
-    )
-    .then(() => {
-      setToasts(successToast('Sprint marked as completed'))
-    })
-  }
-
   const handleStartSprint = () => {
     if (noSprintTasks) return setToasts(infoToast('You must add at least one task to the active sprint before starting the sprint'))
     const confirm = window.confirm('Are you sure you want to start the sprint?')
@@ -278,8 +264,8 @@ export default function ProjectBacklog({ project, backlogTasksFilter }) {
                   setShowMenu={setShowTitlesMenu}
                   onClick={(e) => setShowTitlesMenu(showTitlesMenu === 'sprint' ? null : 'sprint')}
                   items={[
-                    { label: "Edit Sprint", icon: "fas fa-pen", onClick: () => editSprint() },
-                    { label: "Complete Sprint", icon: "fas fa-check-square", onClick: () => markCompleted() },
+                    { label: "Edit Sprint", icon: "fas fa-pen", onClick: () => setShowSprintDetailsModal(true) },
+                    { label: "Complete Sprint", icon: "fas fa-check-square", onClick: () => setShowCompleteSprintModal(true) },
                   ]}
                 />
               </div>

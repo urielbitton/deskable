@@ -3,7 +3,8 @@ import './styles/AppTabsBar.css'
 
 export default function AppTabsBar(props) {
 
-  const { children, sticky, className, noSpread, spacedOut, noBorder } = props
+  const { children, sticky, className, noSpread, spacedOut, 
+    fullSpace, noBorder } = props
 
   return (
     <div 
@@ -11,6 +12,7 @@ export default function AppTabsBar(props) {
       `${noSpread ? 'no-spread' : ''} `+
       `${spacedOut ? 'spaced-out' : ''} `+
       `${noBorder ? 'no-border' : ''} `+
+      `${fullSpace ? 'full-space' : ''} `+
       `${className ?? ''}`} 
       style={{gap: spacedOut}}
     >

@@ -41,17 +41,19 @@ export default function ProjectPages({ project }) {
           />
         </div>
       </div>
-      <div className="content-flex">
-        {pagesList}
-        {
-          pagesAmount > pagesLimit &&
-          <AppButton
-            label="Load More"
-            buttonType="invertedBtn small"
-            onClick={() => setPagesLimit(pagesLimit + limitsNum)}
-            className="load-more-text"
-          />
-        }
+      <div className="content-container">
+        <div className="content-flex">
+          {pagesList}
+          {
+            pagesAmount > pagesLimit &&
+            <AppButton
+              label="Load More"
+              buttonType="invertedBtn small"
+              onClick={() => setPagesLimit(pagesLimit + limitsNum)}
+              className="load-more-text"
+            />
+          }
+        </div>
       </div>
     </div>
   ) :

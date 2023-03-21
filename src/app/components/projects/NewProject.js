@@ -114,6 +114,7 @@ export default function NewProject() {
               label="Project Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              maxLength={30}
             />
             <AppReactSelect
               label="Category"

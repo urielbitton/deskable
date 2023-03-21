@@ -51,38 +51,7 @@
   background: var(--inputBg);
   padding: 8px 10px;
 }
-.new-project-container .form-container .invited-users-list {
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-radius: 5px;
-  border: 1px solid var(--inputBorder);
-  margin-top: -10px;
-}
-.new-project-container .form-container .invited-users-list .invited-user {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 5px;
-  border-bottom: 1px solid var(--inputBorder);
-}
-.new-project-container .form-container .invited-users-list .invited-user .texts {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-.new-project-container .form-container .invited-users-list .invited-user:last-child {
-  border-bottom: none;
-}
-.new-project-container .form-container .invited-users-list .invited-user h6 {
-  font-size: 13px;
-  color: var(--darkGrayText);
-  font-weight: 600;
-}
-.new-project-container .form-container .invited-users-list .invited-user .icon-container:hover {
-  background: var(--inputBg);
-}
+
 
 .new-project-container .art {
   width: calc(49% - 70px);

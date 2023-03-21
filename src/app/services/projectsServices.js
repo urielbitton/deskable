@@ -89,6 +89,19 @@ export const getOrgProjectFirstColumn = (orgID, projectID) => {
     })
 }
 
+export const getOrgProjectLastColumn = (orgID, projectID) => {
+  const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/columns`)
+  const q = query(
+    docRef,
+    orderBy('dateCreated', 'desc'),
+    limit(1)
+  )
+  return getDocs(q)
+    .then((snapshot) => {
+      return snapshot.docs.map(doc => doc.data())[0]
+    })
+}
+
 export const getOrgProjectTasksByColumnID = (orgID, projectID, columnID, setTasks) => {
   const docRef = collection(db, `organizations/${orgID}/projects/${projectID}/tasks`)
   const q = query(
@@ -292,6 +305,9 @@ export const updateOrgProjectService = (orgID, projectID, project, setToasts, se
   return updateDB(path, projectID, {
     ...project,
   })
+    .then(() => {
+      setLoading(false)
+    })
     .catch(err => catchCode(err, 'There was an error updating the project. Please try again', setToasts, setLoading))
 }
 
@@ -1012,7 +1028,85 @@ export const startProjectSprintService = (path, project, firstColumn, setToasts,
     .catch(err => catchCode(err, 'There was a problem starting the sprint. Please try again.', setToasts, setLoading))
 }
 
-export const completeProjectSprintService = (path, project, setToasts, setLoading) => {
+export const completeProjectSprintService = (path, project, moveTasksTo, setToasts, setLoading) => {
+  setLoading(true)
+  const orgID = path.split('/')[1]
+  const newSprintName = `Sprint ${project.sprintNumber + 1}`
+  const newSprintID = `sprint-${project.sprintNumber + 1}`
+  return getOrgProjectFirstColumn(orgID, project.projectID)
+    .then((firstColumn) => {
+      return getOrgProjectLastColumn(orgID, project.projectID)
+        .then((lastColumn) => {
+          const batch = writeBatch(db)
+          const tasksPath = `organizations/${orgID}/projects/${project.projectID}/tasks`
+          const docRef = collection(db, tasksPath)
+          const q = query(
+            docRef,
+          )
+          return getDocs(q)
+            .then((snapshot) => {
+              for (const snap of snapshot.docs) {
+                const docID = snap.id
+                if (snap.data().columnID === lastColumn.columnID) {
+                  batch.update(doc(db, tasksPath, docID), {
+                    columnID: null,
+                    inSprint: false,
+                    status: 'completed',
+                    position: null,
+                    backlogPosition: null,
+                    dateModified: new Date(),
+                    isDone: true,
+                    sprintID: null
+                  })
+                }
+                if (moveTasksTo === 'backlog' && snap.data().columnID !== lastColumn.columnID) {
+                  batch.update(doc(db, tasksPath, docID), {
+                    columnID: null,
+                    inSprint: false,
+                    status: 'backlog',
+                    position: null,
+                    dateModified: new Date(),
+                    sprintID: null
+                  })
+                }
+                else if (moveTasksTo === 'new-sprint' && snap.data().columnID !== lastColumn.columnID) {
+                  batch.update(doc(db, tasksPath, docID), {
+                    columnID: firstColumn.columnID,
+                    dateModified: new Date(),
+                    sprintID: newSprintID
+                  })
+                }
+              }
+            })
+            .then(() => {
+              return batch.commit()
+            })
+        })
+    })
+    .then(() => {
+      if (moveTasksTo === 'backlog') {
+        return updateDB(path, project.projectID, {
+          activeSprintID: null,
+          isSprintActive: false,
+          sprintName: '',
+          sprintGoal: ''
+        })
+      }
+      else if (moveTasksTo === 'new-sprint') {
+        return updateDB(path, project.projectID, {
+          activeSprintID: newSprintID,
+          isSprintActive: true,
+          sprintNumber: firebaseIncrement(1),
+          sprintName: newSprintName,
+          sprintGoal: ''
+        })
+      }
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Sprint completed.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem completing the sprint. Please try again.', setToasts, setLoading))
 
 }
 
@@ -1204,20 +1298,101 @@ export const projectPageInviteMembersService = (path, page, inviteesIDs, inviter
 export const requestProjectAccessService = (path, myUser, project, setToasts, setLoading) => {
   setLoading(true)
   return updateDB(path, project.projectID, {
-    requests: firebaseArrayAdd(myUser.userID) 
+    requests: firebaseArrayAdd(myUser.userID)
   })
-  .then(() => {
-    return createNotification(
-      project.ownerID,
-      'Project access requested',
-      `${myUser.firstName} ${myUser.lastName} has requested access to join your project: ${project.name}.`,
-      'fas fa-project-diagram',
-      `/projects/${project.projectID}/backlog`
-    )
+    .then(() => {
+      return createNotification(
+        project.ownerID,
+        'Project access requested',
+        `${myUser.firstName} ${myUser.lastName} has requested access to join your project: ${project.name}.`,
+        'fas fa-project-diagram',
+        `/projects/${project.projectID}/backlog`
+      )
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('Your request has been sent.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem sending your request. Please try again.', setToasts, setLoading))
+}
+
+export const acceptProjectRequestService = (path, userID, project, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(path, project.projectID, {
+    members: firebaseArrayAdd(userID),
+    requests: firebaseArrayRemove(userID)
   })
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast('Your request has been sent.'))
+    .then(() => {
+      return createNotification(
+        userID,
+        'Project access granted',
+        `Your request to join project: ${project.name} has been granted. You can ` +
+        `now access the project here.`,
+        'fas fa-project-diagram',
+        `/projects/${project.projectID}/backlog`
+      )
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('The request has been accepted.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem accepting the request. Please try again.', setToasts, setLoading))
+}
+
+export const declineProjectRequestService = (path, userID, project, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(path, project.projectID, {
+    requests: firebaseArrayRemove(userID)
   })
-  .catch(err => catchCode(err, 'There was a problem sending your request. Please try again.', setToasts, setLoading))
+    .then(() => {
+      return createNotification(
+        userID,
+        'Project access declined',
+        `Your request to join project: ${project.name} has been declined. You can ` +
+        `inquire about the decline with your organization admin.`,
+        'fas fa-project-diagram',
+        `/my-organization`
+      )
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('The request has been declined.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem declining the request. Please try again.', setToasts, setLoading))
+}
+
+export const removeProjectMemberService = (path, userID, project, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(path, project.projectID, {
+    members: firebaseArrayRemove(userID)
+  })
+    .then(() => {
+      return createNotification(
+        userID,
+        'Project access removed',
+        `You have been removed from project: ${project.name}. You can ` +
+        `inquire about the removal with your organization admin.`,
+        'fas fa-project-diagram',
+        `/my-organization`
+      )
+    })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('The member has been removed from this project.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem removing the member. Please try again.', setToasts, setLoading))
+}
+
+export const updateProjectSprintDetails = (path, projectID, sprint, setToasts, setLoading) => {
+  setLoading(true)
+  return updateDB(path, projectID, {
+    sprintName: sprint.sprintName,
+    sprintGoal: sprint.sprintGoal,
+    dateModified: new Date()
+  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast('The sprint details have been updated.'))
+    })
+    .catch(err => catchCode(err, 'There was a problem updating the sprint details. Please try again.', setToasts, setLoading))
 }

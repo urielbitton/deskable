@@ -2,11 +2,11 @@
 
 ##To Dos
 - projects:
-  - add page for users to request to join project
-  - complete sprint logic - ask where to move incomplete tasks (all completed tasks will not be found in backlog nor board and can be found in all tasks page) (when mark sprint complete, add a new sprint with the same tasks except the completed ones - all tasks in last column are marked as done and have their backlogPosition and position values set to null, inSprint: false, status: completed, etc.)
-  - projects settings- ?
-  - individual project settings - let users edit project info on this page, and have some basic settings (avatar, name, description, etc)
+  - complete sprint logic 
   - let users accept/reject project invitations
+  - add filters on board page
+
+- General
   - change all wysiwg editors with tinymce basic editor (create a component for it called AppBasicEditor.js - use for comments, posts, etc)
 
 - Posts:
@@ -19,6 +19,13 @@
 
 - Employees - emplyees are actual db users that belong to a org. So no creating, just deleting
   - finish refactoring employees
+
+- Home
+- Meetings
+- Chats
+- Resources
+- Settings
+
 
 Other Todos
 - Create an org (invitation only) flow

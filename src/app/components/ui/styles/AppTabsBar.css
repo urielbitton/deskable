@@ -73,3 +73,8 @@
 .app-tabs-bar > .tab-item.not-active {
   color: var(--darkGrayText);
 }
+
+.app-tabs-bar.full-space > a,
+.app-tabs-bar.full-space > .tab-item {
+  width: 100%;
+}

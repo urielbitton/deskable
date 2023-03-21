@@ -24,7 +24,7 @@ export default function LikesStatsModal(props) {
     <AppModal
       showModal={showModal}
       setShowModal={setShowModal}
-      label={label}
+      label={`${label} (${users?.length})`}
       portalClassName={portalClassName}
       actions={actions}
     >

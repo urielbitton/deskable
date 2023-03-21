@@ -99,7 +99,10 @@ export default function RightBar() {
         <h6>{myUser?.title}</h6>
       </div>
       <div className="content">
-        <AppTabsBar>
+        <AppTabsBar 
+          fullSpace
+          spacedOut={10}
+        >
           <h6
             className={`tab-item ${tabsBarIndex === 0 ? 'active' : ''}`}
             onClick={() => setTabsBarIndex(0)}

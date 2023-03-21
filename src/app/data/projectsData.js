@@ -135,7 +135,7 @@ export const projectAccessOptions = [
   },
   {
     label: 'Invite Only',
-    value: 'invite',
+    value: 'inviteOnly',
     description: 'Project access is restricted to team members only.',
     icon: 'fas fa-lock',
     iconColor: 'var(--grayText)'

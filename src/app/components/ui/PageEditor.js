@@ -42,7 +42,7 @@ export default function PageEditor(props) {
           'bold italic forecolor | alignleft aligncenter ' +
           'alignright alignjustify | bullist numlist outdent indent | ' +
           'searchreplace codesample code insertdatetime image emoticons link table ' +
-          'print help ' + 'export',
+          'print help export',
         content_style: `body { font-family:Helvetica,Arial,sans-serif; font-size:15px } ` +
           `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before { color: #9296b3; } ` +
           `td { padding: 0 5px }`,

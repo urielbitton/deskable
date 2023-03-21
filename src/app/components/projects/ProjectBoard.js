@@ -245,14 +245,14 @@ export default function ProjectBoard({ project, tasksFilter }) {
               isDragging={isDragging}
               setIsDragging={setIsDragging}
             />
-            <div className="column-adder">
+            {/* <div className="column-adder">
               <div 
                 className="column-add-btn"
                 onClick={() => setShowColumnModal(true)}
               >
                 <i className="fal fa-plus" />
               </div>
-            </div>
+            </div> */}
           </>
           :
           <div className="start-sprint-container">

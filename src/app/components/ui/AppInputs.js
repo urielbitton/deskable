@@ -57,7 +57,7 @@ export function AppSelect(props) {
 
 export function AppTextarea(props) {
 
-  const { label, iconclass, className } = props
+  const { label, iconclass, className, maxLength } = props
 
   return (
     <label className={`appTextarea commonInput ${className ?? ""}`}>
@@ -65,6 +65,7 @@ export function AppTextarea(props) {
       <textarea
         style={{ paddingRight: iconclass ? "40px" : "10px" }}
         {...props}
+        maxLength={maxLength}
       />
     </label>
   )
@@ -72,7 +73,8 @@ export function AppTextarea(props) {
 
 export function AppSwitch(props) {
 
-  const { iconclass, label, onChange, checked, className, size = '' } = props
+  const { iconclass, label, onChange, checked, className, size = '',
+  disabled } = props
 
   return (
     <div className={`appSwitch commonInput ${className ?? ""} ${size}`}>
@@ -85,6 +87,7 @@ export function AppSwitch(props) {
           type="checkbox"
           onChange={(e) => onChange(e)}
           checked={checked}
+          disabled={disabled}
         />
         <i></i>
       </label>

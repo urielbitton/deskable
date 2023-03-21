@@ -340,9 +340,9 @@ export default function TaskContentDetails(props) {
 
   const moveToBacklog = () => {
     moveTaskToBacklogService(
-      tasksPath, 
-      myUserID, 
-      taskID, 
+      tasksPath,
+      myUserID,
+      taskID,
       setToasts
     )
   }
@@ -432,7 +432,7 @@ export default function TaskContentDetails(props) {
               onClick={() => setShowCoverInput('description')}
               style={{ display: showCoverInput === 'description' ? 'none' : 'block' }}
             >
-              <HtmlDisplayer html={task.description}/>
+              <HtmlDisplayer html={task.description} />
             </div>
           </div>
         </div>
@@ -492,7 +492,7 @@ export default function TaskContentDetails(props) {
             name="status"
             options={projectColumnsOptions(columns)}
             value={taskStatus}
-            onChange={(status) => updateTaskColumn(status)}
+            onChange={(status) => task.status !== 'completed' && updateTaskColumn(status)}
             showInput={showCoverInput}
             setShowInput={setShowCoverInput}
             loading={coverInputLoading === 'status'}
@@ -551,21 +551,24 @@ export default function TaskContentDetails(props) {
               </h5>
             }
           />
-          <AppCoverSelect
-            label="Task Location"
-            placeholder=""
-            name="addTo"
-            options={addToOptions}
-            value={taskAddTo}
-            onChange={(location) => updateTaskLocation(location)}
-            showInput={showCoverInput}
-            setShowInput={setShowCoverInput}
-            loading={coverInputLoading === 'addTo'}
-            cover={<h5>
-              <i className={task.inSprint ? 'fas fa-line-columns' : 'fas fa-list'} />
-              {task.inSprint ? 'Current Sprint' : 'Backlog'}
-            </h5>}
-          />
+          {
+            task.status !== 'completed' &&
+            <AppCoverSelect
+              label="Task Location"
+              placeholder=""
+              name="addTo"
+              options={addToOptions}
+              value={taskAddTo}
+              onChange={(location) => updateTaskLocation(location)}
+              showInput={showCoverInput}
+              setShowInput={setShowCoverInput}
+              loading={coverInputLoading === 'addTo'}
+              cover={<h5>
+                <i className={task.inSprint ? 'fas fa-line-columns' : 'fas fa-list'} />
+                {task.inSprint ? 'Current Sprint' : 'Backlog'}
+              </h5>}
+            />
+          }
           <AppCoverInput
             label="Task Points"
             name="points"
@@ -629,13 +632,13 @@ export default function TaskContentDetails(props) {
               onUserClick={(e, user) => {
                 e.preventDefault()
                 maxAssignees > task?.assigneesIDs?.length ?
-                updateSingleTaskItem(
-                  { assigneesIDs: [...task?.assigneesIDs, user.userID] },
-                  `Assigned <b>${user.firstName} ${user.lastName}</b> to this task`,
-                  'fas fa-user-plus',
-                  'assignees'
-                ) :
-                setToasts(errorToast('You have reached the maximum number of assignees for this task'))
+                  updateSingleTaskItem(
+                    { assigneesIDs: [...task?.assigneesIDs, user.userID] },
+                    `Assigned <b>${user.firstName} ${user.lastName}</b> to this task`,
+                    'fas fa-user-plus',
+                    'assignees'
+                  ) :
+                  setToasts(errorToast('You have reached the maximum number of assignees for this task'))
               }}
               onUserRemove={(user) => updateSingleTaskItem(
                 { assigneesIDs: task?.assigneesIDs?.filter((assignee) => assignee !== user.userID) },
@@ -689,7 +692,7 @@ export default function TaskContentDetails(props) {
           </div>
         </div>
       </div>
-      { !modalMode && !isTaskPage && commentsEventsContainer }
+      {!modalMode && !isTaskPage && commentsEventsContainer}
       <DocViewerModal
         showModal={showDocViewer}
         setShowModal={setShowDocViewer}

@@ -1,0 +1,23 @@
+.projects-main-settings {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+.projects-main-settings > h3 {
+  color: var(--darkGrayText);
+  margin-bottom: 20px;
+}
+.projects-main-settings .settings-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+  margin-top: 10px;
+  width: 800px;
+}
+.projects-main-settings .settings-container > h5 {
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--darkGrayText);
+}

@@ -1,6 +1,8 @@
 .project-settings {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .project-settings .settings-container {
@@ -12,8 +14,8 @@
 }
 .project-settings .settings-container > h5 {
   margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--darkGrayText);
 }
 .project-settings .settings-container .settings-section input:disabled,
@@ -25,4 +27,15 @@
   resize: vertical;
   max-height: 150px;
   min-height: 100px;
+}
+
+.single-project .project-settings .invited-users-flex {
+  margin-top: 20px;
+}
+.single-project .project-settings .invited-users-flex > h5 {
+  font-size: 13px;
+}
+
+.project-settings .settings-container .btn-group {
+  margin-top: 20px;
 }

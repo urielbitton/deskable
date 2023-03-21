@@ -2,12 +2,14 @@ import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject } from "app/hooks/projectsHooks"
 import { useMultipleQueries } from "app/hooks/searchHooks"
 import { useUsers } from "app/hooks/userHooks"
+import { updateDB } from "app/services/CrudDB"
 import {
   cancelOrgProjectInvitationService,
   completeProjectSprintService,
   createProjectColumnService,
   inviteMembersToProjectService,
-  updateOrgProjectService
+  updateOrgProjectService,
+  updateProjectSprintDetails
 } from "app/services/projectsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
@@ -18,7 +20,7 @@ import {
   useLocation, useNavigate, useParams
 } from "react-router-dom"
 import AppButton from "../ui/AppButton"
-import { AppInput } from "../ui/AppInputs"
+import { AppInput, AppSelect, AppTextarea } from "../ui/AppInputs"
 import AppModal from "../ui/AppModal"
 import AppTabsBar from "../ui/AppTabsBar"
 import Avatar from "../ui/Avatar"
@@ -60,8 +62,15 @@ export default function SingleProject() {
   const [inviteLoading, setInviteLoading] = useState(false)
   const [showCoverInput, setShowCoverInput] = useState(null)
   const [projectInvitees, setProjectInvitees] = useState([])
-  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT `+
-  `${project?.members?.map(member => `userID:${member}`).join(' AND NOT ')}`
+  const [sprintName, setSprintName] = useState('')
+  const [sprintGoal, setSprintGoal] = useState('')
+  const [showSprintDetailsModal, setShowSprintDetailsModal] = useState(false)
+  const [sprintDetailsLoading, setSprintDetailsLoading] = useState(false)
+  const [showCompleteSprintModal, setShowCompleteSprintModal] = useState(false)
+  const [sprintCompleteLoading, setSprintCompleteLoading] = useState(false)
+  const [moveTasksTo, setMoveTasksTo] = useState('new-sprint')
+  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT ` +
+    `${project?.members?.map(member => `userID:${member}`).join(' AND NOT ')}`
   const searchHitsPerPage = 20
   const allMembers = project?.members
   const userIsMember = allMembers?.includes(myUserID)
@@ -74,6 +83,9 @@ export default function SingleProject() {
   const isBoardPage = location.pathname.split('/')[3] === 'board'
   const isBacklogPage = location.pathname.split('/')[3] === 'backlog'
   const isTasksPage = location.pathname.split('/')[3] === 'tasks'
+  const isPagesPage = location.pathname.split('/')[3] === 'pages'
+  const isSettingsPage = location.pathname.split('/')[3] === 'settings'
+  const projectPath = `organizations/${myOrgID}/projects`
 
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
@@ -105,6 +117,11 @@ export default function SingleProject() {
       ) : true
     })
   }
+
+  const moveTaskToOptions = [
+    { label: 'New Sprint', value: 'new-sprint' },
+    { label: 'Backlog', value: 'backlog' },
+  ]
 
   const multipleQueries = [
     {
@@ -164,45 +181,33 @@ export default function SingleProject() {
   })
 
   const invitedUsersList = invitedUsers?.map((user, index) => {
-    return <div
-      className="invited-user"
+    return <InvitedUser
       key={index}
-    >
-      <div className="texts">
-        <Avatar
-          src={user?.photoURL}
+      user={user}
+      action={
+        <IconContainer
+          icon="fal fa-times"
+          onClick={() => setInviteesIDs(inviteesIDs.filter(id => id !== user?.userID))}
+          iconColor="var(--grayText)"
+          iconSize={14}
           dimensions={25}
         />
-        <h6>{user?.firstName} {user?.lastName}</h6>
-      </div>
-      <IconContainer
-        icon="fal fa-times"
-        onClick={() => setInviteesIDs(inviteesIDs.filter(id => id !== user?.userID))}
-        iconColor="var(--grayText)"
-        iconSize={14}
-        dimensions={25}
-      />
-    </div>
+      }
+    />
   })
 
   const projectInvitedUsersList = projectInvitedUsers?.map((user, index) => {
-    return <div
-      className="invited-user"
+    return <InvitedUser
       key={index}
-    >
-      <div className="texts">
-        <Avatar
-          src={user?.photoURL}
-          dimensions={25}
+      user={user}
+      action={
+        <AppButton
+          label="Cancel Invitation"
+          buttonType="invertedBtn small"
+          onClick={() => cancelInvitation(user)}
         />
-        <h6>{user?.firstName} {user?.lastName}</h6>
-      </div>
-      <AppButton
-        label="Cancel Invitation"
-        buttonType="invertedBtn small"
-        onClick={() => cancelInvitation(user)}
-      />
-    </div>
+      }
+    />
   })
 
   const handleClearSearch = () => {
@@ -245,15 +250,21 @@ export default function SingleProject() {
   }
 
   const completeSprint = () => {
-    const confirm = window.confirm('Are you sure you want to mark this sprint as completed?')
+    const confirm = window.confirm('Are you sure you want to complete this sprint? This action cannot be undone.')
     if (!confirm) return
     completeProjectSprintService(
-
+      projectPath, 
+      project, 
+      moveTasksTo,
+      setToasts, 
+      setPageLoading
     )
       .then(() => {
-        setToasts(successToast('Sprint marked as completed'))
+        setShowCompleteSprintModal(false)
+        navigate(`/projects/${projectID}/backlog`)
       })
   }
+  
 
   const archiveProject = () => {
 
@@ -319,6 +330,35 @@ export default function SingleProject() {
       })
   }
 
+  const initSprintModal = () => {
+    setShowSprintDetailsModal(true)
+    setSprintName(project.sprintName)
+    setSprintGoal(project.sprintGoal)
+  }
+
+  const resetSprintModal = () => {
+    setShowSprintDetailsModal(false)
+    setSprintName('')
+    setSprintGoal('')
+  }
+
+  const saveSprintDetails = () => {
+    if (!sprintName || !sprintGoal) return setToasts(infoToast('Please enter a name for the sprint.'))
+    updateProjectSprintDetails(
+      projectPath, 
+      projectID, 
+      {
+        sprintName,
+        sprintGoal
+      }, 
+      setToasts, 
+      setSprintDetailsLoading
+    )
+    .then(() => {
+      resetSprintModal()
+    })
+  }
+
   useEffect(() => {
     if (project) {
       setFilterUserIDs([...allMembers, 'unassigned'])
@@ -328,7 +368,7 @@ export default function SingleProject() {
 
   return project && userIsMember ? (
     <div
-      className={`single-project ${isTasksPage ? 'tasks-page' : ''}`}
+      className={`single-project ${(isTasksPage || isPagesPage || isSettingsPage) ? 'tasks-page' : ''} ${isBoardPage ? 'board-page' : ''}`}
       key={projectID}
     >
       <div className="project-header">
@@ -380,8 +420,14 @@ export default function SingleProject() {
           (isBacklogPage || isBoardPage) &&
           <div className="top-side">
             <div className="left-side">
-              <h5>Overview</h5>
-              <p>Drag and drop cards to move them</p>
+              <h5>
+                <i 
+                  className="fas fa-pen" 
+                  onClick={() => initSprintModal()}
+                />
+                {project?.sprintName}
+              </h5>
+              <p>{project?.sprintGoal}</p>
             </div>
             <div className="btn-group">
               <div className="filter-by-user">
@@ -427,7 +473,7 @@ export default function SingleProject() {
                 items={[
                   ...isBoardPage ? [{ label: 'Add Column', icon: 'fas fa-columns', onClick: () => setShowColumnModal(true) }] : [],
                   { label: !project?.isStarred ? 'Star Project' : 'Unstar Project', icon: 'fas fa-star', onClick: () => starProject() },
-                  ...project?.isSprintActive ? [{ label: 'Complete Sprint', icon: 'fas fa-check-square', onClick: () => completeSprint() }] : [],
+                  ...project?.isSprintActive ? [{ label: 'Complete Sprint', icon: 'fas fa-check-square', onClick: () => setShowCompleteSprintModal(true) }] : [],
                   { label: 'Archive Project', icon: 'fas fa-archive', onClick: () => archiveProject() },
                   { label: 'Reset Filters', icon: 'fas fa-sync', onClick: () => resetAllFilters() },
                   { label: 'Project Settings', icon: 'fas fa-cog', onClick: () => navigate('settings') },
@@ -441,11 +487,11 @@ export default function SingleProject() {
             noSpread
             spacedOut={10}
           >
-            <NavLink to={`/projects/${projectID}/backlog`}><i className="fas fa-list"/>Backlog</NavLink>
-            <NavLink to={`/projects/${projectID}/board`}><i className="fas fa-columns"/>Board</NavLink>
-            <NavLink to={`/projects/${projectID}/tasks`}><i className="fas fa-tasks"/>Tasks</NavLink>
-            <NavLink to={`/projects/${projectID}/pages`}><i className="fas fa-file-alt"/>Pages</NavLink>
-            <NavLink to={`/projects/${projectID}/settings`}><i className="fas fa-cog"/>Settings</NavLink>
+            <NavLink to={`/projects/${projectID}/backlog`}><i className="fas fa-list" />Backlog</NavLink>
+            <NavLink to={`/projects/${projectID}/board`}><i className="fas fa-columns" />Board</NavLink>
+            <NavLink to={`/projects/${projectID}/tasks`}><i className="fas fa-tasks" />Tasks</NavLink>
+            <NavLink to={`/projects/${projectID}/pages`}><i className="fas fa-file-alt" />Pages</NavLink>
+            <NavLink to={`/projects/${projectID}/settings`}><i className="fas fa-cog" />Settings</NavLink>
           </AppTabsBar>
         </div>
       </div>
@@ -454,13 +500,21 @@ export default function SingleProject() {
           <Route
             path="board"
             element={
-              <ProjectBoard project={project} tasksFilter={tasksFilter} />
+              <ProjectBoard 
+                project={project} 
+                tasksFilter={tasksFilter} 
+              />
             }
           />
           <Route
             path="backlog"
             element={
-              <ProjectBacklog project={project} backlogTasksFilter={backlogTasksFilter} />
+              <ProjectBacklog 
+                project={project} 
+                backlogTasksFilter={backlogTasksFilter} 
+                setShowCompleteSprintModal={setShowCompleteSprintModal}
+                setShowSprintDetailsModal={setShowSprintDetailsModal}
+              />
             }
           />
           <Route path="tasks" element={<ProjectTasks project={project} />} />
@@ -564,6 +618,70 @@ export default function SingleProject() {
           }
         </div>
       </AppModal>
+      <AppModal
+        showModal={showSprintDetailsModal}
+        setShowModal={setShowSprintDetailsModal}
+        label="Sprint Details"
+        portalClassName="sprint-details-modal"
+        actions={
+          <>
+            <AppButton
+              label="Save Changes"
+              onClick={() => saveSprintDetails()}
+              loading={sprintDetailsLoading}
+            />
+            <AppButton
+              label="Cancel"
+              buttonType="outlineBtn"
+              onClick={() => resetSprintModal()}
+            />
+          </>
+        }
+      >
+        <AppInput
+          label="Sprint Name"
+          placeholder="Enter a sprint name"
+          value={sprintName}
+          onChange={(e) => setSprintName(e.target.value)}
+          maxLength={30}
+        />
+        <AppTextarea
+          label="Sprint Goal"
+          placeholder="Describe the sprint's goal"
+          value={sprintGoal}
+          onChange={(e) => setSprintGoal(e.target.value)}
+          maxLength={100}
+        />
+        <h6>Sprint Number: {project?.sprintNumber}</h6>
+      </AppModal>
+      <AppModal
+        showModal={showCompleteSprintModal}
+        setShowModal={setShowCompleteSprintModal}
+        label="Complete Sprint?"
+        portalClassName="sprint-details-modal"
+        actions={
+          <>
+            <AppButton
+              label="Complete Sprint"
+              onClick={() => completeSprint()}
+              loading={sprintCompleteLoading}
+            />
+            <AppButton
+              label="Cancel"
+              buttonType="outlineBtn"
+              onClick={() => setShowCompleteSprintModal(false)}
+            />
+          </>
+        }
+      >
+        <AppSelect
+          label="Move Incomplete Tasks to:"
+          options={moveTaskToOptions}
+          value={moveTasksTo}
+          onChange={(e) => setMoveTasksTo(e.target.value)}
+          maxLength={30}
+        />
+      </AppModal>
     </div>
   ) :
     project && !userIsMember ? (
@@ -577,4 +695,18 @@ export default function SingleProject() {
           url="/projects"
         />
       </div>
+}
+
+export function InvitedUser({ user, action }) {
+
+  return <div className="invited-user">
+    <div className="texts">
+      <Avatar
+        src={user?.photoURL}
+        dimensions={25}
+      />
+      <h6>{user?.firstName} {user?.lastName}</h6>
+    </div>
+    {action}
+  </div>
 }

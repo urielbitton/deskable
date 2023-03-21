@@ -105,6 +105,25 @@
   color: var(--grayText);
   font-size: 12px;
   font-weight: 500;
+  transition: all 0.2s;
+}
+.single-project .project-toolbar .left-side i {
+  visibility: hidden;
+  opacity: 0;
+  width: 0;
+  transition: all 0.2s;
+  color: var(--darkGrayText);
+  font-size: 13px;
+  cursor: pointer;
+}
+.single-project .project-toolbar .left-side:hover i {
+  visibility: visible;
+  opacity: 1;
+  width: auto;
+  margin-right: 5px;
+}
+.single-project .project-toolbar .left-side:hover p {
+  margin-left: 20px;
 }
 .single-project .project-toolbar .btn-group {
   display: flex;
@@ -152,6 +171,9 @@
 .single-project.tasks-page .tasks-routes-container {
   height: calc(100vh - 270px);
 }
+.single-project.board-page .tasks-routes-container {
+  height: calc(100vh - 340px);
+}
 
 .add-column-modal .appInput {
   display: flex;
@@ -188,25 +210,25 @@
   margin: 10px 0;
 }
 
-.invite-members-modal .invite-members-container .invited-users-flex {
+.single-project .invited-users-flex {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 30px;
 }
-.invite-members-modal .invite-members-container .invited-users-flex > h5 {
+.single-project .invited-users-flex > h5 {
   font-size: 14px;
   color: var(--darkGrayText);
   font-weight: 600;
 }
-.invite-members-modal .invite-members-container .invited-users-list {
+.single-project .invited-users-list {
   display: flex;
   flex-direction: column;
   background: #fff;
   border-radius: 5px;
   border: 1px solid var(--inputBorder);
 }
-.invite-members-modal .invite-members-container .invited-users-list .invited-user {
+.single-project .invited-users-list .invited-user {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -214,20 +236,20 @@
   padding: 5px;
   border-bottom: 1px solid var(--inputBorder);
 }
-.invite-members-modal .invite-members-container .invited-users-list .invited-user .texts {
+.single-project .invited-users-list .invited-user .texts {
   display: flex;
   align-items: center;
   gap: 15px;
 }
-.invite-members-modal .invite-members-container .invited-users-list .invited-user:last-child {
+.single-project .invited-users-list .invited-user:last-child {
   border-bottom: none;
 }
-.invite-members-modal .invite-members-container .invited-users-list .invited-user h6 {
+.single-project .invited-users-list .invited-user h6 {
   font-size: 13px;
   color: var(--darkGrayText);
   font-weight: 600;
 }
-.invite-members-modal .invite-members-container .invited-users-list .invited-user .icon-container:hover {
+.single-project .invited-users-list .invited-user .icon-container:hover {
   background: var(--inputBg);
 }
 
@@ -248,4 +270,25 @@
 .project-page-not-found i {
   font-size: 40px;
   color: var(--darkGrayText);
+}
+
+.sprint-details-modal .app-modal > section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.sprint-details-modal .app-modal > section .commonInput h6 {
+  font-size: 12px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.sprint-details-modal textarea {
+  resize: vertical;
+  max-height: 150px;
+  min-height: 100px;
+}
+.sprint-details-modal .app-modal > section > h6 {
+  font-size: 12px;
+  color: var(--grayText);
 }

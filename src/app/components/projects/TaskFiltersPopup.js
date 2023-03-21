@@ -96,6 +96,7 @@ export default function TaskFiltersPopup(props) {
           buttonType="tabBtn small"
           leftIcon="fal fa-times"
           onClick={() => clearFilters()}
+          className="clear-btn"
         />
         <AppButton
           label="Apply"
@@ -103,6 +104,7 @@ export default function TaskFiltersPopup(props) {
           onClick={() => saveFilters()}
           buttonType="small"
           disabled={disableApply}
+          className="apply-btn"
         />
       </div>
     </div>

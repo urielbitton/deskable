@@ -292,3 +292,53 @@
   font-size: 12px;
   color: var(--grayText);
 }
+
+.single-project .task-filters .filter-btn {
+  border: 1px solid var(--inputBorder);
+  color: var(--darkGrayText);
+}
+.single-project .task-filters .filter-btn:hover {
+  background: var(--inputBg);
+}
+.single-project .task-filters .filter-btn.active-filters {
+  background: var(--primary);
+  color: #fff;
+}
+.single-project .task-filters .filter-btn i {
+  font-size: 13px;
+}
+.single-project .task-filters .task-filters-popup {
+  min-width: 320px;
+}
+.single-project .task-filters .task-filters-popup .popup-footer .apply-btn {
+  color: #fff;
+}
+.single-project .task-filters .appSelect .placeholder {
+  font-size: 13px;
+  color: var(--grayText);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 140px;
+}
+.single-project .task-filters .appSelect h6 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.single-project .task-filters .sortings .filter-btn {
+  border: 1px solid var(--inputBorder);
+  height: 35px;
+  font-size: 13px;
+  color: var(--grayText);
+}
+.single-project .task-filters .sortings .filter-btn:hover,
+.single-project .task-filters .sortings .filter-btn.active {
+  background: var(--inputBg);
+}
+.single-project .task-filters .sortings .filter-btn.active-filters {
+  background: var(--primary);
+  color: #fff;
+}

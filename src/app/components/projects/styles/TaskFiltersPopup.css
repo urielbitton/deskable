@@ -12,6 +12,7 @@
   border-radius: 5px;
   background: #fff;
   box-shadow: var(--shadow);
+  z-index: 1000;
 }
 .task-filters-popup.show {
   visibility: visible;

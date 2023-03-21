@@ -137,7 +137,7 @@ export default function ProjectTasks({ project }) {
         <div className="sortings">
           <div className="task-filters">
             <AppButton
-              label={activeFilters ? "Active Filters" : "Filters"}
+              label="Filters"
               buttonType="invertedBtn"
               leftIcon="fas fa-filter"
               onClick={() => setShowFilters(prev => !prev)}

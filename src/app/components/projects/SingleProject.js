@@ -1,5 +1,5 @@
 import { infoToast, successToast } from "app/data/toastsTemplates"
-import { useOrgProject } from "app/hooks/projectsHooks"
+import { useOrgProject, useOrgProjectColumns } from "app/hooks/projectsHooks"
 import { useMultipleQueries } from "app/hooks/searchHooks"
 import { useUsers } from "app/hooks/userHooks"
 import { updateDB } from "app/services/CrudDB"
@@ -38,6 +38,7 @@ import ProjectSettings from "./ProjectSettings"
 import ProjectTaskPage from "./ProjectTaskPage"
 import ProjectTasks from "./ProjectTasks"
 import './styles/SingleProject.css'
+import TaskFiltersPopup from "./TaskFiltersPopup"
 
 export default function SingleProject() {
 
@@ -45,6 +46,7 @@ export default function SingleProject() {
     setPageLoading, myUserName } = useContext(StoreContext)
   const projectID = useParams().projectID
   const project = useOrgProject(projectID)
+  const projectColumns = useOrgProjectColumns(projectID)
   const [showOptions, setShowOptions] = useState(false)
   const [showColumnModal, setShowColumnModal] = useState(false)
   const [columnTitle, setColumnTitle] = useState('')
@@ -69,6 +71,17 @@ export default function SingleProject() {
   const [showCompleteSprintModal, setShowCompleteSprintModal] = useState(false)
   const [sprintCompleteLoading, setSprintCompleteLoading] = useState(false)
   const [moveTasksTo, setMoveTasksTo] = useState('new-sprint')
+  const [showFilters, setShowFilters] = useState(false)
+  const [taskTypeFilter, setTaskTypeFilter] = useState('all')
+  const [pointsFilter, setPointsFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [applyFilters, setApplyFilters] = useState({
+    taskType: 'all',
+    points: 'all',
+    priority: 'all',
+    status: 'all',
+  })
   const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT ` +
     `${project?.members?.map(member => `userID:${member}`).join(' AND NOT ')}`
   const searchHitsPerPage = 20
@@ -87,11 +100,51 @@ export default function SingleProject() {
   const isSettingsPage = location.pathname.split('/')[3] === 'settings'
   const projectPath = `organizations/${myOrgID}/projects`
 
+  const activeFilters = applyFilters.taskType !== 'all' ||
+    applyFilters.points !== 'all' ||
+    applyFilters.priority !== 'all' ||
+    applyFilters.status !== 'all'
+
+  const disableApplyFilters = taskTypeFilter === applyFilters.taskType &&
+    pointsFilter === applyFilters.points &&
+    priorityFilter === applyFilters.priority &&
+    statusFilter === applyFilters.status
+
+  const handleSaveFilters = () => {
+    setApplyFilters({
+      taskType: taskTypeFilter,
+      points: pointsFilter,
+      priority: priorityFilter,
+      status: statusFilter,
+    })
+    setShowFilters(false)
+  }
+
+  const handleClearFilters = () => {
+    setTaskTypeFilter('all')
+    setPointsFilter('all')
+    setPriorityFilter('all')
+    setStatusFilter('all')
+    setApplyFilters({
+      taskType: 'all',
+      points: 'all',
+      priority: 'all',
+      status: 'all',
+    })
+    setShowFilters(false)
+  }
+
+  const applyFiltersCombined = (task) => {
+    return (applyFilters.taskType === 'all' || task?.taskType === applyFilters.taskType)
+      && (applyFilters.points === 'all' || task?.points === applyFilters.points)
+      && (applyFilters.priority === 'all' || task?.priority === applyFilters.priority)
+      && (applyFilters.status === 'all' || task?.status === applyFilters.status)
+  }
+
   const tasksFilter = (tasks, column) => {
     return tasks?.filter(task => {
-      return task?.columnID === column?.columnID
-        && filterUserIDs.length > 0 ? (
-        ((
+      if(task?.columnID === column?.columnID && filterUserIDs.length > 0) {
+        return applyFiltersCombined(task) && ((
           task.assigneesIDs.some(id => filterUserIDs.includes(id))
           || (areArraysEqual(allMembers, filterUserIDs) && filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0)
         )
@@ -99,14 +152,17 @@ export default function SingleProject() {
             filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0
           )
         )
-      ) : task?.columnID === column?.columnID
+      }
+      else if(task?.columnID === column?.columnID) {
+        return applyFiltersCombined(task)
+      }
     })
   }
 
   const backlogTasksFilter = (tasks) => {
     return tasks?.filter(task => {
-      return filterUserIDs.length > 0 ? (
-        ((
+      if(filterUserIDs.length > 0) {
+        return applyFiltersCombined(task) && ((
           task.assigneesIDs.some(id => filterUserIDs.includes(id))
           || (areArraysEqual(allMembers, filterUserIDs) && filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0)
         )
@@ -114,7 +170,8 @@ export default function SingleProject() {
             filterUserIDs.includes('unassigned') && task.assigneesIDs.length === 0
           )
         )
-      ) : true
+      }
+      return applyFiltersCombined(task)
     })
   }
 
@@ -253,10 +310,10 @@ export default function SingleProject() {
     const confirm = window.confirm('Are you sure you want to complete this sprint? This action cannot be undone.')
     if (!confirm) return
     completeProjectSprintService(
-      projectPath, 
-      project, 
+      projectPath,
+      project,
       moveTasksTo,
-      setToasts, 
+      setToasts,
       setPageLoading
     )
       .then(() => {
@@ -264,7 +321,6 @@ export default function SingleProject() {
         navigate(`/projects/${projectID}/backlog`)
       })
   }
-  
 
   const archiveProject = () => {
 
@@ -345,18 +401,18 @@ export default function SingleProject() {
   const saveSprintDetails = () => {
     if (!sprintName || !sprintGoal) return setToasts(infoToast('Please enter a name for the sprint.'))
     updateProjectSprintDetails(
-      projectPath, 
-      projectID, 
+      projectPath,
+      projectID,
       {
         sprintName,
         sprintGoal
-      }, 
-      setToasts, 
+      },
+      setToasts,
       setSprintDetailsLoading
     )
-    .then(() => {
-      resetSprintModal()
-    })
+      .then(() => {
+        resetSprintModal()
+      })
   }
 
   useEffect(() => {
@@ -421,8 +477,8 @@ export default function SingleProject() {
           <div className="top-side">
             <div className="left-side">
               <h5>
-                <i 
-                  className="fas fa-pen" 
+                <i
+                  className="fas fa-pen"
                   onClick={() => initSprintModal()}
                 />
                 {project?.sprintName}
@@ -457,11 +513,32 @@ export default function SingleProject() {
               />
               {
                 !isTasksPage &&
-                <AppButton
-                  label="Filters"
-                  buttonType="tabBtn"
-                  leftIcon="fas fa-filter"
-                />
+                <div className="task-filters">
+                  <AppButton
+                    label="Filters"
+                    buttonType="invertedBtn"
+                    leftIcon="fas fa-filter"
+                    onClick={() => setShowFilters(prev => !prev)}
+                    className={`filter-btn ${showFilters ? 'active' : ''} ${activeFilters ? 'active-filters' : ''}`}
+                  />
+                  <TaskFiltersPopup
+                    showPopup={showFilters}
+                    setShowPopup={setShowFilters}
+                    onClose={() => setShowFilters(false)}
+                    taskTypeFilter={taskTypeFilter}
+                    setTaskTypeFilter={setTaskTypeFilter}
+                    pointsFilter={pointsFilter}
+                    setPointsFilter={setPointsFilter}
+                    priorityFilter={priorityFilter}
+                    setPriorityFilter={setPriorityFilter}
+                    statusFilter={statusFilter}
+                    setStatusFilter={setStatusFilter}
+                    taskStatusOptions={projectColumns?.map(column => ({ value: column.title, label: column.title }))}
+                    disableApply={disableApplyFilters}
+                    saveFilters={handleSaveFilters}
+                    clearFilters={() => handleClearFilters()}
+                  />
+                </div>
               }
               <DropdownButton
                 label="Actions"
@@ -500,18 +577,18 @@ export default function SingleProject() {
           <Route
             path="board"
             element={
-              <ProjectBoard 
-                project={project} 
-                tasksFilter={tasksFilter} 
+              <ProjectBoard
+                project={project}
+                tasksFilter={tasksFilter}
               />
             }
           />
           <Route
             path="backlog"
             element={
-              <ProjectBacklog 
-                project={project} 
-                backlogTasksFilter={backlogTasksFilter} 
+              <ProjectBacklog
+                project={project}
+                backlogTasksFilter={backlogTasksFilter}
                 setShowCompleteSprintModal={setShowCompleteSprintModal}
                 setShowSprintDetailsModal={setShowSprintDetailsModal}
               />

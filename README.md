@@ -2,12 +2,11 @@
 
 ##To Dos
 - projects:
-  - complete sprint logic 
-  - let users accept/reject project invitations
   - add filters on board page
 
 - General
   - change all wysiwg editors with tinymce basic editor (create a component for it called AppBasicEditor.js - use for comments, posts, etc)
+  - let users accept/reject project invitations
 
 - Posts:
   - edit announcements - change all db paths to pathPrefix so you can pass org/orgID/announcements as pathPrefix instead of hardcoded posts (change for comments and files, etc.)

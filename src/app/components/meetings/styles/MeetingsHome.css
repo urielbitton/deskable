@@ -1,0 +1,72 @@
+.meetings-home-page {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.meetings-home-page .titles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.meetings-home-page .titles h3 {
+  font-size: 19px;
+  color: var(--darkGrayText);
+}
+
+.meetings-home-page .toolbar {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.meetings-home-page .toolbar .side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.meetings-home-page .toolbar .appInput,
+.meetings-home-page .toolbar input {
+  width: 300px;
+}
+.meetings-home-page .toolbar .appButton {
+  color: var(--grayText);
+}
+.meetings-home-page .toolbar .appButton i {
+  font-size: 12px;
+}
+.meetings-home-page .toolbar .appButton:hover {
+  color: var(--primary);
+}
+
+.meetings-home-page .home-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+}
+.meetings-home-page .home-section > h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  margin-bottom: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.meetings-home-page .home-section > h5 i {
+  color: var(--primary);
+  font-size: 9px;
+}
+
+.meetings-home-page .home-section .meetings-flex {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}

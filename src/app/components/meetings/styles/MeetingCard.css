@@ -1,0 +1,116 @@
+.meeting-card {
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid var(--inputBorder);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.meeting-card:hover {
+  background: var(--lightInputBg);
+}
+
+.meeting-card .header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--inputBorder);
+}
+.meeting-card .header .texts {
+  display: flex;
+  flex-direction: column;
+}
+.meeting-card .header .texts h5 {
+  font-size: 15px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.meeting-card .header .texts h6 {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--grayText);
+}
+
+.meeting-card .organizer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.meeting-card .organizer .side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.meeting-card .organizer .side.right i {
+  color: var(--darkGrayText);
+  font-size: 14px;
+}
+.meeting-card .organizer .side.right i.fa-headset {
+  color: var(--blue);
+}
+.meeting-card .organizer .texts {
+  display: flex;
+  flex-direction: column;
+}
+.meeting-card .organizer .texts h5 {
+  font-size: 13px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.meeting-card .organizer .texts h6 {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--grayText);
+}
+
+.meeting-card .schedule {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+.meeting-card .schedule h5 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.meeting-card .schedule h5 i {
+  margin-right: 5px;
+}
+.meeting-card .schedule h6 {
+  color: var(--darkGrayText);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.meeting-card .actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.meeting-card .actions h6 {
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.meeting-card .actions h6 i {
+  left: 0;
+  transition: all 0.2s;
+}
+.meeting-card .actions h6:hover i {
+  left: 5px;
+}

@@ -1,11 +1,21 @@
 const functions = require("firebase-functions")
 const algoliasearch = require('algoliasearch')
 const firebase = require("firebase-admin")
+const AccessToken = require("twilio").jwt.AccessToken
+const VideoGrant = AccessToken.VideoGrant
 firebase.initializeApp()
 const db = firebase.firestore()
 const storage = firebase.storage()
 db.settings({ ignoreUndefinedProperties: true })
 const sgMail = require('@sendgrid/mail')
+const twilioAccountSID = functions.config().twilio.sid
+const twilioKeySID = functions.config().twilio.keyid
+const twilioKeySecret = functions.config().twilio.keysecret
+const twilioClient = require('twilio')(
+  twilioKeySID,
+  twilioKeySecret,
+  { accountSid: twilioAccountSID }
+)
 
 const APP_ID = functions.config().algolia.app
 const API_KEY = functions.config().algolia.key
@@ -38,7 +48,7 @@ exports.deleteFromIndexUsers = functions
     return usersIndex.deleteObject(snapshot.id)
   })
 
-  //projects index
+//projects index
 exports.addToIndexProjects = functions
   .region('northamerica-northeast1')
   .firestore.document('organizations/{orgID}/projects/{projectID}').onCreate((snapshot, context) => {
@@ -181,16 +191,61 @@ exports.uploadHtmlToFirestorage = functions
         contentType: 'text/plain',
       },
     })
-    .then(() => {
-      return storageRef.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491'
+      .then(() => {
+        return storageRef.getSignedUrl({
+          action: 'read',
+          expires: '03-09-2491'
+        })
+          .then((signedURLs) => {
+            return signedURLs[0]
+          })
+      })
+  })
+
+
+//Twilio API functions
+
+exports.findOrCreateRoom = functions
+  .https.onCall((data, context) => {
+    const roomName = data.roomName
+    twilioClient.video.rooms(roomName).fetch()
+    .then((room) => {
+      return room
     })
-    .then((signedURLs) => {
-      return signedURLs[0]
+    .catch((error) => {
+      if (error.status === 404) {
+        twilioClient.video.rooms.create({
+          uniqueName: roomName,
+          type: 'group',
+        })
+      }
+      else {
+        console.log(error)
+        return error
+      }
     })
   })
-})
+
+exports.getRoomAccessToken = functions
+  .https.onCall((data, context) => {
+    const roomName = data.roomName
+    const userID = data.userID
+
+    const token = new AccessToken(
+      twilioAccountSID,
+      twilioKeySID,
+      twilioKeySecret,
+      { identity: userID }
+    )
+
+    const videoGrant = new VideoGrant({
+      room: roomName
+    })
+
+    token.addGrant(videoGrant)
+
+    return token.toJwt()
+  })
 
 
 //utility functions

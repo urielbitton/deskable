@@ -45,10 +45,18 @@
   color: var(--primary);
 }
 
+.meetings-home-page .meetings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
 .meetings-home-page .home-section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
 }
 .meetings-home-page .home-section > h5 {
   font-size: 13px;
@@ -60,6 +68,10 @@
   gap: 8px;
 }
 .meetings-home-page .home-section > h5 i {
+  color: var(--darkGrayText);
+  font-size: 15px;
+}
+.meetings-home-page .home-section > h5 i.fa-circle {
   color: var(--primary);
   font-size: 9px;
 }

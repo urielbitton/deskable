@@ -17,7 +17,7 @@ export default function MeetingCard(props) {
   return (
     <Link
       className="meeting-card"
-      to={`/meetings/${meetingID}`}
+      to={`/meetings/meeting-room/${meetingID}`}
     >
       <div className="header">
         <IconContainer

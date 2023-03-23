@@ -1,0 +1,127 @@
+import React, { useState } from 'react'
+import AppButton from "../ui/AppButton"
+import DropdownIcon from "../ui/DropDownIcon"
+import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
+import VolumeSlider from "../ui/VolumeSlider"
+import './styles/MeetingWindow.css'
+
+export default function MeetingWindow(props) {
+
+  const { meeting, room, videoOn, soundOn,
+    setMeetingStarted } = props
+  const [soundVolume, setSoundVolume] = useState(80)
+  const [showOptions, setShowOptions] = useState(false)
+
+  const ActionIcon = ({ name, title, icon, onClick }) => {
+    return <div
+      className={`action-icon ${name}`}
+      title={title}
+      onClick={onClick}
+    >
+      <i
+        className={icon}
+      />
+    </div>
+  }
+
+  const leaveRoom = () => {
+    const confirm = window.confirm("Are you sure you want to leave the meeting?")
+    if (!confirm) return 
+    room.disconnect()
+    setMeetingStarted(false)
+  }
+
+  return (
+    <div className="meeting-window">
+      <div className="titles">
+        <h4>{meeting?.title}</h4>
+        <MultipleUsersAvatars
+          userIDs={meeting?.participants}
+          maxAvatars={7}
+          avatarDimensions={28}
+        />
+      </div>
+      <div className="toolbar">
+        <div className="left side">
+          <div className="record-div">
+            <i className="fas fa-record-vinyl" />
+            Recording <b>00:00:00</b>
+          </div>
+        </div>
+        <div className="right side">
+          <AppButton
+            label="Invite people"
+            buttonType="invertedBtn"
+            leftIcon="fas fa-user-plus"
+          />
+        </div>
+      </div>
+      <div className="video-container">
+
+      </div>
+      <div className="video-actions">
+        <div className="left side">
+          <div className="sound-container">
+            <i className="fas fa-volume" />
+            <VolumeSlider value={soundVolume} />
+          </div>
+        </div>
+        <div className="center side">
+          <ActionIcon
+            name="video"
+            title={videoOn ? "Stop video" : "Start video"}
+            icon="fas fa-video"
+            onClick={() => { }}
+          />
+          <ActionIcon
+            name="sound"
+            title={soundOn ? "Mute" : "Unmute"}
+            icon="fas fa-microphone"
+            onClick={() => { }}
+          />
+          <ActionIcon
+            name="raise-hand"
+            title="Raise hand"
+            icon="fas fa-hand-paper"
+            onClick={() => { }}
+          />
+          <ActionIcon
+            name="present"
+            title="Share screen"
+            icon="fas fa-tablet-android"
+            onClick={() => { }}
+          />
+          <ActionIcon
+            name="captions"
+            title="Turn on captions"
+            icon="fas fa-closed-captioning"
+            onClick={() => { }}
+          />
+          <ActionIcon
+            name="fullscreen"
+            title="Fullscreen"
+            icon="fas fa-expand"
+            onClick={() => { }}
+          />
+          <DropdownIcon
+            icon="fas fa-ellipsis-v"
+            iconSize={15}
+            dimensions={40}
+            iconColor="var(--grayText)"
+            setShowMenu={setShowOptions}
+            onClick={() => console.log('')}
+            items={[]}
+          />
+        </div>
+        <div className="right side">
+          <ActionIcon
+            name="leave"
+            title="Leave meeting"
+            icon="fas fa-sign-out-alt"
+            onClick={leaveRoom}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}

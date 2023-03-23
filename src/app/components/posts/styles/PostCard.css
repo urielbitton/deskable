@@ -210,3 +210,14 @@
 .post-card .stats-info small i {
   margin-right: 5px;
 }
+
+.single-post-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 600px;
+}
+.single-post-page > h4 {
+  font-size: 20px;
+  color: var(--darkGrayText);
+}

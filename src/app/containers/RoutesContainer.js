@@ -39,11 +39,11 @@ export default function RoutesContainer() {
             <Route path="posts/:postID" element={<PostPage />} />
             <Route path="posts/:postID/photos" element={<PostPhotosModalPage />} />
             <Route path="projects/*" element={<ProjectsPage />} />
-            <Route path="messages" element={<MessagesPage />} />
-            <Route path="meetings" element={<MeetingsPage />} />
-            <Route path="events" element={<EventsPage />} />
-            <Route path="resources" element={<ResourcesPage />} />
-            <Route path="my-organization" element={<MyOrgPage />} />
+            <Route path="messages/*" element={<MessagesPage />} />
+            <Route path="meetings/*" element={<MeetingsPage />} />
+            <Route path="events/*" element={<EventsPage />} />
+            <Route path="resources/*" element={<ResourcesPage />} />
+            <Route path="my-organization/*" element={<MyOrgPage />} />
           </>
         }
         <Route path="create-organization" element={<CreateOrgPage />} />

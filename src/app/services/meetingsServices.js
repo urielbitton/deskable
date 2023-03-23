@@ -1,12 +1,19 @@
-import { db } from "app/firebase/fire"
-import { collection, doc, limit, onSnapshot, 
-  query, where } from "firebase/firestore"
+import { errorToast, successToast } from "app/data/toastsTemplates"
+import { db, functions } from "app/firebase/fire"
+import {
+  collection, doc, limit, onSnapshot,
+  orderBy,
+  query, where
+} from "firebase/firestore"
+import { httpsCallable } from "firebase/functions"
+import Video from "twilio-video"
 
 export const getLiveMeetingsByOrgID = (orgID, setMeetings, lim) => {
   const docRef = collection(db, `organizations/${orgID}/meetings`)
   const q = query(
-    docRef, 
-    where("isActive", "==", true), 
+    docRef,
+    where("isActive", "==", true),
+    orderBy("meetingStart", "desc"),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -21,12 +28,13 @@ export const getMeetingByID = (orgID, meetingID, setMeeting) => {
   })
 }
 
-export const getTodayMeetingsByOrgID = (orgID, setMeetings, lim) => {
+export const getRangedMeetingsByOrgID = (orgID, start, end, setMeetings, lim) => {
   const docRef = collection(db, `organizations/${orgID}/meetings`)
   const q = query(
-    docRef, 
-    where("meetingStart", ">=", new Date().setHours(0,0,0,0)), 
-    where("meetingStart", "<=", new Date().setHours(23,59,59,999)), 
+    docRef,
+    where("meetingStart", ">=", start),
+    where("meetingStart", "<=", end),
+    orderBy("meetingStart", "desc"),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -34,3 +42,74 @@ export const getTodayMeetingsByOrgID = (orgID, setMeetings, lim) => {
   })
 }
 
+
+// services function
+
+export const createJoinVideoMeetingService = (myUserID, roomID, setPageLoading, setToasts) => {
+  setPageLoading(true)
+  return httpsCallable(functions, 'findOrCreateRoom')({
+    roomName: roomID
+  })
+    .then(() => {
+      return httpsCallable(functions, 'getRoomAccessToken')({
+        roomName: roomID,
+        userID: myUserID
+      })
+    })
+    .then((result) => {
+      setPageLoading(false)
+      setToasts(successToast("Meeting joined."))
+      console.log(result.data)
+      return result.data
+    })
+    .catch((error) => {
+      setPageLoading(false)
+      setToasts(errorToast('There was an error joining the meeting. Please try again'))
+      console.log(error)
+    })
+}
+
+export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) => {
+  setPageLoading(true)
+  return Video.connect(token, {
+    video: videoOn,
+    audio: soundOn
+  })
+    .then((room) => {
+      console.log(room)
+      setPageLoading(false)
+      return room
+    })
+    .catch((error) => {
+      setPageLoading(false)
+      console.error(`Unable to connect to Room: ${error.message}`)
+    })
+}
+
+export const handleConnectedParticipant = (participant) => {
+  const participantDiv = document.createElement("div");
+  participantDiv.setAttribute("id", participant.identity);
+  document.querySelector('.video-container').append(participantDiv)
+  participant.tracks.forEach((trackPublication) => {
+    handleTrackPublication(trackPublication, participant);
+  })
+  participant.on("trackPublished", handleTrackPublication)
+}
+
+export const handleTrackPublication = (trackPublication, participant) => {
+  function displayTrack(track) {
+    const participantDiv = document.querySelector(`#${participant.identity}`)
+    const trackElement = track.attach()
+    participantDiv.append(trackElement)
+  }
+  if(trackPublication.track) {
+    displayTrack(trackPublication.track)
+  }
+  trackPublication.on("subscribed", displayTrack)
+}
+
+export const handleDisconnectedParticipant = (participant) => {
+  participant.removeAllListeners()
+  const participantDiv = document.getElementById(participant.identity);
+  participantDiv.remove()
+}

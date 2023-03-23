@@ -1,0 +1,50 @@
+.waiting-room-page {
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
+.waiting-room-page .meeting-video {
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+}
+.waiting-room-page .meeting-video .video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.waiting-room-page .meeting-video video {
+  width: 700px;
+  height: 380px;
+  background: #111;
+  border-radius: 7px;
+  box-shadow: var(--shadow);
+  object-fit: cover;
+  transform: rotateY(180deg)
+}
+.waiting-room-page .meeting-video .video-container .icons-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.waiting-room-page .meeting-video .video-container .icon-container:hover {
+  background: var(--lightGrayText)!important;
+}
+
+.waiting-room-page .meeting-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+}
+.waiting-room-page .meeting-details h4 {
+  font-size: 24px;
+  color: var(--darkGrayText);
+  margin-bottom: 10px;
+}

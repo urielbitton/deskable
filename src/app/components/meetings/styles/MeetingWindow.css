@@ -1,0 +1,142 @@
+.meeting-window {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.meeting-window .titles {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--inputBorder);
+  padding-bottom: 20px;
+}
+.meeting-window .titles h4 {
+  font-size: 19px;
+  color: #333;
+}
+
+.meeting-window .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.meeting-window .toolbar .side {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.meeting-window .toolbar .left .record-div {
+  font-size: 14px;
+  color: var(--darkGrayText);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.meeting-window .toolbar .left .record-div.active b {
+  animation: fadeInOut 2.5s ease-in-out infinite;
+}
+.meeting-window .toolbar .left .record-div.active i {
+  color: var(--red);
+  animation: roll 2s ease-in-out infinite;
+}
+@keyframes fadeInOut {
+  0% { opacity: 1 }
+  50% { opacity: 0.5 }
+  100% { opacity: 1 }
+}
+@keyframes roll {
+  0% { transform: rotate(0deg) }
+  50% { transform: rotate(360deg) }
+  100% { transform: rotate(0deg) }
+}
+.meeting-window .toolbar .appButton {
+  color: var(--primary);
+}
+
+.meeting-window .video-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 170px);
+  background: #222;
+  border-radius: 10px;
+}
+
+.meeting-window .video-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.meeting-window .video-actions .side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.meeting-window .video-actions .side.left,
+.meeting-window .video-actions .side.right {
+  width: 180px;
+}
+.meeting-window .video-actions .side.right {
+  justify-content: flex-end;
+}
+.meeting-window .video-actions .sound-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--inputBorder);
+  width: 170px;
+  height: 35px;
+  padding: 5px 10px;
+}
+.meeting-window .video-actions .sound-container i {
+  color: var(--grayText);
+}
+.meeting-window .video-actions .dropdown-icon .icon-container {
+  border: 1px solid var(--inputBorder);
+  border-radius: 5px;
+}
+.meeting-window .video-actions .dropdown-icon:hover {
+  background: var(--inputBg);
+  border-radius: 5px;
+}
+
+.meeting-window .action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--inputBorder);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.meeting-window .action-icon:hover {
+  background: var(--inputBg);
+}
+.meeting-window .action-icon:active {
+  background: var(--lightGrayText);
+  transform: scale(0.97);
+}
+.meeting-window .action-icon i {
+  font-size: 14px;
+  color: var(--grayText);
+}
+.meeting-window .action-icon i.fa-tablet-android {
+  transform: scaleX(1.4);
+}
+.meeting-window .action-icon.leave {
+  background: var(--red);
+}
+.meeting-window .action-icon.leave i {
+  color: #fff;
+}

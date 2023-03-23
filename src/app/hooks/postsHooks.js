@@ -8,7 +8,8 @@ export const useOrgPosts = (limit) => {
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
-    getPostsByOrgID(myOrgID, setPosts, limit)
+    if(myOrgID)
+      getPostsByOrgID(myOrgID, setPosts, limit)
   }, [myOrgID, limit])
 
   return posts
@@ -20,7 +21,9 @@ export const useOrgPost = (postID) => {
   const [post, setPost] = useState(null)
 
   useEffect(() => {
-    getOrgPostByID(myOrgID, postID, setPost)
+    if(myOrgID && postID) {
+      getOrgPostByID(myOrgID, postID, setPost)
+    }
   }, [myOrgID, postID])
 
   return post

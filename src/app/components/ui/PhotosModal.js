@@ -20,6 +20,7 @@ export default function PhotosModal(props) {
   const [description, setDescription] = useState("")
   const isPhotosOwner = photosOwnerID === myUserID
   const inputRef = useRef(null)
+  console.log(photos)
 
   const photosList = photos
     ?.slice(slideIndex, slideIndex + 1)

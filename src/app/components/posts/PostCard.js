@@ -30,7 +30,7 @@ export default function PostCard(props) {
   const { authorID, dateCreated, postID, postText, files,
     orgID, likes, saved } = props.post
   const { setShowLikesModal, setLikesStats, setShowSavedModal, 
-    setSavedStats } = props
+    setSavedStats, postAlone, openCommentsDefault } = props
   const [showReportModal, setShowReportModal] = useState(false)
   const [showPostOptions, setShowPostOptions] = useState(false)
   const [showComments, setShowComments] = useState(false)
@@ -227,6 +227,7 @@ export default function PostCard(props) {
             setShowMenu={setShowPostOptions}
             onClick={(e) => setShowPostOptions(showPostOptions === postID ? null : postID)}
             items={[
+              ...!postAlone ? [{ label: 'View Post Alone', icon: "fas fa-eye", onClick: () => navigate(`/posts/${postID}`) }] : [],
               { label: "Edit", icon: "fas fa-pen", onClick: () => initEditPost(), private: authorID !== myUserID },
               { label: "Delete", icon: "fas fa-trash", onClick: () => deletePost(), private: authorID !== myUserID },
               { label: userHasSaved ? 'Unsave Post' : 'Save Post', icon: "fas fa-bookmark", onClick: () => bookmarkPost() },
@@ -316,7 +317,7 @@ export default function PostCard(props) {
       </div>
       <PostComments
         post={props.post}
-        showComments={showComments}
+        showComments={showComments || openCommentsDefault}
         commentsNum={commentsNum}
         commentInputRef={commentInputRef}
         setShowLikesModal={setShowLikesModal}
@@ -330,7 +331,9 @@ export default function PostCard(props) {
       <PhotosModal
         showModal={showPhotosModal.show}
         photos={showPhotosModal.photos}
+        currentPhoto={showPhotosModal.photos[0]}
         onClose={() => setShowPhotosModal({ show: false, photos: [] })}
+        slideIndex={0}
       />
       <ReportModal
         reportOptions={reportOrgPostOptions}

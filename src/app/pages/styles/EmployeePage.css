@@ -53,7 +53,7 @@
   background: var(--inputBg);
 }
 .employee-frame .header .right-side .appButton i {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--grayText);
 }
 

@@ -1,7 +1,10 @@
+import CreateMeeting from "app/components/meetings/CreateMeeting"
 import MeetingsHome from "app/components/meetings/MeetingsHome"
 import AppCard from "app/components/ui/AppCard"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect } from 'react'
+import { Route, Routes } from "react-router-dom"
+import WaitingRoom from "app/components/meetings/WaitingRoom"
 
 export default function MeetingsPage() {
 
@@ -17,8 +20,13 @@ export default function MeetingsPage() {
       className="meetings-page"
       padding="0"
       withBorder
+      styles={{ height: "100%" }}
     >
-      <MeetingsHome />
+      <Routes>
+        <Route index element={<MeetingsHome />} />
+        <Route path="new-meeting" element={<CreateMeeting />} />
+        <Route path="meeting-room/:meetingID" element={<WaitingRoom />} />
+      </Routes>
     </AppCard>
   )
 }

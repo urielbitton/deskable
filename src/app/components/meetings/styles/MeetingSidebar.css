@@ -1,0 +1,7 @@
+.meeting-sidebar {
+  height: 100%;
+  background: var(--lightInputBg);
+  border-radius: 25px;
+  border: 15px solid #fff;
+  padding: 10px;
+}

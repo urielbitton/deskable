@@ -7,7 +7,9 @@ export default function MeetingSidebar(props) {
 
   return (
     <div className="meeting-sidebar">
-      MeetingSidebar
+      <div className="meeting-sidebar-content">
+        MeetingSidebar
+      </div>
     </div>
   )
 }

@@ -86,12 +86,19 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
     })
 }
 
-export const handleConnectedParticipant = (participant) => {
-  const participantDiv = document.createElement("div");
-  participantDiv.setAttribute("id", participant.identity);
-  document.querySelector('.video-container').append(participantDiv)
+export const handleConnectedParticipant = (participant, myUserID) => {
+  const participantClass = participant.identity === myUserID ? "participant my-participant" : "participant participants"
+  const participantDiv = document.createElement("div")
+  participantDiv.setAttribute("id", participant.identity)
+  participantDiv.setAttribute("class", participantClass)
+  if(participant.identity === myUserID) {
+    document.querySelector('.video-container').append(participantDiv)
+  }
+  else {
+    document.querySelector('.participants-list').prepend(participantDiv)
+  }
   participant.tracks.forEach((trackPublication) => {
-    handleTrackPublication(trackPublication, participant);
+    handleTrackPublication(trackPublication, participant)
   })
   participant.on("trackPublished", handleTrackPublication)
 }
@@ -102,7 +109,7 @@ export const handleTrackPublication = (trackPublication, participant) => {
     const trackElement = track.attach()
     participantDiv.append(trackElement)
   }
-  if(trackPublication.track) {
+  if (trackPublication.track) {
     displayTrack(trackPublication.track)
   }
   trackPublication.on("subscribed", displayTrack)
@@ -110,6 +117,23 @@ export const handleTrackPublication = (trackPublication, participant) => {
 
 export const handleDisconnectedParticipant = (participant) => {
   participant.removeAllListeners()
-  const participantDiv = document.getElementById(participant.identity);
+  const participantDiv = document.getElementById(participant.identity)
   participantDiv.remove()
+}
+
+export const shareScreenService = (room) => {
+  navigator.mediaDevices.getDisplayMedia()
+  .then(stream => {
+    const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0])
+    room.localParticipant.publishTrack(screenTrack);
+  })
+  .catch(() => {
+    alert('Could not share the screen.')
+  })
+}
+
+export const stopSharingScreenService = (room) => {
+  const screenTrack = room.localParticipant.videoTracks.values().next().value[1].track
+  room.localParticipant.unpublishTrack(screenTrack)
+  screenTrack.stop()
 }

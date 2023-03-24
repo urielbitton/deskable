@@ -216,7 +216,7 @@ exports.findOrCreateRoom = functions
       if (error.status === 404) {
         twilioClient.video.rooms.create({
           uniqueName: roomName,
-          type: 'group',
+          type: 'go',
         })
       }
       else {

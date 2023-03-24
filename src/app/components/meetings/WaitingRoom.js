@@ -66,13 +66,13 @@ export default function WaitingRoom() {
   }
 
   useEffect(() => {
-    startVideo()
-    return () => stopVideo()
+    // startVideo()
+    // return () => stopVideo()
   }, [])
 
   useEffect(() => {
     if(room) {
-      handleConnectedParticipant(room.localParticipant)
+      handleConnectedParticipant(room.localParticipant, myUserID)
       room.participants.forEach(handleConnectedParticipant)
       room.on("participantConnected", handleConnectedParticipant)
       room.on("participantDisconnected", handleDisconnectedParticipant)
@@ -128,7 +128,9 @@ export default function WaitingRoom() {
     <MeetingStarted
       room={room}
       videoOn={videoOn}
+      setVideoOn={setVideoOn}
       soundOn={soundOn}
+      setSoundOn={setSoundOn}
       setMeetingStarted={setMeetingStarted}
     />
 }

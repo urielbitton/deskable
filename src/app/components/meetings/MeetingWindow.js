@@ -1,20 +1,22 @@
+import { shareScreenService } from "app/services/meetingsServices"
 import React, { useState } from 'react'
 import AppButton from "../ui/AppButton"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import VolumeSlider from "../ui/VolumeSlider"
 import './styles/MeetingWindow.css'
+import Video from "twilio-video"
 
 export default function MeetingWindow(props) {
 
   const { meeting, room, videoOn, soundOn,
-    setMeetingStarted } = props
+    setVideoOn, setSoundOn, setMeetingStarted } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
 
-  const ActionIcon = ({ name, title, icon, onClick }) => {
+  const ActionIcon = ({ name, className = '', title, icon, onClick }) => {
     return <div
-      className={`action-icon ${name}`}
+      className={`action-icon ${name} ${className}`}
       title={title}
       onClick={onClick}
     >
@@ -26,9 +28,33 @@ export default function MeetingWindow(props) {
 
   const leaveRoom = () => {
     const confirm = window.confirm("Are you sure you want to leave the meeting?")
-    if (!confirm) return 
+    if (!confirm) return
     room.disconnect()
     setMeetingStarted(false)
+  }
+
+  const toggleVideo = (value) => {
+    setVideoOn(prev => !prev)
+    room.localParticipant.videoTracks.forEach(publication => {
+      if(value) {
+        publication.track.disable()
+        publication.track.detach().forEach(element => element.remove())
+       } 
+       else {
+        publication.track.enable()
+       }
+    })
+  }
+
+  const toggleAudio = (value) => {
+    setSoundOn(prev => !prev)
+    room.localParticipant.audioTracks.forEach(publication => {
+      value ? publication.track.disable() : publication.track.enable()
+    })
+  }
+
+  const shareScreen = () => {
+    shareScreenService(room)
   }
 
   return (
@@ -57,7 +83,16 @@ export default function MeetingWindow(props) {
         </div>
       </div>
       <div className="video-container">
-
+        <div className="participants-list-container">
+          <div className="participants-list">
+            <div className="participants" />
+            <div className="participants" />
+            <div className="participants" />
+            <div className="participants" />
+            <div className="participants" />
+            <div className="participants" />
+          </div>
+        </div>
       </div>
       <div className="video-actions">
         <div className="left side">
@@ -70,14 +105,16 @@ export default function MeetingWindow(props) {
           <ActionIcon
             name="video"
             title={videoOn ? "Stop video" : "Start video"}
-            icon="fas fa-video"
-            onClick={() => { }}
+            icon={videoOn ? "fas fa-video" : "far fa-video-slash"}
+            onClick={() => toggleVideo(videoOn)}
+            className={!videoOn ? "inactive" : ""}
           />
           <ActionIcon
             name="sound"
             title={soundOn ? "Mute" : "Unmute"}
-            icon="fas fa-microphone"
-            onClick={() => { }}
+            icon={soundOn ? "fas fa-microphone" : "fas fa-microphone-slash"}
+            onClick={() => toggleAudio(soundOn)}
+            className={!soundOn ? "inactive" : ""}
           />
           <ActionIcon
             name="raise-hand"
@@ -89,7 +126,7 @@ export default function MeetingWindow(props) {
             name="present"
             title="Share screen"
             icon="fas fa-tablet-android"
-            onClick={() => { }}
+            onClick={() => shareScreen()}
           />
           <ActionIcon
             name="captions"

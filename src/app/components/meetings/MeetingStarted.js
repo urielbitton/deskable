@@ -7,7 +7,8 @@ import './styles/MeetingStarted.css'
 
 export default function MeetingStarted(props) {
 
-  const { videoOn, soundOn, room, setMeetingStarted } = props
+  const { videoOn, soundOn, room, setVideoOn,
+    setSoundOn, setMeetingStarted } = props
   const meetingID = useParams().meetingID
   const meeting = useMeeting(meetingID)
 
@@ -17,7 +18,9 @@ export default function MeetingStarted(props) {
         meeting={meeting}
         room={room} 
         videoOn={videoOn}
+        setVideoOn={setVideoOn}
         soundOn={soundOn}
+        setSoundOn={setSoundOn}
         setMeetingStarted={setMeetingStarted}
       />
       <MeetingSidebar 

@@ -62,9 +62,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100% - 170px);
+  height: calc(100vh - 280px);
+  width: 100%;
   background: #222;
   border-radius: 10px;
+  overflow: hidden;
+}
+.meeting-window .video-container .my-participant {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.meeting-window .video-container .participants-list-container {
+  overflow-y: hidden;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+}
+.meeting-window .video-container .participants-list {
+  display: flex;
+  justify-content: flex-start; 
+  flex-direction: column-reverse;
+  gap: 10px;
+  overflow-y: scroll;
+  padding: 20px 0;
+  z-index: 10;
+}
+.meeting-window .video-container .participants {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  border: 1px solid #fff;
+  background: #222;
+  overflow: hidden;
+}
+.meeting-window .video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .meeting-window .video-actions {
@@ -72,7 +109,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  flex-wrap: wrap;
   margin-top: 20px;
 }
 .meeting-window .video-actions .side {
@@ -139,4 +175,10 @@
 }
 .meeting-window .action-icon.leave i {
   color: #fff;
+}
+.meeting-window .action-icon.inactive {
+  background: var(--red);
+}
+.meeting-window .action-icon.inactive i {
+  color: #fff
 }

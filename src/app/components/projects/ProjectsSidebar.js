@@ -10,10 +10,11 @@ import './styles/ProjectsSidebar.css'
 export default function ProjectsSidebar() {
 
   const { myUserImg, myUserName, myUser, showProjectsSidebar,
-    setShowProjectsSidebar } = useContext(StoreContext)
+    setShowProjectsSidebar, myMemberType } = useContext(StoreContext)
   const location = useLocation()
   const projectsLimit = 5
   const projects = useOrgProjects(projectsLimit)
+  const canCreateProject = myMemberType === 'classa' || myMemberType === 'classb'
 
   const projectsList = projects?.map((project, index) => {
     return <NavLink
@@ -68,10 +69,13 @@ export default function ProjectsSidebar() {
           <i className="fas fa-sliders-v" />
           <span>Settings</span>
         </NavLink>
-        <NavLink to="/projects/new">
-          <i className="fas fa-plus" />
-          <span>New Project</span>
-        </NavLink>
+        {
+          canCreateProject &&
+          <NavLink to="/projects/new">
+            <i className="fas fa-plus" />
+            <span>New Project</span>
+          </NavLink>
+        }
       </div>
       <div className="section section-projects">
         <h5>

@@ -5,8 +5,10 @@ import newProjectBlob from 'app/assets/images/new-project-blob.svg'
 import { StoreContext } from "app/store/store"
 import { AppInput, AppReactSelect } from "../ui/AppInputs"
 import {
-  projectAccessOptions, projectAvatarsList, projectCategoriesOptions, projectTypeOptions,
-  switchProjectAccess, switchProjectCategory, switchProjectType
+  projectAccessOptions, projectAvatarsList, 
+  projectCategoriesOptions, projectTypeOptions,
+  switchProjectAccess, switchProjectCategory, 
+  switchProjectType
 } from "app/data/projectsData"
 import OrgUsersTagInput from "./OrgUsersTagInput"
 import AppButton from "../ui/AppButton"

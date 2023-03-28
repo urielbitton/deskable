@@ -19,7 +19,7 @@ import noProjectsImg from 'app/assets/images/no-projects-illustration.png'
 
 export default function AllProjects() {
 
-  const { myOrgID, myUserID, setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts, myMemberType } = useContext(StoreContext)
   const [searchString, setSearchString] = useState('')
   const [query, setQuery] = useState('')
   const [pageNum, setPageNum] = useState(0)
@@ -29,6 +29,7 @@ export default function AllProjects() {
   const [loading, setLoading] = useState(false)
   const filters = `orgID: ${myOrgID}`
   const showAll = true
+  const canCreateProject = myMemberType === 'classa' || myMemberType === 'classb'
 
   const allProjects = useInstantSearch(
     query,
@@ -95,11 +96,14 @@ export default function AllProjects() {
           <h6 className="hits-text">{numOfHits} Project{numOfHits !== 1 && 's'}</h6>
         </div>
         <div className="right">
-          <AppButton
-            label="New Project"
-            url="/projects/new"
-            leftIcon="fal fa-plus"
-          />
+          {
+            canCreateProject &&
+            <AppButton
+              label="New Project"
+              url="/projects/new"
+              leftIcon="fal fa-plus"
+            />
+          }
         </div>
       </div>
       <div className="content">
@@ -187,8 +191,8 @@ export function ProjectRow(props) {
         />
         {
           !hasAccess &&
-          <i 
-            className="fas fa-lock" 
+          <i
+            className="fas fa-lock"
             title="You do not have access to this project"
           />
         }

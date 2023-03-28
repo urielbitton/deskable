@@ -8,7 +8,8 @@ import WaitingRoom from "app/components/meetings/WaitingRoom"
 
 export default function MeetingsPage() {
 
-  const { setHideRightBar } = useContext(StoreContext)
+  const { setHideRightBar, myMemberType } = useContext(StoreContext)
+  const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
 
   useEffect(() => {
     setHideRightBar(true)
@@ -24,7 +25,7 @@ export default function MeetingsPage() {
     >
       <Routes>
         <Route index element={<MeetingsHome />} />
-        <Route path="new-meeting" element={<CreateMeeting />} />
+        { canCreateMeeting && <Route path="meetings/new" element={<CreateMeeting />} /> }
         <Route path="meeting-room/:meetingID" element={<WaitingRoom />} />
       </Routes>
     </AppCard>

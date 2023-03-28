@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import { AppInput } from "../ui/AppInputs"
 import './styles/MeetingsHome.css'
@@ -8,9 +8,11 @@ import {
   endOfDay, endOfMonth, endOfWeek,
   startOfDay, startOfMonth, startOfWeek
 } from "date-fns"
+import { StoreContext } from "app/store/store"
 
 export default function MeetingsHome() {
 
+  const { myMemberType } = useContext(StoreContext)
   const limitsNum = 10
   const [meetingLimits, setMeetingLimits] = useState(limitsNum)
   const todayStart = startOfDay(new Date())
@@ -21,6 +23,7 @@ export default function MeetingsHome() {
   const monthEnd = endOfMonth(new Date())
   const liveMeetings = useLiveMeetings(meetingLimits)
   const monthMeetings = useRangedMeetings(monthStart, monthEnd, meetingLimits)
+  const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
 
   const liveMeetingsList = liveMeetings?.map((meeting, index) => {
     return <MeetingCard
@@ -32,7 +35,7 @@ export default function MeetingsHome() {
   const todayMeetingsList = monthMeetings
     ?.filter(meeting => {
       return meeting.meetingStart?.toDate() >= todayStart && meeting.meetingStart?.toDate() <= todayEnd
-      && !meeting.isActive
+        && !meeting.isActive
     })
     .map((meeting, index) => {
       return <MeetingCard
@@ -44,7 +47,7 @@ export default function MeetingsHome() {
   const weekMeetingsList = monthMeetings
     ?.filter(meeting => {
       return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
-      && !meeting.isActive
+        && !meeting.isActive
     })
     .map((meeting, index) => {
       return <MeetingCard
@@ -54,22 +57,26 @@ export default function MeetingsHome() {
     })
 
   const monthMeetingsList = monthMeetings
-  ?.filter(meeting => !meeting.isActive)
-  .map((meeting, index) => {
-    return <MeetingCard
-      key={index}
-      meeting={meeting}
-    />
-  })
+    ?.filter(meeting => !meeting.isActive)
+    .map((meeting, index) => {
+      return <MeetingCard
+        key={index}
+        meeting={meeting}
+      />
+    })
 
   return (
     <div className="meetings-home-page">
       <div className="titles">
         <h3>Organization Meetings</h3>
-        <AppButton
-          label="Create Meeting"
-          rightIcon="fal fa-plus"
-        />
+        {
+          canCreateMeeting &&
+          <AppButton
+            label="Create Meeting"
+            rightIcon="fal fa-plus"
+            url="/meetings/new"
+          />
+        }
       </div>
       <div className="toolbar">
         <div className="left side">

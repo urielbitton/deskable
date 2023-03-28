@@ -1,14 +1,19 @@
+import { successToast } from "app/data/toastsTemplates"
 import { useMeeting } from "app/hooks/meetingsHooks"
+import { useUsers } from "app/hooks/userHooks"
 import {
+  addMeetingParticipantService,
   createJoinVideoMeetingService,
   handleConnectedParticipant,
   handleDisconnectedParticipant,
   joinVideoRoomService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
+import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
+import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import MeetingStarted from "./MeetingStarted"
 import './styles/WaitingRoom.css'
@@ -24,6 +29,20 @@ export default function WaitingRoom() {
   const [meetingStarted, setMeetingStarted] = useState(false)
   const [room, setRoom] = useState(null)
   const roomID = meeting?.roomID
+  const participantsUsers = useUsers(meeting?.participants)
+
+  const participantsRender = participantsUsers?.map((user, index) => {
+    return <span
+      key={index}
+    >
+      <Avatar
+        src={user.photoURL}
+        dimensions={25}
+      />
+      {user.firstName} {user.lastName}
+      {index === participantsUsers.length - 1 ? "" : ","}
+    </span>
+  })
 
   const startVideo = () => {
     if (navigator.mediaDevices.getUserMedia) {
@@ -63,6 +82,18 @@ export default function WaitingRoom() {
         setMeetingStarted(true)
         setRoom(room)
       })
+      .then(() => {
+        addMeetingParticipantService(
+          meeting?.orgID,
+          meeting?.meetingID,
+          myUserID
+        )
+      })
+  }
+
+  const copyRoomID = () => {
+    navigator.clipboard.writeText(meeting?.roomID)
+    setToasts(successToast("Room ID copied to clipboard"))
   }
 
   useEffect(() => {
@@ -71,13 +102,13 @@ export default function WaitingRoom() {
   }, [])
 
   useEffect(() => {
-    if(room) {
+    if (room) {
       handleConnectedParticipant(room.localParticipant, myUserID)
       room.participants.forEach(handleConnectedParticipant)
       room.on("participantConnected", handleConnectedParticipant)
       room.on("participantDisconnected", handleDisconnectedParticipant)
     }
-  },[room])
+  }, [room])
 
   useEffect(() => {
     window.addEventListener("pagehide", () => room.disconnect())
@@ -86,7 +117,7 @@ export default function WaitingRoom() {
       window.removeEventListener("pagehide", () => room.disconnect())
       window.removeEventListener("beforeunload", () => room.disconnect())
     }
-  },[])
+  }, [])
 
   return !meetingStarted ? (
     <div className="waiting-room-page">
@@ -118,6 +149,35 @@ export default function WaitingRoom() {
       </div>
       <div className="meeting-details">
         <h4>Ready to join?</h4>
+        <h5>Meeting: {meeting?.title}</h5>
+        {
+          participantsUsers?.length !== 0 ?
+            <div className="participants">
+              <h5>Participants</h5>
+              {participantsRender}
+            </div> :
+            <span className="no-participants">No one has joined this meeting yet.</span>
+        }
+        <div className="schedule">
+          <div>
+            <span>{convertClassicDate(meeting?.meetingStart?.toDate())}</span>
+            <span> - </span>
+            <span>{convertClassicDate(meeting?.meetingEnd?.toDate())}</span>
+          </div>
+          <div>
+            <span>{convertClassicTime(meeting?.meetingStart?.toDate())}</span>
+            <span> - </span>
+            <span>{convertClassicTime(meeting?.meetingEnd?.toDate())}</span>
+          </div>
+        </div>
+        <h6 
+          className="room-id"
+          title="Click to copy"
+          onClick={() => copyRoomID()}
+        >
+          Room ID: {meeting?.roomID}
+          <i className="fas fa-clone" />
+        </h6>
         <AppButton
           label="Join Meeting"
           onClick={() => joinMeeting()}

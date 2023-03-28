@@ -1,14 +1,15 @@
-import { shareScreenService } from "app/services/meetingsServices"
-import React, { useState } from 'react'
+import { removeMeetingParticipantService, shareScreenService } from "app/services/meetingsServices"
+import { StoreContext } from "app/store/store"
+import React, { useContext, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import VolumeSlider from "../ui/VolumeSlider"
 import './styles/MeetingWindow.css'
-import Video from "twilio-video"
 
 export default function MeetingWindow(props) {
 
+  const { myUserID } = useContext(StoreContext)
   const { meeting, room, videoOn, soundOn,
     setVideoOn, setSoundOn, setMeetingStarted } = props
   const [soundVolume, setSoundVolume] = useState(80)
@@ -30,26 +31,35 @@ export default function MeetingWindow(props) {
     const confirm = window.confirm("Are you sure you want to leave the meeting?")
     if (!confirm) return
     room.disconnect()
+    removeMeetingParticipantService(
+      meeting?.orgID, 
+      meeting?.meetingID, 
+      myUserID
+    )
     setMeetingStarted(false)
   }
 
   const toggleVideo = (value) => {
     setVideoOn(prev => !prev)
     room.localParticipant.videoTracks.forEach(publication => {
-      if(value) {
+      if (value) {
         publication.track.disable()
-        publication.track.detach().forEach(element => element.remove())
-       } 
-       else {
+      }
+      else {
         publication.track.enable()
-       }
+      }
     })
   }
 
   const toggleAudio = (value) => {
     setSoundOn(prev => !prev)
     room.localParticipant.audioTracks.forEach(publication => {
-      value ? publication.track.disable() : publication.track.enable()
+      if (value) {
+        publication.track.disable()
+      }
+      else {
+        publication.track.enable()
+      }
     })
   }
 
@@ -83,15 +93,8 @@ export default function MeetingWindow(props) {
         </div>
       </div>
       <div className="video-container">
-        <div className="participants-list-container">
-          <div className="participants-list">
-            <div className="participants" />
-            <div className="participants" />
-            <div className="participants" />
-            <div className="participants" />
-            <div className="participants" />
-            <div className="participants" />
-          </div>
+        <div className="participants-list">
+
         </div>
       </div>
       <div className="video-actions">

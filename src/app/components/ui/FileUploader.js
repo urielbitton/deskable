@@ -71,7 +71,7 @@ export default function FileUploader(props) {
           onDragLeave={() => setIsDragging(false)}
           onDragEnd={() => setIsDragging(false)}
         />
-        <i className={icon}></i>
+        <i className={icon} />
         <h5>{text}</h5>
         <DotsLoader
           dimensions="30px"

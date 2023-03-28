@@ -1306,7 +1306,7 @@ export const requestProjectAccessService = (path, myUser, project, setToasts, se
         'Project access requested',
         `${myUser.firstName} ${myUser.lastName} has requested access to join your project: ${project.name}.`,
         'fas fa-project-diagram',
-        `/projects/${project.projectID}/backlog`
+        `/projects/${project.projectID}/settings`
       )
     })
     .then(() => {

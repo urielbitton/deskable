@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
+  width: 100%;
 }
 .meeting-window .titles {
   display: flex;
@@ -36,6 +37,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  opacity: 0.3;
 }
 .meeting-window .toolbar .left .record-div.active b {
   animation: fadeInOut 2.5s ease-in-out infinite;
@@ -65,8 +67,19 @@
   height: calc(100vh - 280px);
   width: 100%;
   background: #222;
-  border-radius: 10px;
+  border-radius: 15px;
   overflow: hidden;
+}
+.meeting-window .video-container .participants-list {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 0;
+  position: absolute;
+  right: 20px;
+  top: 0;
+}
+.meeting-window .video-container .participants-list::-webkit-scrollbar {
+  width: 0;
 }
 .meeting-window .video-container .my-participant {
   width: 100%;
@@ -75,28 +88,21 @@
   align-items: center;
   justify-content: center;
 }
-.meeting-window .video-container .participants-list-container {
-  overflow-y: hidden;
-  position: absolute;
-  bottom: 0;
-  right: 10px;
-}
-.meeting-window .video-container .participants-list {
+.meeting-window .video-container .participants-list .children {
   display: flex;
   justify-content: flex-start; 
   flex-direction: column-reverse;
   gap: 10px;
-  overflow-y: scroll;
   padding: 20px 0;
   z-index: 10;
 }
 .meeting-window .video-container .participants {
   width: 110px;
   height: 110px;
-  border-radius: 12px;
+  border-radius: 17px;
   border: 1px solid #fff;
   background: #222;
-  overflow: hidden;
+  margin-bottom: 15px;
 }
 .meeting-window .video-container video {
   width: 100%;

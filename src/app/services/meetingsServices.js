@@ -7,6 +7,7 @@ import {
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
 import Video from "twilio-video"
+import { firebaseArrayAdd, firebaseArrayRemove, updateDB } from "./CrudDB"
 
 export const getLiveMeetingsByOrgID = (orgID, setMeetings, lim) => {
   const docRef = collection(db, `organizations/${orgID}/meetings`)
@@ -136,4 +137,24 @@ export const stopSharingScreenService = (room) => {
   const screenTrack = room.localParticipant.videoTracks.values().next().value[1].track
   room.localParticipant.unpublishTrack(screenTrack)
   screenTrack.stop()
+}
+
+export const addMeetingParticipantService = (orgID, meetingID, userID) => {
+  const path = `organizations/${orgID}/meetings`
+  updateDB(path, meetingID, {
+    participants: firebaseArrayAdd(userID)
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+}
+
+export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
+  const path = `organizations/${orgID}/meetings`
+  updateDB(path, meetingID, {
+    participants: firebaseArrayRemove(userID)
+  })
+  .catch((error) => {
+    console.log(error)
+  })
 }

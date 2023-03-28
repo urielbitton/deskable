@@ -17,7 +17,9 @@ export default function Navbar() {
   const [showMenu, setShowMenu] = useState(null)
   const unreadNotifications = useUnreadNotifications(myUserID, 50)
   const notifications = useAllNotifications(myUserID, 5)
-  const isClassA = myMemberType === 'classa'
+  const canCreateProject = myMemberType === 'classa' || myMemberType === 'classb'
+  const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
+  const canCreateEvent = myMemberType === 'classa'
 
   const notificationsList = notifications?.map((notif, index) => {
     return <NotificationElement
@@ -58,11 +60,11 @@ export default function Navbar() {
               buttonType="outlineWhiteBtn"
               rightIcon="fal fa-chevron-down"
               items={[
-                { label: "New Post", icon: "fas fa-newspaper", url: "/posts/new" },
-                { label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" },
+                { label: "New Post", icon: "fas fa-newspaper", url: "/posts" },
+                ...canCreateProject ? [{ label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" }] : [],
+                ...canCreateMeeting ? [{ label: "New Meeting", icon: "fas fa-video", url: "/meetings/new" }] : [],
                 { label: "New Message", icon: "fas fa-comment", url: "/messages/new" },
-                { label: "New Meeting", icon: "fas fa-video", url: "/meetings/new" },
-                { label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" },
+                ...canCreateEvent ? [{ label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" }] : [],
               ]}
             /> :
             <AppButton

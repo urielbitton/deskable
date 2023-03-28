@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import { StoreContext } from "app/store/store"
+import React, { useContext, useState } from 'react'
 import { Route, Routes } from "react-router-dom"
 import AllProjects from "./AllProjects"
 import NewProject from "./NewProject"
@@ -11,8 +12,10 @@ import WritePage from "./WritePage"
 
 export default function ProjectsWindow() {
 
+  const { myMemberType } = useContext(StoreContext)
   const [showScroll, setShowScroll] = useState(false)
   const [windowPadding, setWindowPadding] = useState('20px')
+  const canCreateProject = myMemberType === 'classa' || myMemberType === 'classb'
 
   return (
     <div 
@@ -27,7 +30,7 @@ export default function ProjectsWindow() {
         <Route path=":projectID/pages/new-page" element={<WritePage setWindowPadding={setWindowPadding} />} />
         <Route path="all-projects" element={<AllProjects />} />
         <Route path="settings" element={<ProjectsMainSettings />} />
-        <Route path="new" element={<NewProject />} />
+        { canCreateProject && <Route path="new" element={<NewProject />} /> }
       </Routes>
     </div>
   )

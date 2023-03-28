@@ -6,7 +6,8 @@ import {
   createJoinVideoMeetingService,
   handleConnectedParticipant,
   handleDisconnectedParticipant,
-  joinVideoRoomService
+  joinVideoRoomService,
+  removeMeetingParticipantService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
@@ -24,8 +25,8 @@ export default function WaitingRoom() {
   const meetingID = useParams().meetingID
   const meeting = useMeeting(meetingID)
   const videoRef = useRef(null)
-  const [videoOn, setVideoOn] = useState(false)
-  const [soundOn, setSoundOn] = useState(false)
+  const [videoOn, setVideoOn] = useState(true)
+  const [soundOn, setSoundOn] = useState(true)
   const [meetingStarted, setMeetingStarted] = useState(false)
   const [room, setRoom] = useState(null)
   const roomID = meeting?.roomID
@@ -91,14 +92,23 @@ export default function WaitingRoom() {
       })
   }
 
+  const disconnectParticipant = () => {
+    room.disconnect()
+    removeMeetingParticipantService(
+      meeting?.orgID,
+      meeting?.meetingID,
+      myUserID
+    )
+  }
+
   const copyRoomID = () => {
     navigator.clipboard.writeText(meeting?.roomID)
     setToasts(successToast("Room ID copied to clipboard"))
   }
 
   useEffect(() => {
-    // startVideo()
-    // return () => stopVideo()
+    startVideo()
+    return () => stopVideo()
   }, [])
 
   useEffect(() => {
@@ -111,11 +121,11 @@ export default function WaitingRoom() {
   }, [room])
 
   useEffect(() => {
-    window.addEventListener("pagehide", () => room.disconnect())
-    window.addEventListener("beforeunload", () => room.disconnect())
+    window.addEventListener("pagehide", () => disconnectParticipant())
+    window.addEventListener("beforeunload", () => disconnectParticipant())
     return () => {
-      window.removeEventListener("pagehide", () => room.disconnect())
-      window.removeEventListener("beforeunload", () => room.disconnect())
+      window.removeEventListener("pagehide", () => disconnectParticipant())
+      window.removeEventListener("beforeunload", () => disconnectParticipant())
     }
   }, [])
 
@@ -170,7 +180,7 @@ export default function WaitingRoom() {
             <span>{convertClassicTime(meeting?.meetingEnd?.toDate())}</span>
           </div>
         </div>
-        <h6 
+        <h6
           className="room-id"
           title="Click to copy"
           onClick={() => copyRoomID()}

@@ -5,6 +5,7 @@ import AppButton from "../ui/AppButton"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import VolumeSlider from "../ui/VolumeSlider"
+import Participant from "./Participant"
 import './styles/MeetingWindow.css'
 
 export default function MeetingWindow(props) {
@@ -14,6 +15,14 @@ export default function MeetingWindow(props) {
     setVideoOn, setSoundOn, setMeetingStarted } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
+
+  const participantsList = room?.participants?.map((participant, index) => {
+    return <Participant 
+      key={index}
+      participant={participant}
+      room={room}
+    />
+  })
 
   const ActionIcon = ({ name, className = '', title, icon, onClick }) => {
     return <div

@@ -1,8 +1,11 @@
 ###Deskable App
 
 ##To Dos
-- projects:
-  - add filters on board page
+- meetings
+  - refactor to react ui
+
+- chats
+  - import as much code as possible from familia
 
 - General
   - change all wysiwg editors with tinymce basic editor (create a component for it called AppBasicEditor.js - use for comments, posts, etc)

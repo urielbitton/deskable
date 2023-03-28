@@ -103,12 +103,16 @@
   padding: 15px 20px;
   border-radius: 5px;
   background: var(--inputBg);
+  border: 1px solid var(--inputBorder);
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   gap: 20px;
   cursor: pointer;
   transition: all 0.2s;
+}
+.waiting-room-page .meeting-details .room-id:hover {
+  background: var(--darkInputBg);
 }
 .waiting-room-page .meeting-details .room-id:active {
   background: var(--lightGrayText);

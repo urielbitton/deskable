@@ -4,7 +4,6 @@ import './styles/VolumeSlider.css'
 export default function VolumeSlider({value}) {
 
   const [sliderValue, setSliderValue] = useState(value)
-  console.log(sliderValue)
 
   return (
     <div className="volume-slider">

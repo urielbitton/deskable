@@ -12,17 +12,18 @@ export default function MeetingWindow(props) {
 
   const { myUserID } = useContext(StoreContext)
   const { meeting, room, videoOn, soundOn,
-    setVideoOn, setSoundOn, setMeetingStarted } = props
+    setVideoOn, setSoundOn, setMeetingStarted,
+    participants } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
 
-  const participantsList = room?.participants?.map((participant, index) => {
-    return <Participant 
-      key={index}
-      participant={participant}
-      room={room}
-    />
-  })
+  const participantsList = participants?.map((participant, index) => {
+      return <Participant
+        key={index}
+        participant={participant}
+        room={room}
+      />
+    })
 
   const ActionIcon = ({ name, className = '', title, icon, onClick }) => {
     return <div
@@ -41,8 +42,8 @@ export default function MeetingWindow(props) {
     if (!confirm) return
     room.disconnect()
     removeMeetingParticipantService(
-      meeting?.orgID, 
-      meeting?.meetingID, 
+      meeting?.orgID,
+      meeting?.meetingID,
       myUserID
     )
     setMeetingStarted(false)
@@ -102,8 +103,12 @@ export default function MeetingWindow(props) {
         </div>
       </div>
       <div className="video-container">
+        <Participant
+          participant={room?.localParticipant}
+          room={room}
+        />
         <div className="participants-list">
-
+          {participantsList}
         </div>
       </div>
       <div className="video-actions">

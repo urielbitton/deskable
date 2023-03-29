@@ -4,8 +4,6 @@ import { useUsers } from "app/hooks/userHooks"
 import {
   addMeetingParticipantService,
   createJoinVideoMeetingService,
-  handleConnectedParticipant,
-  handleDisconnectedParticipant,
   joinVideoRoomService,
   removeMeetingParticipantService
 } from "app/services/meetingsServices"
@@ -28,6 +26,7 @@ export default function WaitingRoom() {
   const [videoOn, setVideoOn] = useState(true)
   const [soundOn, setSoundOn] = useState(true)
   const [meetingStarted, setMeetingStarted] = useState(false)
+  const [participants, setParticipants] = useState([])
   const [room, setRoom] = useState(null)
   const roomID = meeting?.roomID
   const participantsUsers = useUsers(meeting?.participants)
@@ -106,28 +105,39 @@ export default function WaitingRoom() {
     setToasts(successToast("Room ID copied to clipboard"))
   }
 
+  const participantConnected = participant => {
+    setParticipants(prev => [...prev, participant])
+  }
+  
+  const participantDisconnected = participant => {
+    setParticipants(prevParticipants =>
+      prevParticipants.filter(p => p !== participant)
+    )
+  }
+
   useEffect(() => {
     startVideo()
     return () => stopVideo()
   }, [])
 
   useEffect(() => {
-    if (room) {
-      handleConnectedParticipant(room.localParticipant, myUserID)
-      room.participants.forEach(handleConnectedParticipant)
-      room.on("participantConnected", handleConnectedParticipant)
-      room.on("participantDisconnected", handleDisconnectedParticipant)
+    if(room) {
+      room.on("participantConnected", participantConnected)
+      room.on("participantDisconnected", participantDisconnected)
+      room.participants.forEach(participantConnected)
     }
-  }, [room])
+  },[room])
 
   useEffect(() => {
     window.addEventListener("pagehide", () => disconnectParticipant())
+    window.addEventListener("onunload", () => disconnectParticipant())
     window.addEventListener("beforeunload", () => disconnectParticipant())
     return () => {
       window.removeEventListener("pagehide", () => disconnectParticipant())
+      window.removeEventListener("onunload", () => disconnectParticipant())
       window.removeEventListener("beforeunload", () => disconnectParticipant())
     }
-  }, [])
+  })
 
   return !meetingStarted ? (
     <div className="waiting-room-page">
@@ -197,6 +207,7 @@ export default function WaitingRoom() {
   ) :
     <MeetingStarted
       room={room}
+      participants={participants}
       videoOn={videoOn}
       setVideoOn={setVideoOn}
       soundOn={soundOn}

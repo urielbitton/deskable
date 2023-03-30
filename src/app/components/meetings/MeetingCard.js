@@ -13,6 +13,7 @@ export default function MeetingCard(props) {
   const { title, meetingStart, meetingEnd, participants,
     isActive, organizerID, isPublic, meetingID } = props.meeting
   const organizer = useUser(organizerID)
+  const meetingTimeOver = meetingEnd?.toDate() < new Date()
 
   return (
     <Link
@@ -60,10 +61,14 @@ export default function MeetingCard(props) {
         </h6>
       </div>
       <div className="actions">
-        <h6>
-          Join Meeting
-          <i className="far fa-arrow-right" />
-        </h6>
+        {
+          !meetingTimeOver ?
+          <h6>
+            Join Meeting
+            <i className="far fa-arrow-right" />
+          </h6> :
+          <h6 style={{color: 'var(--grayText)'}}>Meeting Ended</h6>
+        }
         <MultipleUsersAvatars
           userIDs={participants}
           maxAvatars={6}

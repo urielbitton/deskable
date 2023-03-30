@@ -11,7 +11,6 @@ const StoreContextProvider = ({children}) => {
   const [myUser, setMyUser] = useState(null) 
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === "true")
   const [contentScrollBottom, setContentScrollBottom] = useState(false)
-  const [windowIsFocused, setWindowIsFocused] = useState(false)
   const [pageLoading, setPageLoading] = useState(false) 
   const myUserID = user?.uid
   const myUserImg = myUser?.photoURL
@@ -42,17 +41,6 @@ const StoreContextProvider = ({children}) => {
     localStorage.setItem('darkmode', !darkMode ? "false" : "true")  
   },[darkMode]) 
 
-  useEffect(() => {
-    document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') {
-        setWindowIsFocused(true)
-      }
-      else {
-        setWindowIsFocused(false)
-      }
-    })
-  },[])
-
   return <StoreContext.Provider value={{ 
     user, myUser, setMyUser, myUserID, myUserImg, myUserName, myMemberType,
     myOrgID,
@@ -61,7 +49,6 @@ const StoreContextProvider = ({children}) => {
     percentFormat,
     contentScrollBottom, setContentScrollBottom, 
     photoURLPlaceholder,
-    windowIsFocused,
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,
     newEventModal, setNewEventModal,

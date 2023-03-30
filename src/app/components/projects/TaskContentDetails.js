@@ -596,6 +596,7 @@ export default function TaskContentDetails(props) {
             name="reporter"
             placeholder="Unassigned"
             value={taskReporterQuery}
+            query={taskReporterQuery}
             onChange={(e) => setTaskReporterQuery(e.target.value)}
             setLoading={setSearchLoading}
             filters={orgAlgoliaFilters}
@@ -626,6 +627,7 @@ export default function TaskContentDetails(props) {
               name="assignees"
               placeholder="Unassigned"
               value={assigneesQuery}
+              query={assigneesQuery}
               onChange={(e) => setAssigneesQuery(e.target.value)}
               setLoading={setSearchLoading}
               filters={orgAlgoliaFilters}

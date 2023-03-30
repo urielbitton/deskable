@@ -74,7 +74,7 @@ export default function MeetingsHome() {
           <AppButton
             label="Create Meeting"
             rightIcon="fal fa-plus"
-            url="/meetings/new"
+            url="/meetings/meeting/new"
           />
         }
       </div>

@@ -16,7 +16,7 @@
   border: 1px solid var(--primary);
 }
 .app-item-row:hover {
-  box-shadow: var(--cardShadowHover);
+  background: var(--inputBg);
 }
 .app-item-row .row-item {
   font-size: 14px;

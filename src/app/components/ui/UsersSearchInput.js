@@ -14,9 +14,9 @@ export default function UsersSearchInput(props) {
     onUserRemove, maxAvatars, onClear, inputSubtitle,
     showAll, typeSearch, showUserEmails } = props
 
-  const usersRender = users?.map((user) => {
+  const usersRender = users?.map((user, index) => {
     return <div
-      key={user.userID}
+      key={index}
       className="user-row"
       onClick={(e) => onUserClick(e, user)}
     >
@@ -25,7 +25,7 @@ export default function UsersSearchInput(props) {
           showImgs &&
           <Avatar
             src={user.photoURL}
-            dimensions={35}
+            dimensions={30}
             alt={`${user.firstName} ${user.lastName}`}
           />
         }

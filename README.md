@@ -2,7 +2,10 @@
 
 ##To Dos
 - meetings
-  - refactor to react ui
+  - participant mute, video mute, isTalking icons
+  - main features: screen sharing, raise hand, virtual backgounds, fullscreen, closed captions, options.
+  - search meetings features
+  - filter & view toggle meetings
 
 - chats
   - import as much code as possible from familia

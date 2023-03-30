@@ -1,5 +1,6 @@
 import { errorToast, successToast } from "app/data/toastsTemplates"
 import { db, functions } from "app/firebase/fire"
+import { generateRoomID } from "app/utils/generalUtils"
 import {
   collection, doc, limit, onSnapshot,
   orderBy,
@@ -7,7 +8,7 @@ import {
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
 import Video from "twilio-video"
-import { firebaseArrayAdd, firebaseArrayRemove, updateDB } from "./CrudDB"
+import { firebaseArrayAdd, firebaseArrayRemove, getRandomDocID, setDB, updateDB } from "./CrudDB"
 
 export const getLiveMeetingsByOrgID = (orgID, setMeetings, lim) => {
   const docRef = collection(db, `organizations/${orgID}/meetings`)
@@ -106,7 +107,7 @@ export const stopSharingScreenService = (room) => {
 
 export const addMeetingParticipantService = (orgID, meetingID, userID) => {
   const path = `organizations/${orgID}/meetings`
-  updateDB(path, meetingID, {
+  return updateDB(path, meetingID, {
     participants: firebaseArrayAdd(userID)
   })
   .catch((error) => {
@@ -116,10 +117,49 @@ export const addMeetingParticipantService = (orgID, meetingID, userID) => {
 
 export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
   const path = `organizations/${orgID}/meetings`
-  updateDB(path, meetingID, {
+  return updateDB(path, meetingID, {
     participants: firebaseArrayRemove(userID)
   })
   .catch((error) => {
+    console.log(error)
+  })
+}
+
+export const switchMeetingInactiveService = (orgID, meetingID) => {
+  const path = `organizations/${orgID}/meetings`
+  return updateDB(path, meetingID, {
+    isActive: false
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+}
+
+export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
+  setLoading(true)
+  const path = `organizations/${orgID}/meetings`
+  const docID = getRandomDocID(path)
+  const roomID = generateRoomID()
+  return setDB(path, docID, {
+    invitees: [],
+    isActive: true,
+    isPublic: meeting.isPublic,
+    meetingEnd: meeting.meetingEnd,
+    meetingID: docID,
+    meetingStart: meeting.meetingStart,
+    orgID,
+    organizerID: meeting.organizerID,
+    participants: [],
+    roomID,
+    title: meeting.title
+  })
+  .then(() => {
+    setLoading(false)
+    setToasts(successToast("Meeting created."))
+  })
+  .catch((error) => {
+    setLoading(false)
+    setToasts(errorToast('There was an error creating the meeting. Please try again'))
     console.log(error)
   })
 }

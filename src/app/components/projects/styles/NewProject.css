@@ -8,7 +8,7 @@
 }
 .new-project-container .content {
   width: 100%;
-  height: 100%;
+  height: 100%; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,6 +50,30 @@
 .new-project-container .form-container .form .selected-user {
   background: var(--inputBg);
   padding: 8px 10px;
+}
+.new-project-container .form-container .invited-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.new-project-container .form-container .invited-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.new-project-container .form-container .invited-user .texts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.new-project-container .form-container .invited-user .texts h6 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.new-project-container .form-container .invited-user .icon-container:hover {
+  background: var(--inputBg);
 }
 
 

@@ -26,6 +26,7 @@ const usersIndex = client.initIndex('users_index')
 const projectsIndex = client.initIndex('projects_index')
 const tasksIndex = client.initIndex('tasks_index')
 const projectPagesIndex = client.initIndex('project_pages_index')
+const meetingsIndex = client.initIndex('meetings_index')
 
 //users index
 exports.addToIndexUsers = functions
@@ -90,6 +91,7 @@ exports.deleteFromIndexProjectTasks = functions
     return tasksIndex.deleteObject(snapshot.id)
   })
 
+//pages index
 exports.addToIndexProjectPages = functions
   .region('northamerica-northeast1')
   .firestore.document('organizations/{orgID}/projects/{projectID}/pages/{pageID}').onCreate((snapshot, context) => {
@@ -109,6 +111,28 @@ exports.deleteFromIndexProjectPages = functions
   .firestore.document('organizations/{orgID}/projects/{projectID}/pages/{pageID}').onDelete((snapshot, context) => {
     return projectPagesIndex.deleteObject(snapshot.id)
   })
+
+//meetings index
+exports.addToIndexMeetings = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/meetings/{meetingID}').onCreate((snapshot, context) => { 
+    const data = snapshot.data()
+    return meetingsIndex.saveObject({ ...data, objectID: snapshot.id })
+  })
+
+exports.updateIndexMeetings = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/meetings/{meetingID}').onUpdate((change) => {
+    const newData = change.after.data()
+    return meetingsIndex.saveObject({ ...newData, objectID: change.after.id })
+  })
+
+exports.deleteFromIndexMeetings = functions
+  .region('northamerica-northeast1')
+  .firestore.document('organizations/{orgID}/meetings/{meetingID}').onDelete((snapshot, context) => {
+    return meetingsIndex.deleteObject(snapshot.id)
+  })
+
 
 
 //on triggers

@@ -45,7 +45,7 @@ export default function NewProject() {
       <div className="texts">
         <Avatar
           src={user?.photoURL}
-          dimensions={25}
+          dimensions={27}
         />
         <h6>{user?.firstName} {user?.lastName}</h6>
       </div>
@@ -53,7 +53,7 @@ export default function NewProject() {
         icon="fal fa-times"
         onClick={() => removeInvite(user)}
         iconColor="var(--grayText)"
-        iconSize={14}
+        iconSize={19}
         dimensions={25}
       />
     </div>
@@ -113,7 +113,8 @@ export default function NewProject() {
               onAvatarClick={(avatar) => setSelectedAvatar(avatar)}
             />
             <AppInput
-              label="Project Name"
+              label="Project Name *"
+              placeholder=""
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={30}
@@ -158,6 +159,7 @@ export default function NewProject() {
               label="Invite Members"
               name="invites"
               placeholder="Invite members..."
+              query={invitesQuery}
               value={invitesQuery}
               onChange={(e) => setInvitesQuery(e.target.value)}
               setLoading={setSearchLoading}
@@ -173,6 +175,7 @@ export default function NewProject() {
               maxAvatars={10}
               onClear={() => clearInvites()}
               showAll={false}
+              typeSearch
             />
             {
               inviteesUsers?.length > 0 &&

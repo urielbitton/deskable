@@ -1,5 +1,6 @@
 import AppBadge from "app/components/ui/AppBadge"
 import AppButton from "app/components/ui/AppButton"
+import AppTabsBar from "app/components/ui/AppTabsBar"
 import DropdownIcon from "app/components/ui/DropDownIcon"
 import HelmetTitle from "app/components/ui/HelmetTitle"
 import PageTitleBar from "app/components/ui/PageTitleBar"
@@ -11,7 +12,7 @@ import { StoreContext } from "app/store/store"
 import { convertClassicDate } from "app/utils/dateUtils"
 import { formatPhoneNumber } from "app/utils/generalUtils"
 import React, { useContext, useState } from 'react'
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import "./styles/EmployeePage.css"
 
 export default function EmployeePage() {
@@ -147,7 +148,15 @@ export default function EmployeePage() {
           </div>
         </div>
         <div className="data-container">
-
+          <AppTabsBar 
+            spacedOut={15}
+            sticky
+          >
+            <Link to={`/employees/${employeeID}`}>Posts</Link>
+            <Link to={`/employees/${employeeID}/projects`}>Projects</Link>
+            <Link to={`/employees/${employeeID}/meetings`}>Meetings</Link>
+            <Link to={`/employees/${employeeID}/events`}>Events</Link>
+          </AppTabsBar>
         </div>
       </div>
     </div>

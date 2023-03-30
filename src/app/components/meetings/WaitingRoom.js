@@ -10,7 +10,7 @@ import {
 import { StoreContext } from "app/store/store"
 import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
@@ -30,6 +30,12 @@ export default function WaitingRoom() {
   const [room, setRoom] = useState(null)
   const roomID = meeting?.roomID
   const participantsUsers = useUsers(meeting?.participants)
+  const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
+  const hasParticipants = participants.length > 0
+  const meetingEnded = meetingTimeOver && !hasParticipants
+  const meetingHasStarted = meeting?.meetingStart?.toDate() <= new Date()
+  const canJoinMeeting = meetingHasStarted && !meetingTimeOver
+  const navigate = useNavigate()
 
   const participantsRender = participantsUsers?.map((user, index) => {
     return <span
@@ -69,6 +75,8 @@ export default function WaitingRoom() {
   }
 
   const joinMeeting = () => {
+    if (meetingEnded) return setToasts(successToast("This meeting has ended."))
+    if(!canJoinMeeting) return setToasts(successToast("This meeting has not started yet."))
     createJoinVideoMeetingService(
       myUserID,
       roomID,
@@ -91,15 +99,6 @@ export default function WaitingRoom() {
       })
   }
 
-  const disconnectParticipant = () => {
-    room.disconnect()
-    removeMeetingParticipantService(
-      meeting?.orgID,
-      meeting?.meetingID,
-      myUserID
-    )
-  }
-
   const copyRoomID = () => {
     navigator.clipboard.writeText(meeting?.roomID)
     setToasts(successToast("Room ID copied to clipboard"))
@@ -108,7 +107,7 @@ export default function WaitingRoom() {
   const participantConnected = participant => {
     setParticipants(prev => [...prev, participant])
   }
-  
+
   const participantDisconnected = participant => {
     setParticipants(prevParticipants =>
       prevParticipants.filter(p => p !== participant)
@@ -121,26 +120,35 @@ export default function WaitingRoom() {
   }, [])
 
   useEffect(() => {
-    if(room) {
+    if (room) {
       room.on("participantConnected", participantConnected)
       room.on("participantDisconnected", participantDisconnected)
       room.participants.forEach(participantConnected)
     }
-  },[room])
+  }, [room])
 
   useEffect(() => {
-    window.addEventListener("pagehide", () => disconnectParticipant())
-    window.addEventListener("onunload", () => disconnectParticipant())
-    window.addEventListener("beforeunload", () => disconnectParticipant())
-    return () => {
-      window.removeEventListener("pagehide", () => disconnectParticipant())
-      window.removeEventListener("onunload", () => disconnectParticipant())
-      window.removeEventListener("beforeunload", () => disconnectParticipant())
+    const disconnectParticipant = () => {
+      room.disconnect()
+      removeMeetingParticipantService(
+        meeting?.orgID,
+        meeting?.meetingID,
+        myUserID
+      )
     }
-  })
+    window.onbeforeunload = disconnectParticipant
+    window.onunload = disconnectParticipant
+  }, [])
 
   return !meetingStarted ? (
     <div className="waiting-room-page">
+      <AppButton
+        label="Back to Meetings"
+        buttonType="invertedBtn"
+        leftIcon="fal fa-arrow-left"
+        onClick={() => navigate('/meetings')}
+        className="back-btn"
+      />
       <div className="meeting-video">
         <div className="video-container">
           <video
@@ -168,7 +176,7 @@ export default function WaitingRoom() {
         </div>
       </div>
       <div className="meeting-details">
-        <h4>Ready to join?</h4>
+        { !meetingEnded && <h4>Ready to join?</h4> }
         <h5>Meeting: {meeting?.title}</h5>
         {
           participantsUsers?.length !== 0 ?
@@ -198,9 +206,15 @@ export default function WaitingRoom() {
           Room ID: {meeting?.roomID}
           <i className="fas fa-clone" />
         </h6>
+        {
+          meetingEnded ?
+            <span className="meeting-ended">This meeting has ended.</span> :
+            null
+        }
         <AppButton
           label="Join Meeting"
           onClick={() => joinMeeting()}
+          disabled={meetingEnded}
         />
       </div>
     </div>

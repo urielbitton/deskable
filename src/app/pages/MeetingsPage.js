@@ -25,7 +25,7 @@ export default function MeetingsPage() {
     >
       <Routes>
         <Route index element={<MeetingsHome />} />
-        { canCreateMeeting && <Route path="meetings/new" element={<CreateMeeting />} /> }
+        { canCreateMeeting && <Route path="meeting/new" element={<CreateMeeting />} /> }
         <Route path="meeting-room/:meetingID" element={<WaitingRoom />} />
       </Routes>
     </AppCard>

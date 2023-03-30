@@ -13,7 +13,7 @@ export default function PreventTabClose({preventClose, ...props}) {
       window.addEventListener("beforeunload", eventReturnValue) 
     }
     return () => window.removeEventListener("beforeunload", eventReturnValue)
-  }, [preventClose])
+  })
  
   return (
     <></>

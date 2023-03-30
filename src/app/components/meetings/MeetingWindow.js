@@ -1,4 +1,5 @@
-import { removeMeetingParticipantService, shareScreenService } from "app/services/meetingsServices"
+import { removeMeetingParticipantService, 
+  shareScreenService, switchMeetingInactiveService } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useState } from 'react'
 import AppButton from "../ui/AppButton"
@@ -16,6 +17,7 @@ export default function MeetingWindow(props) {
     participants } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
+  const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
 
   const participantsList = participants?.map((participant, index) => {
       return <Participant
@@ -41,12 +43,20 @@ export default function MeetingWindow(props) {
     const confirm = window.confirm("Are you sure you want to leave the meeting?")
     if (!confirm) return
     room.disconnect()
+    setMeetingStarted(false)
     removeMeetingParticipantService(
       meeting?.orgID,
       meeting?.meetingID,
       myUserID
     )
-    setMeetingStarted(false)
+    .then(() => {
+      if(participants.length === 0 && meetingTimeOver) {
+        switchMeetingInactiveService(
+          meeting?.orgID, 
+          meeting?.meetingID
+        )
+      }
+    })
   }
 
   const toggleVideo = (value) => {

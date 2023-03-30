@@ -193,6 +193,7 @@ export default function NewTaskModal(props) {
             label="Reporter"
             name="reporter"
             placeholder="Unassigned"
+            query={reporterQuery}
             value={reporterQuery}
             onChange={(e) => setTaskReporterQuery(e.target.value)}
             setLoading={setSearchLoading}
@@ -210,6 +211,7 @@ export default function NewTaskModal(props) {
               label="Assignees"
               name="assignees"
               placeholder="Unassigned"
+              query={assigneesQuery}
               value={assigneesQuery}
               onChange={(e) => setAssigneesQuery(e.target.value)}
               setLoading={setSearchLoading}

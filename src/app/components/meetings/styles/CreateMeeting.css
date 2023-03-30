@@ -1,3 +1,100 @@
 .create-meeting-page {
-  
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.create-meeting-page .content {
+  width: 100%;
+  height: 100%; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 70px;
+  flex-wrap: wrap;
+}
+
+.create-meeting-page .form-container {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+.create-meeting-page .form-container > h3 {
+  color: var(--darkGrayText);
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+.create-meeting-page .form-container > h6 {
+  color: var(--grayText);
+  font-size: 12px;
+  font-weight: 600;
+}
+.create-meeting-page .form-container .form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 40px 0; 
+}
+.create-meeting-page .form-container .form .commonInput {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.create-meeting-page .form-container .form .commonInput h6 {
+  color: var(--darkGrayText);
+  font-size: 12px;
+  font-weight: 600;
+}
+.create-meeting-page .form-container .form .selected-user {
+  background: var(--inputBg);
+  padding: 8px 10px;
+}
+.create-meeting-page .form-container .full-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.create-meeting-page .form-container .invited-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.create-meeting-page .form-container .invited-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.create-meeting-page .form-container .invited-user .texts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.create-meeting-page .form-container .invited-user .texts h6 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--darkGrayText);
+}
+.create-meeting-page .form-container .invited-user .icon-container:hover {
+  background: var(--inputBg);
+}
+
+.create-meeting-page .art {
+  width: calc(49% - 70px);
+}
+.create-meeting-page .art .blob {
+  width: 100%;
+  height: 600px;
+  transform: rotate(180deg);
+}
+.create-meeting-page .art .new-project-img {
+  position: absolute;
+  top: 50%;
+  left: 70px;
+  transform: translateY(-50%);
+  width: 75%;
+  filter: drop-shadow(-10px 10px 10px rgba(0, 0, 0, 0.2));
 }

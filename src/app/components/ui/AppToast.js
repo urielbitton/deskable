@@ -9,7 +9,7 @@ export default function AppToast(props) {
 
   const { setToasts, toasts } = useContext(StoreContext)
   const { title, message, icon, url, onClick, btnLabel = 'View',
-    toastID } = props.toast
+    toastID, color } = props.toast
   const [markClosing, setMarkClosing] = useState([])
 
   const closeToast = (id) => {
@@ -32,7 +32,10 @@ export default function AppToast(props) {
   }, [toasts])
 
   return (
-    <div className={`app-toast entering ${markClosing.includes(toastID) && 'closing'}`}>
+    <div 
+      className={`app-toast entering ${markClosing.includes(toastID) && 'closing'}`}
+      style={{ backgroundColor: color }}
+    >
       <div className="side left">
         <i className={icon} />
         <div className="texts">

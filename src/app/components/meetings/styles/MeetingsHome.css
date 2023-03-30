@@ -71,9 +71,8 @@
   color: var(--darkGrayText);
   font-size: 15px;
 }
-.meetings-home-page .home-section > h5 i.fa-circle {
-  color: var(--primary);
-  font-size: 9px;
+.meetings-home-page .home-section > h5 i.fa-headset {
+  color: var(--blue);
 }
 
 .meetings-home-page .home-section .meetings-flex {

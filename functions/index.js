@@ -232,6 +232,8 @@ exports.uploadHtmlToFirestorage = functions
 exports.findOrCreateRoom = functions
   .https.onCall((data, context) => {
     const roomName = data.roomName
+    const roomType = data.roomType
+    const accountType = data.accountType
     twilioClient.video.rooms(roomName).fetch()
     .then((room) => {
       return room
@@ -240,7 +242,8 @@ exports.findOrCreateRoom = functions
       if (error.status === 404) {
         twilioClient.video.rooms.create({
           uniqueName: roomName,
-          type: 'go',
+          type: roomType,
+          maxParticipants: accountType === 'premium' ? 10 : 4
         })
       }
       else {
@@ -254,20 +257,16 @@ exports.getRoomAccessToken = functions
   .https.onCall((data, context) => {
     const roomName = data.roomName
     const userID = data.userID
-
     const token = new AccessToken(
       twilioAccountSID,
       twilioKeySID,
       twilioKeySecret,
       { identity: userID }
     )
-
     const videoGrant = new VideoGrant({
       room: roomName
     })
-
     token.addGrant(videoGrant)
-
     return token.toJwt()
   })
 

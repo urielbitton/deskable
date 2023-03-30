@@ -18,12 +18,12 @@ export default function MeetingWindow(props) {
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
+  console.log(room)
 
   const participantsList = participants?.map((participant, index) => {
       return <Participant
         key={index}
         participant={participant}
-        room={room}
       />
     })
 
@@ -115,7 +115,7 @@ export default function MeetingWindow(props) {
       <div className="video-container">
         <Participant
           participant={room?.localParticipant}
-          room={room}
+          isLocal
         />
         <div className="participants-list">
           {participantsList}

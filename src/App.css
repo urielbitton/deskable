@@ -11,6 +11,8 @@ html, body {
   --secondary: #BAB69B;
   --red: #ff4d4d;
   --blue: #2881ff;
+  --yellow: #fcc603;
+  --orange: #ff5e08;
   --lightRed: #ffe2e2;
   --bg: #f8f8ff;
   --grayText: #696e93;
@@ -19,7 +21,7 @@ html, body {
   --inputBg: #f0f2f5;
   --lightInputBg: #F6F8FA;
   --darkInputBg: rgb(219, 223, 231);
-  --primarToast: rgba(124, 194, 68, 0.9);
+  --primaryToast: rgba(124, 194, 68, 0.9);
   --primaryTrans: rgba(124, 194, 68, 0.2);
   --primaryShadow: 0 10px 12px 1px var(--primaryTrans);
   --morphShadow: 0 0 6px 2px rgba(23, 143, 255, 0.09);

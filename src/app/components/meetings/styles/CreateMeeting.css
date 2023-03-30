@@ -56,6 +56,10 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
+.create-meeting-page .form-container .public-switch {
+  display: flex;
+  align-items: flex-start;
+}
 
 .create-meeting-page .form-container .invited-user {
   display: flex;

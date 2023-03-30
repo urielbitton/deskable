@@ -2,7 +2,6 @@ import useUser from "app/hooks/userHooks"
 import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
 import React from 'react'
 import { Link } from "react-router-dom"
-import AppButton from "../ui/AppButton"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
@@ -45,7 +44,7 @@ export default function MeetingCard(props) {
           </div>
         </div>
         <div className="right side">
-          {isActive && <i className="fas fa-headset" title="Live meeting" />}
+          {isActive && !meetingTimeOver && <i className="fas fa-headset" title="Live meeting" />}
           {isPublic && <i className="fas fa-globe" title="Public organization meeting" />}
         </div>
       </div>

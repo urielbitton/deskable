@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: space-between;
   box-shadow: var(--morphShadow);
-  z-index: 2000;
+  z-index: 9300;
   transition: all 0.3s;
 }
 

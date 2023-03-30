@@ -1,6 +1,6 @@
 import { useUsers } from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import OrgUsersTagInput from "../projects/OrgUsersTagInput"
 import AppButton from "../ui/AppButton"
 import { AppInput, AppSwitch } from "../ui/AppInputs"
@@ -8,11 +8,11 @@ import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import newProjectBlob from 'app/assets/images/new-project-blob.svg'
 import videoMeetingImg from 'app/assets/images/new-meeting-img.png'
-import './styles/CreateMeeting.css'
 import { createMeetingService } from "app/services/meetingsServices"
 import { convertDateToInputDateAndTimeFormat } from "app/utils/dateUtils"
 import { useNavigate } from "react-router-dom"
-import { infoToast } from "app/data/toastsTemplates"
+import { errorToast } from "app/data/toastsTemplates"
+import './styles/CreateMeeting.css'
 
 export default function CreateMeeting() {
 
@@ -29,11 +29,6 @@ export default function CreateMeeting() {
   const orgAlgoliaFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID}`
   const inviteesUsers = useUsers(inviteesIDs)
   const navigate = useNavigate()
-
-  const allowCreate = (
-    meetingName.length > 3
-    && meetingStart < meetingEnd
-  )
 
   const invitedUsersList = inviteesUsers?.map((user, index) => {
     return <div
@@ -71,27 +66,25 @@ export default function CreateMeeting() {
   }
 
   const createMeeting = () => {
-    if(allowCreate) return 
+    if (meetingName.length < 4) return setToasts(errorToast("Meeting name must be at least 3 characters long"))
+    if (meetingStart >= meetingEnd) return setToasts(errorToast("Meeting start must be before meeting end"))
     createMeetingService(
       myOrgID,
       {
+        invitees: inviteesIDs,
         isPublic,
         meetingEnd: new Date(meetingEnd),
         meetingStart: new Date(meetingStart),
         organizerID: myUserID,
         title: meetingName,
-      }, 
-      setCreateLoading, 
+      },
+      setCreateLoading,
       setToasts
     )
-    .then(() => {
-      navigate('/meetings')
-    })
+      .then(() => {
+        navigate('/meetings')
+      })
   }
-
-  useEffect(() => {
-
-  },[])
 
   return (
     <div className="create-meeting-page">
@@ -111,44 +104,48 @@ export default function CreateMeeting() {
                 label="Meeting Start"
                 type="datetime-local"
                 onChange={(e) => setMeetingStart(e.target.value)}
-                value={convertDateToInputDateAndTimeFormat(meetingStart)}
+                value={convertDateToInputDateAndTimeFormat(new Date(meetingStart))}
               />
               <AppInput
                 label="Meeting End"
                 type="datetime-local"
                 onChange={(e) => setMeetingEnd(e.target.value)}
-                value={convertDateToInputDateAndTimeFormat(meetingEnd)}
+                value={convertDateToInputDateAndTimeFormat(new Date(meetingEnd))}
               />
             </div>
             <AppSwitch
-              label="Public Meeting"
+              label={isPublic ? "Public Meeting" : "Private Meeting"}
               checked={isPublic}
               onChange={() => setIsPublic(prev => !prev)}
-            />
-            <OrgUsersTagInput
-              label="Invite Members"
-              name="invites"
-              placeholder="Invite members..."
-              value={invitesQuery}
-              query={invitesQuery}
-              onChange={(e) => setInvitesQuery(e.target.value)}
-              setLoading={setSearchLoading}
-              filters={orgAlgoliaFilters}
-              onUserClick={(e, user) => inviteUser(e, user)}
-              onUserRemove={(user) => removeInvite(user)}
-              onFocus={() => setShowCoverInput('invites')}
-              showDropdown={showCoverInput}
-              setShowDropdown={setShowCoverInput}
-              iconleft={<div className="icon"><i className="far fa-user" /></div>}
-              selectedUsers={inviteesUsers}
-              multiple={inviteesIDs?.length > 1}
-              maxAvatars={10}
-              onClear={() => clearInvites()}
-              showAll={false}
-              typeSearch
+              className="public-switch"
             />
             {
-              inviteesUsers?.length > 0 &&
+              !isPublic &&
+              <OrgUsersTagInput
+                label="Invite Members"
+                name="invites"
+                placeholder="Invite members..."
+                value={invitesQuery}
+                query={invitesQuery}
+                onChange={(e) => setInvitesQuery(e.target.value)}
+                setLoading={setSearchLoading}
+                filters={orgAlgoliaFilters}
+                onUserClick={(e, user) => inviteUser(e, user)}
+                onUserRemove={(user) => removeInvite(user)}
+                onFocus={() => setShowCoverInput('invites')}
+                showDropdown={showCoverInput}
+                setShowDropdown={setShowCoverInput}
+                iconleft={<div className="icon"><i className="far fa-user" /></div>}
+                selectedUsers={inviteesUsers}
+                multiple={inviteesIDs?.length > 1}
+                maxAvatars={10}
+                onClear={() => clearInvites()}
+                showAll={false}
+                typeSearch
+              />
+            }
+            {
+              inviteesUsers?.length > 0 && !isPublic &&
               <div className="invited-users-list">
                 {invitedUsersList}
               </div>
@@ -159,7 +156,6 @@ export default function CreateMeeting() {
               label="Create"
               onClick={() => createMeeting()}
               loading={createLoading}
-              disabled={!allowCreate}
             />
           </div>
         </div>

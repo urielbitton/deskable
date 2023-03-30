@@ -1,5 +1,6 @@
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
+import { convertClassicDate } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import DropdownButton from "../ui/DropdownButton"
@@ -20,6 +21,7 @@ export default function Navbar() {
   const canCreateProject = myMemberType === 'classa' || myMemberType === 'classb'
   const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
   const canCreateEvent = myMemberType === 'classa'
+  const todaysDate = convertClassicDate(new Date())
 
   const notificationsList = notifications?.map((notif, index) => {
     return <NotificationElement
@@ -41,6 +43,10 @@ export default function Navbar() {
         <div className="left">
           <h4>Deskable</h4>
           <NavSearch />
+          <h5>
+            <i className="fas fa-calendar-alt" />
+            {todaysDate}
+          </h5>
           <div
             className="mobile-btn"
             onClick={() => setShowMobileSidebar(true)}

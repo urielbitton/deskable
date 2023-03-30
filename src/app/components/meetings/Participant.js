@@ -1,15 +1,20 @@
+import useUser from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import IconContainer from "../ui/IconContainer"
 
 export default function Participant(prop) {
 
   const { myUserID } = useContext(StoreContext)
-  const { room, participant } = prop
+  const { participant, isLocal } = prop
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
   const videoRef = useRef(null)
   const audioRef = useRef(null)
+  const isAudioMuted = !audioTracks[0]?.isEnabled
+  const isVideoMuted = !videoTracks[0]?.isEnabled
+  const participantUser = useUser(participant?.identity)
 
   const trackPubsToTracks = trackMap => Array.from(trackMap.values())
     .map(publication => publication.track)
@@ -78,6 +83,34 @@ export default function Participant(prop) {
         ref={audioRef}
         autoPlay
       />
+      {
+        !isLocal &&
+        <>
+          <h6>{participantUser?.firstName}</h6>
+          <div className="icons-row">
+            {
+              isVideoMuted &&
+              <IconContainer
+                icon="fas fa-video-slash"
+                iconColor="#fff"
+                iconSize={12}
+                dimensions={27}
+                bgColor="var(--orange)"
+              />
+            }
+            {
+              isAudioMuted &&
+              <IconContainer
+                icon="fas fa-microphone-slash"
+                iconColor="#fff"
+                iconSize={12}
+                dimensions={27}
+                bgColor="var(--yellow)"
+              />
+            }
+          </div>
+        </>
+      }
     </div>
   )
 }

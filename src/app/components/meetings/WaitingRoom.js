@@ -1,5 +1,6 @@
 import { successToast } from "app/data/toastsTemplates"
 import { useMeeting } from "app/hooks/meetingsHooks"
+import { useOrganization } from "app/hooks/organizationHooks"
 import { useUsers } from "app/hooks/userHooks"
 import {
   addMeetingParticipantService,
@@ -39,6 +40,7 @@ export default function WaitingRoom() {
   const meetingHasStarted = meeting?.meetingStart?.toDate() <= new Date()
   const canJoinMeeting = meetingHasStarted && !meetingTimeOver
   const navigate = useNavigate()
+  const org = useOrganization(meeting?.orgID)
 
   const participantsRender = participantsUsers?.map((user, index) => {
     return <span
@@ -49,7 +51,6 @@ export default function WaitingRoom() {
         dimensions={25}
       />
       {user.firstName} {user.lastName}
-      {index === participantsUsers.length - 1 ? "" : ","}
     </span>
   })
 
@@ -80,7 +81,9 @@ export default function WaitingRoom() {
     if (!canJoinMeeting) return setToasts(successToast("This meeting has not started yet."))
     createJoinVideoMeetingService(
       myUserID,
+      org.accountType || 'basic',
       roomID,
+      meeting.roomType || "group",
       setPageLoading,
       setToasts
     )
@@ -130,7 +133,7 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     const disconnectParticipant = () => {
-      room.disconnect()
+      room?.disconnect()
       removeMeetingParticipantService(
         meeting?.orgID,
         meeting?.meetingID,

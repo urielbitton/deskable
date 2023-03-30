@@ -1,7 +1,6 @@
 .app-toast {
   width: 100%;
   border-radius: 5px;
-  background: var(--primarToast);
   padding: 13px 15px;
   display: flex;
   align-items: center;

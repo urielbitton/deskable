@@ -4,8 +4,7 @@ import { AppInput } from "../ui/AppInputs"
 import './styles/MeetingsHome.css'
 import { useLiveMeetings, useRangedMeetings } from 'app/hooks/meetingsHooks'
 import MeetingCard from "./MeetingCard"
-import {
-  endOfDay, endOfMonth, endOfWeek,
+import { endOfDay, endOfMonth, endOfWeek,
   startOfDay, startOfMonth, startOfWeek
 } from "date-fns"
 import { StoreContext } from "app/store/store"
@@ -25,6 +24,10 @@ export default function MeetingsHome() {
   const monthMeetings = useRangedMeetings(monthStart, monthEnd, meetingLimits)
   const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
 
+  const meetingTimesNotLive = meeting => {
+    return !(new Date() < meeting.meetingStart?.toDate() || new Date() < meeting.meetingEnd?.toDate())
+  }
+
   const liveMeetingsList = liveMeetings?.map((meeting, index) => {
     return <MeetingCard
       key={index}
@@ -35,7 +38,7 @@ export default function MeetingsHome() {
   const todayMeetingsList = monthMeetings
     ?.filter(meeting => {
       return meeting.meetingStart?.toDate() >= todayStart && meeting.meetingStart?.toDate() <= todayEnd
-        && !meeting.isActive
+      && meetingTimesNotLive(meeting)
     })
     .map((meeting, index) => {
       return <MeetingCard
@@ -47,7 +50,7 @@ export default function MeetingsHome() {
   const weekMeetingsList = monthMeetings
     ?.filter(meeting => {
       return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
-        && !meeting.isActive
+      && meetingTimesNotLive(meeting)
     })
     .map((meeting, index) => {
       return <MeetingCard
@@ -57,8 +60,8 @@ export default function MeetingsHome() {
     })
 
   const monthMeetingsList = monthMeetings
-    ?.filter(meeting => !meeting.isActive)
-    .map((meeting, index) => {
+  ?.filter(meeting => meetingTimesNotLive(meeting))
+  .map((meeting, index) => {
       return <MeetingCard
         key={index}
         meeting={meeting}
@@ -101,7 +104,7 @@ export default function MeetingsHome() {
       <div className="meetings-content">
         <div className="home-section">
           <h5>
-            <i className="fas fa-circle" />
+            <i className="fas fa-headset" />
             Live Now
           </h5>
           <div className="meetings-flex">

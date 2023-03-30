@@ -65,10 +65,12 @@ export const stopVideoCameraService = (mediaStreamRef) => {
   mediaStreamRef.getVideoTracks()?.forEach(track => track.stop())
 }
 
-export const createJoinVideoMeetingService = (myUserID, roomID, setPageLoading, setToasts) => {
+export const createJoinVideoMeetingService = (myUserID, accountType, roomID, roomType, setPageLoading, setToasts) => {
   setPageLoading(true)
   return httpsCallable(functions, 'findOrCreateRoom')({
-    roomName: roomID
+    roomName: roomID,
+    roomType,
+    accountType
   })
     .then(() => {
       return httpsCallable(functions, 'getRoomAccessToken')({
@@ -159,7 +161,7 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
   const docID = getRandomDocID(path)
   const roomID = generateRoomID()
   return setDB(path, docID, {
-    invitees: [],
+    invitees: meeting.invitees,
     isActive: true,
     isPublic: meeting.isPublic,
     meetingEnd: meeting.meetingEnd,

@@ -35,6 +35,22 @@ export default function EmployeePage() {
     )
   }
 
+  const startVoiceCall = () => {
+    //twilio voice call 
+  }
+
+  const startVideoCall = () => {
+    //set meetingType to 'go' and not 'group' (one on one meeting)
+  }
+
+  const startChat = () => {
+
+  }
+
+  const startEmail = () => {
+
+  }
+
   return employee ? (
     <div className="employee-page">
       <HelmetTitle title={`Employee ${employee.firstName} ${employee.lastName}`} />
@@ -72,18 +88,22 @@ export default function EmployeePage() {
             <AppButton
               buttonType="iconBtn small"
               leftIcon="fas fa-phone"
+              onClick={() => startVoiceCall()}
             />
             <AppButton
               buttonType="iconBtn small"
               leftIcon="fas fa-envelope"
+              onClick={() => startEmail()}
             />
             <AppButton
               buttonType="iconBtn small"
               leftIcon="fas fa-comment"
+              onClick={() => startChat()}
             />
             <AppButton
               buttonType="iconBtn small"
               leftIcon="fas fa-video"
+              onClick={() => startVideoCall()}
             />
             <AppBadge
               label={organization?.name}

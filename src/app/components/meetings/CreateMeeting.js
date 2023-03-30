@@ -76,8 +76,8 @@ export default function CreateMeeting() {
       myOrgID,
       {
         isPublic,
-        meetingEnd,
-        meetingStart,
+        meetingEnd: new Date(meetingEnd),
+        meetingStart: new Date(meetingStart),
         organizerID: myUserID,
         title: meetingName,
       }, 

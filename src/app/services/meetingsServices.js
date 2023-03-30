@@ -8,14 +8,18 @@ import {
 } from "firebase/firestore"
 import { httpsCallable } from "firebase/functions"
 import Video from "twilio-video"
-import { firebaseArrayAdd, firebaseArrayRemove, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import {
+  firebaseArrayAdd, firebaseArrayRemove,
+  getRandomDocID, setDB, updateDB
+} from "./CrudDB"
 
 export const getLiveMeetingsByOrgID = (orgID, setMeetings, lim) => {
   const docRef = collection(db, `organizations/${orgID}/meetings`)
   const q = query(
     docRef,
     where("isActive", "==", true),
-    orderBy("meetingStart", "desc"),
+    where("meetingEnd", ">=", new Date()),
+    orderBy("meetingEnd", "asc"),
     limit(lim)
   )
   onSnapshot(q, (snapshot) => {
@@ -46,6 +50,20 @@ export const getRangedMeetingsByOrgID = (orgID, start, end, setMeetings, lim) =>
 
 
 // services function
+
+export const getUserMediaDevices = () => {
+  if (navigator.mediaDevices.getUserMedia) {
+    return navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .catch(err => console.log("Something went wrong getting your media devices."))
+  }
+  else {
+    alert("Your browser does not support video or audio.")
+  }
+}
+
+export const stopVideoCameraService = (mediaStreamRef) => {
+  mediaStreamRef.getVideoTracks()?.forEach(track => track.stop())
+}
 
 export const createJoinVideoMeetingService = (myUserID, roomID, setPageLoading, setToasts) => {
   setPageLoading(true)
@@ -90,13 +108,13 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
 
 export const shareScreenService = (room) => {
   navigator.mediaDevices.getDisplayMedia()
-  .then(stream => {
-    const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0])
-    room.localParticipant.publishTrack(screenTrack);
-  })
-  .catch(() => {
-    alert('Could not share the screen.')
-  })
+    .then(stream => {
+      const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0])
+      room.localParticipant.publishTrack(screenTrack);
+    })
+    .catch(() => {
+      alert('Could not share the screen.')
+    })
 }
 
 export const stopSharingScreenService = (room) => {
@@ -110,9 +128,9 @@ export const addMeetingParticipantService = (orgID, meetingID, userID) => {
   return updateDB(path, meetingID, {
     participants: firebaseArrayAdd(userID)
   })
-  .catch((error) => {
-    console.log(error)
-  })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
 export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
@@ -120,9 +138,9 @@ export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
   return updateDB(path, meetingID, {
     participants: firebaseArrayRemove(userID)
   })
-  .catch((error) => {
-    console.log(error)
-  })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
 export const switchMeetingInactiveService = (orgID, meetingID) => {
@@ -130,9 +148,9 @@ export const switchMeetingInactiveService = (orgID, meetingID) => {
   return updateDB(path, meetingID, {
     isActive: false
   })
-  .catch((error) => {
-    console.log(error)
-  })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
 export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
@@ -153,13 +171,13 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
     roomID,
     title: meeting.title
   })
-  .then(() => {
-    setLoading(false)
-    setToasts(successToast("Meeting created."))
-  })
-  .catch((error) => {
-    setLoading(false)
-    setToasts(errorToast('There was an error creating the meeting. Please try again'))
-    console.log(error)
-  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast("Meeting created."))
+    })
+    .catch((error) => {
+      setLoading(false)
+      setToasts(errorToast('There was an error creating the meeting. Please try again'))
+      console.log(error)
+    })
 }

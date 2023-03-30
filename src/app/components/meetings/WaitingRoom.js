@@ -4,8 +4,10 @@ import { useUsers } from "app/hooks/userHooks"
 import {
   addMeetingParticipantService,
   createJoinVideoMeetingService,
+  getUserMediaDevices,
   joinVideoRoomService,
-  removeMeetingParticipantService
+  removeMeetingParticipantService,
+  stopVideoCameraService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
@@ -23,6 +25,7 @@ export default function WaitingRoom() {
   const meetingID = useParams().meetingID
   const meeting = useMeeting(meetingID)
   const videoRef = useRef(null)
+  const mediaStreamRef = useRef(null)
   const [videoOn, setVideoOn] = useState(true)
   const [soundOn, setSoundOn] = useState(true)
   const [meetingStarted, setMeetingStarted] = useState(false)
@@ -51,18 +54,16 @@ export default function WaitingRoom() {
   })
 
   const startVideo = () => {
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-          videoRef.current.srcObject = stream
-          setVideoOn(true)
-        })
-        .catch(err => console.log("Something went wrong!"))
-    }
+    getUserMediaDevices()
+      .then((stream) => {
+        mediaStreamRef.current = stream
+        videoRef.current.srcObject = stream
+        setVideoOn(true)
+      })
   }
 
   const stopVideo = () => {
-    videoRef?.current?.srcObject?.getTracks()?.forEach(track => track?.stop())
+    stopVideoCameraService(mediaStreamRef.current)
     setVideoOn(false)
   }
 
@@ -76,7 +77,7 @@ export default function WaitingRoom() {
 
   const joinMeeting = () => {
     if (meetingEnded) return setToasts(successToast("This meeting has ended."))
-    if(!canJoinMeeting) return setToasts(successToast("This meeting has not started yet."))
+    if (!canJoinMeeting) return setToasts(successToast("This meeting has not started yet."))
     createJoinVideoMeetingService(
       myUserID,
       roomID,
@@ -142,14 +143,14 @@ export default function WaitingRoom() {
 
   return !meetingStarted ? (
     <div className="waiting-room-page">
-      <AppButton
-        label="Back to Meetings"
-        buttonType="invertedBtn"
-        leftIcon="fal fa-arrow-left"
-        onClick={() => navigate('/meetings')}
-        className="back-btn"
-      />
       <div className="meeting-video">
+        <AppButton
+          label="Back to Meetings"
+          buttonType="invertedBtn"
+          leftIcon="fal fa-arrow-left"
+          onClick={() => navigate('/meetings')}
+          className="back-btn"
+        />
         <div className="video-container">
           <video
             autoPlay
@@ -176,7 +177,7 @@ export default function WaitingRoom() {
         </div>
       </div>
       <div className="meeting-details">
-        { !meetingEnded && <h4>Ready to join?</h4> }
+        {!meetingEnded && <h4>Ready to join?</h4>}
         <h5>Meeting: {meeting?.title}</h5>
         {
           participantsUsers?.length !== 0 ?

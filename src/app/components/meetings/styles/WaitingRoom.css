@@ -8,16 +8,13 @@
   overflow-y: auto;
 }
 
-.waiting-room-page .back-btn {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-}
-
 .waiting-room-page .meeting-video {
   width: 700px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
 }
 .waiting-room-page .meeting-video .video-container {
   display: flex;

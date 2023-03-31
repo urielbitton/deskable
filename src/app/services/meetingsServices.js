@@ -81,7 +81,6 @@ export const createJoinVideoMeetingService = (myUserID, accountType, roomID, roo
     .then((result) => {
       setPageLoading(false)
       setToasts(successToast("Meeting joined."))
-      console.log(result.data)
       return result.data
     })
     .catch((error) => {
@@ -95,7 +94,8 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
   setPageLoading(true)
   return Video.connect(token, {
     video: videoOn,
-    audio: soundOn
+    audio: soundOn,
+    dominantSpeaker: true,
   })
     .then((room) => {
       console.log(room)
@@ -112,7 +112,7 @@ export const shareScreenService = (room) => {
   navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
       const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0])
-      room.localParticipant.publishTrack(screenTrack);
+      room.localParticipant.publishTrack(screenTrack)
     })
     .catch(() => {
       alert('Could not share the screen.')

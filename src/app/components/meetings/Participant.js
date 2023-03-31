@@ -6,15 +6,17 @@ import IconContainer from "../ui/IconContainer"
 export default function Participant(prop) {
 
   const { myUserID } = useContext(StoreContext)
-  const { participant, isLocal } = prop
+  const { participant, dominantSpeaker, isLocal } = prop
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
+  const [isVideoMuted, setIsVideoMuted] = useState(false)
+  const [isAudioMuted, setIsAudioMuted] = useState(false)
   const videoRef = useRef(null)
   const audioRef = useRef(null)
-  const isAudioMuted = !audioTracks[0]?.isEnabled
-  const isVideoMuted = !videoTracks[0]?.isEnabled
   const participantUser = useUser(participant?.identity)
+  const isDominantSpeaker = participant?.identity === dominantSpeaker?.identity
+  console.log(dominantSpeaker)
 
   const trackPubsToTracks = trackMap => Array.from(trackMap.values())
     .map(publication => publication.track)
@@ -23,20 +25,24 @@ export default function Participant(prop) {
   const trackSubscribed = track => {
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => [...videoTracks, track])
+      setIsVideoMuted(track.isMuted)
     }
     else {
       setAudioTracks(audioTracks => [...audioTracks, track])
+      setIsAudioMuted(track.isMuted)
     }
   }
   const trackUnsubscribed = track => {
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => videoTracks.filter(v => v !== track))
+      setIsVideoMuted(track.isMuted)
     }
     else {
       setAudioTracks(audioTracks => audioTracks.filter(a => a !== track))
+      setIsAudioMuted(track.isMuted)
     }
   }
-
+ 
   useEffect(() => {
     setVideoTracks(trackPubsToTracks(participant.videoTracks))
     setAudioTracks(trackPubsToTracks(participant.audioTracks))
@@ -48,6 +54,30 @@ export default function Participant(prop) {
       participant.removeAllListeners()
     }
   }, [participant])
+
+  useEffect(() => {
+    const videoTrack = videoTracks[0]
+    if (videoTrack) {
+      videoTrack.on('enabled', () => {
+        setIsVideoMuted(false)
+      })
+      videoTrack.on('disabled', () => {
+        setIsVideoMuted(true)
+      })
+    } 
+  },[videoTracks])
+  
+  useEffect(() => {
+    const audioTrack = audioTracks[0]
+    if (audioTrack) {
+      audioTrack.on('enabled', () => {
+        setIsAudioMuted(false)
+      })
+      audioTrack.on('disabled', () => {
+        setIsAudioMuted(true)
+      })
+    } 
+  },[audioTracks])
 
   useEffect(() => {
     const videoTrack = videoTracks[0]
@@ -106,6 +136,16 @@ export default function Participant(prop) {
                 iconSize={12}
                 dimensions={27}
                 bgColor="var(--yellow)"
+              />
+            }
+            {
+              isDominantSpeaker &&
+              <IconContainer
+                icon="fas fa-waveform"
+                iconColor="#fff"
+                iconSize={12}
+                dimensions={27}
+                bgColor="var(--blue)"
               />
             }
           </div>

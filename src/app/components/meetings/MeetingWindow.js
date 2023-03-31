@@ -1,7 +1,9 @@
-import { removeMeetingParticipantService, 
-  shareScreenService, switchMeetingInactiveService } from "app/services/meetingsServices"
+import {
+  removeMeetingParticipantService,
+  shareScreenService, switchMeetingInactiveService
+} from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
@@ -17,15 +19,16 @@ export default function MeetingWindow(props) {
     participants } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
+  const [dominantSpeaker, setDominantSpeaker] = useState(null)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
-  console.log(room)
 
   const participantsList = participants?.map((participant, index) => {
-      return <Participant
-        key={index}
-        participant={participant}
-      />
-    })
+    return <Participant
+      key={index}
+      participant={participant}
+      dominantSpeaker={dominantSpeaker}
+    />
+  })
 
   const ActionIcon = ({ name, className = '', title, icon, onClick }) => {
     return <div
@@ -49,14 +52,14 @@ export default function MeetingWindow(props) {
       meeting?.meetingID,
       myUserID
     )
-    .then(() => {
-      if(participants.length === 0 && meetingTimeOver) {
-        switchMeetingInactiveService(
-          meeting?.orgID, 
-          meeting?.meetingID
-        )
-      }
-    })
+      .then(() => {
+        if (participants.length === 0 && meetingTimeOver) {
+          switchMeetingInactiveService(
+            meeting?.orgID,
+            meeting?.meetingID
+          )
+        }
+      })
   }
 
   const toggleVideo = (value) => {
@@ -86,6 +89,19 @@ export default function MeetingWindow(props) {
   const shareScreen = () => {
     shareScreenService(room)
   }
+
+  useEffect(() => {
+    if (room) {
+      room.on('dominantSpeakerChanged', participant => {
+        if (!participant) {
+          setDominantSpeaker(null)
+        }
+        else {
+          setDominantSpeaker(participant)
+        }
+      })
+    }
+  }, [room])
 
   return (
     <div className="meeting-window">

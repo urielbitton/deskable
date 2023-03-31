@@ -52,8 +52,8 @@ export const getRangedMeetingsByOrgID = (orgID, start, end, setMeetings, lim) =>
 // services function
 
 export const getUserMediaDevices = () => {
-  if (navigator.mediaDevices.getUserMedia) {
-    return navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+  if (navigator?.mediaDevices?.getUserMedia) {
+    return navigator?.mediaDevices?.getUserMedia({ video: true, audio: false })
     .catch(err => console.log("Something went wrong getting your media devices."))
   }
   else {
@@ -108,21 +108,29 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
     })
 }
 
-export const shareScreenService = (room) => {
-  navigator.mediaDevices.getDisplayMedia()
+export const shareScreenService = (room, screenTrack, setIsScreenSharing) => {
+  return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
-      const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0])
+      screenTrack = stream.getVideoTracks()[0]
       room.localParticipant.publishTrack(screenTrack)
+      setIsScreenSharing(true)
     })
     .catch(() => {
+      setIsScreenSharing(false)
       alert('Could not share the screen.')
     })
 }
 
-export const stopSharingScreenService = (room) => {
-  const screenTrack = room.localParticipant.videoTracks.values().next().value[1].track
+export const stopSharingScreenService = (room, screenTrack, setIsScreenSharing) => {
   room.localParticipant.unpublishTrack(screenTrack)
-  screenTrack.stop()
+  screenTrack = null
+  room.localParticipant.videoTracks.forEach(publication => {
+    if(publication.track.name === 'screen') {
+      publication.track.stop()
+      publication.unpublish()
+    }
+  })
+  setIsScreenSharing(false)
 }
 
 export const addMeetingParticipantService = (orgID, meetingID, userID) => {
@@ -183,3 +191,4 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
       console.log(error)
     })
 }
+  

@@ -1,6 +1,6 @@
 import {
   removeMeetingParticipantService,
-  shareScreenService, switchMeetingInactiveService
+  shareScreenService, stopSharingScreenService, switchMeetingInactiveService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
@@ -13,14 +13,16 @@ import './styles/MeetingWindow.css'
 
 export default function MeetingWindow(props) {
 
-  const { myUserID } = useContext(StoreContext)
+  const { myUserID, setPageLoading } = useContext(StoreContext)
   const { meeting, room, videoOn, soundOn,
     setVideoOn, setSoundOn, setMeetingStarted,
     participants } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
   const [dominantSpeaker, setDominantSpeaker] = useState(null)
+  const [isScreenSharing, setIsScreenSharing] = useState(false)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
+  let screenTrack = null
 
   const participantsList = participants?.map((participant, index) => {
     return <Participant
@@ -86,10 +88,20 @@ export default function MeetingWindow(props) {
     })
   }
 
-  const shareScreen = () => {
-    shareScreenService(room)
+  const toggleShareScreen = () => {
+    if (!isScreenSharing) {
+      setPageLoading(true)
+      shareScreenService(room, screenTrack, setIsScreenSharing)
+      .then(() => {
+        setPageLoading(false)
+      })
+      .catch(() => setPageLoading(false))
+    }
+    else {
+      stopSharingScreenService(room, screenTrack, setIsScreenSharing)
+    }
   }
-
+ 
   useEffect(() => {
     if (room) {
       room.on('dominantSpeakerChanged', participant => {
@@ -168,8 +180,9 @@ export default function MeetingWindow(props) {
           <ActionIcon
             name="present"
             title="Share screen"
-            icon="fas fa-tablet-android"
-            onClick={() => shareScreen()}
+            icon={isScreenSharing ? "far fa-tablet-android" : "fas fa-tablet-android"}
+            onClick={() => toggleShareScreen()}
+            className={isScreenSharing ? "active" : ""}
           />
           <ActionIcon
             name="captions"

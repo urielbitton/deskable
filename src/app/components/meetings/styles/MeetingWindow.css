@@ -216,6 +216,10 @@
 .meeting-window .action-icon.inactive {
   background: var(--red);
 }
-.meeting-window .action-icon.inactive i {
+.meeting-window .action-icon.inactive i,
+.meeting-window .action-icon.active i {
   color: #fff
+}
+.meeting-window .action-icon.active {
+  background: var(--primary);
 }

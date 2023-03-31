@@ -16,7 +16,6 @@ export default function Participant(prop) {
   const audioRef = useRef(null)
   const participantUser = useUser(participant?.identity)
   const isDominantSpeaker = participant?.identity === dominantSpeaker?.identity
-  console.log(dominantSpeaker)
 
   const trackPubsToTracks = trackMap => Array.from(trackMap.values())
     .map(publication => publication.track)

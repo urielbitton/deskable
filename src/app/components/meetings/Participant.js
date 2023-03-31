@@ -2,6 +2,7 @@ import useUser from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import IconContainer from "../ui/IconContainer"
+import Video from 'twilio-video'
 
 export default function Participant(prop) {
 

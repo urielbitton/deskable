@@ -108,11 +108,14 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
     })
 }
 
-export const shareScreenService = (room, screenTrack, setIsScreenSharing) => {
+export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => {
   return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
-      screenTrack = stream.getVideoTracks()[0]
-      room.localParticipant.publishTrack(screenTrack)
+      const screenTrack = stream.getTracks()[0]
+      setScreenTrack(screenTrack)
+      room.localParticipant.publishTrack(screenTrack, { 
+        name: 'screen-share', priority: 'high' 
+      })
       setIsScreenSharing(true)
     })
     .catch(() => {
@@ -122,8 +125,8 @@ export const shareScreenService = (room, screenTrack, setIsScreenSharing) => {
 }
 
 export const stopSharingScreenService = (room, screenTrack, setIsScreenSharing) => {
+  screenTrack.stop()
   room.localParticipant.unpublishTrack(screenTrack)
-  screenTrack = null
   room.localParticipant.videoTracks.forEach(publication => {
     if(publication.track.name === 'screen') {
       publication.track.stop()

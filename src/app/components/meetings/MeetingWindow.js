@@ -21,8 +21,8 @@ export default function MeetingWindow(props) {
   const [showOptions, setShowOptions] = useState(false)
   const [dominantSpeaker, setDominantSpeaker] = useState(null)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
+  const [screenTrack, setScreenTrack] = useState(null)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
-  let screenTrack = null
 
   const participantsList = participants?.map((participant, index) => {
     return <Participant
@@ -91,7 +91,7 @@ export default function MeetingWindow(props) {
   const toggleShareScreen = () => {
     if (!isScreenSharing) {
       setPageLoading(true)
-      shareScreenService(room, screenTrack, setIsScreenSharing)
+      shareScreenService(room, setScreenTrack, setIsScreenSharing)
       .then(() => {
         setPageLoading(false)
       })
@@ -99,6 +99,7 @@ export default function MeetingWindow(props) {
     }
     else {
       stopSharingScreenService(room, screenTrack, setIsScreenSharing)
+      setScreenTrack(null)
     }
   }
  

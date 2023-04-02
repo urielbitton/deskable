@@ -145,6 +145,7 @@ export default function MeetingWindow(props) {
         <Participant
           participant={room?.localParticipant}
           isLocal
+          screenTrack={screenTrack}
         />
         <div className="participants-list">
           {participantsList}
@@ -173,17 +174,17 @@ export default function MeetingWindow(props) {
             className={!soundOn ? "inactive" : ""}
           />
           <ActionIcon
-            name="raise-hand"
-            title="Raise hand"
-            icon="fas fa-hand-paper"
-            onClick={() => { }}
-          />
-          <ActionIcon
             name="present"
             title="Share screen"
             icon={isScreenSharing ? "far fa-tablet-android" : "fas fa-tablet-android"}
             onClick={() => toggleShareScreen()}
             className={isScreenSharing ? "active" : ""}
+          />
+          <ActionIcon
+            name="raise-hand"
+            title="Raise hand"
+            icon="fas fa-hand-paper"
+            onClick={() => { }}
           />
           <ActionIcon
             name="captions"

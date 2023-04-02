@@ -23,10 +23,23 @@ export default function MeetingsHome() {
   const liveMeetings = useLiveMeetings(meetingLimits)
   const monthMeetings = useRangedMeetings(monthStart, monthEnd, meetingLimits)
   const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
-
+  
   const meetingTimesNotLive = meeting => {
-    return !(new Date() < meeting.meetingStart?.toDate() || new Date() < meeting.meetingEnd?.toDate())
+    return !(new Date() >= meeting.meetingStart?.toDate() && new Date() <= meeting.meetingEnd?.toDate())
   }
+  
+  const todayMeetingsFilter = monthMeetings?.filter(meeting => {
+    return meeting.meetingStart?.toDate() >= todayStart && meeting.meetingStart?.toDate() <= todayEnd
+    && meetingTimesNotLive(meeting)
+  })
+
+  const weekMeetingsFilter = monthMeetings
+  ?.filter(meeting => {
+    return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
+    && meetingTimesNotLive(meeting)
+  })
+
+  const monthMeetingsFilter = monthMeetings?.filter(meeting => meetingTimesNotLive(meeting))
 
   const liveMeetingsList = liveMeetings?.map((meeting, index) => {
     return <MeetingCard
@@ -35,33 +48,21 @@ export default function MeetingsHome() {
     />
   })
 
-  const todayMeetingsList = monthMeetings
-    ?.filter(meeting => {
-      return meeting.meetingStart?.toDate() >= todayStart && meeting.meetingStart?.toDate() <= todayEnd
-      && meetingTimesNotLive(meeting)
-    })
-    .map((meeting, index) => {
+  const todayMeetingsList = todayMeetingsFilter.map((meeting, index) => {
       return <MeetingCard
         key={index}
         meeting={meeting}
       />
     })
 
-  const weekMeetingsList = monthMeetings
-    ?.filter(meeting => {
-      return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
-      && meetingTimesNotLive(meeting)
-    })
-    .map((meeting, index) => {
+  const weekMeetingsList = weekMeetingsFilter.map((meeting, index) => {
       return <MeetingCard
         key={index}
         meeting={meeting}
       />
     })
 
-  const monthMeetingsList = monthMeetings
-  ?.filter(meeting => meetingTimesNotLive(meeting))
-  .map((meeting, index) => {
+  const monthMeetingsList = monthMeetingsFilter.map((meeting, index) => {
       return <MeetingCard
         key={index}
         meeting={meeting}
@@ -108,7 +109,10 @@ export default function MeetingsHome() {
             Live Now
           </h5>
           <div className="meetings-flex">
-            {liveMeetingsList}
+            {
+              liveMeetings.length > 0 ? liveMeetingsList :
+              <small className="no-meetings">There are no live meetings</small>
+            }
           </div>
         </div>
         <div className="home-section">
@@ -117,7 +121,10 @@ export default function MeetingsHome() {
             Today
           </h5>
           <div className="meetings-flex">
-            {todayMeetingsList}
+            {
+              todayMeetingsFilter.length > 0 ? todayMeetingsList :
+              <small className="no-meetings">There are no meetings today</small>
+            }
           </div>
         </div>
         <div className="home-section">
@@ -126,7 +133,10 @@ export default function MeetingsHome() {
             This Week
           </h5>
           <div className="meetings-flex">
-            {weekMeetingsList}
+            {
+              weekMeetingsFilter.length > 0 ? weekMeetingsList :
+              <small className="no-meetings">There are no meetings this week</small>
+            }
           </div>
         </div>
         <div className="home-section">
@@ -135,7 +145,10 @@ export default function MeetingsHome() {
             This Month
           </h5>
           <div className="meetings-flex">
-            {monthMeetingsList}
+            {
+              monthMeetingsFilter.length > 0 ? monthMeetingsList :
+              <small className="no-meetings">There are no meetings this month</small>
+            }
           </div>
         </div>
       </div>

@@ -38,7 +38,6 @@ export default function WaitingRoom() {
   const hasParticipants = participants.length > 0
   const meetingEnded = meetingTimeOver && !hasParticipants
   const meetingHasStarted = meeting?.meetingStart?.toDate() <= new Date()
-  const canJoinMeeting = meetingHasStarted && !meetingTimeOver
   const navigate = useNavigate()
   const org = useOrganization(meeting?.orgID)
 
@@ -78,7 +77,6 @@ export default function WaitingRoom() {
 
   const joinMeeting = () => {
     if (meetingEnded) return setToasts(successToast("This meeting has ended."))
-    if (!canJoinMeeting) return setToasts(successToast("This meeting has not started yet."))
     createJoinVideoMeetingService(
       myUserID,
       org.accountType || 'basic',
@@ -213,7 +211,9 @@ export default function WaitingRoom() {
         {
           meetingEnded ?
             <span className="meeting-ended">This meeting has ended.</span> :
-            null
+            !meetingHasStarted ?
+              <span>This meeting has not started yet.</span> :
+              null
         }
         <AppButton
           label="Join Meeting"

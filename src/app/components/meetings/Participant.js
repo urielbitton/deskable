@@ -2,12 +2,11 @@ import useUser from "app/hooks/userHooks"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import IconContainer from "../ui/IconContainer"
-import Video from 'twilio-video'
 
 export default function Participant(prop) {
 
   const { myUserID } = useContext(StoreContext)
-  const { participant, dominantSpeaker, isLocal } = prop
+  const { participant, dominantSpeaker, isLocal, screenTrack } = prop
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
@@ -64,6 +63,10 @@ export default function Participant(prop) {
       videoTrack.on('disabled', () => {
         setIsVideoMuted(true)
       })
+      videoTrack.attach(videoRef.current)
+      return () => {
+        videoTrack.detach()
+      }
     } 
   },[videoTracks])
   
@@ -76,28 +79,28 @@ export default function Participant(prop) {
       audioTrack.on('disabled', () => {
         setIsAudioMuted(true)
       })
+      audioTrack.attach(audioRef.current)
+      return () => {
+        audioTrack.detach()
+      }
     } 
   },[audioTracks])
 
   useEffect(() => {
     const videoTrack = videoTracks[0]
-    if (videoTrack) {
-      videoTrack.attach(videoRef.current)
+    if (screenTrack) {
+      screenTrack.attach(videoRef.current)
+      screenTrack.on('enabled', () => {
+        videoTrack?.detach()
+      })
+      screenTrack.on('disabled', () => {
+        videoTrack?.attach(videoRef.current)
+      })
       return () => {
-        videoTrack.detach()
+        screenTrack.detach()
       }
     }
-  }, [videoTracks])
-
-  useEffect(() => {
-    const audioTrack = audioTracks[0]
-    if (audioTrack) {
-      audioTrack.attach(audioRef.current)
-      return () => {
-        audioTrack.detach()
-      }
-    }
-  }, [audioTracks])
+  }, [screenTrack])
 
   return (
     <div

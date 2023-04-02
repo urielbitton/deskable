@@ -111,10 +111,10 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
 export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => {
   return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
-      const screenTrack = stream.getTracks()[0]
+      const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0], {name:'myscreenshare'})
       setScreenTrack(screenTrack)
       room.localParticipant.publishTrack(screenTrack, { 
-        name: 'screen-share', priority: 'high' 
+        name: 'myscreenshare', priority: 'high' 
       })
       setIsScreenSharing(true)
     })

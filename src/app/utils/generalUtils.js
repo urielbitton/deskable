@@ -153,15 +153,12 @@ export const isNumbersInRange = (number1, number2, range) => {
 }
 
 export const toggleFullScreen = () => {
-  const elem = document.documentElement
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen()
-  } else if (elem.mozRequestFullScreen) {
-    elem.mozRequestFullScreen()
-  } else if (elem.webkitRequestFullscreen) {
-    elem.webkitRequestFullscreen()
-  } else if (elem.msRequestFullscreen) {
-    elem.msRequestFullscreen()
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    }
   }
 }
 

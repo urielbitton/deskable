@@ -198,6 +198,9 @@
   background: var(--inputBg);
   border-radius: 5px;
 }
+.meeting-window .video-actions .dropdown-icon .dropdown-menu span {
+  font-size: 14px;
+}
 
 .meeting-window .action-icon {
   width: 40px;

@@ -23,7 +23,7 @@
   left: 0;
   right: auto;
   top: auto;
-  bottom: 40px;
+  bottom: 50px;
 }
 .dropdown-button .dropdown-menu.place-right-bottom {
   left: auto;
@@ -33,7 +33,7 @@
   left: auto;
   right: 0;
   top: auto;
-  bottom: 40px;
+  bottom: 50px;
 }
 .dropdown-button .dropdown-menu h5.title {
   font-size: 14px;

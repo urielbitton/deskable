@@ -30,6 +30,10 @@
   display: none;
 }
 
+.app-container.meeting-fullscreen .navbar,
+.app-container.meeting-fullscreen .sidebar {
+  display: none;
+}
 
 @media (max-width: 1080px) {
   .app-container {

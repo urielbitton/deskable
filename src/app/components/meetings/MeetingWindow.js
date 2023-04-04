@@ -12,6 +12,7 @@ import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import VolumeSlider from "../ui/VolumeSlider"
 import Participant from "./Participant"
 import './styles/MeetingWindow.css'
+import { toggleFullScreen } from "app/utils/generalUtils"
 
 export default function MeetingWindow(props) {
 
@@ -259,25 +260,25 @@ export default function MeetingWindow(props) {
             className={isRaisingHand ? "active" : ""}
           />
           <ActionIcon
-            name="captions"
-            title="Turn on captions"
-            icon="fas fa-closed-captioning"
-            onClick={() => { }}
-          />
-          <ActionIcon
             name="fullscreen"
             title="Fullscreen"
             icon="fas fa-expand"
-            onClick={() => { }}
+            onClick={() => toggleFullScreen()}
           />
           <DropdownIcon
             icon="fas fa-ellipsis-v"
             iconSize={15}
             dimensions={40}
             iconColor="var(--grayText)"
+            showMenu={showOptions}
             setShowMenu={setShowOptions}
-            onClick={() => console.log('')}
-            items={[]}
+            onClick={() => setShowOptions(prev => !prev)}
+            dropdownPosition="place-right-top"
+            items={[
+              {label: 'Background Effects', icon: 'fas fa-sparkles', onClick: () => console.log('')},
+              {label: 'Report a problem', icon: 'fas fa-bullhorn', onClick: () => console.log('')},
+              {label: 'Settings', icon: 'fas fa-cog', onClick: () => console.log('')}
+            ]}
           />
         </div>
         <div className="right side">

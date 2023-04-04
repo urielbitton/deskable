@@ -137,6 +137,12 @@ export const stopSharingScreenService = (room, screenTrack, setIsScreenSharing) 
   setIsScreenSharing(false)
 }
 
+export const toggleRaiseHandService = (orgID, meetingID, myUserID, isRaisingHand) => {
+  return updateDB(`organizations/${orgID}/meetings`, meetingID, {
+    raisedHands: isRaisingHand ? firebaseArrayRemove(myUserID) : firebaseArrayAdd(myUserID)
+  })
+}
+
 export const addMeetingParticipantService = (orgID, meetingID, userID) => {
   const path = `organizations/${orgID}/meetings`
   return updateDB(path, meetingID, {
@@ -150,7 +156,8 @@ export const addMeetingParticipantService = (orgID, meetingID, userID) => {
 export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
   const path = `organizations/${orgID}/meetings`
   return updateDB(path, meetingID, {
-    participants: firebaseArrayRemove(userID)
+    participants: firebaseArrayRemove(userID),
+    raisedHands: firebaseArrayRemove(userID)
   })
     .catch((error) => {
       console.log(error)
@@ -160,7 +167,8 @@ export const removeMeetingParticipantService = (orgID, meetingID, userID) => {
 export const switchMeetingInactiveService = (orgID, meetingID) => {
   const path = `organizations/${orgID}/meetings`
   return updateDB(path, meetingID, {
-    isActive: false
+    isActive: false,
+    raisedHands: []
   })
     .catch((error) => {
       console.log(error)
@@ -183,7 +191,8 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
     organizerID: meeting.organizerID,
     participants: [],
     roomID,
-    title: meeting.title
+    title: meeting.title,
+    raisedHands: [],
   })
     .then(() => {
       setLoading(false)

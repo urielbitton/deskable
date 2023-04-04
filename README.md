@@ -2,6 +2,7 @@
 
 ##To Dos
 - meetings
+  - fix screen share bug (only participants who join AFTER a user starts screen sharing can see the screen share, if screenshare is closed and restarted no one can see it - has to do with event listeners of screenshare not properly being removed or readded. )
   - fix remove participants on page close
   - main features: raise hand, virtual backgounds, fullscreen, closed captions, options.
   - search meetings features

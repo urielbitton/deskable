@@ -1,7 +1,8 @@
 import {
   removeMeetingParticipantService,
   shareScreenService, stopSharingScreenService,
-  switchMeetingInactiveService
+  switchMeetingInactiveService,
+  toggleRaiseHandService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
@@ -25,6 +26,7 @@ export default function MeetingWindow(props) {
   const [remoteScreenSharer, setRemoteScreenSharer] = useState(null)
   const [screenTrack, setScreenTrack] = useState(null)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
+  const isRaisingHand = meeting?.raisedHands?.includes(myUserID)
 
   const participantsList = participants?.map((participant, index) => {
     return <Participant
@@ -32,6 +34,7 @@ export default function MeetingWindow(props) {
       participant={participant}
       dominantSpeaker={dominantSpeaker}
       setRemoteScreenSharer={setRemoteScreenSharer}
+      meeting={meeting}
     />
   })
 
@@ -115,6 +118,15 @@ export default function MeetingWindow(props) {
     }
   }
 
+  const toggleRaiseHand = () => {
+    toggleRaiseHandService(
+      meeting.orgID,
+      meeting.meetingID,
+      myUserID,
+      isRaisingHand
+    )
+  }
+
   useEffect(() => {
     if (room) {
       room.on('dominantSpeakerChanged', participant => {
@@ -129,8 +141,22 @@ export default function MeetingWindow(props) {
   }, [room])
 
   useEffect(() => {
-    window.addEventListener('beforeunload', () => forceLeaveRoom)
-    return () => window.removeEventListener('beforeunload', () => forceLeaveRoom)
+    const disconnectParticipant = () => {
+      if (room) {
+        room.disconnect()
+        room.localParticipant.tracks.forEach(track => {
+          track.stop()
+          track.detach()
+        })
+      }
+      removeMeetingParticipantService(
+        meeting?.orgID,
+        meeting?.meetingID,
+        myUserID
+      )
+    }
+    window.onbeforeunload = disconnectParticipant
+    window.onunload = disconnectParticipant
   }, [])
 
   return (
@@ -166,11 +192,13 @@ export default function MeetingWindow(props) {
               participant={room?.localParticipant}
               isLocal
               screenTrack={screenTrack}
+              meeting={meeting}
             /> :
             // Remote participant view of the screen sharer
             <Participant
               participant={remoteScreenSharer?.participant}
               screenShareWindow
+              meeting={meeting}
             />
         }
         <div className="participants-list">
@@ -180,6 +208,7 @@ export default function MeetingWindow(props) {
             <Participant
               participant={room?.localParticipant}
               screenShareWindow
+              meeting={meeting}
             />
           }
           {
@@ -188,6 +217,7 @@ export default function MeetingWindow(props) {
               participant={room?.localParticipant}
               isTempLocal
               isLocal
+              meeting={meeting}
             />
           }
         </div>
@@ -218,14 +248,15 @@ export default function MeetingWindow(props) {
             name="present"
             title="Share screen"
             icon={isScreenSharing ? "far fa-tablet-android" : "fas fa-tablet-android"}
-            onClick={() => toggleShareScreen()}
+            onClick={toggleShareScreen}
             className={isScreenSharing ? "active" : ""}
           />
           <ActionIcon
             name="raise-hand"
             title="Raise hand"
             icon="fas fa-hand-paper"
-            onClick={() => { }}
+            onClick={toggleRaiseHand}
+            className={isRaisingHand ? "active" : ""}
           />
           <ActionIcon
             name="captions"

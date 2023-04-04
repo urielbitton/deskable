@@ -7,16 +7,20 @@ export default function Participant(prop) {
 
   const { myUserID } = useContext(StoreContext)
   const { participant, dominantSpeaker, isLocal, screenTrack,
-    screenShareWindow, setRemoteScreenSharer, isTempLocal } = prop
+    screenShareWindow, setRemoteScreenSharer, isTempLocal,
+    meeting } = prop
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
+  const [dataTracks, setDataTracks] = useState([])
   const [isVideoMuted, setIsVideoMuted] = useState(false)
   const [isAudioMuted, setIsAudioMuted] = useState(false)
+  const [isHandRaised, setIsHandRaised] = useState(false)
   const videoRef = useRef(null)
   const audioRef = useRef(null)
   const participantUser = useUser(participant?.identity)
   const isDominantSpeaker = participant?.identity === dominantSpeaker?.identity
+  const hasRaisedHand = meeting?.raisedHands?.includes(participant?.identity)
 
   const trackPubsToTracks = trackMap => Array.from(trackMap.values())
     .map(publication => publication.track)
@@ -162,7 +166,7 @@ export default function Participant(prop) {
                 iconColor="#fff"
                 iconSize={12}
                 dimensions={27}
-                bgColor="var(--yellow)"
+                bgColor="var(--red)"
               />
             }
             {
@@ -183,6 +187,16 @@ export default function Participant(prop) {
                 iconSize={12}
                 dimensions={27}
                 bgColor="var(--primary)"
+              />
+            }
+            {
+              hasRaisedHand &&
+              <IconContainer
+                icon="fas fa-hand-paper"
+                iconColor="#fff"
+                iconSize={12}
+                dimensions={27}
+                bgColor="var(--yellow)"
               />
             }
           </div>

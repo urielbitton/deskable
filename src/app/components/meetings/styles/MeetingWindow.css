@@ -240,3 +240,7 @@
 .meeting-window .action-icon.active {
   background: var(--primary);
 }
+.meeting-window .action-icon.raise-hand.active {
+  background: var(--yellow);
+  color: #fff;
+}

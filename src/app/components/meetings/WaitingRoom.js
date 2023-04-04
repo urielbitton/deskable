@@ -121,7 +121,7 @@ export default function WaitingRoom() {
   }
 
   const closeRoom = () => {
-    if(!canCloseRoom) return 
+    if (!canCloseRoom) return
     const confirm = window.confirm("Are you sure you want to close this room? You won't be able to re-open it and all chat messages will be lost.")
     if (!confirm) return
     stopVideo()
@@ -146,7 +146,13 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     const disconnectParticipant = () => {
-      room?.disconnect()
+      if (room) {
+        room && room.disconnect()
+        room.localParticipant.tracks.forEach(track => {
+          track.stop()
+          track.detach()
+        })
+      }
       removeMeetingParticipantService(
         meeting?.orgID,
         meeting?.meetingID,

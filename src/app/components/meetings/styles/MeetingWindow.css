@@ -75,7 +75,7 @@
   overflow-y: auto;
   padding: 20px 10px;
   position: absolute;
-  right: 10px;
+  right: 5px;
   top: 0;
   z-index: 100;
 }
@@ -97,7 +97,9 @@
   padding: 20px 0;
   z-index: 10;
 }
-.meeting-window .video-container .participants {
+.meeting-window .video-container .participants,
+.meeting-window .video-container .participant.screenshare-window,
+.meeting-window .video-container .participant.is-local {
   width: 110px;
   height: 110px;
   border-radius: 17px;
@@ -105,7 +107,9 @@
   background: #222;
   margin-bottom: 15px;
 }
-.meeting-window .video-container .participants h6 {
+.meeting-window .video-container .participants h6,
+.meeting-window .video-container .participant.screenshare-window h6,
+.meeting-window .video-container .participant.is-local h6 {
   font-size: 11px;
   font-weight: 600;
   color: #fff;
@@ -114,7 +118,8 @@
   left: 10px;
   z-index: 10;
 }
-.meeting-window .video-container .participants .icons-row {
+.meeting-window .video-container .participants .icons-row,
+.meeting-window .video-container .participant.screenshare-window .icons-row {
   position: absolute;
   bottom: -7px;
   right: -7px;
@@ -124,7 +129,9 @@
   gap: 5px;
   z-index: 11;
 }
-.meeting-window .video-container .participants::after {
+.meeting-window .video-container .participants::after,
+.meeting-window .video-container .participant.screenshare-window::after,
+.meeting-window .video-container .participant.is-local::after {
   content: "";
   position: absolute;
   top: 0;
@@ -139,6 +146,16 @@
   height: 100%;
   object-fit: cover;
   border-radius: 17px;
+}
+/* Screen share */
+.meeting-window .video-container .participants.screenshare-window {
+  width: 100%;
+  height: 100%;
+  border: none;
+  margin: 0;
+}
+.meeting-window .video-container .participants.screenshare-window .icons-row {
+  display: none;
 }
 
 .meeting-window .video-actions {

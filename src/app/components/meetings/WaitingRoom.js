@@ -4,6 +4,7 @@ import { useOrganization } from "app/hooks/organizationHooks"
 import { useUsers } from "app/hooks/userHooks"
 import {
   addMeetingParticipantService,
+  closeMeetingRoomService,
   createJoinVideoMeetingService,
   getUserMediaDevices,
   joinVideoRoomService,
@@ -19,10 +20,11 @@ import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
 import MeetingStarted from "./MeetingStarted"
 import './styles/WaitingRoom.css'
+import AppModal from "../ui/AppModal"
 
 export default function WaitingRoom() {
 
-  const { myUserID, setPageLoading, setToasts } = useContext(StoreContext)
+  const { myUserID, myOrgID, setPageLoading, setToasts } = useContext(StoreContext)
   const meetingID = useParams().meetingID
   const meeting = useMeeting(meetingID)
   const videoRef = useRef(null)
@@ -32,6 +34,7 @@ export default function WaitingRoom() {
   const [meetingStarted, setMeetingStarted] = useState(false)
   const [participants, setParticipants] = useState([])
   const [room, setRoom] = useState(null)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
   const roomID = meeting?.roomID
   const participantsUsers = useUsers(meeting?.participants)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
@@ -40,6 +43,7 @@ export default function WaitingRoom() {
   const meetingHasStarted = meeting?.meetingStart?.toDate() <= new Date()
   const navigate = useNavigate()
   const org = useOrganization(meeting?.orgID)
+  const canCloseRoom = meeting?.organizerID === myUserID
 
   const participantsRender = participantsUsers?.map((user, index) => {
     return <span
@@ -116,6 +120,17 @@ export default function WaitingRoom() {
     )
   }
 
+  const closeRoom = () => {
+    if(!canCloseRoom) return 
+    const confirm = window.confirm("Are you sure you want to close this room? You won't be able to re-open it and all chat messages will be lost.")
+    if (!confirm) return
+    stopVideo()
+    closeMeetingRoomService(myOrgID, meetingID, setToasts, setPageLoading)
+      .then(() => {
+        navigate('/meetings')
+      })
+  }
+
   useEffect(() => {
     startVideo()
     return () => stopVideo()
@@ -145,13 +160,20 @@ export default function WaitingRoom() {
   return !meetingStarted ? (
     <div className="waiting-room-page">
       <div className="meeting-video">
-        <AppButton
-          label="Back to Meetings"
-          buttonType="invertedBtn"
-          leftIcon="fal fa-arrow-left"
-          onClick={() => navigate('/meetings')}
-          className="back-btn"
-        />
+        <div className="toolbar">
+          <AppButton
+            label="Back to Meetings"
+            buttonType="invertedBtn"
+            leftIcon="fal fa-arrow-left"
+            onClick={() => navigate('/meetings')}
+          />
+          <AppButton
+            label="Room Settings"
+            buttonType="invertedBtn"
+            leftIcon="fal fa-cog"
+            onClick={() => setShowSettingsModal(true)}
+          />
+        </div>
         <div className="video-container">
           <video
             autoPlay
@@ -221,6 +243,32 @@ export default function WaitingRoom() {
           disabled={meetingEnded}
         />
       </div>
+      <AppModal
+        showModal={showSettingsModal}
+        setShowModal={setShowSettingsModal}
+        label="Room Settings"
+        portalClassName="room-settings-modal"
+        onClose={() => setShowSettingsModal(false)}
+        actions={
+          <AppButton
+            label="Done"
+            onClick={() => setShowSettingsModal(false)}
+          />
+        }
+      >
+        <div className="room-settings">
+          <div className="settings-row">
+            <h5>Close Room</h5>
+            <AppButton
+              label="Close Room"
+              onClick={closeRoom}
+              buttonType="redBtn"
+              disabled={!canCloseRoom}
+              title={!canCloseRoom && "You can only close this room if you are the meeting organizer."}
+            />
+          </div>
+        </div>
+      </AppModal>
     </div>
   ) :
     <MeetingStarted

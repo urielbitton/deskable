@@ -16,6 +16,16 @@
   align-items: flex-start;
   gap: 30px;
 }
+
+.waiting-room-page .meeting-video .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 .waiting-room-page .meeting-video .video-container {
   display: flex;
   flex-direction: column;
@@ -81,6 +91,7 @@
   font-size: 14px;
   color: var(--grayText);
   font-weight: 600;
+  margin: 10px 0;
 }
 .waiting-room-page .meeting-details .schedule {
   display: flex;
@@ -128,4 +139,21 @@
   padding: 12px 30px;
   font-size: 15px;
   margin-top: 15px;
+}
+
+.room-settings-modal .room-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.room-settings-modal .room-settings .settings-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.room-settings-modal .room-settings .settings-row h5 {
+  color: var(--darkGrayText);
+  font-size: 15px;
+  font-weight: 600;
 }

@@ -2,10 +2,11 @@
 
 ##To Dos
 - meetings
-  - participant mute, video mute, isTalking icons
-  - main features: screen sharing, raise hand, virtual backgounds, fullscreen, closed captions, options.
+  - fix remove participants on page close
+  - main features: raise hand, virtual backgounds, fullscreen, closed captions, options.
   - search meetings features
   - filter & view toggle meetings
+  - test isTalking feature
 
 - chats
   - import as much code as possible from familia

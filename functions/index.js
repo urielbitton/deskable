@@ -226,6 +226,15 @@ exports.uploadHtmlToFirestorage = functions
       })
   })
 
+exports.recursivelyDeleteDocument = functions
+  .https.onCall((data, context) => {
+    const path = data.path
+    const documentID = data.documentID
+    return recursivelyDeleteDocument(path, documentID)
+      .catch((error) => console.log(error))
+  })
+
+
 
 //Twilio API functions
 

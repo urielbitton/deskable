@@ -9,6 +9,7 @@ import {
 import { httpsCallable } from "firebase/functions"
 import Video from "twilio-video"
 import {
+  deleteDB,
   firebaseArrayAdd, firebaseArrayRemove,
   getRandomDocID, setDB, updateDB
 } from "./CrudDB"
@@ -54,7 +55,7 @@ export const getRangedMeetingsByOrgID = (orgID, start, end, setMeetings, lim) =>
 export const getUserMediaDevices = () => {
   if (navigator?.mediaDevices?.getUserMedia) {
     return navigator?.mediaDevices?.getUserMedia({ video: true, audio: false })
-    .catch(err => console.log("Something went wrong getting your media devices."))
+      .catch(err => console.log("Something went wrong getting your media devices."))
   }
   else {
     alert("Your browser does not support video or audio.")
@@ -111,10 +112,10 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
 export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => {
   return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
-      const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0], {name:'myscreenshare'})
+      const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0], { name: 'myscreenshare' })
       setScreenTrack(screenTrack)
-      room.localParticipant.publishTrack(screenTrack, { 
-        name: 'myscreenshare', priority: 'high' 
+      room.localParticipant.publishTrack(screenTrack, {
+        name: 'myscreenshare', priority: 'high'
       })
       setIsScreenSharing(true)
     })
@@ -128,7 +129,7 @@ export const stopSharingScreenService = (room, screenTrack, setIsScreenSharing) 
   screenTrack.stop()
   room.localParticipant.unpublishTrack(screenTrack)
   room.localParticipant.videoTracks.forEach(publication => {
-    if(publication.track.name === 'screen') {
+    if (publication.track.name === 'screen') {
       publication.track.stop()
       publication.unpublish()
     }
@@ -194,4 +195,20 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
       console.log(error)
     })
 }
-  
+
+export const closeMeetingRoomService = (orgID, meetingID, setToasts, setLoading) => {
+  const meetingPath = `organizations/${orgID}/meetings`
+  setLoading(true)
+  return httpsCallable(functions, 'recursivelyDeleteDocument')({
+    path: meetingPath, documentID: meetingID
+  })
+    .then(() => {
+      setLoading(false)
+      setToasts(successToast("The meeting room was closed."))
+    })
+    .catch((error) => {
+      setLoading(false)
+      setToasts(errorToast('There was an error closing the meeting room. Please try again'))
+      console.log(error)
+    })
+}

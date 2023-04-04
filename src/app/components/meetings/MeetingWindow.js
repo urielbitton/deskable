@@ -1,6 +1,7 @@
 import {
   removeMeetingParticipantService,
-  shareScreenService, stopSharingScreenService, switchMeetingInactiveService
+  shareScreenService, stopSharingScreenService,
+  switchMeetingInactiveService
 } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
@@ -21,6 +22,7 @@ export default function MeetingWindow(props) {
   const [showOptions, setShowOptions] = useState(false)
   const [dominantSpeaker, setDominantSpeaker] = useState(null)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
+  const [remoteScreenSharer, setRemoteScreenSharer] = useState(null)
   const [screenTrack, setScreenTrack] = useState(null)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
 
@@ -29,6 +31,7 @@ export default function MeetingWindow(props) {
       key={index}
       participant={participant}
       dominantSpeaker={dominantSpeaker}
+      setRemoteScreenSharer={setRemoteScreenSharer}
     />
   })
 
@@ -44,11 +47,13 @@ export default function MeetingWindow(props) {
     </div>
   }
 
-  const leaveRoom = () => {
-    const confirm = window.confirm("Are you sure you want to leave the meeting?")
-    if (!confirm) return
-    room.disconnect()
+  const forceLeaveRoom = () => {
     setMeetingStarted(false)
+    room.disconnect()
+    room.localParticipant.tracks.forEach(track => {
+      track.stop()
+      track.detach()
+    })
     removeMeetingParticipantService(
       meeting?.orgID,
       meeting?.meetingID,
@@ -62,6 +67,12 @@ export default function MeetingWindow(props) {
           )
         }
       })
+  }
+
+  const leaveRoom = () => {
+    const confirm = window.confirm("Are you sure you want to leave the meeting?")
+    if (!confirm) return
+    forceLeaveRoom()
   }
 
   const toggleVideo = (value) => {
@@ -92,17 +103,18 @@ export default function MeetingWindow(props) {
     if (!isScreenSharing) {
       setPageLoading(true)
       shareScreenService(room, setScreenTrack, setIsScreenSharing)
-      .then(() => {
-        setPageLoading(false)
-      })
-      .catch(() => setPageLoading(false))
+        .then(() => {
+          setPageLoading(false)
+        })
+        .catch(() => setPageLoading(false))
     }
     else {
       stopSharingScreenService(room, screenTrack, setIsScreenSharing)
+      setRemoteScreenSharer(null)
       setScreenTrack(null)
     }
   }
- 
+
   useEffect(() => {
     if (room) {
       room.on('dominantSpeakerChanged', participant => {
@@ -115,6 +127,11 @@ export default function MeetingWindow(props) {
       })
     }
   }, [room])
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => forceLeaveRoom)
+    return () => window.removeEventListener('beforeunload', () => forceLeaveRoom)
+  }, [])
 
   return (
     <div className="meeting-window">
@@ -142,13 +159,37 @@ export default function MeetingWindow(props) {
         </div>
       </div>
       <div className="video-container">
-        <Participant
-          participant={room?.localParticipant}
-          isLocal
-          screenTrack={screenTrack}
-        />
+        {
+          !remoteScreenSharer?.value ?
+            // Local participant view of their own screenshare
+            <Participant
+              participant={room?.localParticipant}
+              isLocal
+              screenTrack={screenTrack}
+            /> :
+            // Remote participant view of the screen sharer
+            <Participant
+              participant={remoteScreenSharer?.participant}
+              screenShareWindow
+            />
+        }
         <div className="participants-list">
           {participantsList}
+          {
+            screenTrack &&
+            <Participant
+              participant={room?.localParticipant}
+              screenShareWindow
+            />
+          }
+          {
+            remoteScreenSharer?.value &&
+            <Participant
+              participant={room?.localParticipant}
+              isTempLocal
+              isLocal
+            />
+          }
         </div>
       </div>
       <div className="video-actions">

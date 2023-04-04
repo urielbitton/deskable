@@ -6,7 +6,8 @@ import IconContainer from "../ui/IconContainer"
 export default function Participant(prop) {
 
   const { myUserID } = useContext(StoreContext)
-  const { participant, dominantSpeaker, isLocal, screenTrack } = prop
+  const { participant, dominantSpeaker, isLocal, screenTrack,
+    screenShareWindow, setRemoteScreenSharer, isTempLocal } = prop
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
@@ -26,22 +27,31 @@ export default function Participant(prop) {
       setVideoTracks(videoTracks => [...videoTracks, track])
       setIsVideoMuted(track.isMuted)
     }
-    else {
+    if(track.name === 'myscreenshare') {
+      setRemoteScreenSharer({participant, value: true})
+      setVideoTracks(videoTracks => [...videoTracks, track])
+    }
+    if(track.kind === 'audio') {
       setAudioTracks(audioTracks => [...audioTracks, track])
       setIsAudioMuted(track.isMuted)
     }
   }
+  
   const trackUnsubscribed = track => {
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => videoTracks.filter(v => v !== track))
       setIsVideoMuted(track.isMuted)
     }
-    else {
+    if(track.name === 'myscreenshare') {
+      setRemoteScreenSharer(null)
+      setVideoTracks(videoTracks => videoTracks.filter(v => v !== track))
+    }
+    if(track.kind === 'audio') {
       setAudioTracks(audioTracks => audioTracks.filter(a => a !== track))
       setIsAudioMuted(track.isMuted)
     }
   }
- 
+
   useEffect(() => {
     setVideoTracks(trackPubsToTracks(participant.videoTracks))
     setAudioTracks(trackPubsToTracks(participant.audioTracks))
@@ -67,9 +77,9 @@ export default function Participant(prop) {
       return () => {
         videoTrack.detach()
       }
-    } 
-  },[videoTracks])
-  
+    }
+  }, [videoTracks])
+
   useEffect(() => {
     const audioTrack = audioTracks[0]
     if (audioTrack) {
@@ -83,28 +93,33 @@ export default function Participant(prop) {
       return () => {
         audioTrack.detach()
       }
-    } 
-  },[audioTracks])
+    }
+  }, [audioTracks])
 
   useEffect(() => {
     const videoTrack = videoTracks[0]
     if (screenTrack) {
       screenTrack.attach(videoRef.current)
       screenTrack.on('enabled', () => {
-        videoTrack?.detach()
+
       })
       screenTrack.on('disabled', () => {
-        videoTrack?.attach(videoRef.current)
+
       })
       return () => {
         screenTrack.detach()
       }
     }
-  }, [screenTrack])
+    else {
+      if(videoTrack) {
+        videoTrack.attach(videoRef.current)
+      }
+    } 
+  }, [screenTrack, participant]) 
 
   return (
     <div
-      className={`participant ${participantClass}`}
+      className={`participant ${participantClass} ${screenShareWindow ? "screenshare-window" : ""} ${isTempLocal ? 'is-local' : ''}`}
       key={participant?.identity}
       id={participant?.identity}
     >
@@ -117,9 +132,18 @@ export default function Participant(prop) {
         autoPlay
       />
       {
+        isTempLocal &&
+        <h6>You</h6>
+      }
+      {
         !isLocal &&
         <>
-          <h6>{participantUser?.firstName}</h6>
+          <h6>
+            {
+              participant?.identity === myUserID ? "You" :
+              participantUser?.firstName
+            }
+          </h6>
           <div className="icons-row">
             {
               isVideoMuted &&
@@ -149,6 +173,16 @@ export default function Participant(prop) {
                 iconSize={12}
                 dimensions={27}
                 bgColor="var(--blue)"
+              />
+            }
+            {
+              screenShareWindow &&
+              <IconContainer
+                icon="fas fa-tablet"
+                iconColor="#fff"  
+                iconSize={12}
+                dimensions={27}
+                bgColor="var(--primary)"
               />
             }
           </div>

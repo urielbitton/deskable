@@ -3,12 +3,15 @@
 ##To Dos
 - meetings
   - virtual backgrounds
+  - record feature
+  - invite participants to meetings button
   - fix screen share bug (only participants who join AFTER a user starts screen sharing can see the screen share, if screenshare is closed and restarted no one can see it - has to do with event listeners of screenshare not properly being removed or readded. )
   - test dominantSpeaker feature
   - refactor to show dominant speaker as main video window (if no one is screensharing only)
   - fix remove participants on page close
   - search meetings on meetings home page
   - filter & view toggle meetings on meetings home page
+  - chat feature (after main chat page)
 
 - chats
   - import as much code as possible from familia
@@ -21,6 +24,10 @@
   - edit announcements - change all db paths to pathPrefix so you can pass org/orgID/announcements as pathPrefix instead of hardcoded posts (change for comments and files, etc.)
   - announcements cards ui - different than posts - add importance variable
   - design sidebar in posts page (either a filter to find posts/announcements or some stats about posts/announcements -  or both)
+
+- projects bugs:
+  - dropping tasks into sprint for first time returns error: non draggable zone
+  - deleting a task returns error: cannot read property undefined of columnID
 
 - support:
   - add support system like Halp.

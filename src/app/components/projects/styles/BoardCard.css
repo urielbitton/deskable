@@ -18,10 +18,9 @@
 }
 .board-card .header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  flex-wrap: wrap;
 }
 .board-card .header h5 {
   font-weight: 600;
@@ -53,6 +52,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 5px;
 }
 .board-card .content .app-badge {
   padding: 2px 5px;

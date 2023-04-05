@@ -263,7 +263,7 @@ export const createOrgProjectService = (orgID, userID, project, setToasts, setLo
   const docID = getRandomDocID(path)
   return setDB(path, docID, {
     ...project,
-    activeSprintID: null,
+    activeSprintID: 'init',
     admins: [userID],
     dateCreated: new Date(),
     description: '',
@@ -439,7 +439,6 @@ export const deleteProjectTaskService = (path, taskID, setLoading, setToasts) =>
   setLoading(true)
   const orgID = path.split('/')[1]
   const projectID = path.split('/')[3]
-  const storagePath = `organizations/${orgID}/projects/${projectID}/tasks/${taskID}/files`
   const taskRef = doc(db, path, taskID)
   const batch = writeBatch(db)
   return runTransaction(db, (transaction) => {

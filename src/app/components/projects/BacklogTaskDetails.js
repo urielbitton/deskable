@@ -1,13 +1,16 @@
 import { switchTaskType } from "app/data/projectsData"
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useSearchParams } from "react-router-dom"
 import DropdownIcon from "../ui/DropDownIcon"
 import IconContainer from "../ui/IconContainer"
 import './styles/BacklogTaskDetails.css'
 import TaskContentDetails from "./TaskContentDetails"
+import { deleteProjectTaskService } from "app/services/projectsServices"
+import { StoreContext } from "app/store/store"
 
 export default function BacklogTaskDetails(props) {
 
+  const { setPageLoading, myOrgID, setToasts } = useContext(StoreContext)
   const { activeTask } = props
   const [searchParams, setSearchParams] = useSearchParams()
   const [showTaskMenu, setShowTaskMenu] = useState(null)
@@ -18,9 +21,22 @@ export default function BacklogTaskDetails(props) {
   const [showCommentEditor, setShowCommentEditor] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [showCoverInput, setShowCoverInput] = useState(null)
+  const projectID = searchParams.get('projectID')
+  const taskPath = `organizations/${myOrgID}/projects/${projectID}/tasks`
+  const taskID = activeTask?.taskID
 
   const deleteTask = () => {
-
+    const confirm = window.confirm('Are you sure you want to delete this task?')
+    if (!confirm) return
+    deleteProjectTaskService(
+      taskPath, 
+      taskID, 
+      setPageLoading, 
+      setToasts
+    )
+    .then(() => {
+      handleClose()
+    })
   }
 
   const handleClose = () => {

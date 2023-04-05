@@ -7,10 +7,11 @@ import AppBadge from "../ui/AppBadge"
 import DropdownIcon from "../ui/DropDownIcon"
 import MultipleUsersAvatars from "../ui/MultipleUsersAvatars"
 import './styles/BoardCard.css'
+import { truncateText } from "app/utils/generalUtils"
 
 export default function BoardCard(props) {
 
-  const { setToasts, myOrgID, myUserID } = useContext(StoreContext)
+  const { setToasts, myUserID } = useContext(StoreContext)
   const { taskID, title, taskNum, taskType, assigneesIDs,
     priority, points } = props.task
   const { tasksPath, handleDeleteTask, dragging, setIsDragging,
@@ -45,7 +46,7 @@ export default function BoardCard(props) {
     >
       <div className="top">
         <div className="header">
-          <h5>{title}</h5>
+          <h5>{truncateText(title, 60)}</h5>
           <DropdownIcon
             icon="far fa-ellipsis-h"
             iconSize="15px"

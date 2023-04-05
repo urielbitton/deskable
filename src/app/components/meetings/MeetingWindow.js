@@ -19,7 +19,7 @@ export default function MeetingWindow(props) {
   const { myUserID, setPageLoading } = useContext(StoreContext)
   const { meeting, room, videoOn, soundOn,
     setVideoOn, setSoundOn, setMeetingStarted,
-    participants } = props
+    participants, setShowBackgroundEffects } = props
   const [soundVolume, setSoundVolume] = useState(80)
   const [showOptions, setShowOptions] = useState(false)
   const [dominantSpeaker, setDominantSpeaker] = useState(null)
@@ -275,7 +275,7 @@ export default function MeetingWindow(props) {
             onClick={() => setShowOptions(prev => !prev)}
             dropdownPosition="place-right-top"
             items={[
-              {label: 'Background Effects', icon: 'fas fa-sparkles', onClick: () => console.log('')},
+              {label: 'Background Effects', icon: 'fas fa-sparkles', onClick: () => setShowBackgroundEffects(true)},
               {label: 'Report a problem', icon: 'fas fa-bullhorn', onClick: () => console.log('')},
               {label: 'Settings', icon: 'fas fa-cog', onClick: () => console.log('')}
             ]}

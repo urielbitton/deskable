@@ -2,12 +2,13 @@
 
 ##To Dos
 - meetings
+  - virtual backgrounds
   - fix screen share bug (only participants who join AFTER a user starts screen sharing can see the screen share, if screenshare is closed and restarted no one can see it - has to do with event listeners of screenshare not properly being removed or readded. )
+  - test dominantSpeaker feature
+  - refactor to show dominant speaker as main video window (if no one is screensharing only)
   - fix remove participants on page close
-  - main features: raise hand, virtual backgounds, fullscreen, closed captions, options.
-  - search meetings features
-  - filter & view toggle meetings
-  - test isTalking feature
+  - search meetings on meetings home page
+  - filter & view toggle meetings on meetings home page
 
 - chats
   - import as much code as possible from familia
@@ -26,13 +27,6 @@
 
 - Employees - emplyees are actual db users that belong to a org. So no creating, just deleting
   - finish refactoring employees
-
-- Home
-- Meetings
-- Chats
-- Resources
-- Settings
-
 
 Other Todos
 - Create an org (invitation only) flow

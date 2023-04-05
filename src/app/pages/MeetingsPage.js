@@ -21,7 +21,7 @@ export default function MeetingsPage() {
       className="meetings-page"
       padding="0"
       withBorder
-      styles={{ height: "100%" }}
+      styles={{ height: "100%", overflowX: 'hidden'  }}
     >
       <Routes>
         <Route index element={<MeetingsHome />} />

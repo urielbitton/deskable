@@ -11,7 +11,7 @@
   - fix remove participants on page close
   - search meetings on meetings home page
   - filter & view toggle meetings on meetings home page
-  - chat feature (after main chat page)
+  - chat feature (after main chat page) - design to model after: https://dribbble.com/shots/16695727/attachments/11736207?mode=media
 
 - chats
   - import as much code as possible from familia

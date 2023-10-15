@@ -25,6 +25,7 @@ const StoreContextProvider = ({children}) => {
   const [hideRightBar, setHideRightBar] = useState(false)
   const [showProjectsSidebar, setShowProjectsSidebar] = useState(localStorage.getItem('showProjectsSidebar') === "true")
   const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY
+  const groupChatDefaultImg = 'https://firebasestorage.googleapis.com/v0/b/deskable-bb146.appspot.com/o/admin%2Fimages%2Fgroup-chat-img.png?alt=media&token=6afc3906-3f1b-4323-b685-7e99f7e28e80&_gl=1*12ymc5t*_ga*MjUyMTY1MTA2LjE2NjQzNzM3MDA.*_ga_CW55HF8NVT*MTY5NzMzNzYyMS4xMjEuMS4xNjk3MzQwMDM1LjE3LjAuMA..'
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -48,7 +49,7 @@ const StoreContextProvider = ({children}) => {
     darkMode, setDarkMode,
     percentFormat,
     contentScrollBottom, setContentScrollBottom, 
-    photoURLPlaceholder,
+    photoURLPlaceholder, groupChatDefaultImg,
     showMobileSidebar, setShowMobileSidebar,
     toasts, setToasts,
     newEventModal, setNewEventModal,

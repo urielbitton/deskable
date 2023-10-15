@@ -1,0 +1,8 @@
+.chat-container {
+  background: #fff;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  height: calc(100vh - var(--navbarHeight) - 20px);
+  display: grid;
+  grid-template-columns: 270px auto;
+}

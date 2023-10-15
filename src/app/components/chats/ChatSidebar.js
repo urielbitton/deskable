@@ -9,7 +9,7 @@ export default function ChatSidebar() {
 
   const { myOrgID, myUserID } = useContext(StoreContext)
   const groupChats = useListOfGroupChats(myOrgID)
-  const singleChats = useListOfSingleChats(myUserID)
+  const singleChats = useListOfSingleChats(myOrgID, myUserID)
 
   const groupChatsList = groupChats?.map(chat => {
     return <ChatCard
@@ -40,7 +40,7 @@ export default function ChatSidebar() {
       </header>
       <div className="chats-list">
         <div className="chat-type-flex">
-          <h5><i className="fas fa-users"/>Groups</h5>
+          <h5><i className="fas fa-users"/>Spaces</h5>
           <div className="chat-type-list">
             { groupChatsList }
           </div>

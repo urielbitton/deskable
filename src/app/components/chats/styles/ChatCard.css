@@ -39,4 +39,9 @@
   font-size: 12px;
   color: var(--grayText);
 }
-
+.chat-card .right-side .unread-badge {
+  width: 7px;
+  height: 7px;
+  border-radius: 100%;
+  background: var(--blue);
+}

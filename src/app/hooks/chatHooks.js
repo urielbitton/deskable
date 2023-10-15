@@ -17,16 +17,17 @@ export const useListOfGroupChats = (orgID) => {
   return messages
 }
 
-export const useListOfSingleChats = (userID) => {
+export const useListOfSingleChats = (orgID, userID) => {
 
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    const q = getListOfSingleChatsByUserID(userID)
+
+    const q = getListOfSingleChatsByUserID(orgID, userID)
     onSnapshot(q, (snapshot) => {
       setMessages(snapshot.docs.map(doc => doc.data()))
     })
-  }, [userID])
+  }, [orgID])
 
   return messages
 }

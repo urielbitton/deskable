@@ -1,0 +1,28 @@
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  height: 60px;
+  border-bottom: 1px solid #eee;
+}
+.chat-header .left-side {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.chat-header .left-side .text {
+  display: flex;
+  flex-direction: column;
+}
+.chat-header .left-side .text h5 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+.chat-header .left-side .text small {
+  font-size: 11px;
+  color: #888;
+  line-height: 1;
+}

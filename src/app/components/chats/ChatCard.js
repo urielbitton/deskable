@@ -11,11 +11,12 @@ export default function ChatCard(props) {
   const { myUserID, groupChatDefaultImg } = useContext(StoreContext)
   const { conversationID, dateUpdated, participantID, 
     creatorID, lastMessage, blockedIDs, type,
-    chatName } = props.chat
+    chatName, isReadBy } = props.chat
   const isGroupChat = type === "group"
   const otherParticipantID = myUserID === participantID ? creatorID : participantID
   const otherParticipant = useUser(!isGroupChat ? otherParticipantID : null)
   const isSentByMe = lastMessage?.senderID === myUserID
+  const seenByMe = isReadBy?.includes(myUserID)
 
   return (
     <Link 
@@ -35,7 +36,7 @@ export default function ChatCard(props) {
       </div>
       <div className="right-side">
         <small>{getTimeAgo(dateUpdated?.toDate())}</small>
-        <div className="unread-badge" />
+        { !seenByMe && <div className="unread-badge" /> }
       </div>
     </Link>
   )

@@ -2,11 +2,19 @@
   padding: 0;
   overflow-y: auto;
 }
+.react-kanban-board > div {
+  display: flex;
+  align-items: stretch!important;
+}
 .react-kanban-column {
   background: var(--inputBg);
   border-radius: 5px;
   padding: 10px;
   width: 300px;
+  height: auto!important;
+}
+.react-kanban-board [data-rbd-droppable-context-id="0"] {
+  height: calc(100% - 90px) !important;
 }
 .react-kanban-board .board-column-header {
   display: flex;

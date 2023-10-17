@@ -7,6 +7,10 @@ export const noWhiteSpaceChars = (text) => {
   return text?.replace(/\s/g, '').length
 }
 
+export const hasWhiteSpace = (text) => {
+  return !text?.replace(/\s/g, '').length
+}
+
 export const truncateText = (text, charsNum) => {
   return text?.length > charsNum ? (text?.slice(0, charsNum) + "...") : text
 }

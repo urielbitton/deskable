@@ -109,6 +109,7 @@ export default function NewEventModal() {
           label="All Day"
           checked={allDay}
           onChange={(e) => setAllDay(e.target.checked)}
+          value={allDay}
         />
         <div className="btn-group">
           <AppButton

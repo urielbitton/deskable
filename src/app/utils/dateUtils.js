@@ -79,7 +79,7 @@ export const getTimeStringIn24h = (date) => {
 }
 
 export const getTimeFromDate = (date) => {
-  return date?.toTimeString().slice(0, 5)
+  return date?.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
 }
 
 export const getNearestTimeToQuarterHour = (date) => {
@@ -164,20 +164,33 @@ export const getDaysAgo = (date) => {
 
 export const getTimeAgo = (date) => {
   const seconds = Math.floor((Date.now() - date) / 1000)
-  if (seconds < 1)
-    return 'Just now'
-  else if (seconds < 60)
-    return seconds + 's'
-  else if (seconds < 3600)
-    return Math.floor(seconds / 60) + 'm'
-  else if (seconds < 86400)
-    return Math.floor(seconds / 3600) + 'h'
-  else if (seconds < 259200) //if less than 3 days
-    return Math.floor(seconds / 86400) + 'd'
-  else if (date.getFullYear() !== new Date().getFullYear())
-    return convertClassicDate(date)
-  else
-    return `${date?.toLocaleDateString('en-CA', { day: 'numeric', month: 'short' })} at ${convertClassicTime(date)}`
+  if (seconds < 1) {
+    return 'Now'
+  }
+  else if (seconds < 60) {
+    return `${seconds}s`
+  }
+  else if (seconds < 3600) {
+    return `${Math.floor(seconds / 60)}m`
+  }
+  else if (seconds < 43200) {
+    return `${Math.floor(seconds / 3600)}h`
+  }
+  else if (seconds < 86400) { //less than 24 hours
+    return getTimeFromDate(date)
+  }
+  else if (seconds < 172800) { //less than 48 hours
+    return 'Yesterday'
+  }
+  else if(seconds < 604800) { //less than 7 days
+    return getNameDayOfTheWeekFromDate(date)
+  }
+  else if (new Date().getFullYear() === date.getFullYear()) {
+    return `${date.toLocaleString('en-CA', { month: 'short' })} ${date.getDate()}`
+  }
+  else {
+    return `${date.toLocaleString('en-CA', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`
+  }
 }
 
 export const militaryTimeToAMPM = (time) => {

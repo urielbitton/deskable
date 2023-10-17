@@ -3,9 +3,9 @@ import { createUserDocService, doGetUserByID } from "./userServices"
 import firebase from "firebase/compat/app"
 import { successToast, infoToast, errorToast } from "app/data/toastsTemplates"
 import { deleteDB } from "./CrudDB"
-import { createUserWithEmailAndPassword, onAuthStateChanged, 
+import { GithubAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, getRedirectResult, onAuthStateChanged, 
   sendEmailVerification,
-  signInWithPopup, updateProfile
+  signInWithPopup, signInWithRedirect, updateProfile
 } from "firebase/auth"
 
 export const completeRegistrationService = (user, authMode, res, userName, setLoading) => {
@@ -40,7 +40,6 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
   }
 }
 
-
 export const plainAuthService = (firstName, lastName, email, password, setLoading, setEmailError, setPassError) => {
   const userName = { firstName, lastName }
   setLoading(true)
@@ -71,57 +70,83 @@ export const plainAuthService = (firstName, lastName, email, password, setLoadin
 
 export const googleAuthService = (setMyUser, setLoading, setToasts) => {
   setLoading(true)
-  const provider = new firebase.auth.GoogleAuthProvider()
+  const provider = new GoogleAuthProvider() 
   provider.addScope('email')
+  return signInWithRedirect(auth, provider)
+    .then(() => {
+      return getRedirectResult(auth)
+        .then((res) => {
+          return fetchSignInMethodsForEmail(auth, res.user.email)
+            .then((signInMethods) => {
+              if (signInMethods.includes(provider.providerId)) {
+                doGetUserByID(res.user.uid)
+                  .then((user) => {
+                    setMyUser(user)
+                    return setLoading(false)
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                    return setLoading(false)
+                  })
+              }
+              else {
+                return completeRegistrationService(res.user, 'google', res, null, setLoading)
+                  .then(() => {
+                    doGetUserByID(res.user.uid)
+                      .then((user) => {
+                        setMyUser(user)
+                        return setLoading(false)
+                      })
+                      .catch((err) => {
+                        console.log(err)
+                        return setLoading(false)
+                      })
+                    setToasts(successToast('Your account was created successfully. Welcome to MarkAI'))
+                  })
+              }
+            })
+        })
+        .catch((error) => {
+          setLoading(false)
+          console.log(error)
+          if (error.code === 'auth/account-exists-with-different-credential')
+            setToasts(errorToast('You have already signed up with a different provider for that email. Please sign in with that provider.'))
+          if (error.code === 'auth/popup-closed-by-user')
+            setToasts(errorToast('Popup closed by user. Please try again.'))
+          if (error.code === 'auth/popup-blocked')
+            setToasts(errorToast('Popup blocked. Please allow popups for this site.'))
+          else
+            setToasts(errorToast('An errror occurred with the google login. Please try again.'))
+          return 'error'
+        })
+    })
+}
+
+export const githubAuthService = (setMyUser, setLoading, setToasts) => {
+  setLoading(true)
+  const provider = new GithubAuthProvider()
+  provider.addScope('read:user')
   return signInWithPopup(auth, provider)
-    .then((res) => {
-      // @ts-ignore
-      if (res.additionalUserInfo.isNewUser) {
-        return completeRegistrationService(res.user, 'google', res, null, setLoading)
-      }
-      else {
-        setMyUser(res.user)
-      }
+    .then((result) => {
+      const credential = GithubAuthProvider.credentialFromResult(result)
+      const token = credential.accessToken
+      const user = result.user
+      setMyUser(user)
       setLoading(false)
+      setToasts(successToast('You have successfully logged in.'))
     })
     .catch((error) => {
       setLoading(false)
       console.log(error)
       if (error.code === 'auth/account-exists-with-different-credential')
-        setToasts(infoToast('You have already signed up with a different provider for that email. Please sign in with that provider.'))
+        setToasts(errorToast('You have already signed up with a different provider for that email. Please sign in with that provider.'))
+      if (error.code === 'auth/popup-closed-by-user')
+        setToasts(errorToast('Popup closed by user. Please try again.'))
+      if (error.code === 'auth/popup-blocked')
+        setToasts(errorToast('Popup blocked. Please allow popups for this site.'))
       else
-        setToasts(errorToast('An errror occurred with the google login. Please try again.'))
-    })
-}
-
-export const facebookAuthService = (setLoading, setToasts) => {
-  setLoading(true)
-  const provider = new firebase.auth.FacebookAuthProvider()
-  return firebase.auth().signInWithPopup(provider)
-    .then((res) => {
-      const credential = res.credential
-      const user = res.user
-      // @ts-ignore
-      const accessToken = credential.accessToken
-      return fetch(`https://graph.facebook.com/me?access_token=${accessToken}&fields=name,first_name,last_name,email,picture.width(720).height(720)`)
-        .then(fbRes => fbRes.json())
-        .then(fbRes => {
-          console.log(fbRes)
-          return completeRegistrationService(user, 'facebook', fbRes, null, setLoading)
-        })
-        .catch(err => {
-          console.log(err)
-          setLoading(false)
-        })
-    })
-    .catch((err) => {
-      console.log(err)
-      if (err.code === 'auth/account-exists-with-different-credential')
-        setToasts(infoToast('You have already signed up with a different provider. Please sign in with that provider.'))
-      else if (err.code === 'auth/popup-blocked')
-        setToasts(infoToast('Popup blocked. Please allow popups for this site.'))
-      else
-        setToasts(errorToast('An error with facebook has occured. Please try again later.'))
+        setToasts(errorToast('An errror occurred with the github login. Please try again.'))
+      return 'error'
     })
 }
 

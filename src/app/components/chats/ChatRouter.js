@@ -1,33 +1,18 @@
 import React from 'react'
-import ChatHeader from "./ChatHeader"
-import ChatConsole from "./ChatConsole"
-import ChatContent from "./ChatContent"
 import { Route, Routes } from "react-router-dom"
 import NewGroupMessage from "./NewGroupMessage"
 import NewMessage from "./NewMessage"
+import SelectChat from "./SelectChat"
+import "./styles/ChatRouter.css"
+import ConversationContainer from "./ConversationContainer"
 
 export default function ChatRouter() {
   return (
-    <div
-      className="chat-router"
-      style={ {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: 'space-between',
-        height: "100%",
-        width: "100%",
-        overflow: "hidden"
-      } }
-    >
+    <div className="chat-router">
       <Routes>
-        <Route path=":chatID/*" element={
-          <>
-            <ChatHeader />
-            <ChatContent />
-            <ChatConsole />
-          </>
-        } />
-        <Route path="new-message" element={<NewMessage />} />
+        <Route index element={<SelectChat />} />
+        <Route path=":conversationID/*" element={<ConversationContainer />} />
+        <Route path="new-conversation" element={<NewMessage />} />
         <Route path="new-group" element={<NewGroupMessage />} />
         <Route path="not-found" element={<div>Conversation not found...</div>} />
       </Routes>

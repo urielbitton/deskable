@@ -4,14 +4,14 @@ import { StoreContext } from 'app/store/store'
 import { AppInput } from 'app/components/ui/AppInputs'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import googleIcon from 'app/assets/images/google-icon.png'
-import facebookIcon from 'app/assets/images/facebook-icon.png'
+import githubIcon from 'app/assets/images/github-icon.png'
 import { auth } from 'app/firebase/fire'
 import { clearAuthState } from "app/services/CrudDB"
 import loginCover from 'app/assets/images/login-cover.png'
 import logo from 'app/assets/images/logo.png'
 import AppButton from "app/components/ui/AppButton"
 import { createAccountOnLoginService, 
-  facebookAuthService, googleAuthService } from "app/services/authServices"
+  githubAuthService, googleAuthService } from "app/services/authServices"
 import { infoToast } from "app/data/toastsTemplates"
 import { signInWithEmailAndPassword } from "firebase/auth"
 
@@ -74,8 +74,8 @@ export default function Login() {
       })
   }
 
-  const facebookAuth = () => {
-    facebookAuthService(setLoading, setToasts)
+  const githubAuth = () => {
+    githubAuthService(setMyUser, setLoading, setToasts)
       .then(() => {
         navigate('/')
       })
@@ -101,7 +101,10 @@ export default function Login() {
             </div>
             <h4>Sign In</h4>
           </div>
-          <div className="social-logins">
+          <div 
+            className="social-logins"
+            style={{display: 'none'}}
+          >
             <div
               className="google-btn btn"
               onClick={() => googleAuth()}
@@ -110,11 +113,11 @@ export default function Login() {
               <span>Sign In with Google</span>
             </div>
             <div
-              className="facebook-btn btn"
-              onClick={() => facebookAuth()}
+              className="github-btn btn"
+              onClick={() => githubAuth()}
             >
-              <img src={facebookIcon} className="img-icon" alt="facebook-icon" />
-              <span>Sign In with Facebook</span>
+              <img src={githubIcon} className="img-icon" alt="github-icon" />
+              <span>Sign In with Github</span>
             </div>
           </div>
           <small className="sep-alt"><hr /><span>Or sign in with email</span><hr /></small>

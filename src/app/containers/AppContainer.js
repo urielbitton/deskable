@@ -18,7 +18,6 @@ export default function AppContainer() {
   const isFullscreen = useIsFullScreen()
   const location = useLocation()
   const isMeetingPage = location.pathname.includes('meeting-room')
-  console.log(isMeetingPage)
 
   return (
     <div className={`app-container ${ darkMode ? "dark-app" : "" } ${hideRightBar ? 'hide-rightbar' : ''} `+ 

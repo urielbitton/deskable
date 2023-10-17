@@ -1,0 +1,113 @@
+.message-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  padding: 7px 15px;
+  transition: all 0.2s;
+}
+.message-container.combined {
+  padding: 5px 10px;
+}
+.message-container.combined .message-content {
+  align-items: center;
+}
+.message-container.parent .message-content {
+  align-items: flex-start;
+}
+.message-container:hover {
+  background: #f1f1f1;
+}
+.message-container .message-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.message-container .message-content .left-side {
+  width: 32px;
+}
+.message-container .message-content .left-side small {
+  opacity: 0;
+  visibility: hidden;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+}
+.message-container:hover .message-content .left-side small {
+  opacity: 1;
+  visibility: visible;
+}
+.message-container .message-content .avatar-container {
+  border-radius: 5px;
+  top: 2px;
+}
+.message-container .message-content .avatar-container img {
+  border-radius: 5px;
+}
+.message-container .message-content .text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.message-container .message-content .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.message-container .message-content .title h6 {
+  font-size: 14px;
+  font-weight: 700;
+}
+.message-container .message-content .title small {
+  color: #555;
+  font-weight: 500;
+  font-size: 12px;
+}
+.message-container .message-content .text p {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.message-container .options-floater {
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  z-index: 10;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  padding: 3px;
+  opacity: 0;
+  visibility: hidden;
+}
+.message-container.open-replies .options-floater {
+  right: 410px;
+}
+.message-container:hover .options-floater {
+  opacity: 1;
+  visibility: visible;
+}
+.message-container:hover .options-floater .action-icon {
+  width: 27px;
+  height: 27px;
+  border-radius: 5px;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.message-container:hover .options-floater .action-icon:hover {
+  background: #f1f1f1;
+}
+.message-container:hover .options-floater .action-icon i {
+  font-size: 15px;
+  color: var(--grayText);
+}

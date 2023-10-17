@@ -3,5 +3,9 @@
   height: calc(100% - 160px);
   display: flex;
   flex-direction: column;
-  padding: 5px;
+}
+
+.chat-content .messages-flex {
+  display: flex;
+  flex-direction: column-reverse;
 }

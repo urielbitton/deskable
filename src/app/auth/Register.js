@@ -5,8 +5,10 @@ import { AppInput } from 'app/components/ui/AppInputs'
 import { Link, useNavigate } from 'react-router-dom'
 import { clearAuthState } from 'app/services/CrudDB'
 import googleIcon from 'app/assets/images/google-icon.png'
-import facebookIcon from 'app/assets/images/facebook-icon.png'
-import { facebookAuthService, googleAuthService, plainAuthService } from "app/services/authServices"
+import githubIcon from 'app/assets/images/github-icon.png'
+import { githubAuthService, 
+  googleAuthService, 
+  plainAuthService } from "app/services/authServices"
 import { validateEmail } from "app/utils/generalUtils"
 import loginCover from 'app/assets/images/login-cover.png'
 import logo from 'app/assets/images/logo.png'
@@ -34,17 +36,29 @@ export default function Register() {
   }
 
   const googleAuth = () => {
+    setLoading(true)
     googleAuthService(setMyUser, setLoading, setToasts)
       .then(() => {
         navigate('/')
+        setLoading(false)
+      })
+      .catch(err => {
+        setLoading(false)
+        console.log(err)
       })
   }
 
-  const facebookAuth = () => {
-    facebookAuthService(setLoading, setToasts)
-      .then(() => {
-        navigate('/')
-      })
+  const githubAuth = () => {
+    setLoading(true)
+    githubAuthService(setMyUser, setLoading, setToasts)
+    .then(() => {
+      navigate('/')
+      setLoading(false)
+    })
+    .catch(err => {
+      setLoading(false)
+      console.log(err)
+    })
   }
 
   const handleSubmit = (e) => {
@@ -78,7 +92,10 @@ export default function Register() {
             </div>
             <h4>Sign Up</h4>
           </div>
-          <div className="social-logins">
+          <div 
+            className="social-logins"
+            style={{display: 'none'}}
+          >
             <div
               className="google-btn btn"
               onClick={() => googleAuth()}
@@ -87,11 +104,11 @@ export default function Register() {
               <span>Sign Up with Google</span>
             </div>
             <div
-              className="facebook-btn btn"
-              onClick={() => facebookAuth()}
+              className="github-btn btn"
+              onClick={() => githubAuth()}
             >
-              <img src={facebookIcon} className="img-icon" alt="facebook-icon" />
-              <span>Sign Up with Facebook</span>
+              <img src={githubIcon} className="img-icon" alt="github-icon" />
+              <span>Sign Up with Github</span>
             </div>
           </div>
           <small className="sep-alt"><hr /><span>Or register with email</span><hr /></small>

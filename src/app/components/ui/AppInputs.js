@@ -74,7 +74,7 @@ export function AppTextarea(props) {
 export function AppSwitch(props) {
 
   const { iconclass, label, onChange, checked, className, size = '',
-  disabled } = props
+  disabled, value } = props
 
   return (
     <div className={`appSwitch commonInput ${className ?? ""} ${size}`}>
@@ -88,6 +88,7 @@ export function AppSwitch(props) {
           onChange={(e) => onChange(e)}
           checked={checked}
           disabled={disabled}
+          value={value}
         />
         <i></i>
       </label>

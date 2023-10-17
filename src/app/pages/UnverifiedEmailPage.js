@@ -11,11 +11,13 @@ export default function UnverifiedEmailPage() {
   const { setToasts } = useContext(StoreContext)
   const user = auth.currentUser
   const [loading, setLoading] = useState(false)
+  const firstName = user?.displayName?.split(' ')[0] || ''
+  const lastName = user?.displayName?.split(' ')[1] || ''
 
   const sendVerificationEmail = () => {
     setLoading(true)
     const ActionCodeSettings = {
-      url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${user.displayName.split(' ')[0]}&lastName=${user.displayName.split(' ')[1]}`,
+      url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${firstName}&lastName=${lastName}`,
     }
     sendEmailVerification(user, ActionCodeSettings)
     .then(() => {

@@ -13,14 +13,14 @@ export default function ChatSidebar() {
 
   const groupChatsList = groupChats?.map(chat => {
     return <ChatCard
-      key={ chat.chatID }
+      key={ chat.conversationID }
       chat={ chat }
     />
   })
 
   const singleChatsList = singleChats?.map(chat => {
     return <ChatCard
-      key={ chat.chatID }
+      key={ chat.conversationID }
       chat={ chat }
     />
   })

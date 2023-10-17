@@ -1,5 +1,8 @@
 .chat-console {
-  height: 100px;
+  max-height: 200px;
+  min-height: 60px;
+  padding: 10px;
+  padding-top: 15px;
   width: 100%;
   border-top: 1px solid #eee;
   display: flex;
@@ -7,7 +10,64 @@
 }
 .chat-console .top {
   width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.chat-console .input-container {
+  width: 100%;
+  display: flex;
+  gap: 3px;
+}
+.chat-console .input-container .textarea-container {
+  width: calc(100% - 40px);
+}
+.chat-console .input-container .send-btn {
+  border-radius: 5px;
+  user-select: none;
+}
+.chat-console .input-container .send-btn:active {
+  transform: scale(0.96);
+}
+.chat-console .input-container .send-btn:hover {
+  background: #f1f1f1;
+}
+.chat-console .input-container .send-btn.disabled:hover {
+  background: transparent;
+  cursor: default;
+}
+.chat-console .text-area-autosize {
+  resize: none;
+  width: 100%;
+  
+}
+.chat-console .text-area-autosize::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-console .input-container .actions-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px;
+}
+.chat-console .input-container .actions-bar .action-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chat-console .input-container .actions-bar .action-icon i {
+  color: var(--grayText);
+  font-size: 16px;
+}
+.chat-console .input-container .actions-bar .action-icon:hover {
+  background: #f1f1f1;
 }

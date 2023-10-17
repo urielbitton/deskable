@@ -1,0 +1,42 @@
+.chat-router {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.select-chat {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.select-chat h3 {
+  font-size: 21px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+.select-chat p {
+  font-size: 15px;
+  color: #555;
+  text-align: center;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+.select-chat .appButton {
+  background: var(--extraLightPrimary);
+  color: var(--primary);
+}
+.select-chat .appButton:hover {
+  background: var(--lightPrimary);
+}
+.select-chat img {
+  width: 100%;
+  max-width: 200px;
+  object-fit: contain;
+  margin-bottom: 40px;
+}

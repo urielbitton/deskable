@@ -10,9 +10,9 @@ import useUser from "app/hooks/userHooks"
 export default function ChatHeader() {
 
   const { myUserID, myOrgID, groupChatDefaultImg } = useContext(StoreContext)
-  const chatID = useParams().chatID
-  const singleChat = useChat(myUserID, chatID)
-  const groupChat = useGroupChat(myOrgID, chatID)
+  const conversationID = useParams().conversationID
+  const singleChat = useChat(myUserID, conversationID)
+  const groupChat = useGroupChat(myOrgID, conversationID)
   const chat = { ...singleChat, ...groupChat }
   const isGroupChat = chat?.type === "group"
   const otherParticipantID = myUserID === chat?.participantID ? chat?.creatorID : chat?.participantID

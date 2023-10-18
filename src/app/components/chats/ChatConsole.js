@@ -79,7 +79,7 @@ export default function ChatConsole(props) {
               cacheMeasurements={true}
               value={value}
               onChange={onChange}
-              onKeyUp={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
                   onSendBtnClick(e)

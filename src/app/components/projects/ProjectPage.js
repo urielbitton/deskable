@@ -144,6 +144,9 @@ export default function ProjectPage({ setWindowPadding }) {
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
           <div className="read-content">
+            <div className="title-header">
+              <h2>{page?.title}</h2>
+            </div>
             <Editor
               apiKey={tinymceAPIKey}
               onInit={(evt, editor) => editorRef.current = editor}
@@ -151,8 +154,8 @@ export default function ProjectPage({ setWindowPadding }) {
                 menubar: false,
                 statusbar: false,
                 toolbar: false,
-                height: 'calc(100vh - 80px)',
-                plugins: ['preview', 'export'],
+                height: 'calc(100vh - 100px)',
+                plugins: ['preview'],
               }}
               value={page?.content}
               disabled

@@ -22,7 +22,7 @@ export default function NotificationCard(props) {
   }
 
   return (
-    <div 
+    <div
       className="notification-card"
       onClick={() => setExpandID(expandID === notificationID ? null : notificationID)}
     >
@@ -44,12 +44,12 @@ export default function NotificationCard(props) {
         </div>
       </div>
       <div className="right">
-        <Link 
+        <Link
           to={url}
           onClick={() => toggleRead()}
         >
           <i className="fas fa-arrow-right" />
-        </Link>  
+        </Link>
         <i
           className={`fas fa-circle ${!isRead ? 'unread' : ''}`}
           onClick={e => toggleRead(e)}

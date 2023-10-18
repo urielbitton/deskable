@@ -84,7 +84,10 @@ export default function RightBar() {
           iconSize="16px"
           dimensions="30px"
           tooltip="Hide Calendar Bar"
-          onClick={() => setHideRightBar(true)}
+          onClick={() => {
+            setHideRightBar(true)
+            localStorage.setItem('hideRightBar', "true")
+          }}
         />
       }
       <div className="header">

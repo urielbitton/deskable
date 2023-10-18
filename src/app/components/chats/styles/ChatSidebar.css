@@ -18,18 +18,22 @@
   font-size: 20px;
   font-weight: 600;
 }
-.chat-sidebar > header .icon-container {
-  border: 1px solid var(--grayText);
+.chat-sidebar > header .action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
 }
-.chat-sidebar > header .icon-container i {
-  color: var(--grayText);
+.chat-sidebar > header .action-icon:hover {
+  background: #f1f1f1;
 }
-.chat-sidebar > header .icon-container:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.chat-sidebar > header .icon-container:hover i {
-  color: #fff;
+.chat-sidebar > header .action-icon i {
+  color: var(--darkGrayText);
+  font-size: 20px;
 }
 
 .chats-list {

@@ -5,6 +5,7 @@ import Avatar from "../ui/Avatar"
 import { getTimeAgo } from "app/utils/dateUtils"
 import './styles/ChatCard.css'
 import { Link } from "react-router-dom"
+import { truncateText } from "app/utils/generalUtils"
 
 export default function ChatCard(props) {
 
@@ -17,6 +18,7 @@ export default function ChatCard(props) {
   const otherParticipant = useUser(!isGroupChat ? otherParticipantID : null)
   const isSentByMe = lastMessage?.senderID === myUserID
   const seenByMe = isReadBy?.includes(myUserID)
+  const otherParticipantName = `${otherParticipant?.firstName} ${otherParticipant?.lastName}`
 
   return (
     <Link 
@@ -30,12 +32,12 @@ export default function ChatCard(props) {
           dimensions={30}
         />
         <div className="text-flex">
-          <h4>{!isGroupChat ? `${otherParticipant?.firstName} ${otherParticipant?.lastName}` : chatName}</h4>
+          <h4>{!isGroupChat ? truncateText(otherParticipantName, 38) : truncateText(chatName, 38)}</h4>
           <p>{isSentByMe ? 'You: ' : null}{lastMessage?.text}</p>
         </div>
       </div>
       <div className="right-side">
-        <small>{getTimeAgo(dateUpdated?.toDate())}</small>
+        <small>{getTimeAgo(lastMessage?.dateSent?.toDate())}</small>
         { !seenByMe && <div className="unread-badge" /> }
       </div>
     </Link>

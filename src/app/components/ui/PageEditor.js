@@ -35,14 +35,14 @@ export default function PageEditor(props) {
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
           'anchor', 'searchreplace', 'fullscreen', 'emoticons',
           'insertdatetime', 'media', 'table', 'help', 'wordcount', 'inlinecode',
-          'codesample', 'template', 'fontSelect', 'fontsizeselect', 'mentions',
-          'print', 'insertdatetime', 'pagebreak', 'code', 'export'
+          'codesample', 'template', 'fontSelect', 'fontsizeselect',
+          'print', 'insertdatetime', 'pagebreak', 'code',
         ],
         toolbar: 'customBtn undo redo | blocks | fontsizeselect ' +
           'bold italic forecolor | alignleft aligncenter ' +
           'alignright alignjustify | bullist numlist outdent indent | ' +
           'searchreplace codesample code insertdatetime image emoticons link table ' +
-          'print help export',
+          'print help',
         content_style: `body { font-family:Helvetica,Arial,sans-serif; font-size:15px } ` +
           `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before { color: #9296b3; } ` +
           `td { padding: 0 5px }`,

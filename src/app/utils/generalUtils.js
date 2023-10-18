@@ -238,3 +238,27 @@ export const areArraysEqual = (arr1, arr2) => {
 export const generateRoomID = () => {
   return `${Math.random().toString(36).substring(2, 6)}-${Math.random().toString(36).substring(2, 6)}-${Math.random().toString(36).substring(2, 6)}`
 }
+
+export const calculateElementPosition = (ref) => {
+  const windowHeight = window.innerHeight
+  const windowWidth = window.innerWidth
+  const refRect = ref.current?.getBoundingClientRect()
+  const refHeight = refRect?.height
+  const refWidth = refRect?.width
+  //if element is in the top half and right of the screen, return position = 'bottom-left'
+  if (refRect?.top < windowHeight / 2 && refRect?.left > windowWidth / 2) {
+    return 'bottom-left'
+  }
+  //if element is in the top half and left of the screen, return position = 'bottom-right'
+  if (refRect?.top < windowHeight / 2 && refRect?.left < windowWidth / 2) {
+    return 'bottom-right'
+  }
+  //if element is in the bottom half and right of the screen, return position = 'top-left'
+  if (refRect?.top > windowHeight / 2 && refRect?.left > windowWidth / 2) {
+    return 'top-left'
+  }
+  //if element is in the bottom half and left of the screen, return position = 'top-right'
+  if (refRect?.top > windowHeight / 2 && refRect?.left < windowWidth / 2) {
+    return 'top-right'
+  }
+}

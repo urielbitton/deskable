@@ -8,7 +8,7 @@
   transition: all 0.2s;
 }
 .message-container.combined {
-  padding: 5px 10px;
+  padding: 5px 15px;
 }
 .message-container.combined .message-content {
   align-items: center;
@@ -26,6 +26,7 @@
 }
 .message-container .message-content .left-side {
   width: 32px;
+  overflow: hidden;
 }
 .message-container .message-content .left-side small {
   opacity: 0;
@@ -59,6 +60,9 @@
   font-size: 14px;
   font-weight: 700;
 }
+.message-container .message-content .title h6 a:hover {
+  text-decoration: underline;
+}
 .message-container .message-content .title small {
   color: #555;
   font-weight: 500;
@@ -70,31 +74,85 @@
   color: #333;
 }
 
+.message-container .reply-bar {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: #fff;
+  margin-top: 2px;
+  cursor: pointer;
+}
+.message-container .reply-bar small span {
+  color: var(--darkGrayText);
+  font-weight: 600;
+}
+.message-container .reply-bar small b {
+  margin-left: 5px;
+  font-weight: 700;
+}
+.message-container .reply-bar small i {
+  margin-right: 5px;
+}
+.message-container:hover .reply-bar {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
 .message-container .options-floater {
   position: absolute;
   top: -20px;
   right: 10px;
-  z-index: 10;
+  z-index: 101;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
+  display: none;
+  flex-direction: column;
   border-radius: 5px;
   border: 1px solid #eee;
   padding: 3px;
-  opacity: 0;
-  visibility: hidden;
 }
 .message-container.open-replies .options-floater {
   right: 410px;
 }
-.message-container:hover .options-floater {
-  opacity: 1;
-  visibility: visible;
+.message-container:hover .options-floater,
+.message-container .options-floater.open {
+  display: flex;
 }
-.message-container:hover .options-floater .action-icon {
+.message-container.open-options {
+  background: #f1f1f1;
+}
+.message-container.open-options .options-floater {
+  display: flex;
+}
+.message-container .options-floater .icons-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.message-container .options-floater .options-flex.open {
+  display: flex;
+}
+.message-container .options-floater .options-flex {
+  flex-direction: column;
+  padding: 5px 0;
+  border-radius: 5px;
+  display: none;
+  overflow: hidden;
+}
+.message-container .options-floater .options-flex.open h6 {
+  padding: 10px 40px 10px 10px;
+}
+.message-container .options-floater .options-flex h6 {
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 5px;
+}
+.message-container .options-floater .options-flex h6:hover {
+  background: #f1f1f1;
+}
+.message-container .options-floater .action-icon {
   width: 27px;
   height: 27px;
   border-radius: 5px;
@@ -104,10 +162,31 @@
   align-items: center;
   justify-content: center;
 }
+.message-container .options-floater .action-icon.active,
 .message-container:hover .options-floater .action-icon:hover {
   background: #f1f1f1;
 }
-.message-container:hover .options-floater .action-icon i {
+.message-container .options-floater .action-icon i {
   font-size: 15px;
-  color: var(--grayText);
+  color: var(--darkGrayText);
+}
+
+.message-container .options-floater .emoji-picker-float {
+  position: absolute;
+  top: 80%;
+  right: -15px;
+  display: none;
+}
+.message-container .options-floater.open .emoji-picker-float {
+  display: flex;
+}
+.message-container .options-floater .emoji-picker-float em-emoji-picker {
+  right: 0;
+  transform: scale(0.92);
+}
+
+.message-container .reactions-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px
 }

@@ -1,11 +1,10 @@
 .chat-card {
   width: 100%;
-  height: 50px;
+  max-height: 70px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 10px;
+  gap: 7px;
+  padding: 5px 10px;
   border-bottom: 1px solid #eee;
   background: #fff;
   transition: all 0.2s;
@@ -33,11 +32,14 @@
 .chat-card .right-side {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 5px;
 }
 .chat-card .right-side small {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--grayText);
+  top: 2px;
+  text-align: right;
 }
 .chat-card .right-side .unread-badge {
   width: 7px;

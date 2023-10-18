@@ -21,6 +21,7 @@ import MyProfilePage from "app/pages/MyProfilePage"
 import MyOrgPage from "app/pages/MyOrgPage"
 import UserManagement from "app/pages/UserManagement"
 import CreateOrgPage from "app/pages/CreateOrgPage"
+import NotificationsPage from "app/pages/NotificationsPage"
 
 export default function RoutesContainer() {
 
@@ -50,6 +51,7 @@ export default function RoutesContainer() {
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="my-profile" element={<MyProfilePage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="login" element={<HomePage />} />
         <Route path="register" element={<HomePage />} />
         {

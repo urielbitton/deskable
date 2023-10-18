@@ -6,12 +6,12 @@ import PageTitleBar from "app/components/ui/PageTitleBar"
 import { showXResultsOptions } from "app/data/general"
 import { useAllNotifications, useUnreadNotifications } from "app/hooks/notificationHooks"
 import { StoreContext } from "app/store/store"
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './styles/NotificationsPage.css'
 
 export default function NotificationsPage() {
 
-  const { myUser, myUserID, setNavItem1, setNavItem2 } = useContext(StoreContext)
+  const { myUserID } = useContext(StoreContext)
   const limitsNum = showXResultsOptions[1].value
   const [notifsLimit, setNotifsLimit] = useState(limitsNum)
   const unreadNotifications = useUnreadNotifications(myUserID)
@@ -23,19 +23,6 @@ export default function NotificationsPage() {
       key={index}
     />
   })
-
-  useEffect(() => {
-    setNavItem1({ label: "Unread", icon: 'fas fa-bell-exclamation', value: unreadNotifications?.length })
-    setNavItem2({ 
-      label: "Total", 
-      icon: 'fas fa-bell', 
-      value: `${allNotifications?.length}${notifsLimit <= allNotifications?.length ? '+' : ''}` 
-    })
-    return () => {
-      setNavItem1(null)
-      setNavItem2(null)
-    }
-  }, [myUser, unreadNotifications, allNotifications])
 
   return (
     <div className="notifications-page">

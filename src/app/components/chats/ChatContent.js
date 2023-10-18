@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import './styles/ChatContent.css'
 import {StoreContext} from "app/store/store"
 import {useParams} from "react-router-dom"
@@ -12,6 +12,7 @@ export default function ChatContent() {
   const conversationID = useParams().conversationID
   const defaultMsgsLimit = 25
   const [messagesLimit, setMessagesLimit] = useState(defaultMsgsLimit)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null)
   const singleChat = useChat(myUserID, conversationID)
   const groupChat = useGroupChat(myOrgID, conversationID)
   const chat = {...singleChat, ...groupChat}
@@ -25,6 +26,8 @@ export default function ChatContent() {
     return <MessageItem
       key={message.messageID}
       message={message}
+      showEmojiPicker={showEmojiPicker}
+      setShowEmojiPicker={setShowEmojiPicker}
     />
   })
 
@@ -35,6 +38,11 @@ export default function ChatContent() {
   const loadMoreMessages = () => {
 
   }
+
+  useEffect(() => {
+    window.onclick = () => setShowEmojiPicker(null)
+    return () => window.onclick = null
+  },[])
 
   return chat ? (
     <div className="chat-content">

@@ -12,7 +12,8 @@ export default function RepliesContainer(props) {
 
   const { myOrgID } = useContext(StoreContext)
   const { replies, replyString, onReplyChange, value,
-    handleSendReply, replyLoading, open, onClose } = props
+    handleSendReply, replyLoading, open, onClose,
+    showReplyEmojiPicker, setShowReplyEmojiPicker } = props
   const [searchParams, setSearchParams] = useSearchParams()
   const conversationID = useParams().conversationID
   const messageID = searchParams.get('messageID')
@@ -24,6 +25,8 @@ export default function RepliesContainer(props) {
     return <ReplyItem
       key={reply.replyID}
       reply={reply}
+      showReplyEmojiPicker={showReplyEmojiPicker}
+      setShowReplyEmojiPicker={setShowReplyEmojiPicker}
     />
   })
 

@@ -4,11 +4,13 @@ import IconContainer from "../ui/IconContainer"
 import TextareaAutosize from 'react-textarea-autosize'
 import AutoresizeWYSIWG from "../ui/AutoresizeWYSIWG"
 import { chatConsoleIcons } from "app/data/chatsData"
+import { hasWhiteSpace } from "app/utils/generalUtils"
 
 export default function ChatConsole(props) {
 
   const { inputPlaceholder, value, onChange,
     onSendBtnClick, sendLoading } = props
+  const hasNoText = hasWhiteSpace(value)
 
   const openEmojis = () => {
 
@@ -87,9 +89,9 @@ export default function ChatConsole(props) {
           <IconContainer
             icon="fas fa-paper-plane"
             iconSize={ 18 }
-            iconColor={ sendLoading ? "#ccc" : "var(--primary)" }
+            iconColor={ (sendLoading || hasNoText) ? "#ccc" : "var(--primary)" }
             onClick={ !sendLoading && onSendBtnClick }
-            className={ sendLoading ? "disabled send-btn" : "send-btn" }
+            className={ (sendLoading || hasNoText) ? "disabled send-btn" : "send-btn" }
           />
         </div>
       </div>
@@ -100,10 +102,10 @@ export default function ChatConsole(props) {
   )
 }
 
-export const ActionIcon = ({ icon, onClick, label='' }) => {
+export const ActionIcon = ({ icon, onClick, label='', className='' }) => {
   return (
     <div
-      className="action-icon"
+      className={`action-icon ${className}`}
       onClick={ onClick }
       title={label}
     >

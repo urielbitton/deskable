@@ -3,6 +3,8 @@ import {
   getListOfSingleChatsByUserID,
   getMessageByIDAndChatID,
   getMessagesByChatID,
+  getReactionsByMessageAndChatID,
+  getReactionsByReplyAndMessageID,
   getRepliesByChatAndMessageID
 } from "app/services/chatServices"
 import { onSnapshot } from "firebase/firestore"
@@ -109,4 +111,32 @@ export const useMessageReplies = (orgID, conversationID, messageID, limit) => {
   }, [orgID, conversationID, messageID, limit])
 
   return replies
+}
+
+export const useMessageReactions = (orgID, conversationID, messageID) => {
+
+  const [reactions, setReactions] = useState([])
+
+  useEffect(() => {
+    if (!orgID || !conversationID || !messageID) return setReactions([])
+    const q = getReactionsByMessageAndChatID(orgID, conversationID, messageID)
+    onSnapshot(q, (snapshot) => {
+      setReactions(snapshot.docs.map(doc => doc.data()))
+    })
+  }, [orgID, conversationID, messageID])
+  return reactions
+}
+
+export const useReplyReactions = (orgID, conversationID, messageID, replyID) => {
+
+  const [reactions, setReactions] = useState([])
+
+  useEffect(() => {
+    if (!orgID || !conversationID || !messageID || !replyID) return setReactions([])
+    const q = getReactionsByReplyAndMessageID(orgID, conversationID, messageID, replyID)
+    onSnapshot(q, (snapshot) => {
+      setReactions(snapshot.docs.map(doc => doc.data()))
+    })
+  }, [orgID, conversationID, messageID, replyID])
+  return reactions
 }

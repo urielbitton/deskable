@@ -7,12 +7,7 @@ import './styles/ProjectsPage.css'
 
 export default function ProjectsPage() {
 
-  const { setHideRightBar, showProjectsSidebar } = useContext(StoreContext)
-
-  useEffect(() => {
-    setHideRightBar(true)
-    return () => setHideRightBar(false)
-  },[])
+  const { showProjectsSidebar } = useContext(StoreContext)
 
   useEffect(() => {
     localStorage.setItem('showProjectsSidebar', !showProjectsSidebar ? "false" : "true")  

@@ -1,9 +1,9 @@
-import {db} from "app/firebase/fire"
+import { db } from "app/firebase/fire"
 import {
   collection, doc, limit, onSnapshot,
   orderBy, query, where
 } from "firebase/firestore"
-import {getRandomDocID, setDB, updateDB} from "./CrudDB"
+import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
 
 const oneMonth = 1000 * 60 * 60 * 24 * 30
 
@@ -68,8 +68,8 @@ export const getRepliesByChatAndMessageID = (orgID, conversationID, messageID, l
 }
 
 export const handleSendMessageService = (messageObj) => {
-  const {message, user, conversationID, orgID,
-    isCombined, hasTimestamp} = messageObj
+  const { message, user, conversationID, orgID,
+    isCombined, hasTimestamp } = messageObj
   const path = `organizations/${orgID}/conversations/${conversationID}/messages`
   const docID = getRandomDocID(path)
   return setDB(path, docID, {
@@ -105,8 +105,8 @@ export const handleSendMessageService = (messageObj) => {
 }
 
 export const handleSendReplyService = (replyObj) => {
-  const {message, user, conversationID, orgID, isCombined,
-    hasTimestamp, messageID} = replyObj
+  const { message, user, conversationID, orgID, isCombined,
+    hasTimestamp, messageID } = replyObj
   const path = `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const docID = getRandomDocID(path)
   return setDB(path, docID, {
@@ -120,15 +120,15 @@ export const handleSendReplyService = (replyObj) => {
     isCombined,
     hasTimestamp,
   })
-  .then(() => {
-    return updateDB(`organizations/${orgID}/conversations/${conversationID}/messages/`, messageID, {
-      lastReply: {
-        dateSent: message.dateSent,
-        senderID: message.senderID,
-        text: message.text,
-      }
+    .then(() => {
+      return updateDB(`organizations/${orgID}/conversations/${conversationID}/messages/`, messageID, {
+        lastReply: {
+          dateSent: message.dateSent,
+          senderID: message.senderID,
+          text: message.text,
+        }
+      })
     })
-  })
     .then(() => {
       return {
         success: true,
@@ -138,4 +138,135 @@ export const handleSendReplyService = (replyObj) => {
     .catch((err) => {
       console.log(err)
     })
+}
+
+export const markAsReadService = (readObj) => {
+  const { userID, conversationID, orgID } = readObj
+  return updateDB(`organizations/${orgID}/conversations/`, conversationID, {
+    isReadBy: firebaseArrayAdd(userID)
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+export const addEmojiReactionService = (emojiObj, path) => {
+  const { emoji, userID, userName, userImg } = emojiObj
+  const docID = emoji.shortcodes
+  return setDB(path, docID, {
+    reactionID: docID,
+    emoji,
+    users: [{
+      userID,
+      userName,
+      userImg,
+    }],
+    dateAdded: new Date(),
+    reactionCount: 1
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+//emoji reaction clicks service function
+export const handleReactionClickService = (reactionMeta, userMeta, messagePath) => {
+  const isAReactor = reactionMeta?.reactionUsers?.findIndex(user => user.userID === userMeta?.userID) > -1
+  if (!isAReactor) {
+    return updateEmojiReactionService(
+      {
+        emoji: reactionMeta?.emoji,
+        reactionUsers: reactionMeta?.reactionUsers
+      },
+      {
+        userID: userMeta?.userID,
+        userName: userMeta?.userName,
+        userImg: userMeta?.userImg,
+      },
+      messagePath
+    )
+  }
+  return removeEmojiReactionService(
+    {
+      emoji: reactionMeta?.emoji,
+      reactionUsers: reactionMeta?.reactionUsers
+    },
+    {
+      userID: userMeta?.userID,
+    },
+    messagePath
+  )
+}
+
+export const updateEmojiReactionService = (reactionMeta, userMeta, path) => {
+  const docID = reactionMeta?.emoji.shortcodes
+  return updateDB(path, docID, {
+    users: firebaseArrayAdd({
+      ...userMeta
+    }),
+    reactionCount: firebaseIncrement(1)
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+export const removeEmojiReactionService = (reactionMeta, userMeta, path) => {
+  const docID = reactionMeta.emoji.shortcodes
+  const isOnlyReactor = reactionMeta?.reactionUsers.length === 1
+    && reactionMeta?.reactionUsers[0]?.userID === userMeta?.userID
+  if (isOnlyReactor) {
+    return deleteDB(path, docID)
+      .then(() => {
+        return {
+          success: true,
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  return updateDB(path, docID, {
+    users: reactionMeta.reactionUsers?.filter(user => user.userID !== userMeta.userID),
+    reactionCount: firebaseIncrement(-1)
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+export const getReactionsByMessageAndChatID = (orgID, conversationID, messageID) => {
+  const reactionsRef = collection(db, `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/reactions`)
+  const q = query(
+    reactionsRef,
+  )
+  return q
+}
+
+export const getReactionsByReplyAndMessageID = (orgID, conversationID, messageID, replyID) => {
+  const reactionsRef = collection(db, `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/replies/${replyID}/reactions`)
+  const q = query(
+    reactionsRef,
+  )
+  return q
 }

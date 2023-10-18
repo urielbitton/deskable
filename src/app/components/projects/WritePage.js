@@ -39,7 +39,8 @@ export default function WritePage({ setWindowPadding }) {
   const contentTitle = editMode ? page?.title : localStorage.getItem(`projectPageTitleDraft`) || ''
   const pageCreator = useUser(page?.creatorID)
   const preventPageClose = page?.content !== localStorage.getItem(`projectPageTitleDraft`) || editTitle?.length > 0
-  const userIsMemberAndEditor = project?.members?.includes(myUserID) && page?.editorsIDs?.includes(myUserID)
+  const userIsMember = project?.members?.includes(myUserID)
+  const userIsEditor = page?.editorsIDs?.includes(myUserID)
 
   const pageTemplatesList = projectPageTemplates
     ?.filter(template => {
@@ -179,7 +180,7 @@ export default function WritePage({ setWindowPadding }) {
     setEditTitle(contentTitle)
   }, [contentTitle])
 
-  return (editMode ? userIsMemberAndEditor : true) ? (
+  return (editMode ? userIsEditor : true) ? (
     <div className="project-page edit-project-page">
       <div className={`page-content ${hideSidebar ? 'hide-sidebar' : ''}`}>
         <div className="editor-container">
@@ -335,6 +336,9 @@ export default function WritePage({ setWindowPadding }) {
         warningMessage="Are you sure you want to leave this page? Your changes will be saved as a draft."
       />
     </div>
-  ) :
-  <AskProjectAccess project={project} />
+  ) : !userIsEditor ?
+    <div>Please ask edit access to this page to your organization administrator.</div> :
+    !userIsMember ?
+      <AskProjectAccess project={project} /> :
+      null
 }

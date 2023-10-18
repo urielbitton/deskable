@@ -6,7 +6,7 @@ import { hasWhiteSpace } from "app/utils/generalUtils"
 import "./styles/ConversationContainer.css"
 import { StoreContext } from "app/store/store"
 import { useParams, useSearchParams } from "react-router-dom"
-import { handleSendMessageService, handleSendReplyService } from "app/services/chatServices"
+import { handleSendMessageService, handleSendReplyService, markAsReadService } from "app/services/chatServices"
 import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo } from "app/utils/dateUtils"
 import { useChat, useChatMessage, useMessageReplies } from "app/hooks/chatHooks"
 import RepliesContainer from "./RepliesContainer"
@@ -21,6 +21,7 @@ export default function ConversationContainer() {
   const [replyString, setReplyString] = useState("")
   const [replyLoading, setReplyLoading] = useState(false)
   const [replyContainerOpen, setReplyContainerOpen] = useState(false)
+  const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const replyMsgID = searchParams.get("messageID")
   const repliesLimit = 20
@@ -32,9 +33,10 @@ export default function ConversationContainer() {
   const combineReply = isDateLessThanXTimeAgo(openMessage?.lastReply?.dateSent?.toDate(), fiveMinutes) && openMessage?.lastReply?.senderID === myUserID
   const insertMsgTimestamp = isDateGreaterThanXTimeAgo(conversation?.lastMessage?.dateSent?.toDate(), fifteenMinutes)
   const insertReplyTimestamp = isDateGreaterThanXTimeAgo(openMessage?.lastReply?.dateSent?.toDate(), fifteenMinutes)
+  const hasReadLastMessage = conversation?.isReadBy?.includes(myUserID)
 
   const handleSendMessage = () => {
-    if(hasWhiteSpace(messageString)) return null
+    if (hasWhiteSpace(messageString)) return null
     setSendLoading(true)
     setMessageString("")
     handleSendMessageService({
@@ -48,21 +50,21 @@ export default function ConversationContainer() {
         senderName: myUserName,
         senderImg: myUserImg
       },
-      conversationID, 
+      conversationID,
       orgID: myOrgID,
       isCombined: combineMessage,
       hasTimestamp: insertMsgTimestamp,
     })
-    .then(() => {
-      setSendLoading(false)
-    })
-    .catch(err => {
-      setSendLoading(false)
-    })
+      .then(() => {
+        setSendLoading(false)
+      })
+      .catch(err => {
+        setSendLoading(false)
+      })
   }
 
   const handleSendReply = () => {
-    if(hasWhiteSpace(replyString)) return null
+    if (hasWhiteSpace(replyString)) return null
     setReplyLoading(true)
     setReplyString("")
     handleSendReplyService({
@@ -76,28 +78,43 @@ export default function ConversationContainer() {
         senderName: myUserName,
         senderImg: myUserImg
       },
-      conversationID, 
+      conversationID,
       orgID: myOrgID,
       isCombined: combineReply,
       hasTimestamp: insertReplyTimestamp,
       messageID: replyMsgID,
     })
-    .then(() => {
-      setReplyLoading(false)
-    })
-    .catch(err => {
-      setReplyLoading(false)
-    })
+      .then(() => {
+        setReplyLoading(false)
+      })
+      .catch(err => {
+        setReplyLoading(false)
+      })
   }
 
   useEffect(() => {
-    if(searchParams.get("messageID")) {
+    if (searchParams.get("messageID")) {
       setReplyContainerOpen(true)
     }
     else {
       setReplyContainerOpen(false)
     }
-  },[searchParams])
+  }, [searchParams])
+
+  useEffect(() => {
+    if (!hasReadLastMessage) {
+      markAsReadService({
+        userID: myUserID,
+        conversationID,
+        orgID: myOrgID
+      })
+    }
+  }, [myOrgID, myUserID])
+
+  useEffect(() => {
+    window.onclick = () => setShowReplyEmojiPicker(null)
+    return () => window.onclick = null
+  },[])
 
   return (
     <div className="conversation-container">
@@ -116,8 +133,10 @@ export default function ConversationContainer() {
         value={replyString}
         handleSendReply={handleSendReply}
         open={replyContainerOpen}
-        onClose={() => setSearchParams({ })}
+        onClose={() => setSearchParams({})}
         replyLoading={replyLoading}
+        showReplyEmojiPicker={showReplyEmojiPicker}
+        setShowReplyEmojiPicker={setShowReplyEmojiPicker}
       />
     </div>
   )

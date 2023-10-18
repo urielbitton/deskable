@@ -1,15 +1,17 @@
 import React, { useContext } from 'react'
 import './styles/ChatSidebar.css'
-import IconContainer from "../ui/IconContainer"
 import { useListOfGroupChats, useListOfSingleChats } from "app/hooks/chatHooks"
 import { StoreContext } from "app/store/store"
 import ChatCard from "./ChatCard"
+import { ActionIcon } from "./ChatConsole"
+import { useNavigate } from "react-router-dom"
 
 export default function ChatSidebar() {
 
   const { myOrgID, myUserID } = useContext(StoreContext)
   const groupChats = useListOfGroupChats(myOrgID)
   const singleChats = useListOfSingleChats(myOrgID, myUserID)
+  const navigate = useNavigate()
 
   const groupChatsList = groupChats?.map(chat => {
     return <ChatCard
@@ -29,13 +31,10 @@ export default function ChatSidebar() {
     <div className="chat-sidebar">
       <header>
         <h3>Messages</h3>
-        <IconContainer
-          icon="fas fa-plus"
-          className="new-button"
-          onClick={ () => console.log("New chat") }
-          round={ false }
-          dimensions={ 30 }
-          iconSize={ 15 }
+        <ActionIcon
+          icon="far fa-plus"
+          label="New Chat"
+          onClick={ () => navigate("/messages/new-conversation") }
         />
       </header>
       <div className="chats-list">

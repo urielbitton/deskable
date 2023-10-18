@@ -94,23 +94,6 @@ export default function Navbar() {
             badgeBgColor="#fff"
             badgeTextColor="var(--darkGrayText)"
           />
-          {
-            myOrgID &&
-            <IconContainer
-              icon="fas fa-comment"
-              inverted
-              iconColor="#fff"
-              iconSize="16px"
-              dimensions="30px"
-              tooltip="Messages"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowMenu(showMenu === 'messages' ? null : 'messages')
-              }}
-              badgeBgColor="#fff"
-              badgeTextColor="var(--darkGrayText)"
-            />
-          }
           <NavDropdown
             label="Notifications"
             viewAllURL="/notifications"
@@ -136,7 +119,10 @@ export default function Navbar() {
               iconSize="16px"
               dimensions="30px"
               tooltip="Show Calendar Bar"
-              onClick={() => setHideRightBar(false)}
+              onClick={() => {
+                setHideRightBar(false)
+                localStorage.setItem('hideRightBar', "false")
+              }}
             />
           }
         </div>

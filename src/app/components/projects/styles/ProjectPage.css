@@ -44,7 +44,7 @@
   display: none;
 }
 .read-project-page .read-content {
-  padding-top: 20px;
+  padding-top: 5px;
 }
 
 .project-page .page-content .editor-container .title-header {
@@ -52,7 +52,7 @@
   width: 100%;
 }
 .project-page .page-content .editor-container .appInput {
-  top: 75px;
+  top: 65px;
   z-index: 10;
 }
 .project-page .page-content .editor-container .appInput input {
@@ -81,7 +81,7 @@
   padding-bottom: 5px;
 }
 .project-page .tox .tox-sidebar-wrap {
-  margin-top: 70px;
+  margin-top: 57px;
   padding-left: 10px;
 }
 .tox .tox-dialog .tox-dialog__footer button {
@@ -255,9 +255,10 @@
 }
 .read-project-page .page-content .editor-container .title-header {
   padding: 0;
+  padding-bottom: 10px;
   padding-left: 30px;
   z-index: 100;
-  margin-bottom: 15px;
+  /* margin-bottom: 10px; */
 }
 .read-project-page .page-content .editor-container .title-header h3 {
   font-size: 25px;

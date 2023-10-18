@@ -42,6 +42,13 @@ const StoreContextProvider = ({children}) => {
     localStorage.setItem('darkmode', !darkMode ? "false" : "true")  
   },[darkMode]) 
 
+  useEffect(() => {
+    if(localStorage.getItem('hideRightBar') === "true") {
+      return setHideRightBar(true)
+    }
+    return setHideRightBar(false)
+  },[])
+
   return <StoreContext.Provider value={{ 
     user, myUser, setMyUser, myUserID, myUserImg, myUserName, myMemberType,
     myOrgID,

@@ -1,0 +1,22 @@
+.reaction-bubble {
+  padding: 2px 5px;
+  min-height: 29px;
+  border-radius: 10px;
+  background: var(--inputBg);
+  border: 1px solid var(--lightGrayText);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.reaction-bubble:hover,
+.reaction-bubble.has-reacted {
+  background: var(--extraLightPrimary);
+  border-color: var(--primary);
+}
+.reaction-bubble small {
+  font-size: 12px;
+  color: var(--grayText);
+  font-weight: 600;
+}

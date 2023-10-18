@@ -9,26 +9,28 @@ import { hasWhiteSpace } from "app/utils/generalUtils"
 export default function ChatConsole(props) {
 
   const { inputPlaceholder, value, onChange,
-    onSendBtnClick, sendLoading } = props
+    onSendBtnClick, sendLoading, openEmojis,
+    openFilesUpload, openMediaUpload, 
+    openRecordAudio, toggleFormatting } = props
   const hasNoText = hasWhiteSpace(value)
 
-  const openEmojis = () => {
+  const handleOpenEmojis = () => {
 
   }
 
-  const openFilesUpload = () => {
+  const handleOpenFilesUpload = () => {
 
   }
 
-  const openMediaUpload = () => {
+  const handleOpenMediaUpload = () => {
 
   }
 
-  const openRecordAudio = () => {
+  const handleOpenRecordAudio = () => {
 
   }
 
-  const toggleFormatting = () => {
+  const handleToggleFormatting = () => {
 
   }
 

@@ -270,3 +270,8 @@ export const getReactionsByReplyAndMessageID = (orgID, conversationID, messageID
   )
   return q
 }
+
+//create group conversation
+export const createGroupChatService = (chatObj) => {
+
+}

@@ -11,10 +11,19 @@
   - fix remove participants on page close
   - search meetings on meetings home page
   - filter & view toggle meetings on meetings home page
-  - chat feature (after main chat page) - design to model after: https://dribbble.com/shots/16695727/attachments/11736207?mode=media
+  - chat features
+
+- calendar
+  - add meetings and events to calendar
+  - allow inviting participants to events
+  - create video meeting directly from event on calendar
 
 - chats
-  - import as much code as possible from familia
+  - create group chats
+  - create single chats
+  - add files, media, emojis, record audio to messages
+  - conversation info sidebar (participants, files, media, etc) (similar to famillia)
+  - add chat search feature
 
 - General
   - change all wysiwg editors with tinymce basic editor (create a component for it called AppBasicEditor.js - use for comments, posts, etc)

@@ -6,7 +6,7 @@
 
 .chat-sidebar > header {
   width: 100%;
-  height: 60px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -36,10 +36,29 @@
   font-size: 20px;
 }
 
+.chat-sidebar .search-bar {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+.chat-sidebar .search-bar .appInput i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px;
+  color: #ccc;
+}
+.chat-sidebar .search-bar input {
+  border: none;
+  padding: 10px;
+}
+.chat-sidebar .search-bar input::placeholder {
+  color: var(--grayText);
+}
+
 .chats-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 5px;
   overflow-y: auto;
 }
 .chats-list .chat-type-flex {

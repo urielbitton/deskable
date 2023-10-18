@@ -2,7 +2,6 @@ import { infoToast, successToast } from "app/data/toastsTemplates"
 import { useOrgProject, useOrgProjectColumns } from "app/hooks/projectsHooks"
 import { useMultipleQueries } from "app/hooks/searchHooks"
 import { useUsers } from "app/hooks/userHooks"
-import { updateDB } from "app/services/CrudDB"
 import {
   cancelOrgProjectInvitationService,
   completeProjectSprintService,

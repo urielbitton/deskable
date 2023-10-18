@@ -18,6 +18,7 @@ export default function ReplyItem(props) {
     isCombined, hasTimestamp, conversationID } = props.reply
   const { showReplyEmojiPicker, setShowReplyEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
+  const reactionsSlice = 4
   const reactions = useReplyReactions(myOrgID, conversationID, messageID, replyID)
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
   const shortTimestamp = getTimeAgo(dateSent?.toDate()).replace(/am|pm/gi, "")
@@ -39,13 +40,15 @@ export default function ReplyItem(props) {
     )
   }
 
-  const reactionsList = reactions?.map(reaction => {
-    return <ReactionsBubble
-      key={reaction.reactionID}
-      reaction={reaction}
-      onClick={() => handleReactionClick(reaction)}
-    />
-  })
+  const reactionsList = reactions
+    ?.slice(0, reactionsSlice)
+    .map(reaction => {
+      return <ReactionsBubble
+        key={reaction.reactionID}
+        reaction={reaction}
+        onClick={() => handleReactionClick(reaction)}
+      />
+    })
 
   const handleEmojiSelect = (emoji) => {
     setShowReplyEmojiPicker(null)
@@ -56,7 +59,7 @@ export default function ReplyItem(props) {
       userImg: myUserImg,
     },
       replyReactionsPath
-    ) 
+    )
   }
 
   const handleOpenEmojiPicker = () => {
@@ -82,11 +85,11 @@ export default function ReplyItem(props) {
   useEffect(() => {
     window.onclick = () => setOpenOptionsID(null)
     return () => window.onclick = null
-  },[])
-  
+  }, [])
+
   return (
     <div
-    className={`
+      className={`
     message-container 
     ${isCombined ? "combined" : ""} 
     ${openOptionsID === replyID ? "open-options" : ""}
@@ -127,9 +130,9 @@ export default function ReplyItem(props) {
           <div className="reactions-bar">
             {reactionsList}
             {
-              reactionsNum > 3 &&
+              reactionsNum > reactionsSlice &&
               <div className="reaction-bubble">
-                <small>{reactionsNum - 3}+ more</small>
+                <small>{reactionsNum - reactionsSlice}+ more</small>
               </div>
             }
           </div>

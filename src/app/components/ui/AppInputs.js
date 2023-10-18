@@ -5,7 +5,8 @@ import Select from 'react-select'
 
 export function AppInput(props) {
 
-  const { label, className, iconleft, iconright, title = '', subtext } = props
+  const { label, className, iconleft, iconright, title = '', 
+    subtext, inputRef } = props
 
   return (
     <label
@@ -13,7 +14,7 @@ export function AppInput(props) {
       title={title ?? ""}
     >
       {label && <h6>{label}</h6>}
-      <input {...props} />
+      <input {...props} ref={inputRef} />
       {iconright}
       {iconleft}
       {subtext}

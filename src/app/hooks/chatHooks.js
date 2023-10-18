@@ -46,7 +46,7 @@ export const useGroupChat = (orgID, conversationID) => {
     if (!conversationID || !orgID) return setChat(null)
     const ref = getGroupChatByID(orgID, conversationID)
     onSnapshot(ref, (snapshot) => {
-      setChat(snapshot.data())
+      setChat(snapshot.data() || undefined)
     })
   }, [orgID, conversationID])
 
@@ -61,11 +61,11 @@ export const useChat = (orgID, conversationID) => {
     if (!conversationID || !orgID) return setChat(null)
     const ref = getChatByID(orgID, conversationID)
     onSnapshot(ref, (snapshot) => {
-      setChat(snapshot.data())
+      setChat(snapshot.data() || undefined)
     })
   }, [orgID, conversationID])
 
-  return chat
+  return chat 
 }
 
 export const useChatMessages = (orgID, conversationID, limit) => {
@@ -76,7 +76,7 @@ export const useChatMessages = (orgID, conversationID, limit) => {
     if (!orgID || !conversationID) return setMessages([])
     const q = getMessagesByChatID(orgID, conversationID, limit)
     onSnapshot(q, (snapshot) => {
-      setMessages(snapshot.docs.map(doc => doc.data()))
+      setMessages(snapshot.docs.map(doc => doc.data()) || undefined)
     })
   }, [orgID, conversationID, limit])
 

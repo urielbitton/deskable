@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react'
 import './styles/ChatContent.css'
 import {StoreContext} from "app/store/store"
-import {useParams} from "react-router-dom"
+import {Navigate, useParams} from "react-router-dom"
 import {useChat, useChatMessages, useGroupChat} from "app/hooks/chatHooks"
 import useUser from "app/hooks/userHooks"
 import MessageItem from "./MessageItem"
 
 export default function ChatContent() {
 
-  const {myUserID, myOrgID} = useContext(StoreContext)
+  const { myUserID, myOrgID } = useContext(StoreContext)
   const conversationID = useParams().conversationID
   const defaultMsgsLimit = 25
   const [messagesLimit, setMessagesLimit] = useState(defaultMsgsLimit)
@@ -64,6 +64,5 @@ export default function ChatContent() {
           </div>
       }
     </div>
-  ) :
-    null
+  ) : null
 }

@@ -26,6 +26,7 @@ export default function MessageItem(props) {
   const messageRepliesNum = useDocsCount(messagePath, searchParams)
   const reactions = useMessageReactions(myOrgID, conversationID, messageID)
   const reactionsNum = reactions?.length
+  const reactionsSlice = 4
   const hasReplies = messageRepliesNum > 0
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
   const shortTimestamp = getTimeAgo(dateSent?.toDate()).replace(/am|pm/gi, "")
@@ -45,7 +46,9 @@ export default function MessageItem(props) {
     )
   }
 
-  const reactionsList = reactions?.map(reaction => {
+  const reactionsList = reactions
+  ?.slice(0, reactionsSlice)
+  .map(reaction => {
     return <ReactionsBubble
       key={reaction.reactionID}
       reaction={reaction}
@@ -135,9 +138,9 @@ export default function MessageItem(props) {
           <div className="reactions-bar">
             {reactionsList}
             {
-              reactionsNum > 3 &&
+              reactionsNum > reactionsSlice &&
               <div className="reaction-bubble">
-                <small>{reactionsNum - 3}+ more</small>
+                <small>{reactionsNum - reactionsSlice}+ more</small>
               </div>
             }
           </div>

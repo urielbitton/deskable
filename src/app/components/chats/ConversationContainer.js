@@ -5,7 +5,7 @@ import ChatConsole from "./ChatConsole"
 import { hasWhiteSpace } from "app/utils/generalUtils"
 import "./styles/ConversationContainer.css"
 import { StoreContext } from "app/store/store"
-import { useParams, useSearchParams } from "react-router-dom"
+import { Navigate, useParams, useSearchParams } from "react-router-dom"
 import { handleSendMessageService, handleSendReplyService, markAsReadService } from "app/services/chatServices"
 import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo } from "app/utils/dateUtils"
 import { useChat, useChatMessage, useMessageReplies } from "app/hooks/chatHooks"
@@ -116,7 +116,7 @@ export default function ConversationContainer() {
     return () => window.onclick = null
   },[])
 
-  return (
+  return conversation !== undefined ? (
     <div className="conversation-container">
       <ChatHeader />
       <ChatContent />
@@ -139,5 +139,7 @@ export default function ConversationContainer() {
         setShowReplyEmojiPicker={setShowReplyEmojiPicker}
       />
     </div>
-  )
+  ) :
+  (conversation === null || conversation !== undefined) ? null :
+  <Navigate to="/messages/not-found" />
 }

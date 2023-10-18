@@ -1,0 +1,120 @@
+.new-message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 80px);
+}
+
+.new-message-container .new-message-header {
+  display: flex;
+  flex-direction: column;
+}
+.new-message-container .new-message-header .title-bar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 20px;
+  height: 50px;
+}
+.new-message-container .new-message-header .title-bar h4 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.new-message-container .new-message-header .compose-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eee;
+  gap: 5px;
+  width: 100%;
+}
+.new-message-container .new-message-header .compose-bar > h5 {
+  margin-right: 10px;
+}
+.new-message-container .new-message-header .compose-bar .dropdown-search-container {
+  width: 100%;
+}
+.new-message-container .new-message-header .compose-bar .appInput {
+  width: 100%;
+}
+.new-message-container .new-message-header .compose-bar .appInput input {
+  border: none;
+  width: 100%;
+  padding: 10px;
+}
+.new-message-container .new-message-header .compose-bar .appInput i {
+  display: none;
+}
+
+.new-message-container .new-message-header .result-item {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.new-message-container .new-message-header .result-item .avatar-container img {
+  border-radius: 5px;
+}
+.new-message-container .new-message-header .result-item h6 {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+.new-message-container .new-message-header .result-item:hover {
+  background: var(--blue);
+}
+.new-message-container .new-message-header .result-item:hover h6 {
+  color: #fff;
+}
+.new-message-container .new-message-header .dropdown-search-results {
+  top: calc(100% + 10px);
+  width: 100%;
+  box-shadow: var(--shadow);
+  border: 1px solid #eee;
+  padding: 7px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.new-message-container .new-message-header .compose-bar .selected-users-flex {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble {
+  padding: 4px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  background: var(--extraLightPrimary);
+  cursor: pointer;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble img {
+  border-radius: 5px;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble h6 {
+  font-size: 14px;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble .close {
+  margin-left: 3px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble .close:hover {
+  background: #fff;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble .close i {
+  font-size: 19px;
+  color: #333;
+}
+.new-message-container .new-message-header .compose-bar .selected-user-bubble .close:hover i {
+  color: var(--primary);
+}

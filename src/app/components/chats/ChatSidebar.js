@@ -5,6 +5,7 @@ import { StoreContext } from "app/store/store"
 import ChatCard from "./ChatCard"
 import { ActionIcon } from "./ChatConsole"
 import { useNavigate } from "react-router-dom"
+import { AppInput } from "../ui/AppInputs"
 
 export default function ChatSidebar() {
 
@@ -37,6 +38,12 @@ export default function ChatSidebar() {
           onClick={ () => navigate("/messages/new-conversation") }
         />
       </header>
+      <div className="search-bar">
+        <AppInput
+          placeholder="Search conversations"
+          iconright={<i className="far fa-search"/>}
+        />
+      </div>
       <div className="chats-list">
         <div className="chat-type-flex">
           <h5><i className="fas fa-users"/>Spaces</h5>

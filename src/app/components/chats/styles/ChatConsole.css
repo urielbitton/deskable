@@ -24,6 +24,9 @@
 .chat-console .input-container .textarea-container {
   width: calc(100% - 40px);
 }
+.chat-console .input-container .textarea-container textarea {
+  border: 1px solid var(--lightGrayText);
+}
 .chat-console .input-container .send-btn {
   border-radius: 5px;
   user-select: none;

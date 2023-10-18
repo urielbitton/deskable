@@ -7,7 +7,7 @@ export default function DropdownSearch(props) {
   const { placeholder, value, onChange, onEnterPress,
     searchResults, dropdownTitle, onFocus, onBlur, 
     searchLoading, clearSearch, showSearchDropdown, 
-    setShowSearchDropdown } = props
+    setShowSearchDropdown, inputRef } = props
 
   useEffect(() => {
     if (showSearchDropdown) {
@@ -38,6 +38,7 @@ export default function DropdownSearch(props) {
             onClick={() => value.length > 0 && clearSearch()}
           />
         }
+        inputRef={inputRef}
       />
       {
         showSearchDropdown &&

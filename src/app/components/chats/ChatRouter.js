@@ -11,7 +11,7 @@ export default function ChatRouter() {
     <div className="chat-router">
       <Routes>
         <Route index element={<SelectChat />} />
-        <Route path=":conversationID/*" element={<ConversationContainer />} />
+        <Route path=":conversationID" element={<ConversationContainer />} />
         <Route path="new-conversation" element={<NewMessage />} />
         <Route path="not-found" element={<ChatNotFound />} />
       </Routes>

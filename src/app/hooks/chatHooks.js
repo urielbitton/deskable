@@ -1,21 +1,25 @@
 import {
-  getChatByID, getGroupChatByID, getListOfGroupChatsByOrgID,
+  getChatByID,
   getListOfSingleChatsByUserID,
+  getListOfSpaceChatsByOrgID,
   getMessageByIDAndChatID,
   getMessagesByChatID,
   getReactionsByMessageAndChatID,
   getReactionsByReplyAndMessageID,
-  getRepliesByChatAndMessageID
+  getRepliesByChatAndMessageID,
+  getSpaceChatByID
 } from "app/services/chatServices"
+import { StoreContext } from "app/store/store"
 import { onSnapshot } from "firebase/firestore"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
-export const useListOfGroupChats = (orgID) => {
+export const useListOfSpaceChats = (orgID) => {
 
+  const { myUserID } = useContext(StoreContext)
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
-    const q = getListOfGroupChatsByOrgID(orgID)
+    const q = getListOfSpaceChatsByOrgID(orgID, myUserID)
     onSnapshot(q, (snapshot) => {
       setMessages(snapshot.docs.map(doc => doc.data()))
     })
@@ -38,13 +42,13 @@ export const useListOfSingleChats = (orgID, userID) => {
   return messages
 }
 
-export const useGroupChat = (orgID, conversationID) => {
+export const useSpaceChat = (orgID, conversationID) => {
 
   const [chat, setChat] = useState(null)
 
   useEffect(() => {
     if (!conversationID || !orgID) return setChat(null)
-    const ref = getGroupChatByID(orgID, conversationID)
+    const ref = getSpaceChatByID(orgID, conversationID)
     onSnapshot(ref, (snapshot) => {
       setChat(snapshot.data() || undefined)
     })

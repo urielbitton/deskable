@@ -1,6 +1,17 @@
 ###Deskable App
 
 ##To Dos
+
+- chats
+  - create group chats
+  - create single chats
+  - add files, media, emojis, record audio to messages
+  - conversation info sidebar (participants, files, media, etc) (similar to famillia)
+  - add chat search feature
+  - use react-tooltip library for important tooltips (e.g. +1 more reactions in message reactions!)
+
+- User onboarding: refactor entire flow (use sendgrid)
+
 - meetings
   - virtual backgrounds
   - record feature
@@ -17,13 +28,6 @@
   - add meetings and events to calendar
   - allow inviting participants to events
   - create video meeting directly from event on calendar
-
-- chats
-  - create group chats
-  - create single chats
-  - add files, media, emojis, record audio to messages
-  - conversation info sidebar (participants, files, media, etc) (similar to famillia)
-  - add chat search feature
 
 - General
   - change all wysiwg editors with tinymce basic editor (create a component for it called AppBasicEditor.js - use for comments, posts, etc)

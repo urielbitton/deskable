@@ -1,18 +1,23 @@
 import { db } from "app/firebase/fire"
 import {
-  collection, doc, limit, onSnapshot,
+  collection, doc, limit,
   orderBy, query, where
 } from "firebase/firestore"
-import { deleteDB, firebaseArrayAdd, firebaseArrayRemove, firebaseIncrement, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import {
+  deleteDB, firebaseArrayAdd,
+  firebaseIncrement, getRandomDocID,
+  setDB, updateDB
+} from "./CrudDB"
 
-const oneMonth = 1000 * 60 * 60 * 24 * 30
+const oneYear = 1000 * 60 * 60 * 24 * 365
 
-export const getListOfGroupChatsByOrgID = (orgID) => {
+export const getListOfSpaceChatsByOrgID = (orgID, userID) => {
   const chatsRef = collection(db, `organizations/${orgID}/conversations`)
   const q = query(
     chatsRef,
-    where('type', '==', 'group'),
-    where('dateUpdated', '>', new Date(Date.now() - oneMonth)),
+    where('type', '==', 'space'),
+    where('participantsIDs', 'array-contains', userID),
+    where('dateUpdated', '>', new Date(Date.now() - oneYear)),
     orderBy('dateUpdated', 'desc')
   )
   return q
@@ -23,14 +28,14 @@ export const getListOfSingleChatsByUserID = (orgID, userID) => {
   const q = query(
     chatsRef,
     where('type', '==', 'single'),
-    where('participantIDs', 'array-contains-any', [userID]),
-    where('dateUpdated', '>', new Date(Date.now() - oneMonth)),
+    where('participantIDs', 'array-contains', userID),
+    where('dateUpdated', '>', new Date(Date.now() - oneYear)),
     orderBy('dateUpdated', 'desc')
   )
   return q
 }
 
-export const getGroupChatByID = (orgID, conversationID) => {
+export const getSpaceChatByID = (orgID, conversationID) => {
   const chatRef = doc(db, `organizations/${orgID}/conversations`, conversationID)
   return chatRef
 }
@@ -90,7 +95,8 @@ export const handleSendMessageService = (messageObj) => {
           text: message.text,
         },
         lastActive: message.dateSent,
-        dateUpdated: new Date()
+        dateUpdated: new Date(),
+        isReadBy: [user.senderID]
       })
     })
     .then(() => {
@@ -271,7 +277,61 @@ export const getReactionsByReplyAndMessageID = (orgID, conversationID, messageID
   return q
 }
 
-//create group conversation
-export const createGroupChatService = (chatObj) => {
+//create space conversation
+export const createSpaceChatService = (data) => {
+  const { selectedUsersIDs, spaceName, messageMeta, userMeta, orgID } = data
+  const path = `organizations/${orgID}/conversations`
+  const docID = getRandomDocID(path)
+  const messagesPath = `organizations/${orgID}/conversations/${docID}/messages`
+  return setDB(path, docID, {
+    blockedIDs: [],
+    conversationID: docID,
+    creatorID: userMeta.userID,
+    dateUpdated: new Date(),
+    isArchived: false,
+    isDeleted: false,
+    isReadBy: [userMeta.userID],
+    lastActive: new Date(),
+    lastMessage: { ...messageMeta },
+    lastReply: null,
+    notifiedUsersIDs: selectedUsersIDs,
+    orgID,
+    participantsIDs: [...selectedUsersIDs, userMeta.userID],
+    spaceName,
+    type: 'space',
+    usersTyping: []
+  })
+    .then(() => {
+      const messageID = getRandomDocID(messagesPath)
+      return setDB(messagesPath, messageID, {
+        conversationID: docID,
+        dateModified: null,
+        dateSent: messageMeta.dateSent,
+        isCombined: false,
+        isDeleted: false,
+        messageID,
+        senderID: userMeta.userID,
+        senderName: userMeta.userName,
+        senderImg: userMeta.userImg,
+        text: messageMeta.text,
+      })
+    })
+    .then(() => {
+      return {
+        success: true,
+        conversationID: docID,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        success: false,
+        conversationID: null,
+      }
+    })
+}
 
+//create single conversation
+export const createSingleChatService = (data) => {
+  return null
 }

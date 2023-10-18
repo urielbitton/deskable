@@ -31,7 +31,10 @@ export default function RepliesContainer(props) {
   })
 
   return (
-    <div className={`replies-container ${open ? "open" : ""}`}>
+    <div 
+      className={`replies-container ${open ? "open" : ""}`}
+      key={messageID}
+    >
       <div className="replies-header">
         <h3>Replies</h3>
         <ActionIcon

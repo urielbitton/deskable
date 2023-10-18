@@ -69,7 +69,7 @@ export default function Navbar() {
                 { label: "New Post", icon: "fas fa-newspaper", url: "/posts" },
                 ...canCreateProject ? [{ label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" }] : [],
                 ...canCreateMeeting ? [{ label: "New Meeting", icon: "fas fa-video", url: "/meetings/meeting/new" }] : [],
-                { label: "New Message", icon: "fas fa-comment", url: "/messages/new" },
+                { label: "New Message", icon: "fas fa-comment", url: "/messages/new-conversation" },
                 ...canCreateEvent ? [{ label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" }] : [],
               ]}
             /> :

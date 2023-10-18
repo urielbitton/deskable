@@ -1,24 +1,24 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './styles/ChatContent.css'
-import {StoreContext} from "app/store/store"
-import {Navigate, useParams} from "react-router-dom"
-import {useChat, useChatMessages, useGroupChat} from "app/hooks/chatHooks"
+import { StoreContext } from "app/store/store"
+import { useParams } from "react-router-dom"
+import {useChat, useChatMessages, useSpaceChat } from "app/hooks/chatHooks"
 import useUser from "app/hooks/userHooks"
 import MessageItem from "./MessageItem"
 
-export default function ChatContent() {
+export default function ChatContent({chatContentHeight}) {
 
   const { myUserID, myOrgID } = useContext(StoreContext)
   const conversationID = useParams().conversationID
-  const defaultMsgsLimit = 25
+  const defaultMsgsLimit = 40
   const [messagesLimit, setMessagesLimit] = useState(defaultMsgsLimit)
   const [showEmojiPicker, setShowEmojiPicker] = useState(null)
   const singleChat = useChat(myUserID, conversationID)
-  const groupChat = useGroupChat(myOrgID, conversationID)
-  const chat = {...singleChat, ...groupChat}
-  const isGroupChat = chat?.type === "group"
+  const spaceChat = useSpaceChat(myOrgID, conversationID)
+  const chat = {...singleChat, ...spaceChat}
+  const isSpaceChat = chat?.type === "space"
   const otherParticipantID = myUserID === chat?.participantID ? chat?.creatorID : chat?.participantID
-  const otherParticipant = useUser(!isGroupChat ? otherParticipantID : null)
+  const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : null)
   const messages = useChatMessages(myOrgID, conversationID, messagesLimit)
   const hasMessages = messages?.length > 0
 
@@ -45,17 +45,21 @@ export default function ChatContent() {
   },[])
 
   return chat ? (
-    <div className="chat-content">
+    <div 
+      className="chat-content"
+      style={{height: `calc(100vh - ${(200+chatContentHeight)}px)`}}
+      key={chat?.conversationID}
+    >
       {
         !hasMessages ?
           <div className="new-conversation-info">
             <h4>
               {
-                !isGroupChat ?
+                !isSpaceChat ?
                   `This is the very beginning of your direct message 
                 history with ${otherParticipant?.firstName} ${otherParticipant?.lastName}.`
                   :
-                  `This is the very beginning of your group chat ${chat?.name}.`
+                  `This is the very beginning of your space ${chat?.name}.`
               }
             </h4>
           </div> :

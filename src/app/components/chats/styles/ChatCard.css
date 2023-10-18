@@ -29,6 +29,12 @@
   font-size: 13px;
   color: var(--grayText);
 }
+.chat-card.unread .left-side .text-flex h4,
+.chat-card.unread .left-side .text-flex p {
+  color: #000;
+  font-weight: 900;
+}
+
 .chat-card .right-side {
   display: flex;
   flex-direction: column;

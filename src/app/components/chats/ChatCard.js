@@ -9,36 +9,36 @@ import { truncateText } from "app/utils/generalUtils"
 
 export default function ChatCard(props) {
 
-  const { myUserID, groupChatDefaultImg } = useContext(StoreContext)
+  const { myUserID, spaceChatDefaultImg } = useContext(StoreContext)
   const { conversationID, dateUpdated, participantID, 
     creatorID, lastMessage, blockedIDs, type,
-    chatName, isReadBy } = props.chat
-  const isGroupChat = type === "group"
+    spaceName, isReadBy, participantsIDs } = props.chat
+  const isSpaceChat = type === "space"
   const otherParticipantID = myUserID === participantID ? creatorID : participantID
-  const otherParticipant = useUser(!isGroupChat ? otherParticipantID : null)
+  const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : null)
   const isSentByMe = lastMessage?.senderID === myUserID
-  const seenByMe = isReadBy?.includes(myUserID)
+  const readByMe = isReadBy?.includes(myUserID)
   const otherParticipantName = `${otherParticipant?.firstName} ${otherParticipant?.lastName}`
 
   return (
     <Link 
       to={`/messages/${conversationID}`}
-      className="chat-card"
+      className={`chat-card ${!readByMe ? 'unread' : ''}`}
       key={conversationID}
     >
       <div className="left-side">
         <Avatar
-          src={!isGroupChat ? otherParticipant?.photoURL : groupChatDefaultImg}
+          src={!isSpaceChat ? otherParticipant?.photoURL : spaceChatDefaultImg}
           dimensions={30}
         />
         <div className="text-flex">
-          <h4>{!isGroupChat ? truncateText(otherParticipantName, 38) : truncateText(chatName, 38)}</h4>
+          <h4>{!isSpaceChat ? truncateText(otherParticipantName, 38) : truncateText(spaceName, 38)}</h4>
           <p>{isSentByMe ? 'You: ' : null}{lastMessage?.text}</p>
         </div>
       </div>
       <div className="right-side">
         <small>{getTimeAgo(lastMessage?.dateSent?.toDate())}</small>
-        { !seenByMe && <div className="unread-badge" /> }
+        { !readByMe && <div className="unread-badge"/> }
       </div>
     </Link>
   )

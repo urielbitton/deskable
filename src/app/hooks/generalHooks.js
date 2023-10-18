@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 export const useIsFullScreen = () => {
+  
   const [isFullScreen, setIsFullScreen] = useState(false)
 
   useEffect(() => {
@@ -19,4 +20,27 @@ export const useIsFullScreen = () => {
   }, [])
 
   return isFullScreen
+}
+
+export const usePageVisibility = () => {
+
+  const [isVisible, setIsVisible] = useState(true)
+
+  const onVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      setIsVisible(true)
+    } else {
+      setIsVisible(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [])
+
+  return isVisible
 }

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import './styles/ChatSidebar.css'
-import { useListOfGroupChats, useListOfSingleChats } from "app/hooks/chatHooks"
+import { useListOfSingleChats, 
+  useListOfSpaceChats } from "app/hooks/chatHooks"
 import { StoreContext } from "app/store/store"
 import ChatCard from "./ChatCard"
 import { ActionIcon } from "./ChatConsole"
@@ -10,11 +11,11 @@ import { AppInput } from "../ui/AppInputs"
 export default function ChatSidebar() {
 
   const { myOrgID, myUserID } = useContext(StoreContext)
-  const groupChats = useListOfGroupChats(myOrgID)
+  const spaceChats = useListOfSpaceChats(myOrgID)
   const singleChats = useListOfSingleChats(myOrgID, myUserID)
   const navigate = useNavigate()
 
-  const groupChatsList = groupChats?.map(chat => {
+  const spaceChatsList = spaceChats?.map(chat => {
     return <ChatCard
       key={ chat.conversationID }
       chat={ chat }
@@ -48,7 +49,7 @@ export default function ChatSidebar() {
         <div className="chat-type-flex">
           <h5><i className="fas fa-users"/>Spaces</h5>
           <div className="chat-type-list">
-            { groupChatsList }
+            { spaceChatsList }
           </div>
         </div>
         <div className="chat-type-flex">

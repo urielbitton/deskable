@@ -23,6 +23,7 @@ export default function ConversationContainer() {
   const [replyContainerOpen, setReplyContainerOpen] = useState(false)
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  const [chatContentHeight, setChatContentHeight] = useState('')
   const replyMsgID = searchParams.get("messageID")
   const repliesLimit = 20
   const messageReplies = useMessageReplies(myOrgID, conversationID, replyMsgID, repliesLimit)
@@ -117,15 +118,19 @@ export default function ConversationContainer() {
   },[])
 
   return conversation !== undefined ? (
-    <div className="conversation-container">
+    <div 
+      className="conversation-container"
+      key={conversationID}
+    >
       <ChatHeader />
-      <ChatContent />
+      <ChatContent chatContentHeight={chatContentHeight} />
       <ChatConsole
         inputPlaceholder="Type a message..."
         value={messageString}
         onChange={(e) => setMessageString(e.target.value)}
         onSendBtnClick={handleSendMessage}
         sendLoading={sendLoading}
+        onHeightChange={(height) => setChatContentHeight(height)}
       />
       <RepliesContainer
         replies={messageReplies}

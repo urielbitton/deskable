@@ -1,11 +1,23 @@
 .chat-content {
   width: 100%;
-  height: calc(100% - 160px);
   display: flex;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 .chat-content .messages-flex {
   display: flex;
   flex-direction: column-reverse;
+  overflow-y: overlay;
+  height: 100%;
+}
+.chat-content .messages-flex::-webkit-scrollbar {
+  width: 10px;
+}
+.chat-content .messages-flex::-webkit-scrollbar-thumb {
+  background: var(--grayText);
+  border-radius: 10px;
+}
+.chat-content .messages-flex::-webkit-scrollbar-track {
+  background: var(--lightGrayText);
 }

@@ -22,6 +22,7 @@ import MyOrgPage from "app/pages/MyOrgPage"
 import UserManagement from "app/pages/UserManagement"
 import CreateOrgPage from "app/pages/CreateOrgPage"
 import NotificationsPage from "app/pages/NotificationsPage"
+import MyAccountPage from "app/pages/MyAccountPage"
 
 export default function RoutesContainer() {
 
@@ -44,6 +45,7 @@ export default function RoutesContainer() {
             <Route path="events/*" element={<EventsPage />} />
             <Route path="resources/*" element={<ResourcesPage />} />
             <Route path="my-organization/*" element={<MyOrgPage />} />
+            <Route path="my-account/*" element={<MyAccountPage />} />
           </>
         }
         <Route path="create-organization" element={<CreateOrgPage />} />

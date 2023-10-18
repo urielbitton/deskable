@@ -26,3 +26,15 @@
   color: #888;
   line-height: 1;
 }
+
+.chat-header .right-side {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.chat-header .right-side .icon-container {
+  border-radius: 5px;
+}
+.chat-header .right-side .icon-container:hover {
+  background: #f1f1f1;
+}

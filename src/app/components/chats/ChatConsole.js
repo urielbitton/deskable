@@ -11,7 +11,8 @@ export default function ChatConsole(props) {
   const { inputPlaceholder, value, onChange,
     onSendBtnClick, sendLoading, openEmojis,
     openFilesUpload, openMediaUpload, 
-    openRecordAudio, toggleFormatting } = props
+    openRecordAudio, toggleFormatting,
+    onHeightChange } = props
   const hasNoText = hasWhiteSpace(value)
 
   const handleOpenEmojis = () => {
@@ -72,12 +73,13 @@ export default function ChatConsole(props) {
               autoFocus
               placeholder={ inputPlaceholder }
               className="text-area-autosize"
-              maxRows={ 6 }
-              minRows={ 1 }
-              cacheMeasurements={ true }
-              value={ value }
-              onChange={ onChange }
-              onKeyUp={ (e) => {
+              onHeightChange={onHeightChange}
+              maxRows={7}
+              minRows={1}
+              cacheMeasurements={true}
+              value={value}
+              onChange={onChange}
+              onKeyUp={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
                   onSendBtnClick(e)

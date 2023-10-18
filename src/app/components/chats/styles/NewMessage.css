@@ -118,3 +118,25 @@
 .new-message-container .new-message-header .compose-bar .selected-user-bubble .close:hover i {
   color: var(--primary);
 }
+
+.new-message-container .console-section {
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+.new-message-container .console-section .appInput {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px
+}
+.new-message-container .console-section .appInput h6 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.new-message-container .console-section .appInput input {
+  border-color: var(--lightGrayText);
+}
+.new-message-container .console-section .chat-console {
+  border-top: none;
+}

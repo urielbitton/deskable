@@ -47,7 +47,6 @@ export default function ChatContent({chatContentHeight}) {
   return chat ? (
     <div 
       className="chat-content"
-      style={{height: `calc(100vh - ${(200+chatContentHeight)}px)`}}
       key={chat?.conversationID}
     >
       {

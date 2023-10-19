@@ -10,6 +10,7 @@ import { handleSendMessageService, handleSendReplyService, markAsReadService } f
 import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo } from "app/utils/dateUtils"
 import { useChat, useChatMessage, useMessageReplies } from "app/hooks/chatHooks"
 import RepliesContainer from "./RepliesContainer"
+import { usePageVisibility } from "app/hooks/generalHooks"
 
 export default function ConversationContainer() {
 
@@ -24,6 +25,7 @@ export default function ConversationContainer() {
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const [chatContentHeight, setChatContentHeight] = useState('')
+  const isPageVisible = usePageVisibility()
   const replyMsgID = searchParams.get("messageID")
   const repliesLimit = 20
   const messageReplies = useMessageReplies(myOrgID, conversationID, replyMsgID, repliesLimit)
@@ -110,7 +112,7 @@ export default function ConversationContainer() {
         orgID: myOrgID
       })
     }
-  }, [myOrgID, myUserID])
+  }, [myOrgID, myUserID, conversationID, isPageVisible])
 
   useEffect(() => {
     window.onclick = () => setShowReplyEmojiPicker(null)

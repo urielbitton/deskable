@@ -28,7 +28,7 @@ export const getListOfSingleChatsByUserID = (orgID, userID) => {
   const q = query(
     chatsRef,
     where('type', '==', 'single'),
-    where('participantIDs', 'array-contains', userID),
+    where('participantsIDs', 'array-contains', userID),
     where('dateUpdated', '>', new Date(Date.now() - oneYear)),
     orderBy('dateUpdated', 'desc')
   )
@@ -298,6 +298,7 @@ export const createConversationService = (data) => {
     lastReply: null,
     ...(isSpaceChat && { notifiedUsersIDs: selectedUsersIDs }),
     orgID,
+    ...(!isSpaceChat && { participantID }),
     ...(isSpaceChat ? { participantsIDs: [...selectedUsersIDs, userMeta.userID] } : { participantsIDs: [participantID, userMeta.userID] }),
     ...(isSpaceChat && { spaceName }),
     type: isSpaceChat ? 'space' : 'single',

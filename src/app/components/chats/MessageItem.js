@@ -193,7 +193,7 @@ export default function MessageItem(props) {
           <AppPortal
             showPortal={showEmojiPicker === messageID}
             className="emoji-picker-float"
-            style={{ top: emojiPickerPosition.top, left: emojiPickerPosition.left, zIndex: 1000 }}
+            style={{ position: 'absolute', top: emojiPickerPosition.top, left: emojiPickerPosition.left, zIndex: 1000 }}
           >
             <EmojiPicker
               showPicker

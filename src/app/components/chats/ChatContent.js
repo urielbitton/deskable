@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import './styles/ChatContent.css'
 import { StoreContext } from "app/store/store"
 import { useParams } from "react-router-dom"
 import { useChat, useChatMessages, useSpaceChat } from "app/hooks/chatHooks"
-import useUser from "app/hooks/userHooks"
+import useUser, { useDocsCount } from "app/hooks/userHooks"
 import MessageItem from "./MessageItem"
+import { useInViewport } from "app/hooks/generalHooks"
 
 export default function ChatContent() {
 
@@ -16,12 +17,17 @@ export default function ChatContent() {
   const singleChat = useChat(myUserID, conversationID)
   const spaceChat = useSpaceChat(myOrgID, conversationID)
   const chat = { ...singleChat, ...spaceChat }
-  const isSpaceChat = chat?.type === "space"
   const lastMessage = chat?.lastMessage
   const otherParticipantID = myUserID === chat?.participantID ? chat?.creatorID : chat?.participantID
+  const isSpaceChat = chat?.type === "space"
+  const loadNewRef = useRef(null)
+  const messagesListRef = useRef(null)
   const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : lastMessage?.senderID)
   const messages = useChatMessages(myOrgID, conversationID, messagesLimit)
+  const chatMessagesNum = useDocsCount(`organizations/${myOrgID}/conversations/${conversationID}/messages`, lastMessage)
   const hasMessages = messages?.length > 0
+  const viewPortOffset = 50
+  const inView = useInViewport(loadNewRef, messagesListRef, viewPortOffset)
 
   const messagesList = messages?.map(message => {
     return <MessageItem
@@ -38,6 +44,12 @@ export default function ChatContent() {
 
   const loadMoreMessages = () => {
 
+  }
+
+  const handleOnScroll = () => {
+    if (inView) {
+      setMessagesLimit(prev => prev + defaultMsgsLimit)
+    }
   }
 
   useEffect(() => {
@@ -63,8 +75,22 @@ export default function ChatContent() {
               }
             </h4>
           </div> :
-          <div className="messages-flex">
+          <div
+            className="messages-flex"
+            ref={messagesListRef}
+            onScroll={handleOnScroll}
+          >
             {messagesList}
+            {
+              chatMessagesNum > messagesLimit &&
+              <div
+                className="load-new"
+                ref={loadNewRef}
+              >
+                <i className="fas fa-spinner fa-spin" />
+                <small>Loading messages</small>
+              </div>
+            }
           </div>
       }
     </div>

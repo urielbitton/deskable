@@ -57,3 +57,29 @@ export const useScreenHeight = () => {
 
   return screenHeight
 }
+
+export const useInViewport = (ref, elemScrollRef, offset) => {
+
+    const [inView, setInView] = useState(false)
+    
+    const isInView = () => {
+      const rect = ref?.current?.getBoundingClientRect()
+      return (
+        rect.top >= offset &&
+        rect.left >= offset &&
+        rect.bottom <= (window.innerHeight || elemScrollRef?.current?.clientHeight) &&
+        rect.right <= (window.innerWidth || elemScrollRef?.current?.clientWidth)
+      )
+    } 
+  
+    useEffect(() => {
+      const scrollHandler = () => {
+        setInView(isInView())
+      }
+      elemScrollRef?.current?.addEventListener('scroll', scrollHandler)
+      return () => elemScrollRef?.current?.removeEventListener('scroll', scrollHandler)
+    })
+
+    return inView
+}
+

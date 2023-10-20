@@ -7,7 +7,7 @@ import "./styles/ConversationContainer.css"
 import { StoreContext } from "app/store/store"
 import { Navigate, useParams, useSearchParams } from "react-router-dom"
 import { handleSendMessageService, handleSendReplyService, markAsReadService } from "app/services/chatServices"
-import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo } from "app/utils/dateUtils"
+import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo, isOnSameDay } from "app/utils/dateUtils"
 import { useChat, useChatMessage, useMessageReplies } from "app/hooks/chatHooks"
 import RepliesContainer from "./RepliesContainer"
 import { usePageVisibility } from "app/hooks/generalHooks"
@@ -58,6 +58,7 @@ export default function ConversationContainer() {
       orgID: myOrgID,
       isCombined: combineMessage,
       hasTimestamp: insertMsgTimestamp,
+      newDay: !isOnSameDay(conversation?.lastMessage?.dateSent?.toDate(), new Date())
     })
       .then(() => {
         setSendLoading(false)

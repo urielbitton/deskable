@@ -74,7 +74,7 @@ export const getRepliesByChatAndMessageID = (orgID, conversationID, messageID, l
 
 export const handleSendMessageService = (messageObj) => {
   const { message, user, conversationID, orgID,
-    isCombined, hasTimestamp } = messageObj
+    isCombined, hasTimestamp, newDay } = messageObj
   const path = `organizations/${orgID}/conversations/${conversationID}/messages`
   const docID = getRandomDocID(path)
   return setDB(path, docID, {
@@ -86,6 +86,7 @@ export const handleSendMessageService = (messageObj) => {
     messageID: docID,
     isCombined,
     hasTimestamp,
+    newDay
   })
     .then(() => {
       return updateDB(`organizations/${orgID}/conversations/`, conversationID, {

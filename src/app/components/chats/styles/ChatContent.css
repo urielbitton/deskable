@@ -23,3 +23,16 @@
 .chat-content .messages-flex::-webkit-scrollbar-track {
   background: var(--lightGrayText);
 }
+
+.chat-content .load-new {
+  z-index: 100;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+.chat-content .load-new small {
+  font-size: 12px;
+}

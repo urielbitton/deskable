@@ -20,6 +20,7 @@ export default function NewMessage() {
   const [spaceName, setSpaceName] = useState('')
   const [messageString, setMessageString] = useState('')
   const [sendLoading, setSendLoading] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID}`
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const inputRef = useRef(null)
@@ -165,6 +166,7 @@ export default function NewMessage() {
           onChange={(e) => setMessageString(e.target.value)}
           onSendBtnClick={handleSendMessage}
           sendLoading={sendLoading}
+          showEmojiPicker={showEmojiPicker}
         />
       </div>
     </div>

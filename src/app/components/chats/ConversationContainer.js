@@ -22,9 +22,9 @@ export default function ConversationContainer() {
   const [replyString, setReplyString] = useState("")
   const [replyLoading, setReplyLoading] = useState(false)
   const [replyContainerOpen, setReplyContainerOpen] = useState(false)
-  const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(null)
+  const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
-  const [chatContentHeight, setChatContentHeight] = useState('')
   const isPageVisible = usePageVisibility()
   const replyMsgID = searchParams.get("messageID")
   const repliesLimit = 20
@@ -115,9 +115,14 @@ export default function ConversationContainer() {
   }, [myOrgID, myUserID, conversationID, isPageVisible])
 
   useEffect(() => {
-    window.onclick = () => setShowReplyEmojiPicker(null)
-    return () => window.onclick = null
-  },[])
+    if(!showEmojiPicker || !showReplyEmojiPicker) {
+      window.onclick = () => {
+        setShowReplyEmojiPicker(false)
+        setShowEmojiPicker(false)
+      }
+      return () => window.onclick = null
+    }
+  })
 
   return conversation !== undefined ? (
     <div 
@@ -125,14 +130,18 @@ export default function ConversationContainer() {
       key={conversationID}
     >
       <ChatHeader />
-      <ChatContent chatContentHeight={chatContentHeight} />
+      <ChatContent />
       <ChatConsole
         inputPlaceholder="Type a message..."
         value={messageString}
         onChange={(e) => setMessageString(e.target.value)}
         onSendBtnClick={handleSendMessage}
         sendLoading={sendLoading}
-        onHeightChange={(height) => setChatContentHeight(height)}
+        showEmojiPicker={showEmojiPicker}
+        onReactionsClick={(e) => {
+          e.stopPropagation()
+          setShowEmojiPicker(prev => !prev)
+        }}
       />
       <RepliesContainer
         replies={messageReplies}

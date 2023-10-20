@@ -1,0 +1,45 @@
+.permissions-bar-portal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+.permissions-bar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  padding-left: var(--sidebarWidth);
+  gap: 20px;
+  background: var(--blue);
+  z-index: 100;
+}
+.permissions-bar .left-side {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.permissions-bar .text {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 600;
+}
+.permissions-bar .text i {
+  margin-right: 10px;
+}
+.permissions-bar .text span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.permissions-bar .right-side {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.permissions-bar .right-side .icon-container:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

@@ -193,6 +193,34 @@ export const getTimeAgo = (date) => {
   }
 }
 
+export const getShortTimeAgo = (date) => {
+  const seconds = Math.floor((Date.now() - date) / 1000)
+  if (seconds <= 1) {
+    return '1s'
+  }
+  else if (seconds < 60) {
+    return `${seconds}s`
+  }
+  else if (seconds < 3600) {
+    return `${Math.floor(seconds / 60)}m`
+  }
+  else if (seconds < 86400) { //less than 24 hours
+    return `${Math.floor(seconds / 3600)}h`
+  }
+  else if (seconds < 604800) { //less than 7 days
+    return `${Math.floor(seconds / 86400)}d`
+  }
+  else if (seconds < 2592000) { //less than 30 days
+    return `${Math.floor(seconds / 604800)}w`
+  }
+  else if (seconds < 31536000) { //less than 365 days
+    return `${Math.floor(seconds / 2592000)}mo`
+  }
+  else {
+    return `${Math.floor(seconds / 31536000)}y`
+  }
+}
+
 export const militaryTimeToAMPM = (time) => {
   const [hours, minutes] = time.split(':')
   const hoursIn12H = hours % 12 || 12

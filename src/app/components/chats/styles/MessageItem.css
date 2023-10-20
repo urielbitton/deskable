@@ -26,6 +26,7 @@
 }
 .message-container .message-content .left-side {
   width: 32px;
+  min-width: 32px;
   overflow: hidden;
 }
 .message-container .message-content .left-side small {
@@ -169,20 +170,6 @@
 .message-container .options-floater .action-icon i {
   font-size: 15px;
   color: var(--darkGrayText);
-}
-
-.message-container .options-floater .emoji-picker-float {
-  position: absolute;
-  top: 80%;
-  right: -15px;
-  display: none;
-}
-.message-container .options-floater.open .emoji-picker-float {
-  display: flex;
-}
-.message-container .options-floater .emoji-picker-float em-emoji-picker {
-  right: 0;
-  transform: scale(0.92);
 }
 
 .message-container .reactions-bar {

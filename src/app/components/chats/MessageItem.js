@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { convertClassicDateAndTime, getTimeAgo } from "app/utils/dateUtils"
+import { convertClassicDateAndTime, getShortTimeAgo, getTimeAgo } from "app/utils/dateUtils"
 import { StoreContext } from "app/store/store"
 import "./styles/MessageItem.css"
 import Avatar from "../ui/Avatar"
@@ -10,6 +10,8 @@ import EmojiPicker from "../ui/EmojiPicker"
 import { addEmojiReactionService, handleReactionClickService } from "app/services/chatServices"
 import { useMessageReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
+import AppPortal from "../ui/AppPortal"
+import { useScreenHeight } from "app/hooks/generalHooks"
 
 export default function MessageItem(props) {
 
@@ -19,45 +21,53 @@ export default function MessageItem(props) {
     isCombined, hasTimestamp, conversationID } = props.message
   const { parentMessage, showEmojiPicker, setShowEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
+  const [emojiPickerPosition, setEmojiPickerPosition] = useState({top: '0', left: '0'})
   const [searchParams, setSearchParams] = useSearchParams()
   const openReplies = searchParams.get("messageID")
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const messageReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/reactions`
   const messageRepliesNum = useDocsCount(messagePath, searchParams)
   const reactions = useMessageReactions(myOrgID, conversationID, messageID)
+  const screenHeight = useScreenHeight()
   const reactionsNum = reactions?.length
   const reactionsSlice = 4
   const hasReplies = messageRepliesNum > 0
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
-  const shortTimestamp = getTimeAgo(dateSent?.toDate()).replace(/am|pm/gi, "")
+  const mediumTimestamp = getTimeAgo(dateSent?.toDate())
+  const smallTimestamp = getShortTimeAgo(dateSent?.toDate())
 
   const handleReactionClick = (reaction) => {
     handleReactionClickService(
       {
         emoji: reaction?.emoji,
         reactionUsers: reaction?.users
-      }, 
+      },
       {
         userID: myUserID,
         userName: myUserName,
         userImg: myUserImg,
-      }, 
+      },
       messageReactionsPath
     )
   }
 
   const reactionsList = reactions
-  ?.slice(0, reactionsSlice)
-  .map(reaction => {
-    return <ReactionsBubble
-      key={reaction.reactionID}
-      reaction={reaction}
-      onClick={() => handleReactionClick(reaction)}
-    />
-  })
+    ?.slice(0, reactionsSlice)
+    .map(reaction => {
+      return <ReactionsBubble
+        key={reaction.reactionID}
+        reaction={reaction}
+        onClick={() => handleReactionClick(reaction)}
+      />
+    })
 
-  const handleOpenEmojiPicker = () => {
+  const handleOpenEmojiPicker = (e) => {
     setShowEmojiPicker(prev => prev === messageID ? null : messageID)
+    if (e.clientY > screenHeight / 2) {
+      setEmojiPickerPosition({ top: `${(e.clientY - screenHeight / 2-20)}px`, left: 'calc(100% - 380px)' })
+    } else {
+      setEmojiPickerPosition({ top: `${e.clientY+30}px`, left: 'calc(100% - 380px)' })
+    }
   }
 
   const handleEmojiSelect = (emoji) => {
@@ -119,7 +129,7 @@ export default function MessageItem(props) {
               <small
                 className="hover-timestamp"
                 title={fullTimestamp}
-              >{shortTimestamp}</small>
+              >{smallTimestamp}</small>
           }
         </div>
         <div className="text-container">
@@ -130,7 +140,7 @@ export default function MessageItem(props) {
                 <h6>
                   <Link to={`/employees/${senderID}`}>{senderName}</Link>
                 </h6>
-                <small title={fullTimestamp}>{shortTimestamp}</small>
+                <small title={fullTimestamp}>{mediumTimestamp}</small>
               </div>
             }
             <p>{text}</p>
@@ -160,12 +170,16 @@ export default function MessageItem(props) {
         className={`options-floater ${showEmojiPicker === messageID ? 'open' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="emoji-picker-float">
+        <AppPortal
+          showPortal={showEmojiPicker === messageID}
+          position={emojiPickerPosition}
+          className="emoji-picker-float"
+        >
           <EmojiPicker
             showPicker={showEmojiPicker === messageID}
             onEmojiSelect={handleEmojiSelect}
           />
-        </div>
+        </AppPortal>
         <div className="icons-bar">
           <ActionIcon
             icon="far fa-smile-plus"
@@ -195,6 +209,6 @@ export default function MessageItem(props) {
           <h6>Pin Message</h6>
         </div>
       </div>
-    </div>
+    </div >
   ) : null
 }

@@ -7,9 +7,11 @@ export default function EmojiPicker(props) {
   const { onEmojiSelect, showPicker } = props
 
   return showPicker ? (
-    <Picker
-      data={data}
-      onEmojiSelect={onEmojiSelect}
-    />
+    <div style={{transform: 'scale(0.9)'}}>
+      <Picker
+        data={data}
+        onEmojiSelect={onEmojiSelect}
+      />
+    </div>
   ) : null
 }

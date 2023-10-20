@@ -33,7 +33,7 @@ export default function ChatCard(props) {
         />
         <div className="text-flex">
           <h4>{!isSpaceChat ? truncateText(otherParticipantName, 38) : truncateText(spaceName, 38)}</h4>
-          <p>{isSentByMe ? 'You: ' : null}{lastMessage?.text}</p>
+          <p>{isSentByMe ? 'You: ' : null}{truncateText(lastMessage?.text, 20)}</p>
         </div>
       </div>
       <div className="right-side">

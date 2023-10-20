@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import ChatConsole, { ActionIcon } from "./ChatConsole"
 import './styles/RepliesContainer.css'
 import { useParams, useSearchParams } from "react-router-dom"
@@ -7,6 +7,9 @@ import { StoreContext } from "app/store/store"
 import ReplyItem from "./ReplyItem"
 import MessageItem from "./MessageItem"
 import { useDocsCount } from "app/hooks/userHooks"
+import { useScreenHeight } from "app/hooks/generalHooks"
+import AppPortal from "../ui/AppPortal"
+import EmojiPicker from "@emoji-mart/react"
 
 export default function RepliesContainer(props) {
 
@@ -15,6 +18,8 @@ export default function RepliesContainer(props) {
     handleSendReply, replyLoading, open, onClose,
     showReplyEmojiPicker, setShowReplyEmojiPicker } = props
   const [searchParams, setSearchParams] = useSearchParams()
+  const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
+  const screenHeight = useScreenHeight()
   const conversationID = useParams().conversationID
   const messageID = searchParams.get('messageID')
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
@@ -31,7 +36,7 @@ export default function RepliesContainer(props) {
   })
 
   return (
-    <div 
+    <div
       className={`replies-container ${open ? "open" : ""}`}
       key={messageID}
     >
@@ -69,6 +74,11 @@ export default function RepliesContainer(props) {
           onChange={onReplyChange}
           onSendBtnClick={handleSendReply}
           sendLoading={replyLoading}
+          showEmojiPicker={showReplyEmojiPicker}
+          onReactionsClick={(e) => {
+            e.stopPropagation()
+            showReplyEmojiPicker(prev => !prev)
+          }}
         />
       </div>
     </div>

@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import './styles/ChatContent.css'
 import { StoreContext } from "app/store/store"
 import { useParams } from "react-router-dom"
-import {useChat, useChatMessages, useSpaceChat } from "app/hooks/chatHooks"
+import { useChat, useChatMessages, useSpaceChat } from "app/hooks/chatHooks"
 import useUser from "app/hooks/userHooks"
 import MessageItem from "./MessageItem"
 
-export default function ChatContent({chatContentHeight}) {
+export default function ChatContent() {
 
   const { myUserID, myOrgID } = useContext(StoreContext)
   const conversationID = useParams().conversationID
@@ -15,10 +15,11 @@ export default function ChatContent({chatContentHeight}) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(null)
   const singleChat = useChat(myUserID, conversationID)
   const spaceChat = useSpaceChat(myOrgID, conversationID)
-  const chat = {...singleChat, ...spaceChat}
+  const chat = { ...singleChat, ...spaceChat }
   const isSpaceChat = chat?.type === "space"
+  const lastMessage = chat?.lastMessage
   const otherParticipantID = myUserID === chat?.participantID ? chat?.creatorID : chat?.participantID
-  const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : null)
+  const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : lastMessage?.senderID)
   const messages = useChatMessages(myOrgID, conversationID, messagesLimit)
   const hasMessages = messages?.length > 0
 
@@ -42,10 +43,10 @@ export default function ChatContent({chatContentHeight}) {
   useEffect(() => {
     window.onclick = () => setShowEmojiPicker(null)
     return () => window.onclick = null
-  },[])
+  })
 
   return chat ? (
-    <div 
+    <div
       className="chat-content"
       key={chat?.conversationID}
     >

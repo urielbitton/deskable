@@ -1,56 +1,45 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import './styles/ChatConsole.css'
 import IconContainer from "../ui/IconContainer"
 import TextareaAutosize from 'react-textarea-autosize'
 import AutoresizeWYSIWG from "../ui/AutoresizeWYSIWG"
-import { chatConsoleIcons } from "app/data/chatsData"
 import { hasWhiteSpace } from "app/utils/generalUtils"
+import EmojiPicker from "../ui/EmojiPicker"
 
 export default function ChatConsole(props) {
 
   const { inputPlaceholder, value, onChange,
-    onSendBtnClick, sendLoading, openEmojis,
-    openFilesUpload, openMediaUpload, 
-    openRecordAudio, toggleFormatting,
-    onHeightChange } = props
+    onSendBtnClick, sendLoading, showEmojiPicker, 
+    onReactionsClick, maxRows=7 } = props
   const hasNoText = hasWhiteSpace(value)
+  const consoleInputRef = useRef(null)
 
-  const handleOpenEmojis = () => {
+  const handleAttachFiles = () => {
+    
+  }
+
+  const handleEmojiClick = (emoji) => {
+    const textarea = consoleInputRef.current
+    const { selectionStart, selectionEnd } = textarea
+    const value = textarea.value
+    const newValue = value.substring(0, selectionStart) + emoji.native + value.substring(selectionEnd, value.length)
+    textarea.value = newValue
+    textarea.setSelectionRange(selectionStart + emoji.native.length, selectionStart + emoji.native.length)
+    onChange({ target: { value: newValue } })
+    textarea.focus()
+  }
+
+  const handleUploadMedia = () => {
 
   }
 
-  const handleOpenFilesUpload = () => {
-
-  }
-
-  const handleOpenMediaUpload = () => {
-
-  }
-
-  const handleOpenRecordAudio = () => {
+  const handleRecordAudio = () => {
 
   }
 
   const handleToggleFormatting = () => {
 
   }
-
-  const functionsArray = [
-    openEmojis,
-    openFilesUpload,
-    openMediaUpload,
-    openRecordAudio,
-    toggleFormatting
-  ]
-
-  const iconsList = chatConsoleIcons?.map(icon => {
-    return <ActionIcon
-      key={ icon.label }
-      icon={ icon.icon }
-      label={icon.label}
-      onClick={ () => functionsArray[icon.functionNum] }
-    />
-  })
 
   return (
     <div className="chat-console">
@@ -69,12 +58,18 @@ export default function ChatConsole(props) {
             }}
           /> */}
           <div className="textarea-container">
+            <div onClick={(e) => e.stopPropagation()}>
+              <EmojiPicker
+                onEmojiSelect={(emoji) => handleEmojiClick(emoji)}
+                showPicker={showEmojiPicker}
+              />
+            </div>
             <TextareaAutosize
               autoFocus
-              placeholder={ inputPlaceholder }
+              ref={consoleInputRef}
+              placeholder={inputPlaceholder}
               className="text-area-autosize"
-              onHeightChange={onHeightChange}
-              maxRows={7}
+              maxRows={maxRows}
               minRows={1}
               cacheMeasurements={true}
               value={value}
@@ -87,33 +82,57 @@ export default function ChatConsole(props) {
               }}
             />
             <div className="actions-bar">
-              { iconsList }
+              <ActionIcon
+                label="Emojis"
+                icon="far fa-smile"
+                onClick={onReactionsClick}
+              />
+              <ActionIcon
+                icon="fas fa-paperclip"
+                label="Attach files"
+                onClick={handleAttachFiles}
+              />
+              <ActionIcon
+                label="Upload Media"
+                icon="far fa-photo-video"
+                onClick={handleUploadMedia}
+              />
+              <ActionIcon
+                label="Record Audio"
+                icon="far fa-microphone"
+                onClick={handleRecordAudio}
+              />
+              <ActionIcon
+                label="Text Format"
+                icon="far fa-font-case"
+                onClick={handleToggleFormatting}
+              />
             </div>
           </div>
           <IconContainer
             icon="fas fa-paper-plane"
-            iconSize={ 18 }
-            iconColor={ (sendLoading || hasNoText) ? "#ccc" : "var(--primary)" }
-            onClick={ !sendLoading && onSendBtnClick }
-            className={ (sendLoading || hasNoText) ? "disabled send-btn" : "send-btn" }
+            iconSize={18}
+            iconColor={(sendLoading || hasNoText) ? "#ccc" : "var(--primary)"}
+            onClick={!sendLoading && onSendBtnClick}
+            className={(sendLoading || hasNoText) ? "disabled send-btn" : "send-btn"}
           />
         </div>
       </div>
       <div className="bottom">
-        {/* attachment media show as slide on: files, images, videos */ }
+        {/* attachment media show as slide on: files, images, videos */}
       </div>
     </div>
   )
 }
 
-export const ActionIcon = ({ icon, onClick, label='', className='' }) => {
+export const ActionIcon = ({ icon, onClick, label = '', className = '' }) => {
   return (
     <div
       className={`action-icon ${className}`}
-      onClick={ onClick }
+      onClick={onClick}
       title={label}
     >
-      <i className={ icon } />
+      <i className={icon} />
     </div>
   )
 }

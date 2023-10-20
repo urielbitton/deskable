@@ -54,3 +54,14 @@ export const getAllNotifications = (userID, setNotifs, lim) => {
     setNotifs(snapshot.docs.map(doc => doc.data()))
   })
 }
+
+export const createPushNotif = (title, body, icon=null) => {
+  var options = {
+    body,
+    icon,
+    dir: "ltr",
+  }
+  // @ts-ignore
+  var notification = new Notification(title, options)
+  return notification
+}

@@ -72,3 +72,8 @@
 .chat-console .input-container .actions-bar .action-icon:hover {
   background: #f1f1f1;
 }
+
+.chat-console em-emoji-picker {
+  bottom: 0;
+  z-index: 1000;
+}

@@ -64,12 +64,12 @@ export const useInViewport = (ref, elemScrollRef, offset) => {
     
     const isInView = () => {
       const rect = ref?.current?.getBoundingClientRect()
-      return (
-        rect.top >= offset &&
-        rect.left >= offset &&
-        rect.bottom <= (window.innerHeight || elemScrollRef?.current?.clientHeight) &&
-        rect.right <= (window.innerWidth || elemScrollRef?.current?.clientWidth)
-      )
+      return rect ? (
+        rect?.top >= offset &&
+        rect?.left >= offset &&
+        rect?.bottom <= (window.innerHeight || elemScrollRef?.current?.clientHeight) &&
+        rect?.right <= (window.innerWidth || elemScrollRef?.current?.clientWidth)
+      ) : false
     } 
   
     useEffect(() => {

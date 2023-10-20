@@ -124,8 +124,8 @@ export default function RepliesContainer(props) {
       </div>
       <AppPortal
         showPortal={showReplyEmojiPicker}
-        position={emojiPickerPosition}
         className="emoji-picker-float"
+        style={{ top: emojiPickerPosition.top, left: emojiPickerPosition.left, zIndex: 1000 }}
       >
         <EmojiPicker
           showPicker

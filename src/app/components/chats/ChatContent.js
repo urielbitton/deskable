@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, 
+  useState, useMemo } from 'react'
 import './styles/ChatContent.css'
 import { StoreContext } from "app/store/store"
 import { useParams } from "react-router-dom"
@@ -11,7 +12,7 @@ export default function ChatContent() {
 
   const { myUserID, myOrgID } = useContext(StoreContext)
   const conversationID = useParams().conversationID
-  const defaultMsgsLimit = 40
+  const defaultMsgsLimit = 30
   const [messagesLimit, setMessagesLimit] = useState(defaultMsgsLimit)
   const [showEmojiPicker, setShowEmojiPicker] = useState(null)
   const singleChat = useChat(myUserID, conversationID)
@@ -29,14 +30,16 @@ export default function ChatContent() {
   const viewPortOffset = 50
   const inView = useInViewport(loadNewRef, messagesListRef, viewPortOffset)
 
-  const messagesList = messages?.map(message => {
-    return <MessageItem
-      key={message.messageID}
-      message={message}
-      showEmojiPicker={showEmojiPicker}
-      setShowEmojiPicker={setShowEmojiPicker}
-    />
-  })
+  const messagesList = useMemo(() => {
+    return messages?.map((message) => (
+      <MessageItem
+        key={message.messageID}
+        message={message}
+        showEmojiPicker={showEmojiPicker}
+        setShowEmojiPicker={setShowEmojiPicker}
+      />
+    ))
+  }, [messages, chat])
 
   const handleSendReply = () => {
 

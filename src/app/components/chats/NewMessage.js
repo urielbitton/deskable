@@ -6,7 +6,7 @@ import DropdownSearch from "../ui/DropdownSearch"
 import Avatar from "../ui/Avatar"
 import ChatConsole from "./ChatConsole"
 import { hasWhiteSpace } from "app/utils/generalUtils"
-import { createSingleChatService, createSpaceChatService } from "app/services/chatServices"
+import { createConversationService } from "app/services/chatServices"
 import { AppInput } from "../ui/AppInputs"
 import { useNavigate } from "react-router-dom"
 
@@ -25,6 +25,7 @@ export default function NewMessage() {
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const inputRef = useRef(null)
   const navigate = useNavigate()
+  const isSpaceChat = selectedUsers.length > 1
 
   const handleSelectUser = (user) => {
     setSelectedUsers(prev => [...prev, user])
@@ -62,11 +63,11 @@ export default function NewMessage() {
           round={false}
         />
         <h6>{`${user.firstName} ${user.lastName}`}</h6>
-        <div className="close">
-          <i
-            className="fal fa-times"
-            onClick={() => setSelectedUsers(prev => prev.filter(prevUser => prevUser.userID !== user.userID))}
-          />
+        <div
+          className="close"
+          onClick={() => setSelectedUsers(prev => prev.filter(prevUser => prevUser.userID !== user.userID))}
+        >
+          <i className="fal fa-times" />
         </div>
       </div>
     })
@@ -77,48 +78,37 @@ export default function NewMessage() {
   }
 
   const handleSendMessage = () => {
-    if (hasWhiteSpace(messageString) || selectedUsers.length < 1) return null
-    if (selectedUsers.length > 1) {
-      setSendLoading(true)
-      createSpaceChatService({
-        selectedUsersIDs: selectedUsers.map(user => user.userID),
-        messageMeta: {
-          dateSent: new Date(),
-          senderID: myUserID,
-          text: messageString,
-        },
-        spaceName,
-        userMeta: {
-          userID: myUserID,
-          userName: `${myUser?.firstName} ${myUser?.lastName}`,
-          userImg: myUser?.photoURL,
-        },
-        orgID: myOrgID,
+    if (selectedUsers.length < 1) return alert('Please select at least one user to send to.')
+    if(hasWhiteSpace(messageString)) return alert('Please add a message to send.')
+    setSendLoading(true)
+    createConversationService({
+      selectedUsersIDs: selectedUsers.map(user => user.userID),
+      messageMeta: {
+        dateSent: new Date(),
+        senderID: myUserID,
+        text: messageString,
+      },
+      spaceName,
+      userMeta: {
+        userID: myUserID,
+        userName: `${myUser?.firstName} ${myUser?.lastName}`,
+        userImg: myUser?.photoURL,
+      },
+      orgID: myOrgID,
+      participantID: selectedUsers[0]?.userID,
+      isSpaceChat
+    })
+      .then((res) => {
+        setSendLoading(false)
+        if (res.success) {
+          return navigate(`/messages/${res.conversationID}`)
+        }
+        return alert('There was a problem creating your space. Please try again.')
       })
-        .then((res) => {
-          setSendLoading(false)
-          if(res.success) {
-            return navigate(`/messages/${res.conversationID}`)
-          }
-          return alert('There was a problem creating your space. Please try again.')
-        })
-        .catch((err) => {
-          console.log(err)
-          setSendLoading(false)
-        })
-    }
-    else {
-      createSingleChatService({
-
+      .catch((err) => {
+        console.log(err)
+        setSendLoading(false)
       })
-        .then(() => {
-          setSendLoading(false)
-        })
-        .catch((err) => {
-          console.log(err)
-          setSendLoading(false)
-        })
-    }
   }
 
   useEffect(() => {
@@ -153,13 +143,16 @@ export default function NewMessage() {
         </div>
       </div>
       <div className="console-section">
-        <AppInput
-          label="Space Name"
-          placeholder="Name your space"
-          onChange={(e) => setSpaceName(e.target.value)}
-          value={spaceName}
-          disabled={sendLoading}
-        />
+        {
+          isSpaceChat &&
+          <AppInput
+            label="Space Name"
+            placeholder="Name your space"
+            onChange={(e) => setSpaceName(e.target.value)}
+            value={spaceName}
+            disabled={sendLoading}
+          />
+        }
         <ChatConsole
           inputPlaceholder="Type a message to send to this space"
           value={messageString}

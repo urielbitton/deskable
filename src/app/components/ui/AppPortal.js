@@ -4,16 +4,11 @@ import { createPortal } from 'react-dom'
 
 export default function AppPortal(props) {
 
-  const { children, showPortal, className="app-portal",
-    position } = props
-  const { top='0px', left='0px' } = position || {}
+  const { children, showPortal, className="app-portal" } = props
 
   if (!showPortal) return null
   return createPortal(
-    <div 
-      className={className}
-      style={{ position: 'absolute', top, left, zIndex: 1000}}
-    >
+    <div className={className}>
       {children}
     </div>, 
     document.body

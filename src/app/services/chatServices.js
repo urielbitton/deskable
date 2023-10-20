@@ -278,14 +278,15 @@ export const getReactionsByReplyAndMessageID = (orgID, conversationID, messageID
   return q
 }
 
-//create space conversation
-export const createSpaceChatService = (data) => {
-  const { selectedUsersIDs, spaceName, messageMeta, userMeta, orgID } = data
+//create space & single conversation
+export const createConversationService = (data) => {
+  const { selectedUsersIDs, spaceName, messageMeta, userMeta, 
+    orgID, participantID, isSpaceChat } = data
   const path = `organizations/${orgID}/conversations`
   const docID = getRandomDocID(path)
   const messagesPath = `organizations/${orgID}/conversations/${docID}/messages`
   return setDB(path, docID, {
-    blockedIDs: [],
+    ...(isSpaceChat && { blockedIDs: [] }),
     conversationID: docID,
     creatorID: userMeta.userID,
     dateUpdated: new Date(),
@@ -295,11 +296,11 @@ export const createSpaceChatService = (data) => {
     lastActive: new Date(),
     lastMessage: { ...messageMeta },
     lastReply: null,
-    notifiedUsersIDs: selectedUsersIDs,
+    ...(isSpaceChat && { notifiedUsersIDs: selectedUsersIDs }),
     orgID,
-    participantsIDs: [...selectedUsersIDs, userMeta.userID],
-    spaceName,
-    type: 'space',
+    ...(isSpaceChat ? { participantsIDs: [...selectedUsersIDs, userMeta.userID] } : { participantsIDs: [participantID, userMeta.userID] }),
+    ...(isSpaceChat && { spaceName }),
+    type: isSpaceChat ? 'space' : 'single',
     usersTyping: []
   })
     .then(() => {
@@ -330,9 +331,4 @@ export const createSpaceChatService = (data) => {
         conversationID: null,
       }
     })
-}
-
-//create single conversation
-export const createSingleChatService = (data) => {
-  return null
 }

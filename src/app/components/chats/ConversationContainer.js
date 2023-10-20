@@ -42,6 +42,7 @@ export default function ConversationContainer() {
     if (hasWhiteSpace(messageString)) return null
     setSendLoading(true)
     setMessageString("")
+    setShowEmojiPicker(false)
     handleSendMessageService({
       message: {
         senderID: myUserID,

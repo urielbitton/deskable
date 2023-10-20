@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react'
-import ChatConsole, { ActionIcon } from "./ChatConsole"
+import React, { useContext, useEffect, useState } from 'react'
+import ChatConsole from "./ChatConsole"
 import './styles/RepliesContainer.css'
 import { useParams, useSearchParams } from "react-router-dom"
 import { useChatMessage } from "app/hooks/chatHooks"
@@ -10,21 +10,38 @@ import { useDocsCount } from "app/hooks/userHooks"
 import { useScreenHeight } from "app/hooks/generalHooks"
 import AppPortal from "../ui/AppPortal"
 import EmojiPicker from "@emoji-mart/react"
+import { ActionIcon } from "../ui/ActionIcon"
+import { addEmojiReactionService } from "app/services/chatServices"
 
 export default function RepliesContainer(props) {
 
-  const { myOrgID } = useContext(StoreContext)
-  const { replies, replyString, onReplyChange, value,
+  const { myOrgID, myUserID, myUserName,
+    myUserImg } = useContext(StoreContext)
+  const { replies, onReplyChange, value,
     handleSendReply, replyLoading, open, onClose,
     showReplyEmojiPicker, setShowReplyEmojiPicker } = props
   const [searchParams, setSearchParams] = useSearchParams()
+  const [showReplyConsoleEmojiPicker, setShowReplyConsoleEmojiPicker] = useState(false)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
+  const [openReplyID, setOpenReplyID] = useState(null)
   const screenHeight = useScreenHeight()
   const conversationID = useParams().conversationID
   const messageID = searchParams.get('messageID')
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
+  const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${openReplyID}/reactions`
   const message = useChatMessage(myOrgID, conversationID, messageID)
   const messageRepliesNum = useDocsCount(messagePath, messageID)
+
+  const handleOpenEmojiPicker = (e, reply) => {
+    e.stopPropagation()
+    setOpenReplyID(reply.replyID)
+    setShowReplyEmojiPicker(!showReplyEmojiPicker)
+    if (e.clientY > screenHeight / 2) {
+      setEmojiPickerPosition({ top: `${((e.clientY - screenHeight / 2) - 15)}px`, left: 'calc(100% - 355px)' })
+    } else {
+      setEmojiPickerPosition({ top: `${e.clientY + 20}px`, left: 'calc(100% - 355px)' })
+    }
+  }
 
   const repliesList = replies?.map(reply => {
     return <ReplyItem
@@ -32,7 +49,28 @@ export default function RepliesContainer(props) {
       reply={reply}
       showReplyEmojiPicker={showReplyEmojiPicker}
       setShowReplyEmojiPicker={setShowReplyEmojiPicker}
+      handleOpenEmojiPicker={(e) => handleOpenEmojiPicker(e, reply)}
     />
+  })
+
+  const handleEmojiSelect = (emoji) => {
+    setShowReplyEmojiPicker(null)
+    addEmojiReactionService({
+      emoji,
+      userID: myUserID,
+      userName: myUserName,
+      userImg: myUserImg,
+    },
+      replyReactionsPath
+    )
+  }
+
+  useEffect(() => {
+    window.onclick = () => {
+      setShowReplyConsoleEmojiPicker(false)
+      setShowReplyEmojiPicker(false)
+    }
+    return () => window.onclick = null
   })
 
   return (
@@ -72,15 +110,28 @@ export default function RepliesContainer(props) {
           inputPlaceholder="Type a reply..."
           value={value}
           onChange={onReplyChange}
-          onSendBtnClick={handleSendReply}
+          onSendBtnClick={() => {
+            handleSendReply()
+            setShowReplyConsoleEmojiPicker(false)
+          }}
           sendLoading={replyLoading}
-          showEmojiPicker={showReplyEmojiPicker}
+          showEmojiPicker={showReplyConsoleEmojiPicker}
           onReactionsClick={(e) => {
             e.stopPropagation()
-            showReplyEmojiPicker(prev => !prev)
+            setShowReplyConsoleEmojiPicker(prev => !prev)
           }}
         />
       </div>
+      <AppPortal
+        showPortal={showReplyEmojiPicker}
+        position={emojiPickerPosition}
+        className="emoji-picker-float"
+      >
+        <EmojiPicker
+          showPicker
+          onEmojiSelect={handleEmojiSelect}
+        />
+      </AppPortal>
     </div>
   )
 }

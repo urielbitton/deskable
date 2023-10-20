@@ -79,6 +79,7 @@
   padding: 3px 7px;
   border-radius: 5px;
   background: #fff;
+  border: 1px solid var(--lightGrayText);
   margin-top: 2px;
   cursor: pointer;
 }
@@ -93,10 +94,8 @@
 .message-container .reply-bar small i {
   margin-right: 5px;
 }
-.message-container:hover .reply-bar {
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-}
 
+/* Options floater css */
 .message-container .options-floater {
   position: absolute;
   top: -20px;
@@ -111,7 +110,7 @@
   padding: 3px;
 }
 .message-container.open-replies .options-floater {
-  right: 410px;
+  right: 370px;
 }
 .message-container:hover .options-floater,
 .message-container .options-floater.open {
@@ -176,4 +175,12 @@
   display: flex;
   align-items: center;
   gap: 5px
+}
+
+/* reply message container styles*/
+.message-container.reply-container .options-floater .emoji-picker-float {
+  display: none;
+}
+.message-container.reply-container .reactions-bar {
+  margin-top: 2px;
 }

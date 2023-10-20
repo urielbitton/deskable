@@ -5,6 +5,7 @@ import TextareaAutosize from 'react-textarea-autosize'
 import AutoresizeWYSIWG from "../ui/AutoresizeWYSIWG"
 import { hasWhiteSpace } from "app/utils/generalUtils"
 import EmojiPicker from "../ui/EmojiPicker"
+import { ActionIcon } from "../ui/ActionIcon"
 
 export default function ChatConsole(props) {
 
@@ -121,18 +122,6 @@ export default function ChatConsole(props) {
       <div className="bottom">
         {/* attachment media show as slide on: files, images, videos */}
       </div>
-    </div>
-  )
-}
-
-export const ActionIcon = ({ icon, onClick, label = '', className = '' }) => {
-  return (
-    <div
-      className={`action-icon ${className}`}
-      onClick={onClick}
-      title={label}
-    >
-      <i className={icon} />
     </div>
   )
 }

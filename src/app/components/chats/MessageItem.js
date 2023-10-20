@@ -3,7 +3,6 @@ import { convertClassicDateAndTime, getShortTimeAgo, getTimeAgo } from "app/util
 import { StoreContext } from "app/store/store"
 import "./styles/MessageItem.css"
 import Avatar from "../ui/Avatar"
-import { ActionIcon } from "./ChatConsole"
 import { useDocsCount } from "app/hooks/userHooks"
 import { Link, useSearchParams } from "react-router-dom"
 import EmojiPicker from "../ui/EmojiPicker"
@@ -12,6 +11,7 @@ import { useMessageReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import AppPortal from "../ui/AppPortal"
 import { useScreenHeight } from "app/hooks/generalHooks"
+import { ActionIcon } from "../ui/ActionIcon"
 
 export default function MessageItem(props) {
 
@@ -64,9 +64,9 @@ export default function MessageItem(props) {
   const handleOpenEmojiPicker = (e) => {
     setShowEmojiPicker(prev => prev === messageID ? null : messageID)
     if (e.clientY > screenHeight / 2) {
-      setEmojiPickerPosition({ top: `${(e.clientY - screenHeight / 2-20)}px`, left: 'calc(100% - 380px)' })
+      setEmojiPickerPosition({ top: `${((e.clientY - screenHeight / 2) - 15)}px`, left: 'calc(100% - 355px)' })
     } else {
-      setEmojiPickerPosition({ top: `${e.clientY+30}px`, left: 'calc(100% - 380px)' })
+      setEmojiPickerPosition({ top: `${e.clientY + 20}px`, left: 'calc(100% - 355px)' })
     }
   }
 
@@ -176,7 +176,7 @@ export default function MessageItem(props) {
           className="emoji-picker-float"
         >
           <EmojiPicker
-            showPicker={showEmojiPicker === messageID}
+            showPicker
             onEmojiSelect={handleEmojiSelect}
           />
         </AppPortal>

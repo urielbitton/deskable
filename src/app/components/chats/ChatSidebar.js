@@ -4,9 +4,9 @@ import { useListOfSingleChats,
   useListOfSpaceChats } from "app/hooks/chatHooks"
 import { StoreContext } from "app/store/store"
 import ChatCard from "./ChatCard"
-import { ActionIcon } from "./ChatConsole"
 import { useNavigate } from "react-router-dom"
 import { AppInput } from "../ui/AppInputs"
+import { ActionIcon } from "../ui/ActionIcon"
 
 export default function ChatSidebar() {
 

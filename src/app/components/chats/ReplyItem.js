@@ -2,13 +2,12 @@ import { StoreContext } from "app/store/store"
 import React, { useContext, useEffect, useState } from 'react'
 import Avatar from "../ui/Avatar"
 import { convertClassicDateAndTime, getTimeAgo } from "app/utils/dateUtils"
-import { ActionIcon } from "./ChatConsole"
 import "./styles/MessageItem.css"
 import { Link } from "react-router-dom"
 import { addEmojiReactionService, handleReactionClickService } from "app/services/chatServices"
 import { useReplyReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
-import EmojiPicker from "@emoji-mart/react"
+import { ActionIcon } from "../ui/ActionIcon"
 
 export default function ReplyItem(props) {
 
@@ -16,7 +15,8 @@ export default function ReplyItem(props) {
   const { replyID, dateSent, senderID, dateModified,
     isDeleted, text, senderName, senderImg, messageID,
     isCombined, hasTimestamp, conversationID } = props.reply
-  const { showReplyEmojiPicker, setShowReplyEmojiPicker } = props
+  const { showReplyEmojiPicker, setShowReplyEmojiPicker, 
+    handleOpenEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
   const reactionsSlice = 4
   const reactions = useReplyReactions(myOrgID, conversationID, messageID, replyID)
@@ -50,22 +50,6 @@ export default function ReplyItem(props) {
       />
     })
 
-  const handleEmojiSelect = (emoji) => {
-    setShowReplyEmojiPicker(null)
-    addEmojiReactionService({
-      emoji,
-      userID: myUserID,
-      userName: myUserName,
-      userImg: myUserImg,
-    },
-      replyReactionsPath
-    )
-  }
-
-  const handleOpenEmojiPicker = () => {
-    setShowReplyEmojiPicker(prev => prev === replyID ? null : replyID)
-  }
-
   const handleReply = () => {
 
   }
@@ -90,7 +74,7 @@ export default function ReplyItem(props) {
   return (
     <div
       className={`
-    message-container 
+    message-container reply-container 
     ${isCombined ? "combined" : ""} 
     ${openOptionsID === replyID ? "open-options" : ""}
   `}
@@ -142,12 +126,6 @@ export default function ReplyItem(props) {
         className={`options-floater ${showReplyEmojiPicker === replyID ? 'open' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="emoji-picker-float">
-          <EmojiPicker
-            showPicker={showReplyEmojiPicker === replyID}
-            onEmojiSelect={handleEmojiSelect}
-          />
-        </div>
         <div className="icons-bar">
           <ActionIcon
             icon="far fa-smile-plus"

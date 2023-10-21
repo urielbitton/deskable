@@ -136,6 +136,7 @@
 }
 .projects-home .home-task-row .task-title .icon-container {
   top: 4px;
+  min-width: 19px;
 }
 .projects-home .home-task-row .task-title .right {
   display: flex;

@@ -47,6 +47,7 @@
   background: var(--lightGrayText);
 }
 
+/* short sidebar version */
 .task-details-container .view-task-content {
   display: flex;
   flex-direction: column;
@@ -57,7 +58,8 @@
   padding-right: 5px;
 }
 .task-details-container .view-task-content .task-content {
-  overflow: unset;
+  overflow: visible;
+  height: auto;
 }
 .task-details-container .view-task-content .task-details {
   overflow: visible;

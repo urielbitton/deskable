@@ -68,6 +68,13 @@
   color: #333;
   white-space: pre-wrap;
 }
+.view-task-content .task-content .description-section p div {
+  word-break: break-all;
+}
+.view-task-content .task-content .description-section p a {
+  text-decoration: underline;
+  color: var(--blue);
+}
 .view-task-content .task-content .attachments-section {
   display: flex;
   flex-direction: column;

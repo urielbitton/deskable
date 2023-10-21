@@ -20,7 +20,7 @@ export default function MessageItem(props) {
   const { myUserID, myUserName, myUserImg, myOrgID } = useContext(StoreContext)
   const { messageID, dateSent, senderID, dateModified,
     isDeleted, text, senderName, senderImg, isCombined,
-    hasTimestamp, conversationID, newDay } = props.message
+    hasTimestamp, conversationID, newDay, lastReply } = props.message
   const { parentMessage, showEmojiPicker, setShowEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
@@ -32,7 +32,7 @@ export default function MessageItem(props) {
   const openReplies = searchParams.get("messageID")
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const messageReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/reactions`
-  const messageRepliesNum = useDocsCount(messagePath, searchParams)
+  const messageRepliesNum = useDocsCount(messagePath, lastReply)
   const reactions = useMessageReactions(myOrgID, conversationID, messageID)
   const screenHeight = useScreenHeight()
   const reactionsNum = reactions?.length

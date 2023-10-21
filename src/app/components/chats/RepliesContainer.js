@@ -30,7 +30,7 @@ export default function RepliesContainer(props) {
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${openReplyID}/reactions`
   const message = useChatMessage(myOrgID, conversationID, messageID)
-  const messageRepliesNum = useDocsCount(messagePath, messageID)
+  const messageRepliesNum = useDocsCount(messagePath, message)
   const consoleInputRef = useRef(null)
 
   const handleOpenEmojiPicker = (e, reply) => {

@@ -128,7 +128,7 @@ export const handleSendReplyService = (replyObj) => {
     hasTimestamp,
   })
     .then(() => {
-      return updateDB(`organizations/${orgID}/conversations/${conversationID}/messages/`, messageID, {
+      return updateDB(`organizations/${orgID}/conversations/${conversationID}/messages`, messageID, {
         lastReply: {
           dateSent: message.dateSent,
           senderID: message.senderID,
@@ -295,7 +295,6 @@ export const createConversationService = (data) => {
     isReadBy: [userMeta.userID],
     lastActive: new Date(),
     lastMessage: { ...messageMeta },
-    lastReply: null,
     ...(isSpaceChat && { notifiedUsersIDs: selectedUsersIDs }),
     orgID,
     ...(!isSpaceChat && { participantID }),

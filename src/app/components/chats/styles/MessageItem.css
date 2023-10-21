@@ -259,5 +259,6 @@
   gap: 5px;
 }
 .message-container.editing .chat-console .custom-edit-btns .appButton {
-
+  padding: 5px 8px;
+  font-size: 14px;
 }

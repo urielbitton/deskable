@@ -21,7 +21,6 @@ export default function ReplyItem(props) {
   const { showReplyEmojiPicker, setShowReplyEmojiPicker,
     handleOpenEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
-  const [editingReply, setEditingReply] = useState(false)
   const [editReplyString, setEditReplyString] = useState(text)
   const [saveLoading, setSaveLoading] = useState(false)
   const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false)
@@ -33,6 +32,8 @@ export default function ReplyItem(props) {
   const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${replyID}/reactions`
   const reactionsNum = reactions?.length
   const consoleInputRef = useRef(null)
+  const editingReply = activeEditID === messageID
+  const isMyMessage = senderID === myUserID
 
   const handleReactionClick = (reaction) => {
     handleReactionClickService(
@@ -73,6 +74,12 @@ export default function ReplyItem(props) {
     } else {
       setOpenOptionsID(replyID)
     }
+  }
+
+  const handleEditReply = () => {
+    setActiveEditID(messageID)
+    setEditReplyString(text)
+    setOpenOptionsID(null)
   }
 
   const handleSaveMessage = () => {
@@ -118,6 +125,7 @@ export default function ReplyItem(props) {
     message-container reply-container 
     ${isCombined ? "combined" : ""} 
     ${openOptionsID === replyID ? "open-options" : ""}
+    ${editingReply ? "editing" : ""}
   `}
       data-reply-id={replyID}
       key={replyID}
@@ -210,9 +218,15 @@ export default function ReplyItem(props) {
           />
         </div>
         <div className={`options-flex ${openOptionsID === replyID ? "open" : ""}`}>
-          <h6>Edit Message</h6>
-          <h6>Delete Message</h6>
-          <h6>Pin Message</h6>
+          {
+            isMyMessage &&
+            <>
+              <h6 onClick={handleEditReply}><i className="far fa-pen" />Edit Message</h6>
+              <h6><i className="far fa-trash" />Delete Message</h6>
+            </>
+          }
+          <h6><i className="far fa-thumbtack" />Pin Message</h6>
+          <h6><i className="far fa-flag" />Report Message</h6>
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import { useScreenHeight } from "app/hooks/generalHooks"
 import { ActionIcon } from "../ui/ActionIcon"
 import ChatConsole from "./ChatConsole"
 import AppButton from "../ui/AppButton"
+import AppLink from "../ui/AppLink"
 
 export default function MessageItem(props) {
 
@@ -115,14 +116,14 @@ export default function MessageItem(props) {
 
   const handleSaveMessage = () => {
     return saveEditedMessageService({
-      text: editMessageString, 
-      messageID, 
-      conversationID, 
+      text: editMessageString,
+      messageID,
+      conversationID,
       orgID: myOrgID,
     })
-    .then(() => {
-      cancelEditMessage()
-    })
+      .then(() => {
+        cancelEditMessage()
+      })
   }
 
   const cancelEditMessage = () => {
@@ -162,22 +163,10 @@ export default function MessageItem(props) {
       consoleInputRef?.current.setSelectionRange(consoleInputRef?.current.value.length, consoleInputRef?.current.value.length)
       consoleInputRef?.current.focus()
     }
-  },[editingMessage])
+  }, [editingMessage])
 
   return messageID ? (
     <>
-      {
-        newDay &&
-        <div
-          className="date-seperator"
-          key={`${messageID}-seperator`}
-        >
-          <div className="seperator-row">
-            <hr />
-            <small>{seperatorDate(dateSent)}</small>
-          </div>
-        </div>
-      }
       <div
         className={`
         message-container 
@@ -238,8 +227,8 @@ export default function MessageItem(props) {
                     customBtns={editConsoleBtns}
                   /> :
                   <p>
-                    {text}
-                    { dateModified && <small className="edited"> (Edited)</small> }
+                    <AppLink text={text} />&nbsp;
+                    {dateModified && <small className="edited">(Edited)</small>}
                   </p>
               }
             </div>
@@ -314,6 +303,18 @@ export default function MessageItem(props) {
           </div>
         </div>
       </div>
+      {
+        newDay &&
+        <div
+          className="date-seperator"
+          key={`${messageID}-seperator`}
+        >
+          <div className="seperator-row">
+            <hr />
+            <small>{seperatorDate(dateSent)}</small>
+          </div>
+        </div>
+      }
     </>
   ) : null
 }

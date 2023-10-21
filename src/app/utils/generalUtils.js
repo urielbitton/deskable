@@ -131,7 +131,7 @@ export const detectAndUnderlineAllLinksInText = (text) => {
   const links = extractAllLinksFromText(text)
   let newText = text
   links.forEach(link => {
-    newText = newText.replace(link, `<a href="${link}" target="_blank">${link}</a>`)
+    newText = newText.replace(link, `<a href="${replaceAllLinksInTextWithHttps(link)}" target="_blank">${link}</a>`)
   })
   return newText
 }

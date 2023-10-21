@@ -80,11 +80,16 @@
   font-weight: 600;
   color: #333;
   white-space: pre-wrap;
+  display: inline-block;
 }
-.message-container .message-content .text p small.edited {
+.message-container .message-content .text small.edited {
   color: #aaa;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
+}
+.message-container .message-content .text p a {
+  color: #000;
+  text-decoration: underline;
 }
 
 .message-container .reply-bar {

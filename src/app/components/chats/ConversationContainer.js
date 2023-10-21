@@ -38,6 +38,7 @@ export default function ConversationContainer() {
   const insertReplyTimestamp = isDateGreaterThanXTimeAgo(openMessage?.lastReply?.dateSent?.toDate(), fifteenMinutes)
   const hasReadLastMessage = conversation?.isReadBy?.includes(myUserID)
   const consoleInputRef = useRef(null)
+  const isNewDay = !isOnSameDay(conversation?.lastMessage?.dateSent?.toDate(), new Date())
 
   const handleSendMessage = () => {
     if (hasWhiteSpace(messageString)) return null
@@ -58,9 +59,9 @@ export default function ConversationContainer() {
       },
       conversationID,
       orgID: myOrgID,
-      isCombined: combineMessage,
+      isCombined: isNewDay ? false : combineMessage,
       hasTimestamp: insertMsgTimestamp,
-      newDay: !isOnSameDay(conversation?.lastMessage?.dateSent?.toDate(), new Date())
+      newDay: isNewDay,
     })
       .then(() => {
         setSendLoading(false)

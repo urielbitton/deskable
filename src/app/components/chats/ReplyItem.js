@@ -1,13 +1,16 @@
 import { StoreContext } from "app/store/store"
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Avatar from "../ui/Avatar"
 import { convertClassicDateAndTime, getTimeAgo } from "app/utils/dateUtils"
 import "./styles/MessageItem.css"
 import { Link } from "react-router-dom"
-import { addEmojiReactionService, handleReactionClickService } from "app/services/chatServices"
+import { addEmojiReactionService, handleReactionClickService, saveEditedReplyService } from "app/services/chatServices"
 import { useReplyReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import { ActionIcon } from "../ui/ActionIcon"
+import ChatConsole from "./ChatConsole"
+import AppButton from "../ui/AppButton"
+import AppLink from "../ui/AppLink"
 
 export default function ReplyItem(props) {
 
@@ -15,15 +18,21 @@ export default function ReplyItem(props) {
   const { replyID, dateSent, senderID, dateModified,
     isDeleted, text, senderName, senderImg, messageID,
     isCombined, hasTimestamp, conversationID } = props.reply
-  const { showReplyEmojiPicker, setShowReplyEmojiPicker, 
+  const { showReplyEmojiPicker, setShowReplyEmojiPicker,
     handleOpenEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
+  const [editingReply, setEditingReply] = useState(false)
+  const [editReplyString, setEditReplyString] = useState(text)
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false)
+  const [activeEditID, setActiveEditID] = useState(null)
   const reactionsSlice = 4
   const reactions = useReplyReactions(myOrgID, conversationID, messageID, replyID)
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
   const shortTimestamp = getTimeAgo(dateSent?.toDate()).replace(/am|pm/gi, "")
   const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${replyID}/reactions`
   const reactionsNum = reactions?.length
+  const consoleInputRef = useRef(null)
 
   const handleReactionClick = (reaction) => {
     handleReactionClickService(
@@ -65,6 +74,38 @@ export default function ReplyItem(props) {
       setOpenOptionsID(replyID)
     }
   }
+
+  const handleSaveMessage = () => {
+    return saveEditedReplyService({
+      text: editReplyString,
+      messageID,
+      replyID,
+      conversationID,
+      orgID: myOrgID,
+    })
+      .then(() => {
+        cancelEditMessage()
+      })
+  }
+
+  const cancelEditMessage = () => {
+    setActiveEditID(null)
+    setEditReplyString('')
+  }
+
+  const editConsoleBtns = (
+    <div className="custom-edit-btns">
+      <AppButton
+        label="Save"
+        onClick={handleSaveMessage}
+      />
+      <AppButton
+        label="Cancel"
+        onClick={cancelEditMessage}
+        buttonType="outlineBtn"
+      />
+    </div>
+  )
 
   useEffect(() => {
     window.onclick = () => setOpenOptionsID(null)
@@ -109,7 +150,31 @@ export default function ReplyItem(props) {
                 <small title={fullTimestamp}>{shortTimestamp}</small>
               </div>
             }
-            <p>{text}</p>
+            {
+              editingReply ?
+                <ChatConsole
+                  inputRef={consoleInputRef}
+                  inputPlaceholder="Edit message..."
+                  value={editReplyString}
+                  onChange={(e) => setEditReplyString(e.target.value)}
+                  sendLoading={saveLoading}
+                  showEmojiPicker={showEditEmojiPicker}
+                  onSendBtnClick={() => null}
+                  onReactionsClick={(e) => {
+                    e.stopPropagation()
+                    setShowEditEmojiPicker(prev => !prev)
+                  }}
+                  showFilesUpload={false}
+                  showMediaUpload={false}
+                  showRecorder={false}
+                  hideSendBtn
+                  customBtns={editConsoleBtns}
+                /> :
+                <p>
+                  <AppLink text={text} />&nbsp;
+                  {dateModified && <small className="edited">(Edited)</small>}
+                </p>
+            }
           </div>
           <div className="reactions-bar">
             {reactionsList}

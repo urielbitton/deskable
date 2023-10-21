@@ -35,6 +35,7 @@ import TaskEvent from "./TaskEvent"
 import './styles/TaskContentDetails.css'
 import AppScrollSlider from "../ui/AppScrollSlider"
 import HtmlDisplayer from "../ui/HtmlDisplayer"
+import AppLink from "../ui/AppLink"
 
 export default function TaskContentDetails(props) {
 
@@ -432,7 +433,7 @@ export default function TaskContentDetails(props) {
               onClick={() => setShowCoverInput('description')}
               style={{ display: showCoverInput === 'description' ? 'none' : 'block' }}
             >
-              <HtmlDisplayer html={task.description} />
+              <AppLink text={task.description} />
             </div>
           </div>
         </div>

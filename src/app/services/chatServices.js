@@ -353,3 +353,23 @@ export const saveEditedMessageService = (data) => {
       }
     })
 }
+
+export const saveEditedReplyService = (data) => {
+  const { text, messageID, replyID, conversationID, orgID } = data
+  const path = `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/replies`
+  return updateDB(path, replyID, {
+    text,
+    dateModified: new Date(),
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        success: false,
+      }
+    })
+}

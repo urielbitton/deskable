@@ -12,6 +12,7 @@ import DropdownIcon from "../ui/DropDownIcon"
 import HtmlDisplayer from "../ui/HtmlDisplayer"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import './styles/TaskComment.css'
+import AppLink from "../ui/AppLink"
 
 export default function TaskComment(props) {
 
@@ -109,7 +110,7 @@ export default function TaskComment(props) {
       <div className="comment-body">
         {
           !editMode ?
-            <HtmlDisplayer html={text}/> :
+            <AppLink text={text}/> :
             <div className="editor-container">
               <WysiwygEditor
                 placeholder="Enter a comment..."

@@ -23,6 +23,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  width: 100%;
 }
 .message-container .message-content .left-side {
   width: 32px;
@@ -75,10 +76,15 @@
   font-size: 12px;
 }
 .message-container .message-content .text p {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   color: #333;
   white-space: pre-wrap;
+}
+.message-container .message-content .text p small.edited {
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .message-container .reply-bar {
@@ -154,6 +160,9 @@
   cursor: pointer;
   transition: all 0.2s;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .message-container .options-floater .options-flex h6:hover {
   background: #f1f1f1;
@@ -223,4 +232,27 @@
   padding: 3px 5px;
   z-index: 10;
   cursor: default;
+}
+
+/* Editing message styles */
+.message-container.editing,
+.message-container.editing:hover {
+  background: var(--extraLightPrimary);
+  z-index: 100;
+}
+.message-container.editing .chat-console,
+.message-container.editing .chat-console .textarea-container,
+.message-container.editing .chat-console .textarea-container textarea,
+.message-container.editing .text-container,
+.message-container.editing .text {
+  width: 100%;
+}
+
+.message-container.editing .chat-console .custom-edit-btns {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.message-container.editing .chat-console .custom-edit-btns .appButton {
+
 }

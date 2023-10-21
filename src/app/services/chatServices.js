@@ -280,7 +280,7 @@ export const getReactionsByReplyAndMessageID = (orgID, conversationID, messageID
 
 //create space & single conversation
 export const createConversationService = (data) => {
-  const { selectedUsersIDs, spaceName, messageMeta, userMeta, 
+  const { selectedUsersIDs, spaceName, messageMeta, userMeta,
     orgID, participantID, isSpaceChat } = data
   const path = `organizations/${orgID}/conversations`
   const docID = getRandomDocID(path)
@@ -330,6 +330,27 @@ export const createConversationService = (data) => {
       return {
         success: false,
         conversationID: null,
+      }
+    })
+}
+
+//save edited message
+export const saveEditedMessageService = (data) => {
+  const { text, messageID, conversationID, orgID } = data
+  const path = `organizations/${orgID}/conversations/${conversationID}/messages`
+  return updateDB(path, messageID, {
+    text,
+    dateModified: new Date(),
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        success: false,
       }
     })
 }

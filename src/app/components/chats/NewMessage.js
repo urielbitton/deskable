@@ -26,6 +26,7 @@ export default function NewMessage() {
   const inputRef = useRef(null)
   const navigate = useNavigate()
   const isSpaceChat = selectedUsers.length > 1
+  const consoleInputRef = useRef(null)
 
   const handleSelectUser = (user) => {
     setSelectedUsers(prev => [...prev, user])
@@ -154,6 +155,7 @@ export default function NewMessage() {
           />
         }
         <ChatConsole
+          inputRef={consoleInputRef}
           inputPlaceholder="Type a message to send to this space"
           value={messageString}
           onChange={(e) => setMessageString(e.target.value)}

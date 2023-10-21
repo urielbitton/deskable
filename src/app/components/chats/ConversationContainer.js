@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ChatHeader from "./ChatHeader"
 import ChatContent from "./ChatContent"
 import ChatConsole from "./ChatConsole"
@@ -37,9 +37,11 @@ export default function ConversationContainer() {
   const insertMsgTimestamp = isDateGreaterThanXTimeAgo(conversation?.lastMessage?.dateSent?.toDate(), fifteenMinutes)
   const insertReplyTimestamp = isDateGreaterThanXTimeAgo(openMessage?.lastReply?.dateSent?.toDate(), fifteenMinutes)
   const hasReadLastMessage = conversation?.isReadBy?.includes(myUserID)
+  const consoleInputRef = useRef(null)
 
   const handleSendMessage = () => {
     if (hasWhiteSpace(messageString)) return null
+    if(sendLoading) return null
     setSendLoading(true)
     setMessageString("")
     setShowEmojiPicker(false)
@@ -70,6 +72,7 @@ export default function ConversationContainer() {
 
   const handleSendReply = () => {
     if (hasWhiteSpace(replyString)) return null
+    if(replyLoading) return null
     setReplyLoading(true)
     setReplyString("")
     handleSendReplyService({
@@ -134,6 +137,7 @@ export default function ConversationContainer() {
       <ChatHeader />
       <ChatContent />
       <ChatConsole
+        inputRef={consoleInputRef}
         inputPlaceholder="Type a message..."
         value={messageString}
         onChange={(e) => setMessageString(e.target.value)}

@@ -10,17 +10,18 @@ import { ActionIcon } from "../ui/ActionIcon"
 export default function ChatConsole(props) {
 
   const { inputPlaceholder, value, onChange,
-    onSendBtnClick, sendLoading, showEmojiPicker, 
-    onReactionsClick, maxRows=7 } = props
+    onSendBtnClick, sendLoading, showEmojiPicker,
+    onReactionsClick, maxRows = 7, showFilesUpload = true,
+    showRecorder = true, showMediaUpload = true,
+    hideSendBtn, customBtns, inputRef } = props
   const hasNoText = hasWhiteSpace(value)
-  const consoleInputRef = useRef(null)
 
   const handleAttachFiles = () => {
-    
+
   }
 
   const handleEmojiClick = (emoji) => {
-    const textarea = consoleInputRef.current
+    const textarea = inputRef.current
     const { selectionStart, selectionEnd } = textarea
     const value = textarea.value
     const newValue = value.substring(0, selectionStart) + emoji.native + value.substring(selectionEnd, value.length)
@@ -67,7 +68,7 @@ export default function ChatConsole(props) {
             </div>
             <TextareaAutosize
               autoFocus
-              ref={consoleInputRef}
+              ref={inputRef}
               placeholder={inputPlaceholder}
               className="text-area-autosize"
               maxRows={maxRows}
@@ -83,40 +84,55 @@ export default function ChatConsole(props) {
               }}
             />
             <div className="actions-bar">
-              <ActionIcon
-                label="Emojis"
-                icon="far fa-smile"
-                onClick={onReactionsClick}
-              />
-              <ActionIcon
-                icon="fas fa-paperclip"
-                label="Attach files"
-                onClick={handleAttachFiles}
-              />
-              <ActionIcon
-                label="Upload Media"
-                icon="far fa-photo-video"
-                onClick={handleUploadMedia}
-              />
-              <ActionIcon
-                label="Record Audio"
-                icon="far fa-microphone"
-                onClick={handleRecordAudio}
-              />
-              <ActionIcon
-                label="Text Format"
-                icon="far fa-font-case"
-                onClick={handleToggleFormatting}
-              />
+              <div className="left-side">
+                <ActionIcon
+                  label="Emojis"
+                  icon="far fa-smile"
+                  onClick={onReactionsClick}
+                />
+                {
+                  showFilesUpload &&
+                  <ActionIcon
+                    icon="fas fa-paperclip"
+                    label="Attach files"
+                    onClick={handleAttachFiles}
+                  />
+                }
+                {
+                  showMediaUpload &&
+                  <ActionIcon
+                    label="Upload Media"
+                    icon="far fa-photo-video"
+                    onClick={handleUploadMedia}
+                  />
+                }
+                {
+                  showRecorder &&
+                  <ActionIcon
+                    label="Record Audio"
+                    icon="far fa-microphone"
+                    onClick={handleRecordAudio}
+                  />
+                }
+                <ActionIcon
+                  label="Text Format"
+                  icon="far fa-font-case"
+                  onClick={handleToggleFormatting}
+                />
+              </div>
+              {customBtns}
             </div>
           </div>
-          <IconContainer
-            icon="fas fa-paper-plane"
-            iconSize={18}
-            iconColor={(sendLoading || hasNoText) ? "#ccc" : "var(--primary)"}
-            onClick={!sendLoading && onSendBtnClick}
-            className={(sendLoading || hasNoText) ? "disabled send-btn" : "send-btn"}
-          />
+          {
+            !hideSendBtn &&
+            <IconContainer
+              icon="fas fa-paper-plane"
+              iconSize={18}
+              iconColor={(sendLoading || hasNoText) ? "#ccc" : "var(--primary)"}
+              onClick={!sendLoading && onSendBtnClick}
+              className={(sendLoading || hasNoText) ? "disabled send-btn" : "send-btn"}
+            />
+          }
         </div>
       </div>
       <div className="bottom">

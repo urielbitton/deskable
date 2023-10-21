@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ChatConsole from "./ChatConsole"
 import './styles/RepliesContainer.css'
 import { useParams, useSearchParams } from "react-router-dom"
@@ -31,6 +31,7 @@ export default function RepliesContainer(props) {
   const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${openReplyID}/reactions`
   const message = useChatMessage(myOrgID, conversationID, messageID)
   const messageRepliesNum = useDocsCount(messagePath, messageID)
+  const consoleInputRef = useRef(null)
 
   const handleOpenEmojiPicker = (e, reply) => {
     e.stopPropagation()
@@ -107,6 +108,7 @@ export default function RepliesContainer(props) {
       </div>
       <div className="replies-console">
         <ChatConsole
+          inputRef={consoleInputRef}
           inputPlaceholder="Type a reply..."
           value={value}
           onChange={onReplyChange}

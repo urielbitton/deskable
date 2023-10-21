@@ -52,8 +52,16 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   padding: 2px;
+}
+.chat-console .input-container .actions-bar .left-side {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
 }
 .chat-console .input-container .actions-bar .action-icon {
   width: 28px;

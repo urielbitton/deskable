@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { convertClassicDate, convertClassicDateAndTime, getShortTimeAgo, getTimeAgo } from "app/utils/dateUtils"
 import { StoreContext } from "app/store/store"
 import "./styles/MessageItem.css"
@@ -6,12 +6,14 @@ import Avatar from "../ui/Avatar"
 import { useDocsCount } from "app/hooks/userHooks"
 import { Link, useSearchParams } from "react-router-dom"
 import EmojiPicker from "../ui/EmojiPicker"
-import { addEmojiReactionService, handleReactionClickService } from "app/services/chatServices"
+import { addEmojiReactionService, handleReactionClickService, saveEditedMessageService } from "app/services/chatServices"
 import { useMessageReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import AppPortal from "../ui/AppPortal"
 import { useScreenHeight } from "app/hooks/generalHooks"
 import { ActionIcon } from "../ui/ActionIcon"
+import ChatConsole from "./ChatConsole"
+import AppButton from "../ui/AppButton"
 
 export default function MessageItem(props) {
 
@@ -22,6 +24,10 @@ export default function MessageItem(props) {
   const { parentMessage, showEmojiPicker, setShowEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
+  const [activeEditID, setActiveEditID] = useState(null)
+  const [editMessageString, setEditMessageString] = useState('')
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const openReplies = searchParams.get("messageID")
   const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
@@ -35,6 +41,9 @@ export default function MessageItem(props) {
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
   const mediumTimestamp = getTimeAgo(dateSent?.toDate())
   const smallTimestamp = getShortTimeAgo(dateSent?.toDate())
+  const isMyMessage = senderID === myUserID
+  const editingMessage = activeEditID === messageID
+  const consoleInputRef = useRef(null)
 
   const handleReactionClick = (reaction) => {
     handleReactionClickService(
@@ -98,6 +107,43 @@ export default function MessageItem(props) {
     }
   }
 
+  const handleEditMessage = () => {
+    setActiveEditID(messageID)
+    setEditMessageString(text)
+    setOpenOptionsID(null)
+  }
+
+  const handleSaveMessage = () => {
+    return saveEditedMessageService({
+      text: editMessageString, 
+      messageID, 
+      conversationID, 
+      orgID: myOrgID,
+    })
+    .then(() => {
+      cancelEditMessage()
+    })
+  }
+
+  const cancelEditMessage = () => {
+    setActiveEditID(null)
+    setEditMessageString('')
+  }
+
+  const editConsoleBtns = (
+    <div className="custom-edit-btns">
+      <AppButton
+        label="Save"
+        onClick={handleSaveMessage}
+      />
+      <AppButton
+        label="Cancel"
+        onClick={cancelEditMessage}
+        buttonType="outlineBtn"
+      />
+    </div>
+  )
+
   const seperatorDate = (dateSent) => {
     if (new Date().getDate() === dateSent?.toDate().getDate())
       return "Today"
@@ -110,6 +156,13 @@ export default function MessageItem(props) {
     window.onclick = () => setOpenOptionsID(null)
     return () => window.onclick = null
   })
+
+  useEffect(() => {
+    if (consoleInputRef?.current) {
+      consoleInputRef?.current.setSelectionRange(consoleInputRef?.current.value.length, consoleInputRef?.current.value.length)
+      consoleInputRef?.current.focus()
+    }
+  },[editingMessage])
 
   return messageID ? (
     <>
@@ -132,6 +185,7 @@ export default function MessageItem(props) {
         ${parentMessage ? "parent" : ""} 
         ${openReplies ? "open-replies" : ""}
         ${openOptionsID === messageID ? "open-options" : ""}
+        ${editingMessage ? "editing" : ""}
       `}
         key={messageID}
       >
@@ -155,7 +209,7 @@ export default function MessageItem(props) {
           <div className="text-container">
             <div className="text">
               {
-                (!isCombined || parentMessage) &&
+                (!isCombined || parentMessage) && !editingMessage &&
                 <div className="title">
                   <h6>
                     <Link to={`/employees/${senderID}`}>{senderName}</Link>
@@ -163,7 +217,31 @@ export default function MessageItem(props) {
                   <small title={fullTimestamp}>{mediumTimestamp}</small>
                 </div>
               }
-              <p>{text}</p>
+              {
+                editingMessage ?
+                  <ChatConsole
+                    inputRef={consoleInputRef}
+                    inputPlaceholder="Edit message..."
+                    value={editMessageString}
+                    onChange={(e) => setEditMessageString(e.target.value)}
+                    sendLoading={saveLoading}
+                    showEmojiPicker={showEditEmojiPicker}
+                    onSendBtnClick={() => null}
+                    onReactionsClick={(e) => {
+                      e.stopPropagation()
+                      setShowEditEmojiPicker(prev => !prev)
+                    }}
+                    showFilesUpload={false}
+                    showMediaUpload={false}
+                    showRecorder={false}
+                    hideSendBtn
+                    customBtns={editConsoleBtns}
+                  /> :
+                  <p>
+                    {text}
+                    { dateModified && <small className="edited"> (Edited)</small> }
+                  </p>
+              }
             </div>
             <div className="reactions-bar">
               {reactionsList}
@@ -224,9 +302,15 @@ export default function MessageItem(props) {
             />
           </div>
           <div className={`options-flex ${openOptionsID === messageID ? "open" : ""}`}>
-            <h6>Edit Message</h6>
-            <h6>Delete Message</h6>
-            <h6>Pin Message</h6>
+            {
+              isMyMessage &&
+              <>
+                <h6 onClick={handleEditMessage}><i className="far fa-pen" />Edit Message</h6>
+                <h6><i className="far fa-trash" />Delete Message</h6>
+              </>
+            }
+            <h6><i className="far fa-thumbtack" />Pin Message</h6>
+            <h6><i className="far fa-flag" />Report Message</h6>
           </div>
         </div>
       </div>

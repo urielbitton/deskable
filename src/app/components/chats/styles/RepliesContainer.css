@@ -58,7 +58,6 @@
 .replies-container .replies-list {
   padding: 5px 0;
   overflow-y: overlay;
-  min-height: calc(100% - 150px);
 }
 .replies-container .replies-list::-webkit-scrollbar {
   width: 8px;
@@ -73,5 +72,5 @@
 }
 
 .replies-container .replies-console {
-  max-height: 200px;
+  height: auto;
 }

@@ -145,10 +145,8 @@ export default function MessageItem(props) {
 
   const handleDeleteMessage = () => {
     deleteMessageService({
-      messageID,
-      conversationID,
-      orgID: myOrgID,
-      files,
+      docID: messageID,
+      path: `organizations/${myOrgID}/conversations/${conversationID}/messages`,
       setToasts,
       setDeleteLoading
     })
@@ -261,7 +259,6 @@ export default function MessageItem(props) {
                       setShowEditEmojiPicker(prev => !prev)
                     }}
                     showFilesUpload={false}
-                    showMediaUpload={false}
                     showRecorder={false}
                     hideSendBtn
                     customBtns={editConsoleBtns}

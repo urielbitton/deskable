@@ -18,14 +18,14 @@ export default function RepliesContainer(props) {
 
   const { myOrgID, myUserID, myUserName,
     myUserImg, setToasts } = useContext(StoreContext)
-  const { replies, onReplyChange, value,
-    handleSendReply, replyLoading, open, onClose,
-    showReplyEmojiPicker, setShowReplyEmojiPicker } = props
+  const { replies, onReplyChange, value, uploadedFiles,
+    setUploadedFiles, handleSendReply, replyLoading, 
+    open, onClose, showReplyEmojiPicker, 
+    setShowReplyEmojiPicker } = props
   const [searchParams, setSearchParams] = useSearchParams()
   const [showReplyConsoleEmojiPicker, setShowReplyConsoleEmojiPicker] = useState(false)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
   const [openReplyID, setOpenReplyID] = useState(null)
-  const [uploadedFiles, setUploadedFiles] = useState([])
   const [uploadFilesLoading, setUploadFilesLoading] = useState(false)
   const screenHeight = useScreenHeight()
   const conversationID = useParams().conversationID

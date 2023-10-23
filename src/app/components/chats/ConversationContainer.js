@@ -27,6 +27,7 @@ export default function ConversationContainer() {
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
+  const [repliesUploadedFiles, setRepliesUploadedFiles] = useState([])
   const [uploadFilesLoading, setUploadFilesLoading] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const isPageVisible = usePageVisibility()
@@ -57,8 +58,8 @@ export default function ConversationContainer() {
         senderID: myUserID,
         text: messageString,
         dateSent: new Date(),
-        files: uploadedFiles
       },
+      files: uploadedFiles,
       user: {
         senderID: myUserID,
         senderName: myUserName,
@@ -85,11 +86,12 @@ export default function ConversationContainer() {
     setReplyLoading(true)
     setReplyString("")
     handleSendReplyService({
-      message: {
+      message: { 
         senderID: myUserID,
         text: replyString,
         dateSent: new Date(),
       },
+      files: repliesUploadedFiles,
       user: {
         senderID: myUserID,
         senderName: myUserName,
@@ -103,6 +105,7 @@ export default function ConversationContainer() {
     })
       .then(() => {
         setReplyLoading(false)
+        setRepliesUploadedFiles([])
       })
       .catch(err => {
         setReplyLoading(false)
@@ -182,6 +185,8 @@ export default function ConversationContainer() {
         replyLoading={replyLoading}
         showReplyEmojiPicker={showReplyEmojiPicker}
         setShowReplyEmojiPicker={setShowReplyEmojiPicker}
+        uploadedFiles={repliesUploadedFiles}
+        setUploadedFiles={setRepliesUploadedFiles}
       />
     </div>
   ) :

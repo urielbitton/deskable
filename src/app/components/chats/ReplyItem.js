@@ -4,31 +4,37 @@ import Avatar from "../ui/Avatar"
 import { convertClassicDateAndTime, getTimeAgo } from "app/utils/dateUtils"
 import "./styles/MessageItem.css"
 import { Link } from "react-router-dom"
-import { addEmojiReactionService, handleReactionClickService, saveEditedReplyService } from "app/services/chatServices"
+import {
+  deleteMessageFilesService, deleteMessageService, handleReactionClickService,
+  saveEditedReplyService
+} from "app/services/chatServices"
 import { useReplyReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import { ActionIcon } from "../ui/ActionIcon"
 import ChatConsole from "./ChatConsole"
 import AppButton from "../ui/AppButton"
 import AppLink from "../ui/AppLink"
+import FileAttachment from "../projects/FileAttachment"
 
 export default function ReplyItem(props) {
 
-  const { myOrgID, myUserID, myUserName, myUserImg } = useContext(StoreContext)
+  const { myOrgID, myUserID, myUserName, myUserImg,
+    setToasts } = useContext(StoreContext)
   const { replyID, dateSent, senderID, dateModified,
     isDeleted, text, senderName, senderImg, messageID,
-    isCombined, hasTimestamp, conversationID } = props.reply
-  const { showReplyEmojiPicker, setShowReplyEmojiPicker,
-    handleOpenEmojiPicker } = props
+    isCombined, hasTimestamp, conversationID, files } = props.reply
+  const { showReplyEmojiPicker, handleOpenEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
   const [editReplyString, setEditReplyString] = useState(text)
   const [saveLoading, setSaveLoading] = useState(false)
   const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false)
   const [activeEditID, setActiveEditID] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const reactionsSlice = 4
   const reactions = useReplyReactions(myOrgID, conversationID, messageID, replyID)
   const fullTimestamp = convertClassicDateAndTime(dateSent?.toDate())
   const shortTimestamp = getTimeAgo(dateSent?.toDate()).replace(/am|pm/gi, "")
+  const replyPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const replyReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies/${replyID}/reactions`
   const reactionsNum = reactions?.length
   const consoleInputRef = useRef(null)
@@ -60,10 +66,6 @@ export default function ReplyItem(props) {
       />
     })
 
-  const handleReply = () => {
-
-  }
-
   const handleShare = () => {
 
   }
@@ -94,6 +96,36 @@ export default function ReplyItem(props) {
         cancelEditMessage()
       })
   }
+
+  const handleDeleteFile = (file) => {
+    deleteMessageFilesService(
+      replyPath,
+      replyID,
+      files,
+      file?.fileID,
+      file?.name,
+      setToasts,
+      () => null
+    )
+  }
+
+  const handleDeleteReply = () => {
+    deleteMessageService({
+      docID: replyID,
+      path: `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`,
+      setToasts,
+      setDeleteLoading
+    })
+  }
+
+  const filesList = files?.map((file, index) => {
+    return <FileAttachment
+      key={`${file.name}-${index}`}
+      file={file}
+      onClick={() => null}
+      onDeleteFile={handleDeleteFile}
+    />
+  })
 
   const cancelEditMessage = () => {
     setActiveEditID(null)
@@ -173,7 +205,6 @@ export default function ReplyItem(props) {
                     setShowEditEmojiPicker(prev => !prev)
                   }}
                   showFilesUpload={false}
-                  showMediaUpload={false}
                   showRecorder={false}
                   hideSendBtn
                   customBtns={editConsoleBtns}
@@ -183,6 +214,14 @@ export default function ReplyItem(props) {
                   {dateModified && <small className="edited">(Edited)</small>}
                 </p>
             }
+            {
+              files ?
+                <div className="files-flex">
+                  {filesList}
+                </div> :
+                null
+            }
+            {deleteLoading && <small>Deleting...</small>}
           </div>
           <div className="reactions-bar">
             {reactionsList}
@@ -222,7 +261,7 @@ export default function ReplyItem(props) {
             isMyMessage &&
             <>
               <h6 onClick={handleEditReply}><i className="far fa-pen" />Edit Message</h6>
-              <h6><i className="far fa-trash" />Delete Message</h6>
+              <h6 onClick={handleDeleteReply}><i className="far fa-trash" />Delete Message</h6>
             </>
           }
           <h6><i className="far fa-thumbtack" />Pin Message</h6>

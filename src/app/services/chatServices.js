@@ -456,3 +456,23 @@ export const addParticipantsToChatService = (data) => {
       }
     })
 }
+
+export const removeChatParticipantService = (data) => {
+  const { participantID, participantsIDs, conversationID, orgID } = data
+  const path = `organizations/${orgID}/conversations`
+  const updatedParticipantsIDs = participantsIDs.filter(id => id !== participantID)
+  return updateDB(path, conversationID, {
+    participantsIDs: updatedParticipantsIDs
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        success: false,
+      }
+    })
+}

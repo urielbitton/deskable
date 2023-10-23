@@ -10,11 +10,12 @@ import AppModal from "../ui/AppModal"
 import AppButton from "../ui/AppButton"
 import { useUsersSearch } from "app/hooks/searchHooks"
 import DropdownSearch from "../ui/DropdownSearch"
-import { addParticipantsToChatService } from "app/services/chatServices"
+import { addParticipantsToChatService, removeChatParticipantService } from "app/services/chatServices"
 
 export default function ChatHeader() {
 
-  const { myUserID, myOrgID, spaceChatDefaultImg } = useContext(StoreContext)
+  const { myUserID, myOrgID, spaceChatDefaultImg,
+    myMemberType } = useContext(StoreContext)
   const conversationID = useParams().conversationID
   const [showAddParticipantModal, setShowAddParticipantModal] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([])
@@ -39,10 +40,26 @@ export default function ChatHeader() {
   const firstParticipantName = `${firstParticipant?.firstName} ${firstParticipant?.lastName}`
   const secondParticipantName = `${secondParticipant?.firstName} ${secondParticipant?.lastName}`
 
+  const handleRemoveParticipant = (participantID) => {
+    const isMe = participantID === myUserID
+    if (myMemberType !== 'classa' && !isMe) return alert('You do not have permission to remove participants. Only admins can remove participants.')
+    if (isMe || myMemberType === 'classa') {
+      const confirm = window.confirm('Are you sure you want to remove this participant?')
+      if (!confirm) return null
+      removeChatParticipantService({
+        orgID: myOrgID,
+        conversationID,
+        participantID,
+        participantsIDs
+      })
+    }
+  }
+
   const allParticipantsList = participantsIDs?.map((participantID) => {
     return <ParticipantItem
       key={participantID}
       participantID={participantID}
+      onRemove={() => handleRemoveParticipant(participantID)}
     />
   })
 
@@ -194,7 +211,7 @@ export default function ChatHeader() {
   )
 }
 
-export const ParticipantItem = ({ participantID }) => {
+export const ParticipantItem = ({ participantID, onRemove }) => {
 
   const participant = useUser(participantID)
 
@@ -208,5 +225,11 @@ export const ParticipantItem = ({ participantID }) => {
       round={false}
     />
     <h6>{`${participant?.firstName} ${participant?.lastName}`}</h6>
+    <div
+      className="close"
+      onClick={onRemove}
+    >
+      <i className="fal fa-times" />
+    </div>
   </div>
 } 

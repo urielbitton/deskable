@@ -73,11 +73,6 @@ export default function NewMessage() {
       </div>
     })
 
-  const handleClearSearch = () => {
-    setQuery('')
-
-  }
-
   const handleSendMessage = () => {
     if (selectedUsers.length < 1) return alert('Please select at least one user to send to.')
     if(hasWhiteSpace(messageString)) return alert('Please add a message to send.')
@@ -136,9 +131,9 @@ export default function NewMessage() {
             onChange={(e) => setQuery(e.target.value)}
             searchResults={orgUsersList}
             showSearchDropdown={query.length > 0}
-            setShowSearchDropdown={setShowSearchDropdown}
+            setShowSearchDropdown={()=>null}
             searchLoading={searchLoading}
-            clearSearch={() => handleClearSearch()}
+            clearSearch={() => setQuery('')}
             inputRef={inputRef}
           />
         </div>

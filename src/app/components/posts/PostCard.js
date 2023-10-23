@@ -203,6 +203,7 @@ export default function PostCard(props) {
       className="post-card"
       withBorder
       padding="0"
+      key={postID}
     >
       <div className="header">
         <div className="left">

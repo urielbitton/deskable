@@ -11,10 +11,12 @@ import { isDateGreaterThanXTimeAgo, isDateLessThanXTimeAgo, isOnSameDay } from "
 import { useChat, useChatMessage, useMessageReplies } from "app/hooks/chatHooks"
 import RepliesContainer from "./RepliesContainer"
 import { usePageVisibility } from "app/hooks/generalHooks"
+import { uploadMultipleFilesLocal } from "app/utils/fileUtils"
 
 export default function ConversationContainer() {
 
-  const { myUserID, myOrgID, myUserName, myUserImg } = useContext(StoreContext)
+  const { myUserID, myOrgID, myUserName, myUserImg,
+    setToasts } = useContext(StoreContext)
   const conversationID = useParams().conversationID
   const conversation = useChat(myOrgID, conversationID)
   const [messageString, setMessageString] = useState("")
@@ -24,6 +26,8 @@ export default function ConversationContainer() {
   const [replyContainerOpen, setReplyContainerOpen] = useState(false)
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [uploadFilesLoading, setUploadFilesLoading] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const isPageVisible = usePageVisibility()
   const replyMsgID = searchParams.get("messageID")
@@ -39,6 +43,8 @@ export default function ConversationContainer() {
   const hasReadLastMessage = conversation?.isReadBy?.includes(myUserID)
   const consoleInputRef = useRef(null)
   const isNewDay = !isOnSameDay(conversation?.lastMessage?.dateSent?.toDate(), new Date())
+  const maxFileSize = 10 * 1024 * 1024
+  const maxFilesNum = 10
 
   const handleSendMessage = () => {
     if (hasWhiteSpace(messageString)) return null
@@ -51,6 +57,7 @@ export default function ConversationContainer() {
         senderID: myUserID,
         text: messageString,
         dateSent: new Date(),
+        files: uploadedFiles
       },
       user: {
         senderID: myUserID,
@@ -65,6 +72,7 @@ export default function ConversationContainer() {
     })
       .then(() => {
         setSendLoading(false)
+        setUploadedFiles([])
       })
       .catch(err => {
         setSendLoading(false)
@@ -99,6 +107,21 @@ export default function ConversationContainer() {
       .catch(err => {
         setReplyLoading(false)
       })
+  }
+
+  const handleFileUploadChange = (e) => {
+    return uploadMultipleFilesLocal(
+      e, 
+      maxFileSize, 
+      maxFilesNum, 
+      setUploadedFiles, 
+      setUploadFilesLoading, 
+      setToasts
+    )
+  }
+
+  const handleMediaUploadChange = (e) => {
+
   }
 
   useEffect(() => {
@@ -149,6 +172,10 @@ export default function ConversationContainer() {
           e.stopPropagation()
           setShowEmojiPicker(prev => !prev)
         }}
+        onFileUploadChange={handleFileUploadChange}
+        onMediaUploadChange={handleMediaUploadChange}
+        uploadedFiles={uploadedFiles}
+        setUploadedFiles={setUploadedFiles}
       />
       <RepliesContainer
         replies={messageReplies}

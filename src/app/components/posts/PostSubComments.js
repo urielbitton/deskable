@@ -65,7 +65,10 @@ export default function PostSubComments(props) {
   },[showReplySection])
 
   return (
-    <div className="post-sub-comments">
+    <div 
+      className="post-sub-comments"
+      key={commentID}
+    >
       {
         showReplySection === commentID &&
         <div className="comment-reply-section">

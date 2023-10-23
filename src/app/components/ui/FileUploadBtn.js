@@ -5,11 +5,11 @@ export default function FileUploadBtn(props) {
 
   const { accept, inputRef, label, iconRight, iconLeft,
     background, color, border, classic,
-    onChange } = props
+    onChange, className="" } = props
 
   return (
     <div 
-      className={`file-upload-btn ${classic ? 'classic' : ''}`}
+      className={`${classic ? 'classic' : ''} ${className}`}
       style={{ background, color, border }}
     >
       <label>

@@ -11,6 +11,7 @@ import useUser, { useDocsCount, useUsers } from "app/hooks/userHooks"
 import {
   changeDiffColumnTaskPositionService,
   createOrgProjectTaskCommentService, createOrgProjectTaskEvent,
+  deleteOrgProjectTaskFilesService,
   deleteProjectTaskService, getLastColumnTaskPosition,
   moveTaskToBacklogService,
   updateSingleTaskItemService, uploadOrgProjectTaskFiles
@@ -29,7 +30,7 @@ import LikesStatsModal from "../ui/LikesStatsModal"
 import WysiwygEditor from "../ui/WysiwygEditor"
 import DocViewerModal from "./DocViewerModal"
 import OrgUsersTagInput from "./OrgUsersTagInput"
-import TaskAttachment from "./TaskAttachment"
+import FileAttachment from "./FileAttachment"
 import TaskComment from "./TaskComment"
 import TaskEvent from "./TaskEvent"
 import './styles/TaskContentDetails.css'
@@ -100,12 +101,24 @@ export default function TaskContentDetails(props) {
     setShowDocViewer(true)
   }
 
+  const handleDeleteFile = (file) => {
+    const { fileID, name } = file
+    deleteOrgProjectTaskFilesService(
+      filesPath, 
+      fileID, 
+      name,
+      setToasts, 
+      setUploadLoading
+    )
+  }
+
   const attachmentsList = attachments?.map((file, index) => {
-    return <TaskAttachment
+    return <FileAttachment
       key={index}
       file={file}
       setUploadLoading={setUploadLoading}
       onClick={handleFileClick}
+      onDeleteFile={handleDeleteFile}
     />
   })
 
@@ -409,6 +422,7 @@ export default function TaskContentDetails(props) {
             iconLeft="fas fa-paperclip"
             classic
             border="1px solid #eee"
+            className="file-upload-btn"
           />
         </div>
         <div className="description-section">

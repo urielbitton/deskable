@@ -29,7 +29,7 @@ export const createOrgPostService = (pathPrefix, userID, orgID, message, uploade
   setLoading(true)
   const docID = getRandomDocID(pathPrefix)
   const postStoragePath = `${pathPrefix}/${docID}/files`
-  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? removeNullOrUndefined(uploadedImgs.map(img => img?.file)) : null, postStoragePath, null)
+  return uploadMultipleFilesToFireStorage(uploadedImgs.length > 0 ? uploadedImgs.map(img => img?.file) : null, postStoragePath, null)
     .then(data => {
       return setDB(pathPrefix, docID, {
         authorID: userID,

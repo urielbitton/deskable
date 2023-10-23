@@ -31,7 +31,8 @@
     "react-select": "^5.7.0",
     "react-simple-wysiwyg": "^2.1.4",
     "react-textarea-autosize": "^8.5.3",
-    "twilio-video": "^2.27.0"
+    "twilio-video": "^2.27.0",
+    "uuid": "^9.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

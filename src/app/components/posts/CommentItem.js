@@ -138,7 +138,10 @@ export default function CommentItem(props) {
   }, [editMode])
 
   return author && (
-    <div className="comment-item">
+    <div 
+      className="comment-item"
+      key={commentID}
+    >
       <div className="left-side">
         <Avatar
           src={author.photoURL}

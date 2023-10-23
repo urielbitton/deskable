@@ -132,7 +132,10 @@ export default function SubCommentItem(props) {
   }, [editMode])
 
   return author && (
-    <div className="comment-item sub-comment-item">
+    <div 
+      className="comment-item sub-comment-item"
+      key={subCommentID}
+    >
       <div className="left-side">
         <Avatar
           src={author?.photoURL}

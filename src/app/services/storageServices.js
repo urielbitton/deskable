@@ -1,9 +1,11 @@
 import { storage } from "app/firebase/fire"
+import { removeNullOrUndefined } from "app/utils/generalUtils"
 import { deleteObject, getDownloadURL, ref, 
   uploadBytesResumable } from "firebase/storage"
 
 export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, setUploadProgress) => {
   return new Promise((resolve, reject) => {
+    files = removeNullOrUndefined(files)
     if(!files?.length) return resolve([])
     const fileURLs = []
     files.forEach((file, i) => {
@@ -35,8 +37,8 @@ export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, 
 export const deleteMultipleStorageFiles = (storagePath, filenames) => {
   return new Promise((resolve, reject) => {
     if(!filenames?.length) return resolve()
-    filenames.forEach((file, i) => {
-      let storageRef = ref(storage, `${storagePath}/${file}`)
+    filenames.forEach((filename, i) => {
+      let storageRef = ref(storage, `${storagePath}/${filename}`)
       deleteObject(storageRef)
       .then(() => {
         if(i === filenames.length-1) {

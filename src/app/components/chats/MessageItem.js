@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { convertClassicDate, convertClassicDateAndTime, getShortTimeAgo, getTimeAgo } from "app/utils/dateUtils"
+import { convertClassicDate, convertClassicDateAndTime, 
+  getShortTimeAgo, getTimeAgo } from "app/utils/dateUtils"
 import { StoreContext } from "app/store/store"
 import "./styles/MessageItem.css"
 import Avatar from "../ui/Avatar"
 import { useDocsCount } from "app/hooks/userHooks"
 import { Link, useSearchParams } from "react-router-dom"
 import EmojiPicker from "../ui/EmojiPicker"
-import { addEmojiReactionService, handleReactionClickService, saveEditedMessageService } from "app/services/chatServices"
+import { addEmojiReactionService, deleteMessageFilesService, 
+  deleteMessageService, handleReactionClickService, 
+  saveEditedMessageService } from "app/services/chatServices"
 import { useMessageReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import AppPortal from "../ui/AppPortal"
@@ -15,13 +18,16 @@ import { ActionIcon } from "../ui/ActionIcon"
 import ChatConsole from "./ChatConsole"
 import AppButton from "../ui/AppButton"
 import AppLink from "../ui/AppLink"
+import FileAttachment from "../projects/FileAttachment"
 
 export default function MessageItem(props) {
 
-  const { myUserID, myUserName, myUserImg, myOrgID } = useContext(StoreContext)
+  const { myUserID, myUserName, myUserImg, myOrgID,
+    setToasts } = useContext(StoreContext)
   const { messageID, dateSent, senderID, dateModified,
     isDeleted, text, senderName, senderImg, isCombined,
-    hasTimestamp, conversationID, newDay, lastReply } = props.message
+    hasTimestamp, conversationID, newDay, lastReply,
+    files } = props.message
   const { parentMessage, showEmojiPicker, setShowEmojiPicker } = props
   const [openOptionsID, setOpenOptionsID] = useState(null)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
@@ -29,11 +35,13 @@ export default function MessageItem(props) {
   const [editMessageString, setEditMessageString] = useState('')
   const [saveLoading, setSaveLoading] = useState(false)
   const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()
   const openReplies = searchParams.get("messageID")
-  const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
+  const messagePath = `organizations/${myOrgID}/conversations/${conversationID}/messages`
+  const messageRepliesPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`
   const messageReactionsPath = `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/reactions`
-  const messageRepliesNum = useDocsCount(messagePath, lastReply)
+  const messageRepliesNum = useDocsCount(messageRepliesPath, lastReply)
   const reactions = useMessageReactions(myOrgID, conversationID, messageID)
   const screenHeight = useScreenHeight()
   const reactionsNum = reactions?.length
@@ -61,6 +69,18 @@ export default function MessageItem(props) {
     )
   }
 
+  const handleDeleteFile = (file) => {
+    deleteMessageFilesService(
+      messagePath,
+      messageID,
+      files,
+      file?.fileID,
+      file?.name,
+      setToasts,
+      () => null
+    )
+  }
+
   const reactionsList = reactions
     ?.slice(0, reactionsSlice)
     .map(reaction => {
@@ -70,6 +90,15 @@ export default function MessageItem(props) {
         onClick={() => handleReactionClick(reaction)}
       />
     })
+
+  const filesList = files?.map((file, index) => {
+    return <FileAttachment
+      key={`${file.name}-${index}`}
+      file={file}
+      onClick={() => null}
+      onDeleteFile={handleDeleteFile}
+    />
+  })
 
   const handleOpenEmojiPicker = (e) => {
     setShowEmojiPicker(prev => prev === messageID ? null : messageID)
@@ -112,6 +141,17 @@ export default function MessageItem(props) {
     setActiveEditID(messageID)
     setEditMessageString(text)
     setOpenOptionsID(null)
+  }
+
+  const handleDeleteMessage = () => {
+    deleteMessageService({
+      messageID,
+      conversationID,
+      orgID: myOrgID,
+      files,
+      setToasts,
+      setDeleteLoading
+    })
   }
 
   const handleSaveMessage = () => {
@@ -231,6 +271,14 @@ export default function MessageItem(props) {
                     {dateModified && <small className="edited">(Edited)</small>}
                   </p>
               }
+              {
+                files ?
+                  <div className="files-flex">
+                    {filesList}
+                  </div> :
+                  null
+              }
+              {deleteLoading && <small>Deleting...</small>}
             </div>
             <div className="reactions-bar">
               {reactionsList}
@@ -295,7 +343,7 @@ export default function MessageItem(props) {
               isMyMessage &&
               <>
                 <h6 onClick={handleEditMessage}><i className="far fa-pen" />Edit Message</h6>
-                <h6><i className="far fa-trash" />Delete Message</h6>
+                <h6 onClick={handleDeleteMessage}><i className="far fa-trash" />Delete Message</h6>
               </>
             }
             <h6><i className="far fa-thumbtack" />Pin Message</h6>

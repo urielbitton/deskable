@@ -1,4 +1,5 @@
 import { db } from "app/firebase/fire"
+import { v4 as uuidv4 } from 'uuid'
 import {
   collection, doc, limit,
   orderBy, query, where
@@ -8,6 +9,8 @@ import {
   firebaseIncrement, getRandomDocID,
   setDB, updateDB
 } from "./CrudDB"
+import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
+import { errorToast, successToast } from "app/data/toastsTemplates"
 
 const oneYear = 1000 * 60 * 60 * 24 * 365
 
@@ -49,7 +52,6 @@ export const getMessagesByChatID = (orgID, conversationID, lim) => {
   const messagesRef = collection(db, `organizations/${orgID}/conversations/${conversationID}/messages`)
   const q = query(
     messagesRef,
-    where('isDeleted', '==', false),
     orderBy('dateSent', 'desc'),
     limit(lim)
   )
@@ -72,11 +74,15 @@ export const getRepliesByChatAndMessageID = (orgID, conversationID, messageID, l
   return q
 }
 
-export const handleSendMessageService = (messageObj) => {
+export const handleSendMessageService = async (messageObj) => {
   const { message, user, conversationID, orgID,
     isCombined, hasTimestamp, newDay } = messageObj
   const path = `organizations/${orgID}/conversations/${conversationID}/messages`
   const docID = getRandomDocID(path)
+  const files = message?.files
+  const mappedFiles = files.length > 0 ? files.map(file => file?.file) : null
+  const msgFilesStoragePath = `organizations/${orgID}/conversations/${conversationID}/messages/${docID}/files`
+  const uploadedFiles = await uploadMultipleFilesToFireStorage(mappedFiles, msgFilesStoragePath, null)
   return setDB(path, docID, {
     ...message,
     ...user,
@@ -86,7 +92,16 @@ export const handleSendMessageService = (messageObj) => {
     messageID: docID,
     isCombined,
     hasTimestamp,
-    newDay
+    newDay,
+    ...(uploadedFiles.length > 0 && {
+      files: uploadedFiles.map((file, i) => ({
+        fileID: uuidv4(),
+        url: file.downloadURL,
+        name: file.filename,
+        type: file.file.type,
+        size: file.file.size,
+      }))
+    })
   })
     .then(() => {
       return updateDB(`organizations/${orgID}/conversations/`, conversationID, {
@@ -371,5 +386,52 @@ export const saveEditedReplyService = (data) => {
       return {
         success: false,
       }
+    })
+}
+
+export const deleteMessageService = (data) => {
+  const { orgID, conversationID, messageID, files, setToasts } = data
+  const fileNames = files?.map(file => file.name)
+  const path = `organizations/${orgID}/conversations/${conversationID}/messages`
+  const filesStoragePath = `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/files`
+  return updateDB(path, messageID, {
+    isDeleted: true,
+    dateModified: new Date(),
+  })
+  .then(() => {
+    return deleteMultipleStorageFiles(
+      filesStoragePath,
+      fileNames
+    )
+  })
+    .then(() => {
+      setToasts(successToast('Message deleted successfully.'))
+    })
+    .catch((err) => {
+      console.log(err)
+      setToasts(errorToast('There was an error deleting the message. Please try again.', true))
+    })
+}
+
+export const deleteMessageFilesService = (path, messageID, files, fileID, fileName, setToasts, setLoading) => {
+  setLoading(true)
+  return deleteMultipleStorageFiles(
+    `${path}/${messageID}/files`,
+    [fileName]
+  )
+    .then(() => {
+      const updatedFiles = files?.filter(file => file.fileID !== fileID)
+      return updateDB(path, messageID, {
+        files: updatedFiles
+      })
+    })
+    .then(() => {
+      setToasts(successToast('File deleted successfully.'))
+      setLoading(false)
+    })
+    .catch((err) => {
+      setToasts(errorToast('There was an error deleting the file. Please try again.', true))
+      setLoading(false)
+      console.log(err)
     })
 }

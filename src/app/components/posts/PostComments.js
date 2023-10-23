@@ -65,7 +65,10 @@ export default function PostComments(props) {
   }
 
   return showComments && (
-    <div className="post-comments">
+    <div 
+      className="post-comments"
+      key={post?.postID}
+    >
       <div className="add-comment-section">
         <EmojiTextarea
           placeholder="Write a comment..."

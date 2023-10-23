@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import './styles/ChatConsole.css'
 import IconContainer from "../ui/IconContainer"
 import TextareaAutosize from 'react-textarea-autosize'
@@ -6,19 +6,28 @@ import AutoresizeWYSIWG from "../ui/AutoresizeWYSIWG"
 import { hasWhiteSpace } from "app/utils/generalUtils"
 import EmojiPicker from "../ui/EmojiPicker"
 import { ActionIcon } from "../ui/ActionIcon"
+import FileUploadBtn from "../ui/FileUploadBtn"
+import AppScrollSlider from "../ui/AppScrollSlider"
+import UploadFileItem from "../ui/UploadFileItem"
 
 export default function ChatConsole(props) {
 
   const { inputPlaceholder, value, onChange,
     onSendBtnClick, sendLoading, showEmojiPicker,
     onReactionsClick, maxRows = 7, showFilesUpload = true,
-    showRecorder = true, showMediaUpload = true,
-    hideSendBtn, customBtns, inputRef } = props
+    showRecorder = true, hideSendBtn, customBtns, 
+    inputRef, onFileUploadChange, uploadedFiles,
+    setUploadedFiles } = props
   const hasNoText = hasWhiteSpace(value)
 
-  const handleAttachFiles = () => {
-
-  }
+  const uploadedFilesList = uploadedFiles?.map((file, index) => {
+    return <UploadFileItem
+      key={index}
+      file={file.file}
+      src={file.src}
+      onCloseClick={() => setUploadedFiles(uploadedFiles.filter((f, i) => i !== index))}
+    />
+  })
 
   const handleEmojiClick = (emoji) => {
     const textarea = inputRef.current
@@ -29,10 +38,6 @@ export default function ChatConsole(props) {
     textarea.setSelectionRange(selectionStart + emoji.native.length, selectionStart + emoji.native.length)
     onChange({ target: { value: newValue } })
     textarea.focus()
-  }
-
-  const handleUploadMedia = () => {
-
   }
 
   const handleRecordAudio = () => {
@@ -92,18 +97,10 @@ export default function ChatConsole(props) {
                 />
                 {
                   showFilesUpload &&
-                  <ActionIcon
-                    icon="fas fa-paperclip"
-                    label="Attach files"
-                    onClick={handleAttachFiles}
-                  />
-                }
-                {
-                  showMediaUpload &&
-                  <ActionIcon
-                    label="Upload Media"
-                    icon="far fa-photo-video"
-                    onClick={handleUploadMedia}
+                  <FileUploadBtn
+                    className="action-icon"
+                    iconLeft="fas fa-paperclip"
+                    onChange={onFileUploadChange}
                   />
                 }
                 {
@@ -136,7 +133,21 @@ export default function ChatConsole(props) {
         </div>
       </div>
       <div className="bottom">
-        {/* attachment media show as slide on: files, images, videos */}
+        {
+          (uploadedFiles?.length > 0 && !sendLoading) ?
+          <div className="uploaded-files-row">
+            <AppScrollSlider
+              scrollAmount={100}
+              fadeEnd="50px"
+              hideArrows
+            >
+              {uploadedFilesList}
+            </AppScrollSlider>
+          </div> :
+          sendLoading ?
+          <i className="fas fa-spinner fa-spin" /> :
+          null
+        }
       </div>
     </div>
   )

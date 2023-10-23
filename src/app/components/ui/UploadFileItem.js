@@ -11,7 +11,7 @@ export default function UploadFileItem(props) {
   const isVideo = file?.type?.includes("video")
   const isMedia = isPhoto || isVideo
 
-  return (
+  return file ? (
     <div
       className={`upload-file-item ${isMedia ? "media" : ""}`}
       onClick={onClick}
@@ -46,5 +46,6 @@ export default function UploadFileItem(props) {
         <i className="fal fa-times" />
       </div>
     </div>
-  )
+  ) :
+  null
 }

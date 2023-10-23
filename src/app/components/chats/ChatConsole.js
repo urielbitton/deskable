@@ -2,7 +2,6 @@ import React from 'react'
 import './styles/ChatConsole.css'
 import IconContainer from "../ui/IconContainer"
 import TextareaAutosize from 'react-textarea-autosize'
-import AutoresizeWYSIWG from "../ui/AutoresizeWYSIWG"
 import { hasWhiteSpace } from "app/utils/generalUtils"
 import EmojiPicker from "../ui/EmojiPicker"
 import { ActionIcon } from "../ui/ActionIcon"
@@ -23,8 +22,8 @@ export default function ChatConsole(props) {
   const uploadedFilesList = uploadedFiles?.map((file, index) => {
     return <UploadFileItem
       key={index}
-      file={file.file}
-      src={file.src}
+      file={file?.file}
+      src={file?.src}
       onCloseClick={() => setUploadedFiles(uploadedFiles.filter((f, i) => i !== index))}
     />
   })
@@ -52,18 +51,6 @@ export default function ChatConsole(props) {
     <div className="chat-console">
       <div className="top">
         <div className="input-container">
-          {/* <AutoresizeWYSIWG
-            config={ {
-              documentReady: true,
-              heightMin: 200,
-              heightMax: 400,
-              events: {
-                'contentChanged': function (e, editor) {
-                  console.log('test')
-                }
-              }
-            }}
-          /> */}
           <div className="textarea-container">
             <div onClick={(e) => e.stopPropagation()}>
               <EmojiPicker

@@ -44,6 +44,7 @@ export const fileTypePathConverter = (string) => {
 
 export const uploadMultipleFilesLocal = (e, maxSize, maxFilesNum=20, setFiles, setLoading=setLoadingDef, setToasts) => {
   let files = e.target.files
+  if(files.length < 1) return null
   if(files.length > maxFilesNum) 
     return setToasts(infoToast(`You can only upload ${maxFilesNum} files at a time`))
   setLoading(true)
@@ -57,14 +58,14 @@ export const uploadMultipleFilesLocal = (e, maxSize, maxFilesNum=20, setFiles, s
   if (files) {
     for (let i = 0; i < files.length; i++) {
       filesArray.push(files[i])
-    }
+    } 
   }
   return Promise.all(filesArray.map(file => {
     return new Promise((resolve, reject) => {
       let reader = new FileReader()
       reader.onloadend = function () {
         setLoading(false)
-        resolve({ src: reader.result, file })
+        resolve({ src: reader.result, file, uploadTime: Date.now() })
       }
       if (file) {
         reader.readAsDataURL(file)

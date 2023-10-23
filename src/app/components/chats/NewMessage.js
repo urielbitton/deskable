@@ -9,10 +9,11 @@ import { hasWhiteSpace } from "app/utils/generalUtils"
 import { createConversationService } from "app/services/chatServices"
 import { AppInput } from "../ui/AppInputs"
 import { useNavigate } from "react-router-dom"
+import { uploadMultipleFilesLocal } from "app/utils/fileUtils"
 
 export default function NewMessage() {
 
-  const { myOrgID, myUser, myUserID } = useContext(StoreContext)
+  const { myOrgID, myUser, myUserID, setToasts } = useContext(StoreContext)
   const [query, setQuery] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [showSearchDropdown, setShowSearchDropdown] = useState(false)
@@ -21,12 +22,16 @@ export default function NewMessage() {
   const [messageString, setMessageString] = useState('')
   const [sendLoading, setSendLoading] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [uploadFilesLoading, setUploadFilesLoading] = useState(false)
   const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID}`
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const inputRef = useRef(null)
   const navigate = useNavigate()
   const isSpaceChat = selectedUsers.length > 1
   const consoleInputRef = useRef(null)
+  const maxFileSize = 10 * 1024 * 1024
+  const maxFilesNum = 10
 
   const handleSelectUser = (user) => {
     setSelectedUsers(prev => [...prev, user])
@@ -75,7 +80,7 @@ export default function NewMessage() {
 
   const handleSendMessage = () => {
     if (selectedUsers.length < 1) return alert('Please select at least one user to send to.')
-    if(hasWhiteSpace(messageString)) return alert('Please add a message to send.')
+    if (hasWhiteSpace(messageString)) return alert('Please add a message to send.')
     setSendLoading(true)
     createConversationService({
       selectedUsersIDs: selectedUsers.map(user => user.userID),
@@ -107,9 +112,29 @@ export default function NewMessage() {
       })
   }
 
+  const handleFileUploadChange = (e) => {
+    return uploadMultipleFilesLocal(
+      e,
+      maxFileSize,
+      maxFilesNum,
+      setUploadedFiles,
+      setUploadFilesLoading,
+      setToasts
+    )
+  }
+
   useEffect(() => {
     inputRef?.current?.focus()
   }, [])
+
+  useEffect(() => {
+    if(!showEmojiPicker) {
+      window.onclick = () => {
+        setShowEmojiPicker(false)
+      }
+      return () => window.onclick = null
+    }
+  })
 
   return (
     <div className="new-message-container">
@@ -131,7 +156,7 @@ export default function NewMessage() {
             onChange={(e) => setQuery(e.target.value)}
             searchResults={orgUsersList}
             showSearchDropdown={query.length > 0}
-            setShowSearchDropdown={()=>null}
+            setShowSearchDropdown={() => null}
             searchLoading={searchLoading}
             clearSearch={() => setQuery('')}
             inputRef={inputRef}
@@ -157,6 +182,13 @@ export default function NewMessage() {
           onSendBtnClick={handleSendMessage}
           sendLoading={sendLoading}
           showEmojiPicker={showEmojiPicker}
+          onReactionsClick={(e) => {
+            e.stopPropagation()
+            setShowEmojiPicker(prev => !prev)
+          }}
+          onFileUploadChange={handleFileUploadChange}
+          uploadedFiles={uploadedFiles}
+          setUploadedFiles={setUploadedFiles}
         />
       </div>
     </div>

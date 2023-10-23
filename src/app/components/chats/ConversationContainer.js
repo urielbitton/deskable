@@ -120,10 +120,6 @@ export default function ConversationContainer() {
     )
   }
 
-  const handleMediaUploadChange = (e) => {
-
-  }
-
   useEffect(() => {
     if (searchParams.get("messageID")) {
       setReplyContainerOpen(true)
@@ -173,7 +169,6 @@ export default function ConversationContainer() {
           setShowEmojiPicker(prev => !prev)
         }}
         onFileUploadChange={handleFileUploadChange}
-        onMediaUploadChange={handleMediaUploadChange}
         uploadedFiles={uploadedFiles}
         setUploadedFiles={setUploadedFiles}
       />

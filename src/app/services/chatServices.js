@@ -11,6 +11,7 @@ import {
 } from "./CrudDB"
 import { deleteMultipleStorageFiles, uploadMultipleFilesToFireStorage } from "./storageServices"
 import { errorToast, successToast } from "app/data/toastsTemplates"
+import { removeNullOrUndefined } from "app/utils/generalUtils"
 
 const oneYear = 1000 * 60 * 60 * 24 * 365
 
@@ -80,7 +81,7 @@ export const handleSendMessageService = async (messageObj) => {
   const path = `organizations/${orgID}/conversations/${conversationID}/messages`
   const docID = getRandomDocID(path)
   const files = message?.files
-  const mappedFiles = files.length > 0 ? files.map(file => file?.file) : null
+  const mappedFiles = files.length > 0 ? removeNullOrUndefined(files.map(file => file?.file)) : null
   const msgFilesStoragePath = `organizations/${orgID}/conversations/${conversationID}/messages/${docID}/files`
   const uploadedFiles = await uploadMultipleFilesToFireStorage(mappedFiles, msgFilesStoragePath, null)
   return setDB(path, docID, {

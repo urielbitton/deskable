@@ -1,11 +1,9 @@
 import { storage } from "app/firebase/fire"
-import { removeNullOrUndefined } from "app/utils/generalUtils"
 import { deleteObject, getDownloadURL, ref, 
   uploadBytesResumable } from "firebase/storage"
 
 export const uploadMultipleFilesToFireStorage = (files, storagePath, fileNames, setUploadProgress) => {
   return new Promise((resolve, reject) => {
-    files = removeNullOrUndefined(files)
     if(!files?.length) return resolve([])
     const fileURLs = []
     files.forEach((file, i) => {

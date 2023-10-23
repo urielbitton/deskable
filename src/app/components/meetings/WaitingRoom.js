@@ -246,7 +246,6 @@ export default function WaitingRoom() {
         <AppButton
           label="Join Meeting"
           onClick={() => joinMeeting()}
-          disabled={meetingEnded}
         />
       </div>
       <AppModal

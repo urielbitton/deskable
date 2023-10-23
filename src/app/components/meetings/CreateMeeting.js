@@ -16,7 +16,7 @@ import './styles/CreateMeeting.css'
 
 export default function CreateMeeting() {
 
-  const { myOrgID, myUserID, setToasts } = useContext(StoreContext)
+  const { myOrgID, myUserID, setToasts, myMemberType } = useContext(StoreContext)
   const [meetingName, setMeetingName] = useState("")
   const [invitesQuery, setInvitesQuery] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
@@ -66,6 +66,7 @@ export default function CreateMeeting() {
   }
 
   const createMeeting = () => {
+    if(myMemberType !== 'classa') return alert('You do not have permission to create meetings. Please contact your organization admin.')
     if (meetingName.length < 4) return setToasts(errorToast("Meeting name must be at least 3 characters long"))
     if (meetingStart >= meetingEnd) return setToasts(errorToast("Meeting start must be before meeting end"))
     createMeetingService(

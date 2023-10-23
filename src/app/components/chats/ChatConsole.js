@@ -121,7 +121,7 @@ export default function ChatConsole(props) {
       </div>
       <div className="bottom">
         {
-          (uploadedFiles?.length > 0 && !sendLoading) ?
+          uploadedFiles?.length > 0 ?
           <div className="uploaded-files-row">
             <AppScrollSlider
               scrollAmount={100}
@@ -131,8 +131,6 @@ export default function ChatConsole(props) {
               {uploadedFilesList}
             </AppScrollSlider>
           </div> :
-          sendLoading ?
-          <i className="fas fa-spinner fa-spin" /> :
           null
         }
       </div>

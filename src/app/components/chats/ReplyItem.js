@@ -110,6 +110,8 @@ export default function ReplyItem(props) {
   }
 
   const handleDeleteReply = () => {
+    const confirm = window.confirm("Are you sure you want to delete this message?")
+    if (!confirm) return null
     deleteMessageService({
       docID: replyID,
       path: `organizations/${myOrgID}/conversations/${conversationID}/messages/${messageID}/replies`,
@@ -209,10 +211,12 @@ export default function ReplyItem(props) {
                   hideSendBtn
                   customBtns={editConsoleBtns}
                 /> :
+                !isDeleted ?
                 <p>
                   <AppLink text={text} />&nbsp;
                   {dateModified && <small className="edited">(Edited)</small>}
-                </p>
+                </p> :
+                <small>This message was deleted.</small>
             }
             {
               files ?
@@ -234,40 +238,43 @@ export default function ReplyItem(props) {
           </div>
         </div>
       </div>
-      <div
-        className={`options-floater ${showReplyEmojiPicker === replyID ? 'open' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="icons-bar">
-          <ActionIcon
-            icon="far fa-smile-plus"
-            onClick={handleOpenEmojiPicker}
-            label="Reactions"
-          />
-          <ActionIcon
-            icon="far fa-share"
-            onClick={handleShare}
-            label="Forward"
-          />
-          <ActionIcon
-            icon="far fa-ellipsis-v"
-            onClick={handleMoreOptions}
-            label="More Options"
-            className={openOptionsID === replyID ? "active" : ""}
-          />
+      {
+        !isDeleted &&
+        <div
+          className={`options-floater ${showReplyEmojiPicker === replyID ? 'open' : ''}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="icons-bar">
+            <ActionIcon
+              icon="far fa-smile-plus"
+              onClick={handleOpenEmojiPicker}
+              label="Reactions"
+            />
+            <ActionIcon
+              icon="far fa-share"
+              onClick={handleShare}
+              label="Forward"
+            />
+            <ActionIcon
+              icon="far fa-ellipsis-v"
+              onClick={handleMoreOptions}
+              label="More Options"
+              className={openOptionsID === replyID ? "active" : ""}
+            />
+          </div>
+          <div className={`options-flex ${openOptionsID === replyID ? "open" : ""}`}>
+            {
+              isMyMessage &&
+              <>
+                <h6 onClick={handleEditReply}><i className="far fa-pen" />Edit Message</h6>
+                <h6 onClick={handleDeleteReply}><i className="far fa-trash" />Delete Message</h6>
+              </>
+            }
+            <h6><i className="far fa-thumbtack" />Pin Message</h6>
+            <h6><i className="far fa-flag" />Report Message</h6>
+          </div>
         </div>
-        <div className={`options-flex ${openOptionsID === replyID ? "open" : ""}`}>
-          {
-            isMyMessage &&
-            <>
-              <h6 onClick={handleEditReply}><i className="far fa-pen" />Edit Message</h6>
-              <h6 onClick={handleDeleteReply}><i className="far fa-trash" />Delete Message</h6>
-            </>
-          }
-          <h6><i className="far fa-thumbtack" />Pin Message</h6>
-          <h6><i className="far fa-flag" />Report Message</h6>
-        </div>
-      </div>
+      }
     </div>
   )
 }

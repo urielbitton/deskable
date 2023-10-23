@@ -67,7 +67,6 @@ export const getRepliesByChatAndMessageID = (orgID, conversationID, messageID, l
   const repliesRef = collection(db, `organizations/${orgID}/conversations/${conversationID}/messages/${messageID}/replies`)
   const q = query(
     repliesRef,
-    where('isDeleted', '==', false),
     orderBy('dateSent', 'desc'),
     limit(lim)
   )
@@ -405,7 +404,6 @@ export const deleteMessageService = (data) => {
   setDeleteLoading(true)
   return updateDB(path, docID, {
     isDeleted: true,
-    dateModified: new Date(),
   })
     .then(() => {
       setToasts(successToast('Message deleted successfully.'))

@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { convertClassicDate, convertClassicDateAndTime, 
-  getShortTimeAgo, getTimeAgo } from "app/utils/dateUtils"
+import {
+  convertClassicDate, convertClassicDateAndTime,
+  getShortTimeAgo, getTimeAgo
+} from "app/utils/dateUtils"
 import { StoreContext } from "app/store/store"
 import "./styles/MessageItem.css"
 import Avatar from "../ui/Avatar"
 import { useDocsCount } from "app/hooks/userHooks"
 import { Link, useSearchParams } from "react-router-dom"
 import EmojiPicker from "../ui/EmojiPicker"
-import { addEmojiReactionService, deleteMessageFilesService, 
-  deleteMessageService, handleReactionClickService, 
-  saveEditedMessageService } from "app/services/chatServices"
+import {
+  addEmojiReactionService, deleteMessageFilesService,
+  deleteMessageService, handleReactionClickService,
+  saveEditedMessageService
+} from "app/services/chatServices"
 import { useMessageReactions } from "app/hooks/chatHooks"
 import ReactionsBubble from "./ReactionBubble"
 import AppPortal from "../ui/AppPortal"
@@ -144,6 +148,8 @@ export default function MessageItem(props) {
   }
 
   const handleDeleteMessage = () => {
+    const confirm = window.confirm("Are you sure you want to delete this message?")
+    if (!confirm) return null
     deleteMessageService({
       docID: messageID,
       path: `organizations/${myOrgID}/conversations/${conversationID}/messages`,
@@ -263,10 +269,12 @@ export default function MessageItem(props) {
                     hideSendBtn
                     customBtns={editConsoleBtns}
                   /> :
-                  <p>
-                    <AppLink text={text} />&nbsp;
-                    {dateModified && <small className="edited">(Edited)</small>}
-                  </p>
+                  !isDeleted ?
+                    <p>
+                      <AppLink text={text} />&nbsp;
+                      {dateModified && <small className="edited">(Edited)</small>}
+                    </p> :
+                    <small>This message was deleted.</small>
               }
               {
                 files ?
@@ -298,55 +306,58 @@ export default function MessageItem(props) {
             }
           </div>
         </div>
-        <div
-          className={`options-floater ${showEmojiPicker === messageID ? 'open' : ''}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <AppPortal
-            showPortal={showEmojiPicker === messageID}
-            className="emoji-picker-float"
-            style={{ position: 'absolute', top: emojiPickerPosition.top, left: emojiPickerPosition.left, zIndex: 1000 }}
+        {
+          !isDeleted &&
+          <div
+            className={`options-floater ${showEmojiPicker === messageID ? 'open' : ''}`}
+            onClick={(e) => e.stopPropagation()}
           >
-            <EmojiPicker
-              showPicker
-              onEmojiSelect={handleEmojiSelect}
-            />
-          </AppPortal>
-          <div className="icons-bar">
-            <ActionIcon
-              icon="far fa-smile-plus"
-              onClick={handleOpenEmojiPicker}
-              label="Reactions"
-            />
-            <ActionIcon
-              icon="far fa-comment-lines"
-              onClick={handleReply}
-              label="Reply"
-            />
-            <ActionIcon
-              icon="far fa-share"
-              onClick={handleShare}
-              label="Forward"
-            />
-            <ActionIcon
-              icon="far fa-ellipsis-v"
-              onClick={handleMoreOptions}
-              label="More Options"
-              className={openOptionsID === messageID ? "active" : ""}
-            />
+            <AppPortal
+              showPortal={showEmojiPicker === messageID}
+              className="emoji-picker-float"
+              style={{ position: 'absolute', top: emojiPickerPosition.top, left: emojiPickerPosition.left, zIndex: 1000 }}
+            >
+              <EmojiPicker
+                showPicker
+                onEmojiSelect={handleEmojiSelect}
+              />
+            </AppPortal>
+            <div className="icons-bar">
+              <ActionIcon
+                icon="far fa-smile-plus"
+                onClick={handleOpenEmojiPicker}
+                label="Reactions"
+              />
+              <ActionIcon
+                icon="far fa-comment-lines"
+                onClick={handleReply}
+                label="Reply"
+              />
+              <ActionIcon
+                icon="far fa-share"
+                onClick={handleShare}
+                label="Forward"
+              />
+              <ActionIcon
+                icon="far fa-ellipsis-v"
+                onClick={handleMoreOptions}
+                label="More Options"
+                className={openOptionsID === messageID ? "active" : ""}
+              />
+            </div>
+            <div className={`options-flex ${openOptionsID === messageID ? "open" : ""}`}>
+              {
+                isMyMessage &&
+                <>
+                  <h6 onClick={handleEditMessage}><i className="far fa-pen" />Edit Message</h6>
+                  <h6 onClick={handleDeleteMessage}><i className="far fa-trash" />Delete Message</h6>
+                </>
+              }
+              <h6><i className="far fa-thumbtack" />Pin Message</h6>
+              <h6><i className="far fa-flag" />Report Message</h6>
+            </div>
           </div>
-          <div className={`options-flex ${openOptionsID === messageID ? "open" : ""}`}>
-            {
-              isMyMessage &&
-              <>
-                <h6 onClick={handleEditMessage}><i className="far fa-pen" />Edit Message</h6>
-                <h6 onClick={handleDeleteMessage}><i className="far fa-trash" />Delete Message</h6>
-              </>
-            }
-            <h6><i className="far fa-thumbtack" />Pin Message</h6>
-            <h6><i className="far fa-flag" />Report Message</h6>
-          </div>
-        </div>
+        }
       </div>
       {
         newDay &&

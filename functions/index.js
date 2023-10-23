@@ -235,7 +235,6 @@ exports.recursivelyDeleteDocument = functions
   })
 
 
-
 //Twilio API functions
 
 exports.findOrCreateRoom = functions

@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useRef, 
-  useState, useMemo } from 'react'
+import React, {
+  useContext, useEffect, useRef,
+  useState, useMemo
+} from 'react'
 import './styles/ChatContent.css'
 import { StoreContext } from "app/store/store"
 import { useParams } from "react-router-dom"
@@ -26,7 +28,7 @@ export default function ChatContent() {
   const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : lastMessage?.senderID)
   const messages = useChatMessages(myOrgID, conversationID, messagesLimit)
   const chatMessagesNum = useDocsCount(`organizations/${myOrgID}/conversations/${conversationID}/messages`, lastMessage)
-  const hasMessages = messages?.length > 0
+  const hasMessages = chatMessagesNum > 0
   const viewPortOffset = 50
   const inView = useInViewport(loadNewRef, messagesListRef, viewPortOffset)
 
@@ -65,37 +67,23 @@ export default function ChatContent() {
       className="chat-content"
       key={chat?.conversationID}
     >
-      {
-        !hasMessages ?
-          <div className="new-conversation-info">
-            <h4>
-              {
-                !isSpaceChat ?
-                  `This is the very beginning of your direct message 
-                history with ${otherParticipant?.firstName} ${otherParticipant?.lastName}.`
-                  :
-                  `This is the very beginning of your space ${chat?.name}.`
-              }
-            </h4>
-          </div> :
+      <div
+        className="messages-flex"
+        ref={messagesListRef}
+        onScroll={handleOnScroll}
+      >
+        {messagesList}
+        {
+          chatMessagesNum > messagesLimit &&
           <div
-            className="messages-flex"
-            ref={messagesListRef}
-            onScroll={handleOnScroll}
+            className="load-new"
+            ref={loadNewRef}
           >
-            {messagesList}
-            {
-              chatMessagesNum > messagesLimit &&
-              <div
-                className="load-new"
-                ref={loadNewRef}
-              >
-                <i className="fas fa-spinner fa-spin" />
-                <small>Loading messages</small>
-              </div>
-            }
+            <i className="fas fa-spinner fa-spin" />
+            <small>Loading messages</small>
           </div>
-      }
+        }
+      </div>
     </div>
   ) : null
 }

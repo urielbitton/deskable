@@ -10,6 +10,7 @@ import AppModal from "../ui/AppModal"
 import AppButton from "../ui/AppButton"
 import { useUsersSearch } from "app/hooks/searchHooks"
 import DropdownSearch from "../ui/DropdownSearch"
+import { addParticipantsToChatService } from "app/services/chatServices"
 
 export default function ChatHeader() {
 
@@ -18,20 +19,53 @@ export default function ChatHeader() {
   const [showAddParticipantModal, setShowAddParticipantModal] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState([])
   const [searchLoading, setSearchLoading] = useState(false)
+  const [addLoading, setAddLoading] = useState(false)
   const [query, setQuery] = useState('')
   const singleChat = useChat(myUserID, conversationID)
   const spaceChat = useSpaceChat(myOrgID, conversationID)
   const chat = { ...singleChat, ...spaceChat }
   const isSpaceChat = chat?.type === "space"
+  const participantsIDs = chat?.participantsIDs
   const otherParticipantID = myUserID === chat?.participantID ? chat?.creatorID : chat?.participantID
   const otherParticipant = useUser(!isSpaceChat ? otherParticipantID : null)
-  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID}`
+  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${participantsIDs?.join(' AND NOT userID: ')}`
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const inputRef = useRef(null)
+  const firstTwoParticipantsIDs = participantsIDs
+    ?.filter((participantID) => participantID !== myUserID)
+    .slice(0, 2)
+  const firstParticipant = useUser(firstTwoParticipantsIDs?.[0])
+  const secondParticipant = useUser(firstTwoParticipantsIDs?.[1])
+  const firstParticipantName = `${firstParticipant?.firstName} ${firstParticipant?.lastName}`
+  const secondParticipantName = `${secondParticipant?.firstName} ${secondParticipant?.lastName}`
+
+  const allParticipantsList = participantsIDs?.map((participantID) => {
+    return <ParticipantItem
+      key={participantID}
+      participantID={participantID}
+    />
+  })
 
   const handleAddParticipants = () => {
-
+    if (!selectedUsers?.length) return null
+    setAddLoading(true)
+    addParticipantsToChatService({
+      orgID: myOrgID,
+      conversationID,
+      participantsIDs,
+      addedIDs: selectedUsers?.map(user => user.userID)
+    })
+      .then(() => {
+        setShowAddParticipantModal(false)
+        setSelectedUsers([])
+        setAddLoading(false)
+      })
+      .catch(err => {
+        setAddLoading(false)
+        alert('Something went wrong. Please try again later.')
+      })
   }
+
 
   const handleSelectUser = (user) => {
     setSelectedUsers(prev => [...prev, user])
@@ -89,18 +123,28 @@ export default function ChatHeader() {
           dimensions={38}
         />
         <div className="text">
-          <h5>{!isSpaceChat ? `${otherParticipant?.firstName} ${otherParticipant?.lastName}` : chat?.spaceName}</h5>
+          <h5>
+            {
+              !isSpaceChat ?
+                `${otherParticipant?.firstName} ${otherParticipant?.lastName}` :
+                <>{chat?.spaceName} <span>({firstParticipantName},&nbsp;
+                  {secondParticipantName} {participantsIDs?.length > 2 ? `and ${participantsIDs?.length - 2} other${participantsIDs?.length > 3 ? 's' : ''}` : ''})</span></>
+            }
+          </h5>
           <small>Active now</small>
         </div>
       </div>
       <div className="right-side">
-        <IconContainer
-          icon="far fa-user-plus"
-          onClick={() => setShowAddParticipantModal(true)}
-          iconSize={15}
-          iconColor="var(--grayText)"
-          round={false}
-        />
+        {
+          isSpaceChat &&
+          <IconContainer
+            icon="far fa-user-plus"
+            onClick={() => setShowAddParticipantModal(true)}
+            iconSize={15}
+            iconColor="var(--grayText)"
+            round={false}
+          />
+        }
         <IconContainer
           icon="far fa-info-circle"
           onClick={() => console.log("info")}
@@ -113,15 +157,16 @@ export default function ChatHeader() {
         label="Add Participant"
         showModal={showAddParticipantModal}
         setShowModal={setShowAddParticipantModal}
+        portalClassName="add-participants-modal"
         actions={
           <AppButton
             label="Add"
             onClick={handleAddParticipants}
+            loading={addLoading}
           />
         }
       >
         <div className="compose-bar">
-          <h5>To:</h5>
           {
             selectedUsers?.length > 0 &&
             <div className="selected-users-flex">
@@ -134,13 +179,34 @@ export default function ChatHeader() {
             onChange={(e) => setQuery(e.target.value)}
             searchResults={orgUsersList}
             showSearchDropdown={query.length > 0}
-            setShowSearchDropdown={()=>null}
+            setShowSearchDropdown={() => null}
             searchLoading={searchLoading}
             clearSearch={() => setQuery('')}
             inputRef={inputRef}
           />
         </div>
+        <div className="participants-list">
+          <h5>Participants</h5>
+          {allParticipantsList}
+        </div>
       </AppModal>
     </div>
   )
 }
+
+export const ParticipantItem = ({ participantID }) => {
+
+  const participant = useUser(participantID)
+
+  return <div
+    className="participant-item"
+    key={participantID}
+  >
+    <Avatar
+      src={participant?.photoURL}
+      dimensions={30}
+      round={false}
+    />
+    <h6>{`${participant?.firstName} ${participant?.lastName}`}</h6>
+  </div>
+} 

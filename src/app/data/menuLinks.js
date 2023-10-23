@@ -23,7 +23,7 @@ export const menuLinks = [
   {
     name: 'Employees',
     url: '/employees',
-    icon: 'fas fa-users', 
+    icon: 'fas fa-users',
     require: 'classa',
     requiresOrg: true
   },
@@ -35,16 +35,16 @@ export const menuLinks = [
     requiresOrg: true
   },
   {
-    name: 'Meetings',
-    url: '/meetings',
-    icon: 'fas fa-video',
+    name: 'Messages',
+    url: '/messages',
+    icon: 'fas fa-comments',
     require: 'any',
     requiresOrg: true
   },
   {
-    name: 'Messages',
-    url: '/messages',
-    icon: 'fas fa-comments',
+    name: 'Meetings',
+    url: '/meetings',
+    icon: 'fas fa-video',
     require: 'any',
     requiresOrg: true
   },

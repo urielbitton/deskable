@@ -20,9 +20,11 @@
   font-size: 18px;
   font-weight: 700;
 }
+
 .new-message-container .new-message-header .compose-bar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   padding: 10px 20px;
   border-bottom: 1px solid #eee;
   gap: 5px;
@@ -33,6 +35,8 @@
 }
 .new-message-container .new-message-header .compose-bar .dropdown-search-container {
   width: 100%;
+  flex: 1;
+  min-width: 200px;
 }
 .new-message-container .new-message-header .compose-bar .appInput {
   width: 100%;
@@ -80,6 +84,7 @@
 .new-message-container .new-message-header .compose-bar .selected-users-flex {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 3px;
 }
 .new-message-container .new-message-header .compose-bar .selected-user-bubble {

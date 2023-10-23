@@ -80,8 +80,7 @@ export default function WaitingRoom() {
   }
 
   const joinMeeting = () => {
-    if (meetingEnded) return setToasts(successToast("This meeting has ended."))
-    createJoinVideoMeetingService(
+    return createJoinVideoMeetingService(
       myUserID,
       org.accountType || 'basic',
       roomID,

@@ -436,3 +436,23 @@ export const deleteMessageFilesService = (path, messageID, files, fileID, fileNa
       console.log(err)
     })
 }
+
+export const addParticipantsToChatService = (data) => {
+  const { addedIDs, participantsIDs, conversationID, orgID } = data
+  const path = `organizations/${orgID}/conversations`
+  const updatedParticipantsIDs = [...participantsIDs, ...addedIDs]
+  return updateDB(path, conversationID, {
+    participantsIDs: updatedParticipantsIDs
+  })
+    .then(() => {
+      return {
+        success: true,
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      return {
+        success: false,
+      }
+    })
+}

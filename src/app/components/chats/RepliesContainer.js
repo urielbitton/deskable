@@ -12,11 +12,12 @@ import AppPortal from "../ui/AppPortal"
 import EmojiPicker from "@emoji-mart/react"
 import { ActionIcon } from "../ui/ActionIcon"
 import { addEmojiReactionService } from "app/services/chatServices"
+import { uploadMultipleFilesLocal } from "app/utils/fileUtils"
 
 export default function RepliesContainer(props) {
 
   const { myOrgID, myUserID, myUserName,
-    myUserImg } = useContext(StoreContext)
+    myUserImg, setToasts } = useContext(StoreContext)
   const { replies, onReplyChange, value,
     handleSendReply, replyLoading, open, onClose,
     showReplyEmojiPicker, setShowReplyEmojiPicker } = props
@@ -24,6 +25,8 @@ export default function RepliesContainer(props) {
   const [showReplyConsoleEmojiPicker, setShowReplyConsoleEmojiPicker] = useState(false)
   const [emojiPickerPosition, setEmojiPickerPosition] = useState({ top: '0', left: '0' })
   const [openReplyID, setOpenReplyID] = useState(null)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [uploadFilesLoading, setUploadFilesLoading] = useState(false)
   const screenHeight = useScreenHeight()
   const conversationID = useParams().conversationID
   const messageID = searchParams.get('messageID')
@@ -32,6 +35,8 @@ export default function RepliesContainer(props) {
   const message = useChatMessage(myOrgID, conversationID, messageID)
   const messageRepliesNum = useDocsCount(messagePath, message)
   const consoleInputRef = useRef(null)
+  const maxFileSize = 10 * 1024 * 1024
+  const maxFilesNum = 10
 
   const handleOpenEmojiPicker = (e, reply) => {
     e.stopPropagation()
@@ -63,6 +68,17 @@ export default function RepliesContainer(props) {
       userImg: myUserImg,
     },
       replyReactionsPath
+    )
+  }
+
+  const handleFileUploadChange = (e) => {
+    return uploadMultipleFilesLocal(
+      e,
+      maxFileSize,
+      maxFilesNum,
+      setUploadedFiles,
+      setUploadFilesLoading,
+      setToasts
     )
   }
 
@@ -121,7 +137,10 @@ export default function RepliesContainer(props) {
           onReactionsClick={(e) => {
             e.stopPropagation()
             setShowReplyConsoleEmojiPicker(prev => !prev)
-          }}
+          }} 
+          onFileUploadChange={handleFileUploadChange}
+          uploadedFiles={uploadedFiles}
+          setUploadedFiles={setUploadedFiles}
         />
       </div>
       <AppPortal

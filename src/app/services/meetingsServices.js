@@ -197,6 +197,7 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
     .then(() => {
       setLoading(false)
       setToasts(successToast("Meeting created."))
+      return { meetingID: docID, roomID }
     })
     .catch((error) => {
       setLoading(false)

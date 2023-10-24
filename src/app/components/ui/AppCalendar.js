@@ -17,12 +17,13 @@ import {
 
 export default function AppCalendar(props) {
 
-  const { setNewEventModal, myUserID, setToasts,
-    setPageLoading } = useContext(StoreContext)
+  const { setNewEventModal, myOrgID, setToasts,
+    setPageLoading, myUserID } = useContext(StoreContext)
   const { events, initialView, eventClassNames, calendarRef,
     eventContent, showToggler, showTodayBtn, viewMode, setViewMode,
     setCalendarRangeStartDate, setCalendarRangeEndDate,
-    customCalendarViewTitle, setCustomCalendarViewTitle } = props
+    customCalendarViewTitle, setCustomCalendarViewTitle,
+    allDaySlot } = props
   const calendarAPI = calendarRef?.current?.getApi()
   const monthView = viewMode === 'dayGridMonth'
 
@@ -47,6 +48,7 @@ export default function AppCalendar(props) {
   const handleEventResizeOrMove = (e) => {
     eventResizeOrMoveService(
       e,
+      myOrgID,
       myUserID,
       setToasts,
       setPageLoading,
@@ -168,6 +170,7 @@ export default function AppCalendar(props) {
         themeSystem="Solar"
         moreLinkContent={(e) => renderEventDots(e)}
         dayMaxEventRows={3}
+        allDaySlot={allDaySlot}
       />
     </div>
   )

@@ -8,7 +8,6 @@ import EmployeesPage from "app/pages/EmployeesPage"
 import PostsPage from "app/pages/PostsPage"
 import MessagesPage from "app/pages/MessagesPage"
 import MeetingsPage from "app/pages/MeetingsPage"
-import EventsPage from "app/pages/EventsPage"
 import ResourcesPage from "app/pages/ResourcesPage"
 import SettingsPage from "app/pages/SettingsPage"
 import CalendarPage from "app/pages/CalendarPage"
@@ -42,7 +41,6 @@ export default function RoutesContainer() {
             <Route path="projects/*" element={<ProjectsPage />} />
             <Route path="messages/*" element={<MessagesPage />} />
             <Route path="meetings/*" element={<MeetingsPage />} /> 
-            <Route path="events/*" element={<EventsPage />} />
             <Route path="resources/*" element={<ResourcesPage />} />
             <Route path="my-organization/*" element={<MyOrgPage />} />
             <Route path="my-account/*" element={<MyAccountPage />} />

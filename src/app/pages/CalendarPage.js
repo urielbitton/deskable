@@ -30,6 +30,7 @@ export default function CalendarPage() {
         setCustomCalendarViewTitle={setCustomCalendarViewTitle}
         showToggler
         showTodayBtn
+        allDaySlot={false}
       />
     </div>
   )

@@ -202,3 +202,10 @@
   font-size: 12px;
   padding: 8px 10px;
 }
+
+.appButton.blueBtn {
+  background: var(--blue);
+}
+.appButton.blueBtn:hover {
+  filter: brightness(105%);
+}

@@ -1,28 +1,29 @@
-import { getMonthCalendarEventsService, getTodayTasksService, getWeekCalendarEventsService } from "app/services/calendarServices"
+import { getMonthCalendarEventsService, getTodayTasksService, 
+  getWeekCalendarEventsService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
 export const useCalendarWeekEvents = (calendarDate) => {
 
-  const { myUserID } = useContext(StoreContext)
+  const { myOrgID, myUserID } = useContext(StoreContext)
   const [weekEvents, setWeekEvents] = useState([])
 
   useEffect(() => {
     if(calendarDate.getTime())
-    getWeekCalendarEventsService(myUserID, calendarDate, setWeekEvents)
-  },[myUserID, calendarDate])
+    getWeekCalendarEventsService(myOrgID, myUserID, calendarDate, setWeekEvents)
+  },[myOrgID, calendarDate])
 
   return weekEvents
 }
 
 export const useCalendarMonthEvents = (calendarDate) => {
 
-  const { myUserID } = useContext(StoreContext)
+  const { myUserID, myOrgID } = useContext(StoreContext)
   const [monthEvents, setMonthEvents] = useState([])
 
   useEffect(() => {
     if(calendarDate.getTime())
-    getMonthCalendarEventsService(myUserID, calendarDate, setMonthEvents)
+    getMonthCalendarEventsService(myOrgID, myUserID, calendarDate, setMonthEvents)
   },[myUserID, calendarDate])
 
   return monthEvents

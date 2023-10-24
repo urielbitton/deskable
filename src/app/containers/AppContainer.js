@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import './styles/AppContainer.css'
 import './styles/DarkMode.css'
 import { StoreContext } from "app/store/store"
@@ -11,6 +11,7 @@ import PreventTabClose from "app/components/ui/PreventTabClose"
 import RightBar from "app/components/layout/RightBar"
 import { useIsFullScreen } from "app/hooks/generalHooks"
 import { useLocation } from "react-router-dom"
+import NewEventModal from "app/components/layout/NewEventModal"
 
 export default function AppContainer() {
 
@@ -23,13 +24,14 @@ export default function AppContainer() {
     <div className={`app-container ${ darkMode ? "dark-app" : "" } ${hideRightBar ? 'hide-rightbar' : ''} `+ 
       `${(isFullscreen && isMeetingPage) ? 'meeting-fullscreen' : ''}`}
     >
-      <HelmetTitle />
+      <HelmetTitle /> 
       <Sidebar />
       <div className="main-content">
         <Navbar />
         <RoutesContainer />
       </div>
       { !hideRightBar && <RightBar /> }
+      <NewEventModal />
       <PageLoader loading={pageLoading} />
       <PreventTabClose preventClose={pageLoading} />
     </div>

@@ -7,20 +7,22 @@ export default function EventItem(props) {
 
   const { setNewEventModal } = useContext(StoreContext)
   const { startingDate, endingDate, title, allDay,
-    description, eventID } = props.event
+    description, eventID, invitees, creatorID } = props.event
 
   const eventClick = () => {
     setNewEventModal(
       {
         open: true,
-        eventObject: {
+        event: {
           startingDate: startingDate?.toDate(),
           endingDate: endingDate?.toDate(),
           title,
           description,
           allDay,
           editMode: true,
-          eventID
+          eventID,
+          invitees,
+          creatorID
         }
       })
   }

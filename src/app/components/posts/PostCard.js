@@ -28,8 +28,8 @@ export default function PostCard(props) {
 
   const { myUserID, setToasts } = useContext(StoreContext)
   const { authorID, dateCreated, postID, postText, files,
-    orgID, likes, saved } = props.post
-  const { setShowLikesModal, setLikesStats, setShowSavedModal, 
+    orgID, likes, saved, dateUpdated } = props.post
+  const { setShowLikesModal, setLikesStats, setShowSavedModal,
     setSavedStats, postAlone, openCommentsDefault } = props
   const [showReportModal, setShowReportModal] = useState(false)
   const [showPostOptions, setShowPostOptions] = useState(false)
@@ -40,7 +40,7 @@ export default function PostCard(props) {
   const [editUploadedImgs, setEditUploadedImgs] = useState([])
   const [loading, setLoading] = useState(false)
   const [deletedFiles, setDeletedFiles] = useState([])
-  const [showPhotosModal, setShowPhotosModal] = useState({show: false, photos: []})
+  const [showPhotosModal, setShowPhotosModal] = useState({ show: false, photos: [] })
   const [reportReason, setReportReason] = useState("")
   const [reportMessage, setReportMessage] = useState("")
   const [reportLoading, setReportLoading] = useState(false)
@@ -50,7 +50,7 @@ export default function PostCard(props) {
   const commentInputRef = useRef(null)
   const fileImgs = files?.filter(file => file?.type?.includes('image'))
   const hasImgs = fileImgs?.length > 0
-  const commentsNum = useDocsCount(`organizations/${orgID}/posts/${postID}/comments`)
+  const commentsNum = useDocsCount(`organizations/${orgID}/posts/${postID}/comments`, dateUpdated)
   const likesNum = likes.length
   const savedNum = saved.length
   const userHasLiked = likes.includes(myUserID)
@@ -303,13 +303,13 @@ export default function PostCard(props) {
         </div>
       </div>
       <div className="user-actions">
-        <div onClick={() => setShowComments(prev => !prev)}>
-          <i className="far fa-comment" />
-          <h6>Comment</h6>
-        </div>
         <div onClick={() => handleLike()}>
           <i className={`fa${userHasLiked ? 's' : 'r'} fa-heart`} />
           <h6>Like{userHasLiked && 'd'}</h6>
+        </div>
+        <div onClick={() => setShowComments(prev => !prev)}>
+          <i className="far fa-comment" />
+          <h6>Comment</h6>
         </div>
         <div onClick={() => bookmarkPost()}>
           <i className={`fa${userHasSaved ? 's' : 'r'} fa-bookmark`} />

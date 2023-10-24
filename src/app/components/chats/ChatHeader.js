@@ -191,7 +191,7 @@ export default function ChatHeader() {
             </div>
           }
           <DropdownSearch
-            placeholder="Search users or spaces"
+            placeholder="Search users..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             searchResults={orgUsersList}

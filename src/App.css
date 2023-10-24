@@ -230,7 +230,7 @@ em-emoji-picker {
   background: #f7f7f7;
 }
 .fc-day-today {
-  background: #f7f7f7 !important;
+  background: #fff !important;
 }
 .fc .fc-timegrid-axis-cushion {
   max-width: 100px !important;
@@ -252,8 +252,26 @@ em-emoji-picker {
 .fc .fc-event.fc-event-draggable {
   cursor: all-scroll;
 }
+.fc-day-today .fc-scrollgrid-sync-inner {
+  background: var(--primary);
+}
+.fc-day-today .fc-scrollgrid-sync-inner a {
+  color: #fff;
+}
+.calendar-page .fc-scrollgrid-sync-inner {
+  padding: 20px 0;
+}
+.fc-v-event .fc-event-main-frame {
+  flex-direction: column-reverse!important;
+}
+.fc-v-event .fc-event-title {
+  font-weight: 600!important;
+}
 #calendar {
   overflow-x:auto;
+}
+.fc-scrollgrid-section-header .fc-scroller {
+  overflow: hidden!important;
 }
 
 /* TinyMCE styles */

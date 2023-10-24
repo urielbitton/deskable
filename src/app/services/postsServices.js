@@ -227,6 +227,11 @@ export const createOrgPostCommentService = (userID, orgID, postID, message, uplo
       })
     })
     .then(() => {
+      return updateDB(`organizations/${orgID}/posts`, postID, {
+        dateUpdated: new Date()
+      })
+    })
+    .then(() => {
       setLoading(false)
     })
     .catch(err => {

@@ -14,7 +14,7 @@ import {
 import { StoreContext } from "app/store/store"
 import { convertClassicDate, convertClassicTime } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import AppButton from "../ui/AppButton"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
@@ -132,8 +132,11 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     startVideo()
-    return () => stopVideo()
   }, [])
+
+  useEffect(() => {
+    return () => stopVideo()
+  })
 
   useEffect(() => {
     if (room) {
@@ -162,7 +165,7 @@ export default function WaitingRoom() {
     window.onunload = disconnectParticipant
   }, [])
 
-  return !meetingStarted ? (
+  return (!meetingStarted && meeting) ? (
     <div className="waiting-room-page">
       <div className="meeting-video">
         <div className="toolbar">
@@ -275,13 +278,17 @@ export default function WaitingRoom() {
       </AppModal>
     </div>
   ) :
-    <MeetingStarted
-      room={room}
-      participants={participants}
-      videoOn={videoOn}
-      setVideoOn={setVideoOn}
-      soundOn={soundOn}
-      setSoundOn={setSoundOn}
-      setMeetingStarted={setMeetingStarted}
-    />
+    meeting ?
+      <MeetingStarted
+        room={room}
+        participants={participants}
+        videoOn={videoOn}
+        setVideoOn={setVideoOn}
+        soundOn={soundOn}
+        setSoundOn={setSoundOn}
+        setMeetingStarted={setMeetingStarted}
+      /> :
+      <p style={{ padding: 10 }}>This meeting does not exist or has been deleted.&nbsp;
+        <Link to="/meetings" style={{textDecoration: 'underline'}}>Back to Meetings.</Link>
+      </p>
 }

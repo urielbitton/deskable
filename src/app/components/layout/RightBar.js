@@ -13,7 +13,6 @@ import { AppInput, AppSwitch } from "../ui/AppInputs"
 import AppTabsBar from "../ui/AppTabsBar"
 import Avatar from "../ui/Avatar"
 import IconContainer from "../ui/IconContainer"
-import NewEventModal from "./NewEventModal"
 import './styles/RightBar.css'
 
 export default function RightBar() {
@@ -169,7 +168,6 @@ export default function RightBar() {
           </div>
         </div>
       </div>
-      <NewEventModal />
     </div>
   )
 }

@@ -1,8 +1,8 @@
-import { errorToast, successToast } from "app/data/toastsTemplates"
+import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { reformatDateToMonthDayYear } from "app/utils/dateUtils"
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns"
-import { collection, limit, onSnapshot, orderBy, query, where } from "firebase/firestore"
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 
 export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle, setCalendarRangeStartDate, setCalendarRangeEndDate) => {
@@ -20,18 +20,20 @@ export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle
 export const dateClickService = (e, monthView, setNewEventModal) => {
   const startDate = new Date(e.date)
   const endDate = new Date(e.date.setHours(e.date.getHours() + 1))
-  const eventObject = {
+  const event = {
     startingDate: startDate,
     endingDate: endDate,
     title: '',
     description: '',
-    allDay: monthView
+    allDay: monthView,
+    invitees: [],
+    creatorID: ''
   }
-  setNewEventModal({ open: true, eventObject })
+  setNewEventModal({ open: true, event })
 }
 
-export const eventResizeOrMoveService = (e, userID, setToasts, setLoading, setNewEventModal) => {
-  const eventObject = {
+export const eventResizeOrMoveService = (e, orgID, myUserID, setToasts, setLoading, setNewEventModal) => {
+  const event = {
     startingDate: e.event.start,
     endingDate: e.event.end,
     title: e.event.title,
@@ -39,29 +41,32 @@ export const eventResizeOrMoveService = (e, userID, setToasts, setLoading, setNe
     allDay: e.event.allDay,
     eventID: e.event.extendedProps.eventID
   }
-  updateCalendarEventService(userID, eventObject, setToasts, setLoading)
+  updateCalendarEventService(orgID, myUserID, event, setToasts, setLoading)
     .then(() => {
-      setNewEventModal({ open: false, eventObject: null })
+      setNewEventModal({ open: false, event: null })
     })
 }
 
 export const eventClickService = (e, setNewEventModal) => {
-  const eventObject = {
+  const event = {
     startingDate: e.event.start,
     endingDate: e.event.end,
     title: e.event.title,
     description: e.event.extendedProps.description,
     allDay: e.event.allDay,
     editMode: true,
-    eventID: e.event.extendedProps.eventID
+    eventID: e.event.extendedProps.eventID,
+    invitees: e.event.extendedProps.invitees,
+    creatorID: e.event.extendedProps.creatorID
   }
-  setNewEventModal({ open: true, eventObject })
+  setNewEventModal({ open: true, event })
 }
 
-export const getWeekCalendarEventsService = (userID, calendarDate, setEvents) => {
-  const eventsRef = collection(db, `users/${userID}/events`)
+export const getWeekCalendarEventsService = (orgID, userID, calendarDate, setEvents) => {
+  const eventsRef = collection(db, `organizations/${orgID}/events`)
   const q = query(
     eventsRef, 
+    where('invitees', 'array-contains', userID),
     where('startingDate', '>=', startOfWeek(calendarDate)),
     where('startingDate', '<=', endOfWeek(calendarDate)),
     orderBy('startingDate', 'desc') 
@@ -71,10 +76,11 @@ export const getWeekCalendarEventsService = (userID, calendarDate, setEvents) =>
   })
 }
 
-export const getMonthCalendarEventsService = (userID, calendarDate, setEvents) => {
-  const eventsRef = collection(db, `users/${userID}/events`)
+export const getMonthCalendarEventsService = (orgID, userID, calendarDate, setEvents) => {
+  const eventsRef = collection(db, `organizations/${orgID}/events`)
   const q = query(
     eventsRef, 
+    where('invitees', 'array-contains', userID),
     where('startingDate', '>=', startOfMonth(calendarDate)),
     where('startingDate', '<=', endOfMonth(calendarDate)),
     orderBy('startingDate', 'desc') 
@@ -86,17 +92,20 @@ export const getMonthCalendarEventsService = (userID, calendarDate, setEvents) =
 
 
 
-export const createCalendarEventService = (userID, event, setToasts, setLoading) => {
+export const createCalendarEventService = (orgID, userID, invitees, event, setToasts, setLoading) => {
   setLoading(true)
-  const eventPath = `users/${userID}/events`
+  const eventPath = `organizations/${orgID}/events`
   const docID = getRandomDocID(eventPath)
   return setDB(eventPath, docID, {
     ...event,
     eventID: docID,
     dateCreated: new Date(),
-    ownerID: userID,
+    creatorID: userID,
+    invitees,
+    orgID,
   })
     .then(() => {
+      // send out emails to invitees
       setToasts(successToast('Event saved successfully'))
       setLoading(false)
     })
@@ -107,9 +116,9 @@ export const createCalendarEventService = (userID, event, setToasts, setLoading)
     })
 }
 
-export const updateCalendarEventService = (userID, event, setToasts, setLoading) => {
+export const updateCalendarEventService = (orgID, eventID, event, setToasts, setLoading) => {
   setLoading(true)
-  return updateDB(`users/${userID}/events`, event.eventID, {
+  return updateDB(`organizations/${orgID}/events`, eventID, {
     ...event
   })
     .then(() => {
@@ -123,9 +132,9 @@ export const updateCalendarEventService = (userID, event, setToasts, setLoading)
     })
 }
 
-export const deleteCalendarEventService = (userID, eventID, setToasts, setLoading) => {
+export const deleteCalendarEventService = (orgID, eventID, setToasts, setLoading) => {
   setLoading(true)
-  return deleteDB(`users/${userID}/events`, eventID)
+  return deleteDB(`organizations/${orgID}/events`, eventID)
     .then(() => {
       setToasts(successToast('Event deleted successfully.'))
       setLoading(false)
@@ -135,6 +144,9 @@ export const deleteCalendarEventService = (userID, eventID, setToasts, setLoadin
       console.log(err)
     })
 }
+
+
+//tasks services
 
 export const getTodayTasksService = (userID, setTasks) => {
   const tasksRef = collection(db, `users/${userID}/tasks`)
@@ -149,14 +161,14 @@ export const getTodayTasksService = (userID, setTasks) => {
   })
 }
 
-export const createTaskService = (userID, title, setToasts, setLoading) => {
+export const createTaskService = (userID, orgID, title, setToasts, setLoading) => {
   setLoading(true)
   const taskPath = `users/${userID}/tasks`
   const docID = getRandomDocID(taskPath)
   return setDB(taskPath, docID, {
     taskID: docID,
     dateCreated: new Date(),
-    ownerID: userID,
+    creatorID: userID,
     title,
     isDone: false
   })

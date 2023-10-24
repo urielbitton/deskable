@@ -49,13 +49,6 @@ export const menuLinks = [
     requiresOrg: true
   },
   {
-    name: 'Events',
-    url: '/events',
-    icon: 'fas fa-calendar-check',
-    require: 'any',
-    requiresOrg: true
-  },
-  {
     name: 'Resources',
     url: '/resources',
     icon: 'fas fa-book',

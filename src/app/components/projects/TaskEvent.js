@@ -11,9 +11,9 @@ import './styles/TaskEvent.css'
 export default function TaskEvent(props) {
 
   const { myUserID, setToasts } = useContext(StoreContext)
-  const { ownerID, dateCreated, title, icon, eventID } = props.event
+  const { creatorID, dateCreated, title, icon, eventID } = props.event
   const { task, eventsPath, showEventMenu, setShowEventMenu } = props
-  const user = useUser(ownerID)
+  const user = useUser(creatorID)
   const isEventCreator = task?.creatorID === myUserID
 
   const deleteEvent = () => {

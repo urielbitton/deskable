@@ -21,7 +21,7 @@ const StoreContextProvider = ({children}) => {
   const percentFormat = new Intl.NumberFormat('en-CA', {style: 'percent'})
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [toasts, setToasts] = useState([])
-  const [newEventModal, setNewEventModal] = useState({open: false, eventObject: null})
+  const [newEventModal, setNewEventModal] = useState({open: false, event: null})
   const [hideRightBar, setHideRightBar] = useState(false)
   const [showProjectsSidebar, setShowProjectsSidebar] = useState(localStorage.getItem('showProjectsSidebar') === "true")
   const tinymceAPIKey = process.env.REACT_APP_TINYMCEKEY

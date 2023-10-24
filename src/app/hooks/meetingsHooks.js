@@ -1,4 +1,5 @@
-import { getLiveMeetingsByOrgID, getMeetingByID, getRangedMeetingsByOrgID } from "app/services/meetingsServices"
+import { getLiveMeetingsByOrgID, getMeetingByID, 
+  getRangedMeetingsByOrgID } from "app/services/meetingsServices"
 import { StoreContext } from "app/store/store"
 import { useContext, useEffect, useState } from "react"
 
@@ -25,7 +26,7 @@ export const useRangedMeetings = (start, end, limit) => {
     if (myOrgID) {
       getRangedMeetingsByOrgID(myOrgID, start, end, setMeetings, limit)
     }
-  }, [myOrgID, start, end, limit])
+  }, [myOrgID, limit])
 
   return meetings
 }

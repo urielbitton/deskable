@@ -1,5 +1,5 @@
 import { useMeeting } from "app/hooks/meetingsHooks"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
 import MeetingSidebar from "./MeetingSidebar"
 import MeetingWindow from "./MeetingWindow"
@@ -9,11 +9,19 @@ import BackgroundEffectsBar from "./BackgroundEffectsBar"
 export default function MeetingStarted(props) {
 
   const { videoOn, soundOn, room, setVideoOn,
-    setSoundOn, setMeetingStarted, participants } = props
+    setSoundOn, setMeetingStarted, participants,
+    stopVideo } = props
   const [showBackgroundEffects, setShowBackgroundEffects] = useState(false)
   const meetingID = useParams().meetingID
   const meeting = useMeeting(meetingID)
   const isFullscreen = useIsFullScreen()
+
+  useEffect(() => {
+    return () => {
+      stopVideo()
+      setVideoOn(false)
+    }
+  }, [])
 
   return (
     <div className={`meeting-started-page ${isFullscreen ? 'fullscreen' : ''}`}>
@@ -31,7 +39,7 @@ export default function MeetingStarted(props) {
       <MeetingSidebar
         meeting={meeting}
       />
-      <BackgroundEffectsBar 
+      <BackgroundEffectsBar
         showBar={showBackgroundEffects}
         onClose={() => setShowBackgroundEffects(false)}
       />

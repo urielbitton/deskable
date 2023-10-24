@@ -4,14 +4,17 @@ import { AppInput } from "../ui/AppInputs"
 import './styles/MeetingsHome.css'
 import { useLiveMeetings, useRangedMeetings } from 'app/hooks/meetingsHooks'
 import MeetingCard from "./MeetingCard"
-import { endOfDay, endOfMonth, endOfWeek,
+import {
+  endOfDay, endOfMonth, endOfWeek,
   startOfDay, startOfMonth, startOfWeek
 } from "date-fns"
 import { StoreContext } from "app/store/store"
+import { deleteMeetingService } from "app/services/meetingsServices"
 
 export default function MeetingsHome() {
 
-  const { myMemberType } = useContext(StoreContext)
+  const { myMemberType, orgAdmin, myOrgID,
+    setToasts, setPageLoading } = useContext(StoreContext)
   const limitsNum = 10
   const [meetingLimits, setMeetingLimits] = useState(limitsNum)
   const todayStart = startOfDay(new Date())
@@ -22,22 +25,37 @@ export default function MeetingsHome() {
   const monthEnd = endOfMonth(new Date())
   const liveMeetings = useLiveMeetings(meetingLimits)
   const monthMeetings = useRangedMeetings(monthStart, monthEnd, meetingLimits)
-  const canCreateMeeting = myMemberType === 'classa' || myMemberType === 'classb'
-  
+  const oldMeetings = useRangedMeetings(new Date('01-01-2000'), monthStart, meetingLimits)
+  const canCreateMeeting = myMemberType === 'classa'
+
+  const handleDeleteMeeting = (e, meeting) => {
+    e.preventDefault()
+    if(!canCreateMeeting) return alert("You don't have permission to delete meetings.")
+    const confirm = window.confirm(`Are you sure you want to delete the meeting ${meeting.title}?`)
+    if (!confirm) return
+    setPageLoading(true)
+    return deleteMeetingService({
+      meetingID: meeting.meetingID,
+      orgID: myOrgID,
+      setToasts,
+      setPageLoading
+    })
+  }
+
   const meetingTimesNotLive = meeting => {
     return !(new Date() >= meeting.meetingStart?.toDate() && new Date() <= meeting.meetingEnd?.toDate())
   }
-  
+
   const todayMeetingsFilter = monthMeetings?.filter(meeting => {
     return meeting.meetingStart?.toDate() >= todayStart && meeting.meetingStart?.toDate() <= todayEnd
-    && meetingTimesNotLive(meeting)
+      && meetingTimesNotLive(meeting)
   })
 
   const weekMeetingsFilter = monthMeetings
-  ?.filter(meeting => {
-    return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
-    && meetingTimesNotLive(meeting)
-  })
+    ?.filter(meeting => {
+      return meeting.meetingStart?.toDate() >= weekStart && meeting.meetingStart?.toDate() <= weekEnd
+        && meetingTimesNotLive(meeting)
+    })
 
   const monthMeetingsFilter = monthMeetings?.filter(meeting => meetingTimesNotLive(meeting))
 
@@ -49,25 +67,41 @@ export default function MeetingsHome() {
   })
 
   const todayMeetingsList = todayMeetingsFilter.map((meeting, index) => {
-      return <MeetingCard
-        key={index}
-        meeting={meeting}
-      />
-    })
+    return <MeetingCard
+      key={index}
+      meeting={meeting}
+    />
+  })
 
   const weekMeetingsList = weekMeetingsFilter.map((meeting, index) => {
-      return <MeetingCard
-        key={index}
-        meeting={meeting}
-      />
-    })
+    return <MeetingCard
+      key={index}
+      meeting={meeting}
+    />
+  })
 
   const monthMeetingsList = monthMeetingsFilter.map((meeting, index) => {
-      return <MeetingCard
-        key={index}
-        meeting={meeting}
-      />
-    })
+    return <MeetingCard
+      key={index}
+      meeting={meeting}
+    />
+  })
+
+  const oldMeetingsList = oldMeetings?.map((meeting, index) => {
+    return <MeetingCard
+      key={index}
+      meeting={meeting}
+      deleteAction={
+        <div 
+          className="close"
+          title="Delete Meeting"
+          onClick={(e) => handleDeleteMeeting(e, meeting)}
+        >
+          <i className="fal fa-times" />
+        </div>
+      }
+    />
+  })
 
   return (
     <div className="meetings-home-page">
@@ -111,7 +145,7 @@ export default function MeetingsHome() {
           <div className="meetings-flex">
             {
               liveMeetings.length > 0 ? liveMeetingsList :
-              <small className="no-meetings">There are no live meetings</small>
+                <small className="no-meetings">There are no live meetings</small>
             }
           </div>
         </div>
@@ -123,7 +157,7 @@ export default function MeetingsHome() {
           <div className="meetings-flex">
             {
               todayMeetingsFilter.length > 0 ? todayMeetingsList :
-              <small className="no-meetings">There are no meetings today</small>
+                <small className="no-meetings">There are no meetings today</small>
             }
           </div>
         </div>
@@ -135,7 +169,7 @@ export default function MeetingsHome() {
           <div className="meetings-flex">
             {
               weekMeetingsFilter.length > 0 ? weekMeetingsList :
-              <small className="no-meetings">There are no meetings this week</small>
+                <small className="no-meetings">There are no meetings this week</small>
             }
           </div>
         </div>
@@ -147,10 +181,22 @@ export default function MeetingsHome() {
           <div className="meetings-flex">
             {
               monthMeetingsFilter.length > 0 ? monthMeetingsList :
-              <small className="no-meetings">There are no meetings this month</small>
+                <small className="no-meetings">There are no meetings this month</small>
             }
           </div>
         </div>
+        {
+          orgAdmin &&
+          <div className="home-section">
+            <h5>
+              <i className="fas fa-history" />
+              Past Meetings
+            </h5>
+            <div className="meetings-list">
+              {oldMeetingsList}
+            </div>
+          </div>
+        }
       </div>
     </div>
   )

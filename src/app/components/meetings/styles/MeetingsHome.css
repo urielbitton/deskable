@@ -81,3 +81,43 @@
   flex-wrap: wrap;
   gap: 20px;
 }
+
+
+/* Old meetings card styles */
+.meetings-home-page .meetings-list .meeting-card {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--inputBorder);
+  border-radius: 0;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.meetings-home-page .meetings-list .meeting-card > div {
+  flex: 1;
+  margin: auto;
+}
+.meetings-home-page .meetings-list .meeting-card .organizer {
+  justify-content: flex-start;
+}
+.meetings-home-page .meetings-list .meeting-card .header {
+  border: none;
+  padding-bottom: 0;
+}
+.meetings-home-page .meetings-list .meeting-card .header .texts h5 {
+  font-size: 14px;
+}
+
+.meetings-home-page .meetings-list .meeting-card .close {
+  width: 25px;
+  height: 25px;
+  background: #222;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.meetings-home-page .meetings-list .meeting-card .close i {
+  color: #fff;
+  font-size: 17px;
+}

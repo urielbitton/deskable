@@ -132,11 +132,8 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     startVideo()
-  }, [])
-
-  useEffect(() => {
     return () => stopVideo()
-  })
+  }, [])
 
   useEffect(() => {
     if (room) {
@@ -287,6 +284,7 @@ export default function WaitingRoom() {
         soundOn={soundOn}
         setSoundOn={setSoundOn}
         setMeetingStarted={setMeetingStarted}
+        stopVideo={stopVideo}
       /> :
       <p style={{ padding: 10 }}>This meeting does not exist or has been deleted.&nbsp;
         <Link to="/meetings" style={{textDecoration: 'underline'}}>Back to Meetings.</Link>

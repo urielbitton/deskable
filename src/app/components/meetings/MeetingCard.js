@@ -11,6 +11,7 @@ export default function MeetingCard(props) {
 
   const { title, meetingStart, meetingEnd, participants,
     isActive, organizerID, isPublic, meetingID } = props.meeting
+  const { deleteAction } = props
   const organizer = useUser(organizerID)
   const meetingTimeOver = meetingEnd?.toDate() < new Date()
 
@@ -73,6 +74,7 @@ export default function MeetingCard(props) {
           maxAvatars={6}
           avatarDimensions={25}
         />
+        {deleteAction}
       </div>
     </Link>
   )

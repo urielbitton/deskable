@@ -49,6 +49,21 @@ export const getRangedMeetingsByOrgID = (orgID, start, end, setMeetings, lim) =>
   })
 }
 
+export const deleteMeetingService = (data) => {
+  const { meetingID, orgID, setToasts, setPageLoading } = data
+  const path = `organizations/${orgID}/meetings`
+  return deleteDB(path, meetingID)
+    .then(() => {
+      setToasts(successToast("Meeting deleted."))
+      setPageLoading(false)
+    })
+    .catch((error) => {
+      setToasts(errorToast('There was an error deleting the meeting. Please try again'))
+      console.log(error)
+      setPageLoading(false)
+    })
+}
+
 
 // services function
 

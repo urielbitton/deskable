@@ -1,7 +1,9 @@
 import { infoToast } from "app/data/toastsTemplates"
-import { createCalendarEventService, deleteCalendarEventService, updateCalendarEventService } from "app/services/calendarServices"
+import { addMeetingInfoToEventService, createCalendarEventService, 
+  deleteCalendarEventService, updateCalendarEventService } from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
-import { convertClassicDate, convertDateToInputDateAndTimeFormat, convertDateToInputFormat } from "app/utils/dateUtils"
+import { convertClassicDate, convertDateToInputDateAndTimeFormat, 
+  convertDateToInputFormat } from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import { AppInput, AppSwitch, AppTextarea } from "../ui/AppInputs"
@@ -178,9 +180,14 @@ export default function NewEventModal() {
   }
 
   const handleStartVideoCall = () => {
-    if (myMemberType !== 'classa')
+    if (newEventModal?.event?.meetingID) {
+      setNewEventModal({ open: false, event: null })
+      return navigate(`/meetings/meeting-room/${newEventModal?.event?.meetingID}?roomID=${newEventModal?.event?.roomID}`)
+    }
+    if (myMemberType !== 'classa') {
       return alert('You do not have permission to create meetings. Please contact your organization admin.')
-    if(createMeetingLoading) return
+    }
+    if (createMeetingLoading) return
     setCreateLoading(true)
     createMeetingService(
       myOrgID,
@@ -198,9 +205,17 @@ export default function NewEventModal() {
       .then((res) => {
         // @ts-ignore
         const { meetingID, roomID } = res
-        setNewEventModal({ open: false, event: null })
-        setCreateLoading(false)
-        navigate(`/meetings/meeting-room/${meetingID}?roomID=${roomID}`)
+        return addMeetingInfoToEventService(
+          myOrgID,
+          newEventModal?.event?.eventID,
+          meetingID,
+          roomID,
+        )
+          .then(() => {
+            setNewEventModal({ open: false, event: null })
+            setCreateLoading(false)
+            navigate(`/meetings/meeting-room/${meetingID}?roomID=${roomID}`)
+          })
       })
       .catch(() => {
         setCreateLoading(false)
@@ -246,7 +261,7 @@ export default function NewEventModal() {
             {
               editMode &&
               <AppButton
-                title="Start Video Call"
+                title="Join Meeting"
                 onClick={handleStartVideoCall}
                 leftIcon="fas fa-video"
                 iconBtn
@@ -315,7 +330,7 @@ export default function NewEventModal() {
         {
           editMode &&
           <AppButton
-            label="Start Video Call"
+            label="Join Meeting"
             onClick={handleStartVideoCall}
             leftIcon="fas fa-video"
             buttonType="blueBtn"

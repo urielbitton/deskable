@@ -366,6 +366,12 @@
   font-size: 12px;
   font-weight: 700;
 }
+.navbar .profile-dropdown .info.name .value {
+  font-size: 13px;
+}
+.navbar .profile-dropdown .info.name {
+  padding-bottom: 0;
+}
 .navbar .profile-dropdown .info span {
   font-size: 12px;
   font-weight: 500;

@@ -6,7 +6,8 @@ import Avatar from "../ui/Avatar"
 
 export default function ProfileDropdown(props) {
 
-  const { myUserImg, myMemberType, myOrgID } = useContext(StoreContext)
+  const { myUserImg, myMemberType, myOrgID,
+    myUserName } = useContext(StoreContext)
   const { showMenu, setShowMenu, avatarDimensions } = props
 
   return (
@@ -51,6 +52,9 @@ export default function ProfileDropdown(props) {
           <span>Sign Out</span>
         </h6>
         <hr />
+        <div className="info name">
+          <span className="value">{myUserName}</span>
+        </div>
         <div className="info">
           <span>Account Type:</span>
           <span className="capitalize value">{myMemberType}</span>

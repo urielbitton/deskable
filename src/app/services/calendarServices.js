@@ -27,7 +27,9 @@ export const dateClickService = (e, monthView, setNewEventModal) => {
     description: '',
     allDay: monthView,
     invitees: [],
-    creatorID: ''
+    creatorID: '',
+    meetingID: null,
+    roomID: null,
   }
   setNewEventModal({ open: true, event })
 }
@@ -39,7 +41,7 @@ export const eventResizeOrMoveService = (e, orgID, myUserID, setToasts, setLoadi
     title: e.event.title,
     description: e.event.extendedProps.description,
     allDay: e.event.allDay,
-    eventID: e.event.extendedProps.eventID
+    eventID: e.event.extendedProps.eventID,
   }
   updateCalendarEventService(orgID, myUserID, event, setToasts, setLoading)
     .then(() => {
@@ -57,7 +59,9 @@ export const eventClickService = (e, setNewEventModal) => {
     editMode: true,
     eventID: e.event.extendedProps.eventID,
     invitees: e.event.extendedProps.invitees,
-    creatorID: e.event.extendedProps.creatorID
+    creatorID: e.event.extendedProps.creatorID,
+    meetingID: e.event.extendedProps.meetingID,
+    roomID: e.event.extendedProps.roomID,
   }
   setNewEventModal({ open: true, event })
 }
@@ -65,11 +69,11 @@ export const eventClickService = (e, setNewEventModal) => {
 export const getWeekCalendarEventsService = (orgID, userID, calendarDate, setEvents) => {
   const eventsRef = collection(db, `organizations/${orgID}/events`)
   const q = query(
-    eventsRef, 
+    eventsRef,
     where('invitees', 'array-contains', userID),
     where('startingDate', '>=', startOfWeek(calendarDate)),
     where('startingDate', '<=', endOfWeek(calendarDate)),
-    orderBy('startingDate', 'desc') 
+    orderBy('startingDate', 'desc')
   )
   onSnapshot(q, (snapshot) => {
     setEvents(snapshot.docs.map(doc => doc.data()))
@@ -79,11 +83,11 @@ export const getWeekCalendarEventsService = (orgID, userID, calendarDate, setEve
 export const getMonthCalendarEventsService = (orgID, userID, calendarDate, setEvents) => {
   const eventsRef = collection(db, `organizations/${orgID}/events`)
   const q = query(
-    eventsRef, 
+    eventsRef,
     where('invitees', 'array-contains', userID),
     where('startingDate', '>=', startOfMonth(calendarDate)),
     where('startingDate', '<=', endOfMonth(calendarDate)),
-    orderBy('startingDate', 'desc') 
+    orderBy('startingDate', 'desc')
   )
   onSnapshot(q, (snapshot) => {
     setEvents(snapshot.docs.map(doc => doc.data()))
@@ -141,6 +145,16 @@ export const deleteCalendarEventService = (orgID, eventID, setToasts, setLoading
     })
     .catch((err) => {
       setToasts(errorToast('Error deleting event. Please try again.'))
+      console.log(err)
+    })
+}
+
+export const addMeetingInfoToEventService = (orgID, eventID, meetingID, roomID) => {
+  return updateDB(`organizations/${orgID}/events`, eventID, {
+    meetingID,
+    roomID
+  })
+    .catch(err => {
       console.log(err)
     })
 }

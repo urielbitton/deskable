@@ -21,9 +21,12 @@ export const newEventEmailTemplate = (data) => {
     <p>You have been invited to the event on Deskable: <b><a href="${url}/calendar">${title}</a></b>.</p>
     ${meetingID &&
     `<h5 style="font-size:15px">Event Meeting:</h5>
-    <a style="color:#000" href="${url}/meetings/${meetingID}?roomID=${roomID}">
-      <div style=${btnStyles}>Join Meeting</div>
-      </a>`
+    <div style=${btnStyles}>
+      <a style="color:#000" href="${url}/meetings/${meetingID}?roomID=${roomID}">
+        Join Meeting
+      </a>
+    </div>
+    ` 
     }    
     <br/>
     <h5 style="font-size:15px">Event details:</h5>

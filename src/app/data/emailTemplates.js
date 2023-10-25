@@ -4,12 +4,11 @@ import {
 } from "app/utils/dateUtils"
 
 const url = process.env.REACT_APP_DOMAIN_URL
-const btnStyles = `background: #2881ff;
-  outline: none;
+const btnStyles = `
+  background: #2881ff;
   user-select: none;
   cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 5px;
+  display: inline-block;
   padding: 8px 15px;
   font-size: 14px;
   color: #fff;
@@ -23,12 +22,12 @@ export const newEventEmailTemplate = (data) => {
     ${meetingID &&
     `<h5 style="font-size:15px">Event Meeting:</h5>
     <a style="color:#000" href="${url}/meetings/${meetingID}?roomID=${roomID}">
-      <button style=${btnStyles}>Join Meeting</button>
+      <div style=${btnStyles}>Join Meeting</div>
       </a>`
     }    
     <br/>
     <h5 style="font-size:15px">Event details:</h5>
-    <p>${description}</p>
+    <p styles="white-space: pre;">${description}</p>
     <h5 style="font-size:15px">When:</h5>
     <p>${convertClassicDateAndTime(dates.startingDate)} - ${convertClassicTime(dates.endingDate)}</p>
     <h5 style="font-size:15px">Guests:</h5>

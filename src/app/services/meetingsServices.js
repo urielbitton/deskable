@@ -202,10 +202,10 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
     meetingEnd: meeting.meetingEnd,
     meetingID: docID,
     meetingStart: meeting.meetingStart,
+    participants: meeting.invitees,
     orgID,
-    organizerID: meeting.organizerID,
-    participants: [],
     roomID,
+    organizerID: meeting.organizerID,
     title: meeting.title,
     raisedHands: [],
   })

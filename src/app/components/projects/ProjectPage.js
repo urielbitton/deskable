@@ -21,7 +21,7 @@ import './styles/ProjectPage.css'
 
 export default function ProjectPage({ setWindowPadding }) {
 
-  const { setShowProjectsSidebar, setPageLoading, myUserID,
+  const { setPageLoading, myUserID,
     tinymceAPIKey, setToasts, myOrgID, myUser } = useContext(StoreContext)
   const [showMenu, setShowMenu] = useState(null)
   const [hideSidebar, setHideSidebar] = useState(false)
@@ -42,8 +42,8 @@ export default function ProjectPage({ setWindowPadding }) {
   const invitedUsers = useUsers(inviteesIDs)
   const userIsMember = project?.members?.includes(myUserID)
   const pagePath = `organizations/${myOrgID}/projects/${projectID}/pages`
-  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT `+
-  `${page?.editorsIDs?.map(editor => `userID:${editor}`).join(' AND NOT ')}`
+  const usersFilters = `activeOrgID:${myOrgID} AND NOT userID:${myUserID} AND NOT ` +
+    `${page?.editorsIDs?.map(editor => `userID:${editor}`).join(' AND NOT ')}`
 
   const invitedUsersList = invitedUsers?.map((user, index) => {
     return <div
@@ -119,14 +119,14 @@ export default function ProjectPage({ setWindowPadding }) {
   const inviteMembers = () => {
     if (!inviteesIDs.length) return setToasts(infoToast('Please select at least one user to invite.'))
     projectPageInviteMembersService(
-      pagePath, 
-      page, 
-      inviteesIDs, 
-      `${myUser?.firstName} ${myUser?.lastName}`, 
-      setToasts, 
+      pagePath,
+      page,
+      inviteesIDs,
+      `${myUser?.firstName} ${myUser?.lastName}`,
+      setToasts,
       setLoading
     )
-    .then(() => closeInviteModal())
+      .then(() => closeInviteModal())
   }
 
   const cancelInvitation = () => {
@@ -134,7 +134,6 @@ export default function ProjectPage({ setWindowPadding }) {
   }
 
   useEffect(() => {
-    setShowProjectsSidebar(false)
     setWindowPadding('0')
     return () => setWindowPadding('20px')
   }, [])
@@ -146,6 +145,12 @@ export default function ProjectPage({ setWindowPadding }) {
           <div className="read-content">
             <div className="title-header">
               <h2>{page?.title}</h2>
+              <AppButton
+                label="Back to Pages"
+                leftIcon="far fa-arrow-left"
+                url={`/projects/${projectID}/pages`}
+                buttonType="outlineBtn"
+              />
             </div>
             <Editor
               apiKey={tinymceAPIKey}

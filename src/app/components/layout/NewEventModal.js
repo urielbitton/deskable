@@ -14,6 +14,8 @@ import DropdownSearch from "../ui/DropdownSearch"
 import { useUsersSearch } from "app/hooks/searchHooks"
 import { createMeetingService } from "app/services/meetingsServices"
 import { useNavigate } from "react-router-dom"
+import { sendSgEmail } from "app/services/emailServices"
+import { newEventEmailTemplate } from "app/data/emailTemplates"
 
 export default function NewEventModal() {
 
@@ -118,6 +120,8 @@ export default function NewEventModal() {
 
   const createEvent = () => {
     if (!!!allowSave) return setToasts(infoToast('Please fill all the fields.'))
+    const confirm = window.confirm('Creating an event will send out an email to all invitees. Continue?')
+    if (!confirm) return null
     createCalendarEventService(
       myOrgID,
       myUserID,
@@ -134,6 +138,11 @@ export default function NewEventModal() {
     )
       .then(() => {
         setNewEventModal({ open: false, event: null })
+        // return sendSgEmail(
+        //   [...selectedUsers?.map(user => user.email)],
+        //   `Invitation: ${title} @ ${convertClassicDate(new Date(startingDate))} - ${convertClassicDate(new Date(endingDate))}`,
+        //   newEventEmailTemplate()
+        // )
       })
   }
 

@@ -1,9 +1,12 @@
 import { infoToast } from "app/data/toastsTemplates"
-import { addMeetingInfoToEventService, createCalendarEventService, 
-  deleteCalendarEventService, updateCalendarEventService } from "app/services/calendarServices"
+import {
+  addMeetingInfoToEventService, createCalendarEventService,
+  deleteCalendarEventService, updateCalendarEventService
+} from "app/services/calendarServices"
 import { StoreContext } from "app/store/store"
-import { convertClassicDate, convertDateToInputDateAndTimeFormat, 
-  convertDateToInputFormat } from "app/utils/dateUtils"
+import {
+  convertClassicDate, convertDateToInputDateAndTimeFormat
+} from "app/utils/dateUtils"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AppButton from "../ui/AppButton"
 import { AppInput, AppSwitch, AppTextarea } from "../ui/AppInputs"
@@ -14,28 +17,28 @@ import DropdownSearch from "../ui/DropdownSearch"
 import { useUsersSearch } from "app/hooks/searchHooks"
 import { createMeetingService } from "app/services/meetingsServices"
 import { useNavigate } from "react-router-dom"
-import { sendSgEmail } from "app/services/emailServices"
-import { newEventEmailTemplate } from "app/data/emailTemplates"
+import { sendEventInvitesEmails } from "app/services/emailServices"
 
 export default function NewEventModal() {
 
   const { newEventModal, setNewEventModal, myUserID,
-    setToasts, setPageLoading, myOrgID, myMemberType } = useContext(StoreContext)
+    setToasts, setPageLoading, myOrgID, myMemberType,
+    myUser } = useContext(StoreContext)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [startingDate, setStartingDate] = useState('')
   const [endingDate, setEndingDate] = useState('null')
-  const [allDay, setAllDay] = useState(false)
   const [inviteesIDs, setInviteesIDs] = useState([])
   const [selectedUsers, setSelectedUsers] = useState([])
   const [query, setQuery] = useState('')
   const [searchLoading, setSearchLoading] = useState(false)
   const [createMeetingLoading, setCreateLoading] = useState(false)
+  const [createVideoMeeting, setCreateVideoMeeting] = useState(false)
   const inputRef = useRef(null)
-  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${inviteesIDs?.join(' AND NOT userID: ')}`
+  const editMode = newEventModal?.event?.eventID
+  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID} ${editMode ? `AND NOT userID: ${inviteesIDs.join(' AND NOT userID: ')}` : ''}`
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const allowSave = title && description && startingDate && endingDate
-  const editMode = newEventModal?.event?.eventID
   const isCreator = newEventModal?.event?.creatorID === myUserID
   const navigate = useNavigate()
 
@@ -52,7 +55,6 @@ export default function NewEventModal() {
           description,
           startingDate: new Date(startingDate),
           endingDate: new Date(endingDate),
-          allDay,
           invitees: inviteesIDs.filter(id => id !== inviteeID)
         },
         setToasts,
@@ -118,11 +120,11 @@ export default function NewEventModal() {
       </div>
     })
 
-  const createEvent = () => {
+  const createEvent = async () => {
     if (!!!allowSave) return setToasts(infoToast('Please fill all the fields.'))
     const confirm = window.confirm('Creating an event will send out an email to all invitees. Continue?')
     if (!confirm) return null
-    createCalendarEventService(
+    const res = await createCalendarEventService(
       myOrgID,
       myUserID,
       selectedUsers?.map(user => user.userID),
@@ -131,19 +133,24 @@ export default function NewEventModal() {
         description,
         startingDate: new Date(startingDate),
         endingDate: new Date(endingDate),
-        allDay
       },
+      createVideoMeeting,
       setToasts,
       setPageLoading
     )
-      .then(() => {
-        setNewEventModal({ open: false, event: null })
-        // return sendSgEmail(
-        //   [...selectedUsers?.map(user => user.email)],
-        //   `Invitation: ${title} @ ${convertClassicDate(new Date(startingDate))} - ${convertClassicDate(new Date(endingDate))}`,
-        //   newEventEmailTemplate()
-        // )
-      })
+    setNewEventModal({ open: false, event: null })
+    setSelectedUsers([])
+    const { meetingID, roomID } = res
+    await sendEventInvitesEmails({
+      users: [...selectedUsers, myUser]?.map(user => ({ name: `${user.firstName} ${user.lastName}`, email: user.email })),
+      title,
+      dates: { 
+        startingDate: new Date(startingDate),
+        endingDate: new Date(endingDate)
+      },
+      description,
+      meeting: { meetingID, roomID }
+    })
   }
 
   const saveEvent = () => {
@@ -157,7 +164,6 @@ export default function NewEventModal() {
         description,
         startingDate: new Date(startingDate),
         endingDate: new Date(endingDate),
-        allDay,
         invitees: [...inviteesIDs, ...selectedUsers?.map(user => user.userID)]
       },
       setToasts,
@@ -236,19 +242,9 @@ export default function NewEventModal() {
       setTitle(newEventModal?.event?.title)
       setDescription(newEventModal?.event?.description)
       setInviteesIDs(newEventModal?.event?.invitees)
-      if (allDay) {
-        setStartingDate(convertDateToInputFormat(newEventModal?.event?.startingDate))
-        setEndingDate(convertDateToInputFormat(newEventModal?.event?.endingDate))
-      }
-      else {
-        setStartingDate(convertDateToInputDateAndTimeFormat((newEventModal?.event?.startingDate)))
-        setEndingDate(convertDateToInputDateAndTimeFormat((newEventModal?.event?.endingDate)))
-      }
+      setStartingDate(convertDateToInputDateAndTimeFormat((newEventModal?.event?.startingDate)))
+      setEndingDate(convertDateToInputDateAndTimeFormat((newEventModal?.event?.endingDate)))
     }
-  }, [newEventModal, allDay])
-
-  useEffect(() => {
-    setAllDay(newEventModal?.event?.allDay)
   }, [newEventModal])
 
 
@@ -316,34 +312,32 @@ export default function NewEventModal() {
         </div>
         <AppInput
           label="Starting Date"
-          type={allDay ? "date" : "datetime-local"}
+          type="datetime-local"
           value={startingDate}
           onChange={(e) => setStartingDate((e.target.value))}
         />
-        {
-          !allDay &&
-          <AppInput
-            label="Ending Date"
-            type="datetime-local"
-            value={endingDate}
-            onChange={(e) => setEndingDate((e.target.value))}
-          />
-        }
-        <AppSwitch
-          label="All Day"
-          checked={allDay}
-          onChange={(e) => setAllDay(e.target.checked)}
-          value={allDay}
+        <AppInput
+          label="Ending Date"
+          type="datetime-local"
+          value={endingDate}
+          onChange={(e) => setEndingDate((e.target.value))}
         />
         <h5>Meet</h5>
         {
-          editMode &&
-          <AppButton
-            label="Join Meeting"
-            onClick={handleStartVideoCall}
-            leftIcon="fas fa-video"
-            buttonType="blueBtn"
-          />
+          editMode ?
+            <AppButton
+              label="Join Meeting"
+              onClick={handleStartVideoCall}
+              leftIcon="fas fa-video"
+              buttonType="blueBtn"
+            /> :
+            myMemberType === 'classa' ?
+            <AppSwitch
+              label={<><i className="fas fa-video" /> Create Video Meeting</>}
+              onChange={(e) => setCreateVideoMeeting(e.target.checked)}
+              checked={createVideoMeeting}
+            /> :
+            null
         }
         <div className="btn-group">
           <AppButton

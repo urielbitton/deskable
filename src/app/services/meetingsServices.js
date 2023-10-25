@@ -218,6 +218,7 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
       setLoading(false)
       setToasts(errorToast('There was an error creating the meeting. Please try again'))
       console.log(error)
+      return { meetingID: null, roomID: null}
     })
 }
 

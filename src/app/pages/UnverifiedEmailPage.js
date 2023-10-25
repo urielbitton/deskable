@@ -17,7 +17,7 @@ export default function UnverifiedEmailPage() {
   const sendVerificationEmail = () => {
     setLoading(true)
     const ActionCodeSettings = {
-      url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${firstName}&lastName=${lastName}`,
+      url: `${process.env.REACT_APP_DOMAIN_URL}/?userID=${user.uid}&firstName=${firstName}&lastName=${lastName}`,
     }
     sendEmailVerification(user, ActionCodeSettings)
     .then(() => {

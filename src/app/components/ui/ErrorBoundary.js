@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component {
           <img src={errorBoundaryImg} alt=""/>
           <h1>An error occured on this page</h1>
           <h6>Don't worry we're working on fixing this bug so it doesn't happen again.</h6>
-          <a href="https://deskable.vercel.app/">
+          <a href={process.env.REACT_APP_DOMAIN_URL}>
             <button>
               <i className="fal fa-home"></i>
               Back Home

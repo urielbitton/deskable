@@ -4,6 +4,8 @@ import { reformatDateToMonthDayYear } from "app/utils/dateUtils"
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns"
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
+import { createMeetingService } from "./meetingsServices"
+import { generateRoomID } from "app/utils/generalUtils"
 
 export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle, setCalendarRangeStartDate, setCalendarRangeEndDate) => {
   if (event === 'prev')
@@ -96,28 +98,56 @@ export const getMonthCalendarEventsService = (orgID, userID, calendarDate, setEv
 
 
 
-export const createCalendarEventService = (orgID, userID, invitees, event, setToasts, setLoading) => {
+export const createCalendarEventService = async (orgID, myUserID, invitees, event, createVideoMeeting, setToasts, setLoading) => {
   setLoading(true)
   const eventPath = `organizations/${orgID}/events`
   const docID = getRandomDocID(eventPath)
-  return setDB(eventPath, docID, {
-    ...event,
-    eventID: docID,
-    dateCreated: new Date(),
-    creatorID: userID,
-    invitees,
-    orgID,
-  })
-    .then(() => {
-      // send out emails to invitees
-      setToasts(successToast('Event saved successfully'))
-      setLoading(false)
+  try {
+    await setDB(eventPath, docID, {
+      ...event,
+      eventID: docID,
+      dateCreated: new Date(),
+      creatorID: myUserID,
+      invitees: [...invitees, myUserID],
+      orgID,
     })
-    .catch(err => {
-      console.log(err)
-      setLoading(false)
-      setToasts(errorToast('Error saving event. Please try again.', true))
-    })
+    setLoading(false)
+    if (!createVideoMeeting) return { eventID: docID }
+    const meetingRes = await createMeetingService(
+      orgID,
+      {
+        invitees,
+        isActive: true,
+        isPublic: false,
+        meetingEnd: event.endingDate,
+        meetingStart: event.startingDate,
+        participants: [],
+        orgID,
+        organizerID: myUserID,
+        title: event.title,
+        raisedHands: [],
+      },
+      setLoading,
+      setToasts
+    )
+    const { meetingID, roomID } = meetingRes
+    await updateCalendarEventService(
+      orgID,
+      docID,
+      {
+        meetingID,
+        roomID
+      },
+      setToasts,
+      setLoading
+    )
+    return { eventID: docID, meetingID, roomID }
+  }
+  catch (err) {
+    console.log(err)
+    setLoading(false)
+    setToasts(errorToast('Error saving event. Please try again.', true))
+  }
 }
 
 export const updateCalendarEventService = (orgID, eventID, event, setToasts, setLoading) => {

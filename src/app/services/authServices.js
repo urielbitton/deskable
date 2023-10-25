@@ -26,7 +26,7 @@ export const completeRegistrationService = (user, authMode, res, userName, setLo
   }
   else {
     const ActionCodeSettings = {
-      url: `https://deskable.vercel.app/?userID=${user.uid}&firstName=${userName.firstName}&lastName=${userName.lastName}`,
+      url: `${process.env.REACT_APP_DOMAIN_URL}/?userID=${user.uid}&firstName=${userName.firstName}&lastName=${userName.lastName}`,
     }
     sendEmailVerification(user, ActionCodeSettings)
       .then(() => {

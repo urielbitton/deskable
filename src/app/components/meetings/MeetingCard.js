@@ -10,7 +10,8 @@ import './styles/MeetingCard.css'
 export default function MeetingCard(props) {
 
   const { title, meetingStart, meetingEnd, participants,
-    isActive, organizerID, isPublic, meetingID } = props.meeting
+    isActive, organizerID, isPublic, meetingID,
+    roomID } = props.meeting
   const { deleteAction } = props
   const organizer = useUser(organizerID)
   const meetingTimeOver = meetingEnd?.toDate() < new Date()
@@ -18,7 +19,7 @@ export default function MeetingCard(props) {
   return (
     <Link
       className="meeting-card"
-      to={`/meetings/meeting-room/${meetingID}`}
+      to={`/meetings/meeting-room/${meetingID}?roomID=${roomID}`}
     >
       <div className="header">
         <IconContainer

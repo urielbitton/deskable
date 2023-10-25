@@ -60,6 +60,7 @@ export default function WaitingRoom() {
   const startVideo = () => {
     getUserMediaDevices()
       .then((stream) => {
+        if(!stream) return
         mediaStreamRef.current = stream
         videoRef.current.srcObject = stream
         setVideoOn(true)

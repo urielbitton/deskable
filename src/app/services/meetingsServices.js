@@ -68,12 +68,16 @@ export const deleteMeetingService = (data) => {
 // services function
 
 export const getUserMediaDevices = () => {
-  if (navigator?.mediaDevices?.getUserMedia) {
+  if (navigator?.mediaDevices && navigator?.mediaDevices?.getUserMedia) {
     return navigator?.mediaDevices?.getUserMedia({ video: true, audio: false })
       .catch(err => console.log("Something went wrong getting your media devices."))
   }
   else {
     alert("Your browser does not support video or audio.")
+    const promise = new Promise((resolve, reject) => {
+      resolve(null)
+    })
+    return promise
   }
 }
 
@@ -127,6 +131,10 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
 export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => {
   return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
+      room.localParticipant.videoTracks.forEach(publication => {
+        publication.track.stop()
+        publication.unpublish()
+      })
       const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0], { name: 'myscreenshare' })
       setScreenTrack(screenTrack)
       room.localParticipant.publishTrack(screenTrack, {
@@ -218,7 +226,7 @@ export const createMeetingService = (orgID, meeting, setLoading, setToasts) => {
       setLoading(false)
       setToasts(errorToast('There was an error creating the meeting. Please try again'))
       console.log(error)
-      return { meetingID: null, roomID: null}
+      return { meetingID: null, roomID: null }
     })
 }
 

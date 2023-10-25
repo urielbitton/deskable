@@ -25,7 +25,7 @@ export default function MeetingWindow(props) {
   const [dominantSpeaker, setDominantSpeaker] = useState(null)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
   const [remoteScreenSharer, setRemoteScreenSharer] = useState(null)
-  const [screenTrack, setScreenTrack] = useState(null)
+  const [shareScreenTrack, setShareScreenTrack] = useState(null)
   const meetingTimeOver = meeting?.meetingEnd?.toDate() < new Date()
   const isRaisingHand = meeting?.raisedHands?.includes(myUserID)
 
@@ -53,6 +53,7 @@ export default function MeetingWindow(props) {
 
   const forceLeaveRoom = () => {
     setMeetingStarted(false)
+    if (!room) return
     room.disconnect()
     room.localParticipant.tracks.forEach(track => {
       track.stop()
@@ -106,16 +107,16 @@ export default function MeetingWindow(props) {
   const toggleShareScreen = () => {
     if (!isScreenSharing) {
       setPageLoading(true)
-      shareScreenService(room, setScreenTrack, setIsScreenSharing)
+      shareScreenService(room, setShareScreenTrack, setIsScreenSharing)
         .then(() => {
           setPageLoading(false)
         })
         .catch(() => setPageLoading(false))
     }
     else {
-      stopSharingScreenService(room, screenTrack, setIsScreenSharing)
+      stopSharingScreenService(room, shareScreenTrack, setIsScreenSharing)
       setRemoteScreenSharer(null)
-      setScreenTrack(null)
+      setShareScreenTrack(null)
     }
   }
 
@@ -139,7 +140,7 @@ export default function MeetingWindow(props) {
         }
       })
     }
-  }, [room])
+  }, [room, participants])
 
   useEffect(() => {
     const disconnectParticipant = () => {
@@ -158,7 +159,7 @@ export default function MeetingWindow(props) {
     }
     window.onbeforeunload = disconnectParticipant
     window.onunload = disconnectParticipant
-  }, [])
+  })
 
   return (
     <div className="meeting-window">
@@ -185,14 +186,14 @@ export default function MeetingWindow(props) {
           />
         </div>
       </div>
-      <div className="video-container">
-        {
+      <div className="video-container"> 
+        { //main video container
           !remoteScreenSharer?.value ?
             // Local participant view of their own screenshare
             <Participant
               participant={room?.localParticipant}
               isLocal
-              screenTrack={screenTrack}
+              screenTrack={shareScreenTrack}
               meeting={meeting}
             /> :
             // Remote participant view of the screen sharer
@@ -205,7 +206,7 @@ export default function MeetingWindow(props) {
         <div className="participants-list">
           {participantsList}
           {
-            screenTrack &&
+            shareScreenTrack &&
             <Participant
               participant={room?.localParticipant}
               screenShareWindow
@@ -225,10 +226,6 @@ export default function MeetingWindow(props) {
       </div>
       <div className="video-actions">
         <div className="left side">
-          <div className="sound-container">
-            <i className="fas fa-volume" />
-            <VolumeSlider value={soundVolume} />
-          </div>
         </div>
         <div className="center side">
           <ActionIcon
@@ -275,9 +272,9 @@ export default function MeetingWindow(props) {
             onClick={() => setShowOptions(prev => !prev)}
             dropdownPosition="place-right-top"
             items={[
-              {label: 'Background Effects', icon: 'fas fa-sparkles', onClick: () => setShowBackgroundEffects(true)},
-              {label: 'Report a problem', icon: 'fas fa-bullhorn', onClick: () => console.log('')},
-              {label: 'Settings', icon: 'fas fa-cog', onClick: () => console.log('')}
+              { label: 'Background Effects', icon: 'fas fa-sparkles', onClick: () => setShowBackgroundEffects(true) },
+              { label: 'Report a problem', icon: 'fas fa-bullhorn', onClick: () => console.log('') },
+              { label: 'Settings', icon: 'fas fa-cog', onClick: () => console.log('') }
             ]}
           />
         </div>

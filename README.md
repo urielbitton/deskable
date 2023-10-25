@@ -1,7 +1,6 @@
 ###Deskable App
 
 ##MVP To dos
-- send emails to event guests on creation 
 - fix screenshare (other participants can't see screen share)
 - add my profile page
 - add homepage data (events, meetings, project tasks, messages, notifs, etc)

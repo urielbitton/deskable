@@ -52,7 +52,6 @@ export const sendEventInvitesEmails = async (data) => {
         }),
         null
       )
-      console.log(`Email sent to ${user.email} successfully`)
     } catch (error) {
       console.error(`Error sending email to ${user.email}:`, error)
     }

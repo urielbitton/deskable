@@ -10,6 +10,8 @@ import {
 } from "date-fns"
 import { StoreContext } from "app/store/store"
 import { deleteMeetingService } from "app/services/meetingsServices"
+import { sendSgEmail } from "app/services/emailServices"
+import { newEventEmailTemplate } from "app/data/emailTemplates"
 
 export default function MeetingsHome() {
 
@@ -103,6 +105,16 @@ export default function MeetingsHome() {
     />
   })
 
+  const test = () => {
+    return sendSgEmail(
+      'urielas@hotmail.com',
+      'Test Email',
+      newEventEmailTemplate({
+        name:'Uriel Bitton', title:'title', guests:[{name: 'Uriel Bitton', email: 'urielas@hotmail.com'}], dates: {startingDate: new Date(), endingDate: new Date()}, description:'description', meetingID:'meetingID', roomID:'roomID'
+      })
+    )
+  }
+
   return (
     <div className="meetings-home-page">
       <div className="titles">
@@ -150,7 +162,7 @@ export default function MeetingsHome() {
           </div>
         </div>
         <div className="home-section">
-          <h5>
+          <h5 onClick={test}>
             <i className="fas fa-calendar-day" />
             Today
           </h5>

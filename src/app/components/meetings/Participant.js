@@ -25,10 +25,8 @@ export default function Participant(prop) {
     .filter(track => track !== null)
 
   const trackSubscribed = track => {
-    console.log(track)
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => [...videoTracks, track])
-      // setIsVideoMuted(track.isMuted)
     }
     if(track.name === 'myscreenshare') {
       setRemoteScreenSharer({participant, value: true})
@@ -43,7 +41,6 @@ export default function Participant(prop) {
   const trackUnsubscribed = track => {
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => videoTracks.filter(v => v !== track))
-      // setIsVideoMuted(track.isMuted)
     }
     if(track.name === 'myscreenshare') {
       setRemoteScreenSharer(null)
@@ -55,7 +52,7 @@ export default function Participant(prop) {
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { 
     setVideoTracks(trackPubsToTracks(participant.videoTracks))
     setAudioTracks(trackPubsToTracks(participant.audioTracks))
     participant.on('trackSubscribed', trackSubscribed)

@@ -47,37 +47,31 @@ export default function Navbar() {
             <i className="fas fa-calendar-alt" />
             {todaysDate}
           </h5>
-          <div
-            className="mobile-btn"
-            onClick={() => setShowMobileSidebar(true)}
-          >
-            <i className="fal fa-bars" />
-          </div>
         </div>
         <div className="right">
           {
             myOrgID ?
-            <DropdownButton
-              label="Create New"
-              iconRight="fal fa-plus"
-              showMenu={showMenu === 'show'}
-              setShowMenu={setShowMenu}
-              className="create-new-btn"
-              buttonType="outlineWhiteBtn"
-              rightIcon="fal fa-chevron-down"
-              items={[
-                { label: "New Post", icon: "fas fa-newspaper", url: "/posts" },
-                ...canCreateProject ? [{ label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" }] : [],
-                ...canCreateMeeting ? [{ label: "New Meeting", icon: "fas fa-video", url: "/meetings/meeting/new" }] : [],
-                { label: "New Message", icon: "fas fa-comment", url: "/messages/new-conversation" },
-                ...canCreateEvent ? [{ label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" }] : [],
-              ]}
-            /> :
-            <AppButton
-              label="Join Organization"
-              buttonType="outlineWhiteBtn small"
-              style={{borderColor: 'rgba(255,255,255,0.4)'}}
-            />
+              <DropdownButton
+                label="Create New"
+                iconRight="fal fa-plus"
+                showMenu={showMenu === 'show'}
+                setShowMenu={setShowMenu}
+                className="create-new-btn"
+                buttonType="outlineWhiteBtn"
+                rightIcon="fal fa-chevron-down"
+                items={[
+                  { label: "New Post", icon: "fas fa-newspaper", url: "/posts" },
+                  ...canCreateProject ? [{ label: "New Project", icon: "fas fa-project-diagram", url: "/projects/new" }] : [],
+                  ...canCreateMeeting ? [{ label: "New Meeting", icon: "fas fa-video", url: "/meetings/meeting/new" }] : [],
+                  { label: "New Message", icon: "fas fa-comment", url: "/messages/new-conversation" },
+                  ...canCreateEvent ? [{ label: "New Event", icon: "fas fa-calendar-alt", url: "/events/new" }] : [],
+                ]}
+              /> :
+              <AppButton
+                label="Join Organization"
+                buttonType="outlineWhiteBtn small"
+                style={{ borderColor: 'rgba(255,255,255,0.4)' }}
+              />
           }
           <IconContainer
             icon="fas fa-bell"
@@ -125,6 +119,12 @@ export default function Navbar() {
               }}
             />
           }
+          <div
+            className="mobile-btn"
+            onClick={() => setShowMobileSidebar(true)}
+          >
+            <i className="fal fa-bars" />
+          </div>
         </div>
       </div>
       <div className="shapes-container">

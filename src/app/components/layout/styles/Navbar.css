@@ -380,8 +380,11 @@
 
 
 @media (max-width: 1080px) {
-  .navbar .rightbar-btn {
-    display: flex;
+  .navbar .dropdown-button {
+    display: none;
+  }
+  .navbar .topbar .right .icon-container {
+    display: none;
   }
 }
 
@@ -401,5 +404,8 @@
   }
   .nav-search-dropdown {
     width: 100%;
+  }
+  .navbar .topbar .left {
+    gap: 15px;
   }
 }

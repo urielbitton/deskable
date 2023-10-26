@@ -214,10 +214,11 @@ export default function SingleProject() {
       className="search-result-list"
       key={index}
     >
+      <h6>{index === 0 ? 'Tasks' : 'Pages'} ({result?.hits?.length})</h6>
       {
-        result?.hits?.length > 0 ?
-          <h6>Tasks ({result?.hits?.length})</h6> :
-          <h6><i className="fas fa-file-search" />No Results Found</h6>
+        result?.hits?.length <= 0 ?
+          <h6><i className="fas fa-file-search" />No Results Found</h6> :
+          null
       }
       {
         result?.hits?.map((item, index) => {

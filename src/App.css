@@ -280,6 +280,9 @@ em-emoji-picker {
 .tox .tox-tbtn:active {
   background: var(--darkInputBg)!important;
 }
+.tox-notifications-container {
+  display: none!important;
+}
 
 
 @media (max-width: 1370px) {

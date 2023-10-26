@@ -14,6 +14,7 @@ import {
   dateChangeService, dateClickService,
   eventClickService, eventResizeOrMoveService
 } from "app/services/calendarServices"
+import { useSearchParams } from "react-router-dom"
 
 export default function AppCalendar(props) {
 
@@ -26,6 +27,7 @@ export default function AppCalendar(props) {
     allDaySlot } = props
   const calendarAPI = calendarRef?.current?.getApi()
   const monthView = viewMode === 'dayGridMonth'
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const handleDateChange = (event) => {
     dateChangeService(
@@ -57,6 +59,7 @@ export default function AppCalendar(props) {
   }
 
   const handleEventClick = (e) => {
+    setSearchParams({ eventID: e.event.extendedProps.eventID })
     eventClickService(
       e,
       setNewEventModal

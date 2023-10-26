@@ -16,7 +16,7 @@ import Avatar from "../ui/Avatar"
 import DropdownSearch from "../ui/DropdownSearch"
 import { useUsersSearch } from "app/hooks/searchHooks"
 import { createMeetingService } from "app/services/meetingsServices"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { sendEventInvitesEmails } from "app/services/emailServices"
 
 export default function NewEventModal() {
@@ -34,9 +34,10 @@ export default function NewEventModal() {
   const [searchLoading, setSearchLoading] = useState(false)
   const [createMeetingLoading, setCreateLoading] = useState(false)
   const [createVideoMeeting, setCreateVideoMeeting] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
   const inputRef = useRef(null)
   const editMode = newEventModal?.event?.eventID
-  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID} ${editMode ? `AND NOT userID: ${inviteesIDs.join(' AND NOT userID: ')}` : ''}`
+  const searchFilters = `activeOrgID: ${myOrgID} AND NOT userID: ${myUserID} ${editMode ? `AND NOT userID: ${inviteesIDs?.join(' AND NOT userID: ')}` : ''}`
   const orgUsers = useUsersSearch(query, setSearchLoading, searchFilters, false)
   const allowSave = title && description && startingDate && endingDate
   const isCreator = newEventModal?.event?.creatorID === myUserID
@@ -237,6 +238,11 @@ export default function NewEventModal() {
       })
   }
 
+  const handleCloseModal = (e) => {
+    setNewEventModal({ open: false, event: null })
+    setSearchParams({ })
+  }
+
   useEffect(() => {
     if (newEventModal.event) {
       setTitle(newEventModal?.event?.title)
@@ -247,11 +253,15 @@ export default function NewEventModal() {
     }
   }, [newEventModal])
 
+  useEffect(() => {
+    
+  },[])
+
 
   return (
     <div
       className={`new-event-modal ${newEventModal.open ? 'show' : ''}`}
-      onMouseDown={() => setNewEventModal({ open: false, event: null })}
+      onMouseDown={handleCloseModal}
     >
       <div
         className="modal-content"

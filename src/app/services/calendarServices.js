@@ -2,10 +2,17 @@ import { errorToast, infoToast, successToast } from "app/data/toastsTemplates"
 import { db } from "app/firebase/fire"
 import { reformatDateToMonthDayYear } from "app/utils/dateUtils"
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns"
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore"
+import { collection, doc, onSnapshot, orderBy, query, where } from "firebase/firestore"
 import { deleteDB, getRandomDocID, setDB, updateDB } from "./CrudDB"
 import { createMeetingService } from "./meetingsServices"
-import { generateRoomID } from "app/utils/generalUtils"
+
+//getters
+export const getCalendarEventService = (orgID, eventID, setEvent) => {
+  const eventRef = doc(db, `organizations/${orgID}/events`, eventID)
+  onSnapshot(eventRef, (doc) => {
+    setEvent(doc.data())
+  })
+}
 
 export const dateChangeService = (event, calendarAPI, setCustomCalendarViewTitle, setCalendarRangeStartDate, setCalendarRangeEndDate) => {
   if (event === 'prev')

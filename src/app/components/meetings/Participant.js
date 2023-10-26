@@ -12,10 +12,8 @@ export default function Participant(prop) {
   const participantClass = participant?.identity === myUserID ? "my-participant" : "participants"
   const [videoTracks, setVideoTracks] = useState([])
   const [audioTracks, setAudioTracks] = useState([])
-  const [dataTracks, setDataTracks] = useState([])
   const [isVideoMuted, setIsVideoMuted] = useState(false)
   const [isAudioMuted, setIsAudioMuted] = useState(false)
-  const [isHandRaised, setIsHandRaised] = useState(false)
   const videoRef = useRef(null)
   const audioRef = useRef(null)
   const participantUser = useUser(participant?.identity)
@@ -27,9 +25,10 @@ export default function Participant(prop) {
     .filter(track => track !== null)
 
   const trackSubscribed = track => {
+    console.log(track)
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => [...videoTracks, track])
-      setIsVideoMuted(track.isMuted)
+      // setIsVideoMuted(track.isMuted)
     }
     if(track.name === 'myscreenshare') {
       setRemoteScreenSharer({participant, value: true})
@@ -38,13 +37,13 @@ export default function Participant(prop) {
     if(track.kind === 'audio') {
       setAudioTracks(audioTracks => [...audioTracks, track])
       setIsAudioMuted(track.isMuted)
-    }
+    }  
   }
   
   const trackUnsubscribed = track => {
     if (track.kind === 'video') {
       setVideoTracks(videoTracks => videoTracks.filter(v => v !== track))
-      setIsVideoMuted(track.isMuted)
+      // setIsVideoMuted(track.isMuted)
     }
     if(track.name === 'myscreenshare') {
       setRemoteScreenSharer(null)
@@ -127,6 +126,14 @@ export default function Participant(prop) {
       key={participant?.identity}
       id={participant?.identity}
     >
+      {
+        //if participant is muted, show video mute overlay
+        isVideoMuted ? 
+        <div className="video-mute-overlay">
+          <i className="fas fa-video-slash" />
+        </div> : 
+        null
+      }
       <video
         ref={videoRef}
         autoPlay

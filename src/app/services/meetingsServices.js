@@ -100,7 +100,6 @@ export const createJoinVideoMeetingService = (myUserID, accountType, roomID, roo
     })
     .then((result) => {
       setPageLoading(false)
-      setToasts(successToast("Meeting joined."))
       return result.data
     })
     .catch((error) => {
@@ -131,8 +130,8 @@ export const joinVideoRoomService = (token, videoOn, soundOn, setPageLoading) =>
 export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => {
   return navigator.mediaDevices.getDisplayMedia()
     .then(stream => {
+      // unpublish video camera tracks
       room.localParticipant.videoTracks.forEach(publication => {
-        publication.track.stop()
         publication.unpublish()
       })
       const screenTrack = new Video.LocalVideoTrack(stream.getTracks()[0], { name: 'myscreenshare' })
@@ -148,14 +147,19 @@ export const shareScreenService = (room, setScreenTrack, setIsScreenSharing) => 
     })
 }
 
-export const stopSharingScreenService = (room, screenTrack, setIsScreenSharing) => {
-  screenTrack.stop()
-  room.localParticipant.unpublishTrack(screenTrack)
+export const stopSharingScreenService = (room, screenTrack, setShareScreenTrack, setIsScreenSharing) => {
+  // screenTrack.stop()
+  setShareScreenTrack(null)
+  // room.localParticipant.unpublishTrack(screenTrack)
   room.localParticipant.videoTracks.forEach(publication => {
     if (publication.track.name === 'screen') {
-      publication.track.stop()
+      // publication.track.stop()
       publication.unpublish()
     }
+  })
+  //republish video camera tracks
+  room.localParticipant.videoTracks.forEach(publication => {
+    publication.publish()
   })
   setIsScreenSharing(false)
 }

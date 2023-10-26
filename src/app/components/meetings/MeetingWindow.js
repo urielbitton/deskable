@@ -84,10 +84,10 @@ export default function MeetingWindow(props) {
     setVideoOn(prev => !prev)
     room.localParticipant.videoTracks.forEach(publication => {
       if (value) {
-        publication.track.disable()
+        publication.track.stop()
       }
       else {
-        publication.track.enable()
+        publication.track.restart()
       }
     })
   }
@@ -114,7 +114,7 @@ export default function MeetingWindow(props) {
         .catch(() => setPageLoading(false))
     }
     else {
-      stopSharingScreenService(room, shareScreenTrack, setIsScreenSharing)
+      stopSharingScreenService(room, shareScreenTrack, setShareScreenTrack, setIsScreenSharing)
       setRemoteScreenSharer(null)
       setShareScreenTrack(null)
     }

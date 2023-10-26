@@ -79,6 +79,16 @@
   top: 0;
   z-index: 100;
 }
+.meeting-window .video-container .participant .video-mute-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background: #000;
+  border-radius: 10px;
+}
 .meeting-window .video-container .participants-list::-webkit-scrollbar {
   width: 0;
 }
@@ -153,6 +163,9 @@
   height: 100%;
   border: none;
   margin: 0;
+}
+.meeting-window .video-container .participants.screenshare-window video {
+  transform: none;
 }
 .meeting-window .video-container .participants.screenshare-window .icons-row {
   display: none;

@@ -82,7 +82,7 @@ export const getUserMediaDevices = () => {
 }
 
 export const stopVideoCameraService = (mediaStreamRef) => {
-  mediaStreamRef.getVideoTracks()?.forEach(track => track.stop())
+  mediaStreamRef?.getVideoTracks()?.forEach(track => track.stop())
 }
 
 export const createJoinVideoMeetingService = (myUserID, accountType, roomID, roomType, setPageLoading, setToasts) => {

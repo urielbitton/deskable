@@ -283,10 +283,6 @@ em-emoji-picker {
 .tox-notifications-container {
   display: none!important;
 }
-#tinymce {
-  line-height: 0.4!important;
-}
-
 
 @media (max-width: 1370px) {
   .site-grid {

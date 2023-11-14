@@ -46,7 +46,7 @@ export default function PageEditor(props) {
           'print help lineheight',
         content_style: `body { font-family:Helvetica,Arial,sans-serif; font-size:15px } ` +
           `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before { color: #9296b3; } ` +
-          `td { padding: 0 5px } #tinymce { line-height: 0.4!important; }`,
+          `td { padding: 0 5px } }`,
         init_instance_callback: function (editor) {
           editor.addShortcut("ctrl+s", "Custom Ctrl+S", "custom_ctrl_s");
           editor.addCommand("custom_ctrl_s", function () {

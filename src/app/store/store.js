@@ -7,7 +7,7 @@ export const StoreContext = createContext()
 
 const StoreContextProvider = ({children}) => {
  
-  const user = auth.currentUser
+  const user = auth.currentUser 
   const [myUser, setMyUser] = useState(null) 
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkmode') === "true")
   const [contentScrollBottom, setContentScrollBottom] = useState(false)
